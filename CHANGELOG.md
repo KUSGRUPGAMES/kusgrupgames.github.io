@@ -4,6 +4,50 @@ Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
 
 ## [Yayınlanmadı] — 0.1.0
 
+### Görsel geçiş — ekran görüntüsü ve video turuyla yakalanan hatalar
+
+Uygulamanın 42 ekranı web hedefinde gerçekten çizdirilip tek tek incelendi;
+üstüne 85 saniyelik bir gezinme videosu kaydedildi. Bakarak bulunan hatalar:
+
+- **İlk açılış bomboş beyaz ekrandı.** Kök düzen `onboardingDone` yanlışken
+  `<Stack>` yerine yalnız `<Redirect>` döndürüyordu; gezinme kabı hiç
+  çizilmediği için yönlendirme de çalışmıyordu. Kapı artık kök yığının bir
+  ekranı olan `(tabs)/_layout.tsx` içinde. Kök düzenin erken dönmediğini
+  doğrulayan sınama eklendi.
+- **Onboarding'de konum adımı atlanabiliyordu.** "Geç" düğmesi doğrudan
+  `setAdim` çağırdığı için konum kontrolünü deliyordu; kullanıcı konumsuz
+  ana sayfaya düşüyordu. Düğme artık 2. adımda çizilmiyor.
+- **Geri sayım halkanın dışına taşıyordu.** 40 puntoluk sayaç 168 birimlik
+  halkaya sığmıyordu; ana sayfada halka 208'e çıkarıldı.
+- **Ramazan dışında "İftara kalan" sayılıyordu.** Geri sayım yalnız Ramazan
+  ayında çizilir; dışında tahmini başlangıç tarihi gösterilir.
+- **Hatırlatıcı saati "+21" görünüyordu.** `Stepper` her pozitif değere artı
+  koyuyordu; işaret artık yalnız `signed` verilen düzeltme alanlarında.
+- **Pusula okunmuyorken başlık alttaki etiketi tekrar ediyordu** ("Kıble yönü"
+  iki kez). Ayrı bir yönlendirme metni eklendi (`qibla.noHeading`).
+- **Paylaşım kartı boş durumu alakasız metin gösteriyordu** ("Eklediklerin
+  burada görünecek"). Ekranın nereden açıldığını anlatan metin yazıldı.
+- **Yedi ekranda bölüm başlığı ekran başlığını tekrar ediyordu.** Hepsi
+  düzeltildi; tekrarı yakalayan sınama eklendi.
+- **Tarihler her dilde Türkçe çiziliyordu.** `Intl.DateTimeFormat('tr-TR', …)`
+  yedi yerde gömülüydü; `useDateFormat` ile seçili dile bağlandı, sabit dil
+  yazımını yasaklayan sınama eklendi.
+- **Yer aramasında ülke eşleşmesi şehir eşleşmesiyle aynı puandaydı.** "İs"
+  yazınca İstanbul'un yanında Kahire (Mısır) ve Karaçi (Pakistan) çıkıyordu;
+  şehir adı eşleşmeleri artık her zaman üstte.
+- **Pusula aboneliği sızabiliyordu.** Abonelik kurulurken ekran kapanırsa
+  bırakılmıyordu ve `AppState` tekrarı eski aboneliği kaybettiriyordu;
+  ikisi de düzeltildi, `remove()` hatası artık unmount'u kırmıyor.
+- Tespih ikonu 24 pikselde "C" gibi okunuyordu; kapalı boncuk halkası ve
+  püskül olarak yeniden çizildi. Ramazan, zekât ve hac için ayrı ikonlar
+  eklendi (hilal-yıldız, para, Kâbe) — eskiden esmâ ve dinî günlerle aynı
+  ikonu paylaşıyorlardı.
+- Keşfet'teki "Günün Hadisi" bölümü, lisans (B3) çözülene kadar hiç
+  çizilmiyor; kullanıcıya boş bir bölüm ve özür metni gösterilmiyor.
+
+Kalite kapısı: 524 sınama, `tsc` + `eslint` + Android paketi yeşil.
+
+
 ### FAZ 0 — Repository audit, mimari, durum dosyaları
 
 - Repository denetlendi: 5 mevcut Capacitor ürünü, tek dosya mimarisi.

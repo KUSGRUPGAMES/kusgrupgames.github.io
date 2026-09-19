@@ -26,7 +26,7 @@ Bilinen eksikler ve engeller. Kapanan madde `CHANGELOG.md`'ye taşınır.
 |---|---|---|
 | E1 | Bu kapsayıcıda **macOS/Xcode yok** | iOS derlemesi yalnız CI'da (macOS runner) doğrulanabilir |
 | E2 | Bu kapsayıcıda **Android SDK yok** | Android derlemesi yalnız CI'da doğrulanabilir |
-| E3 | Simülatör/emülatör yok | Ekran görüntüleri web hedefi (react-native-web) üzerinden alınır |
+| E3 | Simülatör/emülatör yok | Ekran görüntüleri ve gezinme videosu web hedefi (react-native-web) üzerinden alınır. 42 ekran + 85 sn'lik tur bu yolla çekildi ve incelendi; gerçek cihazda son bir bakış yine de gerekiyor. |
 
 ## Açık teknik borç
 

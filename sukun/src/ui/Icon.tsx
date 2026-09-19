@@ -5,15 +5,19 @@
  * Figüratif ikon yoktur; ürünün geometrik diline uygun, sade konturdur.
  */
 import React from 'react';
-import Svg, { Path, Circle, Line, Polyline } from 'react-native-svg';
+import Svg, { Path, Circle, Ellipse, Line, Polyline } from 'react-native-svg';
 import { useTheme } from '@/theme/ThemeProvider';
+
+/** Tespih boncuklarının halka üzerindeki açıları (derece). */
+const BEAD_ANGLES = [-90, -30, 30, 90, 150, 210] as const;
 
 export type IconName =
   | 'clock' | 'compass' | 'book' | 'beads' | 'heart' | 'settings'
   | 'chevronRight' | 'chevronLeft' | 'chevronDown' | 'check' | 'close'
   | 'bell' | 'bellOff' | 'share' | 'lock' | 'plus' | 'minus' | 'search'
   | 'moon' | 'sun' | 'location' | 'calendar' | 'user' | 'users'
-  | 'sparkle' | 'play' | 'pause' | 'bookmark' | 'info' | 'alert' | 'refresh' | 'star' | 'copy';
+  | 'sparkle' | 'play' | 'pause' | 'bookmark' | 'info' | 'alert' | 'refresh' | 'star' | 'copy'
+  | 'crescentStar' | 'coins' | 'kaaba';
 
 export interface IconProps {
   name: IconName;
@@ -47,7 +51,24 @@ function render(name: IconName, p: P): React.ReactNode {
     case 'book':
       return <Path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H19v16H5.5A1.5 1.5 0 0 0 4 20.5ZM4 20.5A1.5 1.5 0 0 1 5.5 19H19v2H5.5A1.5 1.5 0 0 1 4 20.5Z" {...p} />;
     case 'beads':
-      return <><Path d="M12 3a9 9 0 1 0 0 18" {...p} /><Circle cx={12} cy={3} r={1.6} {...p} /><Circle cx={4.6} cy={8.4} r={1.6} {...p} /><Circle cx={4.6} cy={15.6} r={1.6} {...p} /><Circle cx={12} cy={21} r={1.6} {...p} /></>;
+      // Tespih: kapalı bir boncuk halkası ve püskül. Önceki çizim yalnız
+      // yarım bir yay + dört nokta olduğu için sekme çubuğunda "C" gibi
+      // okunuyordu — ekran görüntüsünde böyle görüldü.
+      return <>
+        <Circle cx={12} cy={9.5} r={7} {...p} />
+        {BEAD_ANGLES.map((a) => (
+          <Circle
+            key={a}
+            cx={12 + 7 * Math.cos((a * Math.PI) / 180)}
+            cy={9.5 + 7 * Math.sin((a * Math.PI) / 180)}
+            r={1.5}
+            {...p}
+            fill={p.stroke}
+          />
+        ))}
+        <Path d="M12 16.5v4" {...p} />
+        <Circle cx={12} cy={21.4} r={1.3} {...p} fill={p.stroke} />
+      </>;
     case 'heart':
       return <Path d="M12 20s-7-4.5-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.5-7 9-7 9Z" {...p} />;
     case 'settings':
@@ -91,6 +112,26 @@ function render(name: IconName, p: P): React.ReactNode {
       return <><Path d="M12 3.5 21.5 20h-19Z" {...p} /><Path d="M12 10v4.5" {...p} /><Circle cx={12} cy={17.4} r={0.9} fill={p.stroke} stroke="none" /></>;
     case 'refresh':
       return <><Path d="M20 12a8 8 0 1 1-2.6-5.9" {...p} /><Polyline points="20,3.5 20,7 16.5,7" {...p} /></>;
+    case 'crescentStar':
+      // Ramazan: hilal + yıldız. Sade 'moon' ile karışmasın diye ayrı.
+      return <>
+        <Path d="M17.5 15.5A7.5 7.5 0 0 1 9 4.2a7.6 7.6 0 1 0 8.5 11.3Z" {...p} />
+        <Path d="M18.3 5.2l1 2.1 2.3.3-1.7 1.6.4 2.3-2-1.1-2 1.1.4-2.3-1.7-1.6 2.3-.3Z" {...p} />
+      </>;
+    case 'coins':
+      // Zekât: üst üste iki para. Esmâ ile aynı yıldızı kullanıyordu.
+      return <>
+        <Ellipse cx={12} cy={7} rx={7} ry={3} {...p} />
+        <Path d="M5 7v4.5c0 1.7 3.1 3 7 3s7-1.3 7-3V7" {...p} />
+        <Path d="M5 11.5V16c0 1.7 3.1 3 7 3s7-1.3 7-3v-4.5" {...p} />
+      </>;
+    case 'kaaba':
+      // Hac ve Umre: Kâbe küpü ve kuşak.
+      return <>
+        <Path d="M12 2.8 20 7v10l-8 4.2L4 17V7Z" {...p} />
+        <Path d="M4 7l8 4.2L20 7M12 11.2v10" {...p} />
+        <Path d="M4.6 10.4 12 14.2l7.4-3.8" {...p} />
+      </>;
     case 'copy':
       return <><Path d="M9 9h10v12H9z" {...p} /><Path d="M15 9V3H5v12h4" {...p} /></>;
     case 'star': {

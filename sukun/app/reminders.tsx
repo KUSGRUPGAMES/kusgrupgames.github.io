@@ -50,10 +50,9 @@ export default function RemindersScreen() {
     <Screen scroll motif="octagonGrid">
       <Stack.Screen options={{ headerShown: true, title: t('reminder.title') }} />
 
-      <SectionHeader title={t('reminder.title')} />
 
       {reminders.length === 0 ? (
-        <EmptyState icon="bell" title={t('reminder.none')} description={t('reminder.add')} />
+        <EmptyState icon="bell" title={t('reminder.none')} description={t('reminder.emptyBody')} />
       ) : (
         <Card padding="sm">
           {reminders.map((r, i) => (
@@ -110,6 +109,7 @@ export default function RemindersScreen() {
                 subtitle={t('reminder.offsetHint')}
                 value={offset}
                 min={-120}
+                signed
                 max={120}
                 step={5}
                 unit={t('notification.beforeUnit')}

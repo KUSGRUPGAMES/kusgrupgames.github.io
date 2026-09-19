@@ -25,14 +25,14 @@ export const en: Partial<Record<StringKey, string>> = {
   'location.permissionBody': 'Prayer times are calculated for where you are. If you prefer not to grant access, you can pick your city manually.',
   'location.timezone': 'Time zone',
 
-  'qibla.title': 'Qibla', 'qibla.bearing': 'Qibla direction',
+  'qibla.title': 'Qibla', 'qibla.bearing': 'Qibla direction', 'qibla.noHeading': 'No compass reading; use the bearing below',
   'qibla.distance': 'Distance to the Kaaba', 'qibla.aligned': 'You are facing the Qibla',
 
   'quran.title': 'Quran', 'quran.surahs': 'Surahs', 'quran.juz': 'Juz',
   'quran.continue': 'Continue where you left off', 'quran.translation': 'Translation',
   'quran.bookmarks': 'Bookmarks', 'quran.favorites': 'Favourites',
 
-  'worship.title': 'Worship', 'worship.dhikr': 'Dhikr counter', 'worship.duas': 'Supplications',
+  'worship.title': 'Worship', 'worship.dhikr': 'Dhikr counter', 'dhikr.pick': 'Choose a dhikr', 'worship.duas': 'Supplications',
   'worship.names': 'Names of Allah', 'worship.qada': 'Missed prayers',
 
   'explore.title': 'Explore', 'profile.title': 'Profile', 'profile.signIn': 'Sign in',

@@ -98,6 +98,7 @@ export default function PrayerSettingsScreen() {
             title={label(key)}
             value={(settings.adjustments as Partial<Record<PrayerKey, number>>)[key] ?? 0}
             min={-60}
+            signed
             max={60}
             unit={t('notification.beforeUnit')}
             onChange={(v) => update({ adjustments: { ...settings.adjustments, [key]: v } })}

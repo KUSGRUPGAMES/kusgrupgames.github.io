@@ -161,7 +161,10 @@ export default function OnboardingScreen() {
           <Button label={t('nav.back')} variant="ghost" onPress={() => { setUyari(null); setAdim(adim - 1); }} />
         ) : null}
         <View style={{ flex: 1 }} />
-        {adim > 1 && adim < TOPLAM ? (
+        {/* Konum adımı (2) atlanamaz: "Geç" doğrudan `setAdim` çağırdığı için
+            `ilerle()` içindeki konum kontrolünü deliyordu ve kullanıcı
+            konumsuz ana sayfaya düşüyordu. */}
+        {adim > 2 && adim < TOPLAM ? (
           <Button label={t('common.skip')} variant="ghost" onPress={() => setAdim(adim + 1)} />
         ) : null}
         <Button

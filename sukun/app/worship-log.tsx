@@ -7,7 +7,7 @@ import {
   Field, Banner, IconButton, Divider, Chip,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
-import { useT } from '@/lib/i18n';
+import { useT, useDateFormat } from '@/lib/i18n';
 import { useWorshipStore, type QadaSlot, type FastKind } from '@/store/worship';
 import { useLocationStore } from '@/store/locations';
 import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
@@ -18,6 +18,7 @@ type NamazSlot = Exclude<QadaSlot, 'witr'>;
 const NAMAZLAR: NamazSlot[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
 
 export default function WorshipLogScreen() {
+  const tamTarih = useDateFormat({ dateStyle: 'full', timeZone: 'UTC' });
   const t = useT();
   const theme = useTheme();
   const label = usePrayerLabel();
@@ -43,8 +44,7 @@ export default function WorshipLogScreen() {
   const setFast = useWorshipStore((s) => s.setFast);
   const clearFast = useWorshipStore((s) => s.clearFast);
 
-  const gosterim = new Intl.DateTimeFormat('tr-TR', { dateStyle: 'full', timeZone: 'UTC' })
-    .format(new Date(`${tarih}T12:00:00Z`));
+  const gosterim = tamTarih.format(new Date(`${tarih}T12:00:00Z`));
 
   const orucSecenekleri: { id: FastKind | 'none'; label: string }[] = [
     { id: 'none', label: t('log.fastNone') },

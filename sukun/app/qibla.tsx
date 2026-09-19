@@ -87,7 +87,9 @@ export default function QiblaScreen() {
             {hizali
               ? t('qibla.aligned')
               : compass.heading === null
-                ? t('qibla.bearing')
+                // Pusula yoksa başlık alttaki "Kıble yönü" etiketini
+                // tekrarlıyordu; kullanıcıya hiçbir şey söylemiyordu.
+                ? t('qibla.noHeading')
                 : fark > 0 ? t('qibla.turnRight') : t('qibla.turnLeft')}
           </Text>
 

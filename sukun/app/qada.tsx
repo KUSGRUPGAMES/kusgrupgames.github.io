@@ -34,7 +34,7 @@ export default function QadaScreen() {
   return (
     <Screen scroll motif="octagonGrid">
       <Stack.Screen options={{ headerShown: true, title: t('qada.title') }} />
-      <SectionHeader title={t('qada.title')} subtitle={t('qada.subtitle')} />
+      <SectionHeader title={t('qada.subtitle')} />
 
       {toplam === 0 ? (
         <EmptyState icon="check" title={t('qada.allDone')} description={t('qada.bulkHint')} />

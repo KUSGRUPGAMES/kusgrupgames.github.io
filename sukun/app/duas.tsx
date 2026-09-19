@@ -21,7 +21,7 @@ export default function DuasScreen() {
   return (
     <Screen scroll motif="arch">
       <Stack.Screen options={{ headerShown: true, title: t('dua.title') }} />
-      <SectionHeader title={t('dua.title')} subtitle={t('dua.categories')} />
+      <SectionHeader title={t('dua.categories')} />
 
       <Row gap="sm" wrap>
         <Chip label={t('common.all')} selected={kategori === null} onPress={() => setKategori(null)} />

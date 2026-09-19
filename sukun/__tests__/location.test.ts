@@ -77,6 +77,17 @@ describe('arama ve en yakın şehir', () => {
     expect(searchPlaces('izmır')[0]?.name).toBe('İzmir');
   });
 
+  it('şehir adıyla eşleşenler ülke adıyla eşleşenlerin üstünde', () => {
+    // "İs" yazıldığında İstanbul ile Isparta önde gelmeli; Kahire (Mısır)
+    // ve Karaçi (Pakistan) yalnız ülke adında "is" geçtiği için listede.
+    const r = searchPlaces('İs', { limit: 6 }).map((p) => p.name);
+    expect(r.slice(0, 2).sort()).toEqual(['Isparta', 'İstanbul']);
+    for (const ulkeEslesmesi of ['Kahire', 'Karaçi', 'Kudüs']) {
+      const sira = r.indexOf(ulkeEslesmesi);
+      expect({ ad: ulkeEslesmesi, ilkAltida: sira }).toEqual({ ad: ulkeEslesmesi, ilkAltida: -1 });
+    }
+  });
+
   it('ülke adıyla da aranabilir', () => {
     const r = searchPlaces('Almanya');
     expect(r.length).toBeGreaterThan(3);

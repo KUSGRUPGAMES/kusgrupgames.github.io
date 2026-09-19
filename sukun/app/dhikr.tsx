@@ -101,7 +101,7 @@ export default function DhikrScreen() {
         </View>
       ) : null}
 
-      <SectionHeader title={t('worship.dhikr')} />
+      <SectionHeader title={t('dhikr.pick')} />
       <Row gap="sm" wrap>
         {DHIKR_PRESETS.map((p) => (
           <Chip

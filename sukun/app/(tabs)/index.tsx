@@ -82,6 +82,9 @@ export default function HomeScreen() {
               {live?.next ? (
                 <CountdownRing
                   progress={live.progress}
+                  // 40 puntoluk geri sayım varsayılan 168'lik halkaya
+                  // sığmıyor, rakamlar çemberin dışına taşıyordu.
+                  size={208}
                   accessibilityLabel={t('prayer.remainingTo', {
                     name: label(live.next.key),
                     time: formatCountdown(live.secondsToNext),

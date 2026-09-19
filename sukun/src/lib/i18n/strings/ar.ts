@@ -25,14 +25,14 @@ export const ar: Partial<Record<StringKey, string>> = {
   'location.permissionBody': 'تُحسب مواقيت الصلاة حسب مكانك. وإن لم ترغب في منح الإذن فيمكنك اختيار مدينتك يدوياً.',
   'location.timezone': 'المنطقة الزمنية',
 
-  'qibla.title': 'القبلة', 'qibla.bearing': 'اتجاه القبلة',
+  'qibla.title': 'القبلة', 'qibla.bearing': 'اتجاه القبلة', 'qibla.noHeading': 'تعذّرت قراءة البوصلة؛ استعمل الزاوية أدناه',
   'qibla.distance': 'المسافة إلى الكعبة', 'qibla.aligned': 'أنت مستقبل القبلة',
 
   'quran.title': 'القرآن', 'quran.surahs': 'السور', 'quran.juz': 'الأجزاء',
   'quran.continue': 'تابع من حيث توقفت', 'quran.translation': 'الترجمة',
   'quran.bookmarks': 'العلامات', 'quran.favorites': 'المفضلة',
 
-  'worship.title': 'العبادة', 'worship.dhikr': 'المسبحة', 'worship.duas': 'الأدعية',
+  'worship.title': 'العبادة', 'worship.dhikr': 'المسبحة', 'dhikr.pick': 'اختر الذكر', 'worship.duas': 'الأدعية',
   'worship.names': 'أسماء الله الحسنى', 'worship.qada': 'الصلوات الفائتة',
 
   'explore.title': 'استكشاف', 'profile.title': 'الحساب', 'profile.signIn': 'تسجيل الدخول',

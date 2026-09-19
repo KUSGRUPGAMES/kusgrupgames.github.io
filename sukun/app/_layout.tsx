@@ -1,8 +1,8 @@
 /** Kök düzen — şartname §11. Tüm sağlayıcılar burada kurulur. */
 import React from 'react';
-import { Stack, Redirect } from 'expo-router';
+import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { AppProviders, useBoot } from '@/boot/AppProviders';
+import { AppProviders } from '@/boot/AppProviders';
 import { useTheme } from '@/theme/ThemeProvider';
 
 export default function RootLayout() {
@@ -15,9 +15,10 @@ export default function RootLayout() {
 
 function RootStack() {
   const theme = useTheme();
-  const { onboardingDone } = useBoot();
-  // İlk açılışta onboarding'e yönlendirilir; sonraki açılışlarda görünmez (§12).
-  if (!onboardingDone) return <Redirect href="/onboarding" />;
+  // Buradan **asla** erken dönülmez. Kök düzen bir gezinme kabı çizmezse
+  // yönlendirme asılacak bağlam bulamaz ve ekran bomboş kalır; ilk açılış
+  // beyaz ekranla başlıyordu, sebebi buydu. Onboarding kapısı artık
+  // `(tabs)/_layout.tsx` içinde — orası kök yığının bir ekranıdır (§12).
   return (
     <>
       <StatusBar style={theme.name === 'dark' ? 'light' : 'dark'} />

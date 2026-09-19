@@ -6,7 +6,7 @@
  * ulaşılmayan ekran, kayıt edilmemiş yol, çevrilmemiş metin.
  */
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
-import { join, basename } from 'node:path';
+import { join, basename, sep } from 'node:path';
 import { tr } from '@/lib/i18n';
 
 const ROOT = join(__dirname, '..');
@@ -154,5 +154,62 @@ describe('içerik künyeleri', () => {
 
   it('yazı tipi lisansı paketle birlikte duruyor', () => {
     expect(existsSync(join(ROOT, 'assets', 'fonts', 'Amiri-OFL.txt'))).toBe(true);
+  });
+});
+
+describe('gezinme iskeleti', () => {
+  // Bu bir kez gerçekten oldu: kök düzen `onboardingDone` yanlışken
+  // `<Stack>` yerine yalnız `<Redirect>` döndürüyordu. Gezinme kabı hiç
+  // çizilmediği için yönlendirme de çalışmıyordu ve uygulama **ilk
+  // açılışta bomboş beyaz ekranla** başlıyordu. Kök düzen erken dönemez.
+  const kok = oku(join(ROOT, 'app', '_layout.tsx'));
+
+  it('kök düzen her durumda gezinme kabını çiziyor', () => {
+    const govde = kok.slice(kok.indexOf('function RootStack'));
+    const stackIndex = govde.indexOf('<Stack');
+    expect(stackIndex).toBeGreaterThan(0);
+    // `<Stack`tan önce tek bir `return` bulunmalı — kabı çizen o dönüş.
+    // Fazlası koşullu erken dönüştür ve o dalda navigatör hiç çizilmez.
+    const oncesi = govde.slice(0, stackIndex);
+    expect(oncesi.match(/\breturn\b/g) ?? []).toHaveLength(1);
+  });
+
+  it('onboarding kapısı bir ekranın içinde duruyor', () => {
+    // Kapı kökte değil, kök yığının bir ekranı olan sekme düzenindedir;
+    // `Redirect` ancak orada gezinme bağlamı bulur.
+    expect(kok).not.toContain('Redirect');
+    const sekme = oku(join(ROOT, 'app', '(tabs)', '_layout.tsx'));
+    expect(sekme).toContain('<Redirect href="/onboarding" />');
+  });
+});
+
+describe('dil ayarı her yere işliyor', () => {
+  // Ekranlarda `Intl.DateTimeFormat('tr-TR', …)` gömülüydü: arayüz dilini
+  // İngilizce yapan kullanıcı yine "20 Eylül 2026" görüyordu. Biçimlendirici
+  // tek yerden, seçili dilden gelir.
+  it('hiçbir ekran tarih biçimlendiricisine sabit dil yazmıyor', () => {
+    const suclular: string[] = [];
+    for (const f of [...uygulamaDosyalari, ...dosyalar(join(ROOT, 'src'))]) {
+      if (basename(f) === 'dates.ts' || f.includes(`${sep}lib${sep}time${sep}`)) continue;
+      if (/new Intl\.DateTimeFormat\(\s*['"`]/.test(oku(f))) suclular.push(basename(f));
+    }
+    expect(suclular).toEqual([]);
+  });
+});
+
+describe('ekran başlıkları', () => {
+  // Bir düzine ekranda üst çubuktaki başlık, hemen altındaki bölüm
+  // başlığında birebir tekrar ediyordu: "Dualar / Dualar", "Kıble yönü /
+  // Kıble yönü". Ekran görüntülerine bakınca görüldü.
+  it('bölüm başlığı ekran başlığını tekrar etmiyor', () => {
+    const suclular: string[] = [];
+    for (const f of uygulamaDosyalari) {
+      const s = oku(f);
+      const ekran = /options=\{\{[^}]*title: t\('([^']+)'\)/.exec(s);
+      if (!ekran) continue;
+      const ilkBolum = /<SectionHeader\s+title=\{t\('([^']+)'\)\}/.exec(s);
+      if (ilkBolum && ilkBolum[1] === ekran[1]) suclular.push(`${basename(f)}: ${ekran[1]}`);
+    }
+    expect(suclular).toEqual([]);
   });
 });

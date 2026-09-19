@@ -18,8 +18,16 @@ export function searchPlaces(query: string, options: SearchOptions = {}): Place[
 
   if (!q) return havuz.slice(0, limit);
 
+  // Şehir adıyla eşleşen her sonuç, ülke adıyla eşleşen her sonucun
+  // üstündedir. Eskiden ikisi tek bir puanda toplanıyordu: "İs" yazınca
+  // İstanbul'un hemen ardında Kahire (Mısır) ve Karaçi (Pakistan)
+  // sıralanıyordu — ülke adında "is" geçtiği için.
   return havuz
-    .map((p) => ({ p, score: Math.max(matchScore(p.name, q), matchScore(p.country, q) > 0 ? 1 : 0) }))
+    .map((p) => {
+      const ad = matchScore(p.name, q);
+      const ulke = matchScore(p.country, q);
+      return { p, score: ad > 0 ? ad + 3 : (ulke > 0 ? 1 : 0) };
+    })
     .filter((x) => x.score > 0)
     .sort((a, b) => (b.score - a.score) || a.p.name.localeCompare(b.p.name, 'tr'))
     .slice(0, limit)

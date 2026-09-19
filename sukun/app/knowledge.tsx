@@ -25,7 +25,7 @@ export default function KnowledgeScreen() {
   return (
     <Screen scroll motif="octagonGrid">
       <Stack.Screen options={{ headerShown: true, title: t('knowledge.title') }} />
-      <SectionHeader title={t('knowledge.title')} subtitle={t('knowledge.topics')} />
+      <SectionHeader title={t('knowledge.topics')} />
 
       <Field label={t('common.search')} value={sorgu} onChangeText={setSorgu} />
 

@@ -11,4 +11,5 @@ export {
   type UiLanguage, type Direction,
 } from './direction';
 export { FONT_ASSETS, ARABIC_FONT_LICENSE, scriptureFont, type ArabicFont } from './fonts';
+export { LOCALE_TAGS, localeTag, useDateFormat } from './dates';
 export { I18nProvider, useI18n, useT, type Translator, type I18nProviderProps } from './I18nProvider';

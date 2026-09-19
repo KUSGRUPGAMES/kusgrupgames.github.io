@@ -34,8 +34,11 @@ export function useCompass(enabled: boolean): CompassState {
     let canli = true;
 
     const ac = async () => {
+      // Zaten açıkken tekrar açmak eski aboneliği kaybettirir: pusula arka
+      // planda çalışmaya devam eder. AppState 'active' üst üste gelebilir.
+      if (abone) return;
       try {
-        abone = await Location.watchHeadingAsync((h) => {
+        const yeni = await Location.watchHeadingAsync((h) => {
           if (!canli) return;
           // `trueHeading` yalnız konum izni varken gelir; yoksa manyetik kuzey.
           const yon = h.trueHeading >= 0 ? h.trueHeading : h.magHeading;
@@ -57,20 +60,31 @@ export function useCompass(enabled: boolean): CompassState {
             available: true,
           });
         });
+        // Abonelik kurulurken ekran kapandıysa hemen bırakılır; yoksa
+        // "pusula yalnız bu ekran açıkken çalışır" sözü tutulmaz.
+        if (!canli) { birak(yeni); return; }
+        abone = yeni;
       } catch {
         // Manyetometresi olmayan cihaz ya da izin yok.
         if (canli) setState({ ...BASLANGIC, available: false });
       }
     };
 
-    const kapat = () => { abone?.remove(); abone = null; };
+    // Bazı platformlarda `remove()` içeriden patlar (web'de
+    // `LocationEventEmitter.removeSubscription is not a function`). Temizlik
+    // sırasında atılan hata React'in unmount'unu kırar, o yüzden yutulur.
+    const birak = (s: Location.LocationSubscription | null) => {
+      try { s?.remove(); } catch { /* aboneliği bırakamadık; sürdürülecek bir şey yok */ }
+    };
+
+    const kapat = () => { birak(abone); abone = null; };
 
     void ac();
     const sub = AppState.addEventListener('change', (s) => {
       if (s === 'active') void ac(); else kapat();
     });
 
-    return () => { canli = false; kapat(); sub.remove(); };
+    return () => { canli = false; kapat(); try { sub.remove(); } catch { /* yok sayılır */ } };
   }, [enabled]);
 
   return state;

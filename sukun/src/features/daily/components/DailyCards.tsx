@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import { router } from 'expo-router';
-import { Card, Column, Row, Text, Badge, IconButton, SectionHeader, Banner } from '@/ui';
+import { Card, Column, Row, Text, Badge, IconButton } from '@/ui';
 import { useT } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
 import { pickDaily } from '../pick';
@@ -237,16 +237,5 @@ export function RamadanCard({ ctx }: { ctx: DailyContext }) {
         <Text variant="title3" tone="accent">{t('ramadan.day', { day: durum.day })}</Text>
       </Column>
     </Card>
-  );
-}
-
-/** Telif engelli bölümler için açık açıklama (§92, CONTENT_SOURCES). */
-export function PendingContentSection({ title }: { title: string }) {
-  const t = useT();
-  return (
-    <>
-      <SectionHeader title={title} />
-      <Banner tone="info" title={t('common.source')} description={t('content.pendingLicense')} />
-    </>
   );
 }

@@ -135,9 +135,16 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 - [x] Bileşen sınamaları (jest-expo), uç durum matrisi
 - [x] README, ARCHITECTURE, RELEASE_CHECKLIST, mağaza sayfaları, gizlilik (TR+EN)
 
+**Görsel geçiş — ekranlara bakılarak yapıldı:**
+
+- [x] `npm run preview`: 42 ekran çizdirilip tek tek incelendi, 85 sn'lik tur kaydedildi
+- [x] Bakarak bulunan 13 hata düzeltildi (ayrıntı `CHANGELOG.md`), dördü için
+      geri gelmesini engelleyen sınama yazıldı
+
 ## Devam eden
 
 - [ ] Mağaza hesapları açılınca: abonelik, widget, Live Activity (⛔B6, B7)
+- [ ] Gerçek cihazda son bakış (⛔E3 — bu kapsayıcıda emülatör yok)
 
 ## Sıradaki iş
 
@@ -153,9 +160,10 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 |---|---|
 | TypeScript | ✅ `tsc --noEmit` temiz |
 | Lint | ✅ `eslint --max-warnings=0` temiz |
-| Test | ✅ 40 suite / 517 test (mantık + bileşen) |
+| Test | ✅ 40 suite / 524 test (mantık + bileşen) |
 | Veritabanı | ✅ `bash sukun/tools/verify-db.sh` — migration + RLS + kapsama |
 | Paketleme | ✅ `npm run bundle` — Metro paketi üretiliyor |
+| Görsel geçiş | ✅ `npm run preview` — 42 ekran + 85 sn'lik gezinme videosu, hepsi çiziyor |
 | iOS build | henüz denenmedi (B6 — Apple hesabı) |
 | Android build | henüz denenmedi |
 

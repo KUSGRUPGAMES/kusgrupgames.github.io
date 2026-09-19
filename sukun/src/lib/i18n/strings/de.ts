@@ -25,14 +25,14 @@ export const de: Partial<Record<StringKey, string>> = {
   'location.permissionBody': 'Die Gebetszeiten werden für deinen Ort berechnet. Wenn du keine Freigabe erteilen möchtest, kannst du deine Stadt manuell wählen.',
   'location.timezone': 'Zeitzone',
 
-  'qibla.title': 'Qibla', 'qibla.bearing': 'Qibla-Richtung',
+  'qibla.title': 'Qibla', 'qibla.bearing': 'Qibla-Richtung', 'qibla.noHeading': 'Kein Kompasswert; nutze den Winkel unten',
   'qibla.distance': 'Entfernung zur Kaaba', 'qibla.aligned': 'Du bist zur Qibla ausgerichtet',
 
   'quran.title': 'Koran', 'quran.surahs': 'Suren', 'quran.juz': 'Dschuz',
   'quran.continue': 'Weiterlesen', 'quran.translation': 'Übersetzung',
   'quran.bookmarks': 'Lesezeichen', 'quran.favorites': 'Favoriten',
 
-  'worship.title': 'Gottesdienst', 'worship.dhikr': 'Dhikr-Zähler', 'worship.duas': 'Bittgebete',
+  'worship.title': 'Gottesdienst', 'worship.dhikr': 'Dhikr-Zähler', 'dhikr.pick': 'Dhikr wählen', 'worship.duas': 'Bittgebete',
   'worship.names': 'Die Namen Allahs', 'worship.qada': 'Nachzuholende Gebete',
 
   'explore.title': 'Entdecken', 'profile.title': 'Profil', 'profile.signIn': 'Anmelden',

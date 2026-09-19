@@ -47,7 +47,7 @@ export default function NamesScreen() {
 
   const baslik = (
     <Column gap="md" style={{ paddingBottom: theme.spacing.md }}>
-      <SectionHeader title={t('names.title')} subtitle={t('names.subtitle')} />
+      <SectionHeader title={t('names.subtitle')} />
       <Field label={t('common.search')} hint={t('names.searchHint')} value={sorgu} onChangeText={setSorgu} />
       <Banner tone="info" title={t('common.source')} description={t('names.arabicPending')} />
     </Column>

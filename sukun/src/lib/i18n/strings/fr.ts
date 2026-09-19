@@ -25,14 +25,14 @@ export const fr: Partial<Record<StringKey, string>> = {
   'location.permissionBody': "Les horaires de prière sont calculés pour l'endroit où vous êtes. Si vous préférez ne pas donner l'accès, vous pouvez choisir votre ville manuellement.",
   'location.timezone': 'Fuseau horaire',
 
-  'qibla.title': 'Qibla', 'qibla.bearing': 'Direction de la Qibla',
+  'qibla.title': 'Qibla', 'qibla.bearing': 'Direction de la Qibla', 'qibla.noHeading': 'Pas de lecture de boussole ; utilise l’angle ci-dessous',
   'qibla.distance': 'Distance jusqu’à la Kaaba', 'qibla.aligned': 'Vous êtes face à la Qibla',
 
   'quran.title': 'Coran', 'quran.surahs': 'Sourates', 'quran.juz': 'Juz',
   'quran.continue': 'Reprendre la lecture', 'quran.translation': 'Traduction',
   'quran.bookmarks': 'Signets', 'quran.favorites': 'Favoris',
 
-  'worship.title': 'Adoration', 'worship.dhikr': 'Compteur de dhikr', 'worship.duas': 'Invocations',
+  'worship.title': 'Adoration', 'worship.dhikr': 'Compteur de dhikr', 'dhikr.pick': 'Choisir un dhikr', 'worship.duas': 'Invocations',
   'worship.names': 'Les noms d’Allah', 'worship.qada': 'Prières manquées',
 
   'explore.title': 'Explorer', 'profile.title': 'Profil', 'profile.signIn': 'Se connecter',

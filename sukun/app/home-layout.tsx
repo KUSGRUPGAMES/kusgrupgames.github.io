@@ -1,7 +1,7 @@
 /** Ana sayfa düzeni — şartname §21. */
 import React from 'react';
 import { Stack } from 'expo-router';
-import { Screen, SectionHeader, Card, ListItem, Row, IconButton, Button } from '@/ui';
+import { Screen, Text, Card, ListItem, Row, IconButton, Button } from '@/ui';
 import { useT } from '@/lib/i18n';
 import { useHomeLayoutStore, PINNED_CARDS, type HomeCardId } from '@/store/homeLayout';
 
@@ -31,7 +31,7 @@ export default function HomeLayoutScreen() {
   return (
     <Screen scroll>
       <Stack.Screen options={{ headerShown: true, title: t('home.customize') }} />
-      <SectionHeader title={t('home.customize')} subtitle={t('home.customizeHint')} />
+      <Text variant="caption" tone="muted">{t('home.customizeHint')}</Text>
 
       <Card padding="sm">
         {cards.map((c, i) => {

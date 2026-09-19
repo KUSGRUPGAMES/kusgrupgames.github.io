@@ -16,12 +16,20 @@ export interface StepperProps {
   onChange: (value: number) => void;
   /** Değerin yanına yazılacak birim, ör. "dk". */
   unit?: string;
+  /**
+   * Artı işareti gösterilsin mi. Yalnız **düzeltme** alanlarında anlamlı:
+   * "+5 dk" ileri almak demektir. Saat, dakika, punto gibi mutlak
+   * değerlerde işaret yanlıştır — hatırlatıcı saati "+21" görünüyordu.
+   */
+  signed?: boolean;
 }
 
-export function Stepper({ title, subtitle, value, min = -60, max = 60, step = 1, onChange, unit }: StepperProps) {
+export function Stepper({
+  title, subtitle, value, min = -60, max = 60, step = 1, onChange, unit, signed = false,
+}: StepperProps) {
   const theme = useTheme();
   const clamp = (n: number) => Math.min(max, Math.max(min, n));
-  const shown = `${value > 0 ? '+' : ''}${value}${unit ? ` ${unit}` : ''}`;
+  const shown = `${signed && value > 0 ? '+' : ''}${value}${unit ? ` ${unit}` : ''}`;
   return (
     <Row align="center" gap="md" style={{ minHeight: 52 }}>
       <Column flex={1} gap="xxs">

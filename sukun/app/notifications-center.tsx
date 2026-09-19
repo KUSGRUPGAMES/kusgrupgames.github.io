@@ -6,7 +6,7 @@ import {
   Screen, SectionHeader, Column, Row, Text, Button, Banner, EmptyState, VirtualList,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
-import { useT } from '@/lib/i18n';
+import { useT, useDateFormat } from '@/lib/i18n';
 import { useSettingsStore } from '@/store/settings';
 import { useLocationStore } from '@/store/locations';
 import { useWorshipStore } from '@/store/worship';
@@ -84,7 +84,7 @@ export default function NotificationsCenterScreen() {
     setKurulu(n);
   }, [gunler, bildirimAyari, label, t, settings.notifications.sound]);
 
-  const bicim = new Intl.DateTimeFormat('tr-TR', { dateStyle: 'short', timeStyle: 'short' });
+  const bicim = useDateFormat({ dateStyle: 'short', timeStyle: 'short' });
 
   return (
     <Screen motif="octagonGrid" padding="lg">

@@ -6,7 +6,7 @@ import {
   Screen, Card, Row, Column, Text, IconButton, Divider, EmptyState, SectionHeader,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
-import { useT } from '@/lib/i18n';
+import { useT, useDateFormat } from '@/lib/i18n';
 import { useLocationStore } from '@/store/locations';
 import { useSettingsStore } from '@/store/settings';
 import { monthSchedule } from '@/features/prayer/schedule';
@@ -16,6 +16,7 @@ import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
 import { zonedNow } from '@/lib/time/zone';
 
 export default function PrayerCalendarScreen() {
+  const ayBicimi = useDateFormat({ month: 'long', year: 'numeric', timeZone: 'UTC' });
   const t = useT();
   const theme = useTheme();
   const label = usePrayerLabel();
@@ -51,8 +52,7 @@ export default function PrayerCalendarScreen() {
     );
   }
 
-  const ayAdi = new Intl.DateTimeFormat('tr-TR', { month: 'long', year: 'numeric', timeZone: 'UTC' })
-    .format(new Date(Date.UTC(ay.year, ay.month, 1)));
+  const ayAdi = ayBicimi.format(new Date(Date.UTC(ay.year, ay.month, 1)));
 
   const kaydir = (delta: number) => {
     const d = new Date(Date.UTC(ay.year, ay.month + delta, 1));

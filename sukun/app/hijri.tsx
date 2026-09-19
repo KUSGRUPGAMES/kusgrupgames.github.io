@@ -6,7 +6,7 @@ import {
   Screen, SectionHeader, Card, Column, Row, Text, Stepper, Segmented, Field, Banner, Badge, Divider,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
-import { useT } from '@/lib/i18n';
+import { useT, useDateFormat } from '@/lib/i18n';
 import { useSettingsStore } from '@/store/settings';
 import { toHijri, fromHijri, HIJRI_MONTHS, upcomingReligiousDays } from '@/features/hijri/calc';
 import { moonState } from '@/features/moon/phase';
@@ -21,6 +21,9 @@ export default function HijriScreen() {
   const [yon, setYon] = useState<Yon>('toHijri');
   const [girdi, setGirdi] = useState('');
 
+  const uzunTarih = useDateFormat({ dateStyle: 'long' });
+  const ortaTarih = useDateFormat({ dateStyle: 'medium' });
+
   const simdi = useMemo(() => new Date(), []);
   const bugunHicri = toHijri(new Date(simdi.getTime() + settings.hijriOffset * 86400000));
   const gunler = useMemo(() => upcomingReligiousDays(simdi), [simdi]);
@@ -33,7 +36,7 @@ export default function HijriScreen() {
     const [a, b, c] = sayilar as [number, number, number];
     if (yon === 'toGregorian') {
       const d = fromHijri(c, b, a);
-      return d ? new Intl.DateTimeFormat('tr-TR', { dateStyle: 'long' }).format(d) : null;
+      return d ? uzunTarih.format(d) : null;
     }
     const d = new Date(c, b - 1, a);
     if (Number.isNaN(d.getTime())) return null;
@@ -62,6 +65,7 @@ export default function HijriScreen() {
           title={t('hijri.offset')}
           value={settings.hijriOffset}
           min={-2}
+          signed
           max={2}
           unit={t('moon.ageUnit')}
           onChange={(v) => update({ hijriOffset: v })}
@@ -98,7 +102,7 @@ export default function HijriScreen() {
               <Column flex={1} gap="xxs">
                 <Text variant="bodyStrong">{g.label}</Text>
                 <Text variant="caption" tone="muted">
-                  {new Intl.DateTimeFormat('tr-TR', { dateStyle: 'long' }).format(g.date)}
+                  {uzunTarih.format(g.date)}
                 </Text>
               </Column>
               <Badge
@@ -127,11 +131,11 @@ export default function HijriScreen() {
           </Row>
           <Row justify="space-between">
             <Text tone="muted">{t('moon.nextNew')}</Text>
-            <Text>{new Intl.DateTimeFormat('tr-TR', { dateStyle: 'medium' }).format(ay.nextNewMoon)}</Text>
+            <Text>{ortaTarih.format(ay.nextNewMoon)}</Text>
           </Row>
           <Row justify="space-between">
             <Text tone="muted">{t('moon.nextFull')}</Text>
-            <Text>{new Intl.DateTimeFormat('tr-TR', { dateStyle: 'medium' }).format(ay.nextFullMoon)}</Text>
+            <Text>{ortaTarih.format(ay.nextFullMoon)}</Text>
           </Row>
           <Text variant="micro" tone="subtle">{t('moon.approxNote')}</Text>
         </Column>

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import * as Clipboard from 'expo-clipboard';
 import { Stack } from 'expo-router';
 import {
-  Screen, SectionHeader, Card, Column, Row, Text, Button, Banner, EmptyState, Divider,
+  Screen, Card, Column, Row, Text, Button, Banner, EmptyState, Divider,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -19,12 +19,12 @@ export default function DiagnosticsScreen() {
   return (
     <Screen scroll>
       <Stack.Screen options={{ headerShown: true, title: t('diagnostics.title') }} />
+      <Text variant="caption" tone="muted">{`${Brand.appName} ${Brand.version}`}</Text>
 
-      <SectionHeader title={t('diagnostics.title')} subtitle={`${Brand.appName} ${Brand.version}`} />
       <Banner tone="info" title={t('settings.privacy')} description={t('diagnostics.localOnly')} />
 
       {kayitlar.length === 0 ? (
-        <EmptyState icon="check" title={t('diagnostics.noCrashes')} description={t('diagnostics.localOnly')} />
+        <EmptyState icon="check" title={t('diagnostics.noCrashes')} description={t('diagnostics.noCrashesBody')} />
       ) : (
         <>
           <Card padding="sm" style={{ marginTop: theme.spacing.md }}>

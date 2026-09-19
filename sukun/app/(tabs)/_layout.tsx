@@ -4,8 +4,9 @@
  * Sekme adları çeviriden gelir; ikonlar kendi SVG setimizden.
  */
 import React from 'react';
-import { Tabs } from 'expo-router';
+import { Tabs, Redirect } from 'expo-router';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useBoot } from '@/boot/AppProviders';
 import { useT } from '@/lib/i18n';
 import { Icon, type IconName } from '@/ui';
 import { OfflineBanner } from '@/features/network/OfflineBanner';
@@ -13,11 +14,17 @@ import { OfflineBanner } from '@/features/network/OfflineBanner';
 export default function TabsLayout() {
   const theme = useTheme();
   const t = useT();
+  const { onboardingDone } = useBoot();
 
   const ikon = (name: IconName) =>
     function TabIcon({ color, size }: { color: string; size: number }) {
       return <Icon name={name} color={color} size={size} />;
     };
+
+  // İlk açılışta onboarding'e yönlendirilir; sonraki açılışlarda görünmez (§12).
+  // Bu kapı kökte değil burada durur: bu düzen kök yığının bir ekranıdır,
+  // dolayısıyla `Redirect` çalışacağı gezinme bağlamını bulur.
+  if (!onboardingDone) return <Redirect href="/onboarding" />;
 
   return (
     <>

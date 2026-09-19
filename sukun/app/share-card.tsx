@@ -52,7 +52,7 @@ export default function ShareCardScreen() {
       <Stack.Screen options={{ headerShown: true, title: t('share.title') }} />
 
       {!gecerli ? (
-        <Banner tone="warning" title={t('share.failed')} description={t('empty.body')} />
+        <Banner tone="info" title={t('share.nothing')} description={t('share.nothingBody')} />
       ) : (
         <>
           <Card padding="md">

@@ -19,6 +19,7 @@ import { ErrorState } from '@/ui/ErrorState';
 import { EmptyState } from '@/ui/EmptyState';
 import { ProLock } from '@/ui/ProLock';
 import { ArabicText } from '@/ui/ArabicText';
+import { Stepper } from '@/ui/Stepper';
 
 function Kabuk({ children }: { children: React.ReactNode }) {
   return (
@@ -162,5 +163,24 @@ describe('ProLock', () => {
     const ekran = await ciz(<ProLock locked={false} onPress={() => undefined}><Text>Açık</Text></ProLock>);
     expect(ekran.queryByLabelText('Pro ile açılır')).toBeNull();
     expect(ekran.getByText('Açık')).toBeTruthy();
+  });
+});
+
+describe('Stepper', () => {
+  // Hatırlatıcı saati "+21" diye çiziliyordu: artı işareti her pozitif
+  // değere konuyordu. İşaret yalnız düzeltme alanlarında anlamlıdır.
+  it('mutlak değerde artı işareti koymuyor', async () => {
+    const r = await ciz(
+      <Stepper title="Saat" value={21} min={0} max={23} onChange={() => {}} />,
+    );
+    expect(r.queryByText('+21')).toBeNull();
+    expect(r.getByText('21')).toBeTruthy();
+  });
+
+  it('düzeltme alanında artı işareti koyuyor', async () => {
+    const r = await ciz(
+      <Stepper title="Dakika düzeltmesi" value={5} min={-60} max={60} unit="dk" signed onChange={() => {}} />,
+    );
+    expect(r.getByText('+5 dk')).toBeTruthy();
   });
 });

@@ -6,7 +6,7 @@ import {
   Screen, SectionHeader, Card, Column, Row, Text, Banner, Divider, EmptyState, CountdownRing,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
-import { useT } from '@/lib/i18n';
+import { useT, useDateFormat } from '@/lib/i18n';
 import { useLocationStore } from '@/store/locations';
 import { useSettingsStore } from '@/store/settings';
 import { ramadanState, ramadanDays } from '@/features/ramadan/calc';
@@ -35,6 +35,9 @@ export default function RamadanScreen() {
       },
     };
   }, [konum, settings]);
+
+  const uzunTarih = useDateFormat({ dateStyle: 'long' });
+  const gunAy = useDateFormat({ day: '2-digit', month: 'short' });
 
   const live = useLiveView(input);
   const durum = useMemo(() => ramadanState(new Date(), settings.hijriOffset), [settings.hijriOffset]);
@@ -77,8 +80,12 @@ export default function RamadanScreen() {
               ? t('ramadan.day', { day: durum.day })
               : t('ramadan.untilStart', { days: durum.daysUntil })}
           </Text>
-          {live ? (
-            <CountdownRing progress={live.progress} color={theme.colors.onAccent}>
+          {/* İftar/imsak geri sayımı yalnız Ramazan'dayken anlamlıdır.
+              Eskiden her zaman çiziliyordu ve "Ramazana 142 gün kaldı"
+              yazısının altında "İftara kalan" sayıyordu — kimse oruçlu
+              değilken iftar saymak yanlış. */}
+          {durum.active && live ? (
+            <CountdownRing progress={live.progress} color={theme.colors.onAccent} size={190}>
               <Column align="center" gap="xxs">
                 <Text variant="caption" tone="onAccent">
                   {iftarGecti ? t('ramadan.imsak') : t('ramadan.iftar')}
@@ -88,6 +95,13 @@ export default function RamadanScreen() {
                 </Text>
               </Column>
             </CountdownRing>
+          ) : durum.startsOn ? (
+            <Column align="center" gap="xxs">
+              <Text variant="caption" tone="onAccent">{t('ramadan.startsOn')}</Text>
+              <Text variant="title1" tone="onAccent">
+                {uzunTarih.format(durum.startsOn)}
+              </Text>
+            </Column>
           ) : null}
         </Column>
       </Card>
@@ -109,7 +123,7 @@ export default function RamadanScreen() {
         {takvim.map((g, i) => (
           <Row key={i} align="center" style={{ paddingVertical: theme.spacing.xs }}>
             <Text variant="caption" tone="muted" style={{ width: 90 }}>
-              {`${i + 1}. ${new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'short' }).format(g.date)}`}
+              {`${i + 1}. ${gunAy.format(g.date)}`}
             </Text>
             <View style={{ flex: 1, alignItems: 'center' }}>
               <Text variant="caption">{formatHM(g.schedule.times.fajr)}</Text>
