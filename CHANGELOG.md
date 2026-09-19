@@ -248,3 +248,24 @@ Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
 - **Pil kuralları sınamaya bağlandı**: tek seferlik GPS okuması
   (`watchPositionAsync` kullanımı yasak), pusula yalnız kıble ekranında,
   geri sayım arka planda durur.
+
+### FAZ 18-19 — Test matrisi ve yayın hazırlığı
+
+- Sınamalar iki projeye ayrıldı: `mantik` (saf hesaplar, düğüm ortamı, ~2 sn)
+  ve `bilesen` (jest-expo ile gerçek render). Toplam 496 sınama.
+- Bileşen sınamaları tasarım sisteminin sözleşmesini koruyor: düğme devre
+  dışıyken dokunmayı iletmiyor mu, Arapça metin gerçekten sağdan sola mı
+  akıyor, Pro kilidi içeriği gizlemeden mi kilitliyor.
+  (RTL 14'te `render` promise döndürüyor — beklenmediğinde sorgular boş
+  nesneden okunuyor; bu yakalanıp düzeltildi.)
+- **Son denetim sınaması** (§101): üretim kodunda yarım iş işareti kalmadı,
+  her ekran kök düzende kayıtlı, kodda geçen her yönlendirme hedefi gerçekten
+  var, kullanılan her çeviri anahtarı tanımlı, sürüm numaraları tutarlı,
+  içerik paketleri kaynak künyesi taşıyor.
+- README, ARCHITECTURE ve RELEASE_CHECKLIST yazıldı. Yayın listesi beş
+  kullanıcı yolculuğunu adım adım tarif ediyor ve hepsini bir kez de uçak
+  modunda tekrarlatıyor.
+- Mağaza sayfaları: `docs/sukun/` altında tanıtım, gizlilik (Türkçe ve
+  İngilizce ayrı yazıldı), kullanım koşulları ve destek sayfası. Gizlilik
+  metni "hesap yok, sunucu yok" gerçeğini olduğu gibi anlatıyor ve reklam
+  sınırlarını tek tek sayıyor.

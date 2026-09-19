@@ -128,9 +128,16 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 - [x] **B5 — Supabase**: v1 için gerekmiyor; içerik GitHub Pages'ten, kişisel
       veri cihazda kalıyor (D12)
 
+**FAZ 11, 16, 17, 18, 19 — yapılabilecek kısım tamam:**
+
+- [x] Paylaşım kartı (§62), freemium ve reklam kuralları (§66, §68)
+- [x] Erişilebilirlik, kontrast, güvenlik ve pil denetimleri sınamaya bağlandı
+- [x] Bileşen sınamaları (jest-expo), uç durum matrisi
+- [x] README, ARCHITECTURE, RELEASE_CHECKLIST, mağaza sayfaları, gizlilik (TR+EN)
+
 ## Devam eden
 
-- [ ] FAZ 12-16 — widget, topluluk, AI, admin, abonelik (çoğu dış engele bağlı)
+- [ ] Mağaza hesapları açılınca: abonelik, widget, Live Activity (⛔B6, B7)
 
 ## Sıradaki iş
 
@@ -146,7 +153,7 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 |---|---|
 | TypeScript | ✅ `tsc --noEmit` temiz |
 | Lint | ✅ `eslint --max-warnings=0` temiz |
-| Test | ✅ 36 suite / 466 test |
+| Test | ✅ 38 suite / 496 test (mantık + bileşen) |
 | Veritabanı | ✅ `bash sukun/tools/verify-db.sh` — migration + RLS + kapsama |
 | Paketleme | ✅ `npm run bundle` — Metro paketi üretiliyor |
 | iOS build | henüz denenmedi (B6 — Apple hesabı) |

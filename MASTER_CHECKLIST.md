@@ -4,7 +4,7 @@
 > tamamlanmadan `[x]` yapılmaz (§93). `⛔Bn` işareti, o maddenin
 > `KNOWN_ISSUES.md` içindeki **Bn** engeline bağlı olduğunu gösterir:
 > altyapı tamamlanır, veri/kimlik yuvası boş kalır.
-**Toplam 133 madde · tamamlanan 80 · kısmen tamamlanan 7 · dış engele bağlı 22**
+**Toplam 133 madde · tamamlanan 88 · kısmen tamamlanan 10 · dış engele bağlı 22**
 >
 > `[~]` işareti: yapılabilecek kısmı tamamlandı, kalanı dış engele bağlı.
 
@@ -182,22 +182,22 @@
 
 ## FAZ 18 — Test
 
-- [ ] Unit testler (§86)
-- [ ] Integration testler (§86)
-- [ ] Component testler (§86)
+- [x] Unit testler (§86) — 480 mantık sınaması
+- [~] Bütünleşme: içe aktarma boruhattı, içerik kanalı ve RLS uçtan uca sınanıyor; E2E cihaz testi ⛔E3 (§86)
+- [x] Component testler (§86) — jest-expo ile 16 bileşen sınaması
 - [ ] E2E testler (§86)
-- [ ] Kritik: namaz vakti, timezone, DST, hicri, kıble, zekât (§86)
-- [ ] Kritik: Kur'an bütünlüğü, auth, RLS, abonelik, offline sync (§86)
-- [ ] Edge case matrisi (§88)
+- [x] Kritik: namaz vakti, timezone, DST, hicri, kıble, zekât, ay (§86)
+- [~] Kritik: Kur'an bütünlüğü, meal bütünlüğü, RLS, çevrimdışı birleştirme sınandı; abonelik ⛔B6/B7 (§86)
+- [x] Uç durum matrisi (§88) — kutup enlemleri, gece yarısını aşan yatsı, DST geçişi, boş/bozuk veri, ağ yokluğu
 - [ ] Cihaz matrisi (§87)
 
 ## FAZ 19 — Yayın
 
-- [ ] Environment ayrımı: development/staging/production (§96)
-- [ ] README / ARCHITECTURE / ROADMAP / CONTENT_SOURCES / PRIVACY_ARCHITECTURE / RELEASE_CHECKLIST (§97)
-- [ ] Semantic versioning + build number (§98)
+- [x] Ortam ayrımı: development/staging/production, ayrı bundle id (§96)
+- [x] README, ARCHITECTURE, RELEASE_CHECKLIST, CONTENT_SOURCES, DECISIONS, KNOWN_ISSUES (§97)
+- [x] Semantic versioning — marka ve paket sürümü eşitliği sınanıyor (§98)
 - [ ] iOS store gereklilikleri (§90)  ⛔B6
 - [ ] Google Play gereklilikleri (§91)  ⛔B7
-- [ ] Final audit: TODO/mock/dead UI taraması (§101)
-- [ ] Release test: 5 user journey (§102)
+- [x] Son denetim: yarım iş işareti, kayıtsız ekran, olmayan yönlendirme, tanımsız çeviri anahtarı taraması (§101)
+- [~] Beş kullanıcı yolculuğu RELEASE_CHECKLIST'e yazıldı; gerçek cihazda elle koşulacak ⛔E3 (§102)
 - [ ] /final-screenshots/ (§110)
