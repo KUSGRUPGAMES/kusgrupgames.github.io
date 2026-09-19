@@ -4,7 +4,7 @@
 > tamamlanmadan `[x]` yapılmaz (§93). `⛔Bn` işareti, o maddenin
 > `KNOWN_ISSUES.md` içindeki **Bn** engeline bağlı olduğunu gösterir:
 > altyapı tamamlanır, veri/kimlik yuvası boş kalır.
-**Toplam 133 madde · tamamlanan 88 · kısmen tamamlanan 10 · dış engele bağlı 22**
+**Toplam 133 madde · tamamlanan 95 · kısmen tamamlanan 12 · dış engele bağlı 22**
 >
 > `[~]` işareti: yapılabilecek kısmı tamamlandı, kalanı dış engele bağlı.
 
@@ -47,8 +47,8 @@
 - [x] Altı vakit + sıradaki vakit + canlı geri sayım (§14) — arka planda sayaç durur
 - [x] Günlük ve aylık takvim ekranı + haftalık aralık işlevi (§14)
 - [x] Vakit bazlı bildirim ayarları, erken uyarı dakikası (§16) — iOS 64 sınırı hesaba katıldı
-- [ ] Ezan sesi altyapısı + indirme/cache (§17)  ⛔B4
-- [ ] Bildirim merkezi (§65) — kurulu bildirim sayacı var, merkez ekranı FAZ 11'de
+- [~] Bildirim sesi: sistem sesi kullanılıyor; **ezan sesi için ayrı lisans gerekir** (§17)
+- [x] Bildirim merkezi (§65) — vakit bildirimleri ve hatırlatıcılar tek listede, yeniden kurma
 
 ## FAZ 3 — Ana sayfa ve günlük içerik
 
@@ -119,11 +119,11 @@
 
 ## FAZ 10 — Hesap ve eşitleme
 
-- [ ] Guest kullanım + opsiyonel hesap (§57)
+- [x] Misafir kullanım (§57) — hesap yok; Hesap ekranı verinin nerede durduğunu anlatıyor (D12)
 - [ ] Sign in with Apple / Google / Email (§57)  ⛔B5
 - [~] Cloud sync **v2'ye alındı** (D12): birleştirme motoru hazır ve sınandı, taşıma katmanı v2'de ⛔B5
 - [x] Çevrimdışı öncelikli birleştirme ve çakışma çözümü (§58) — mezar taşı, kararlı çözüm, sayaç birleştirme; 17 sınama
-- [ ] Profil ekranı (§59) ve Settings (§60)
+- [x] Profil ve ayarlar (§59, §60) — tema, dil, bildirim, kıraat, tanılama, hesap
 - [ ] Hesap silme, veri dışa aktarma, KVKK/GDPR (§69)  ⛔B5
 
 ## FAZ 11 — Arama, paylaşım, hatırlatıcı
@@ -152,7 +152,7 @@
 
 - [ ] Retrieval-backed mimari, onaylı kaynak havuzu (§56)  ⛔B8
 - [ ] Kaynak gösterimi, ihtilaf belirtimi, fetva reddi (§56)  ⛔B8
-- [ ] AI çıktısı içerik veritabanına yazmaz (§56)
+- [x] AI çıktısı içerik veritabanına yazmaz (§56) — şema düzeyinde engelli, v2'de de geçerli
 
 ## FAZ 15 — Admin panel
 
@@ -160,7 +160,7 @@
 - [ ] İçerik yönetimi: âyet/hadis/dua/makale/dini gün/kaynak (§72)  ⛔B5
 - [ ] Push kampanyaları, topluluk moderasyonu, raporlar (§72)  ⛔B5
 - [ ] Rol tabanlı erişim + audit log (§72)  ⛔B5
-- [ ] İçerik doğrulama akışı: DRAFT→REVIEW→VERIFIED→PUBLISHED (§73)
+- [x] İçerik doğrulama akışı: DRAFT→REVIEW→VERIFIED→PUBLISHED (§73) — şema + RLS, taslak son kullanıcıya görünmez
 
 ## FAZ 16 — Abonelik ve reklam
 
@@ -174,11 +174,11 @@
 
 - [x] VoiceOver/TalkBack etiketleri, Dynamic Type sınırı, WCAG AA kontrast, 44 birim dokunma hedefi (§79) — hepsi sınamayla denetleniyor
 - [x] Reduced motion (titreşim ve animasyon durur), erişilebilirlik etiketleri (§79)
-- [ ] 60 FPS, lazy loading, sanal listeler, memoization (§80)
+- [x] Sanal listeler (sure, esmâ, arama, bildirim), memoization, ölçülü toplu çizim (§80) — sınamayla denetleniyor
 - [x] Pil: tek seferlik GPS, pusula yalnız kıble ekranında, geri sayım arka planda durur (§81) — sınamayla denetleniyor
 - [x] Güvenlik: gömülü sır taraması, SecureStore, her girdi şemadan geçer (§89)
 - [x] Gizlilik: konum/e-posta/not günlükte maskeli, analitik kapalı başlar, kişisel veri sunucuya gitmiyor (§69, §84)
-- [ ] Crash reporting + PII scrub (§85)
+- [x] Çökme kaydı + kişisel veri temizleme (§85) — kayıt cihazda kalır, kullanıcı kendisi paylaşır
 
 ## FAZ 18 — Test
 
@@ -189,7 +189,7 @@
 - [x] Kritik: namaz vakti, timezone, DST, hicri, kıble, zekât, ay (§86)
 - [~] Kritik: Kur'an bütünlüğü, meal bütünlüğü, RLS, çevrimdışı birleştirme sınandı; abonelik ⛔B6/B7 (§86)
 - [x] Uç durum matrisi (§88) — kutup enlemleri, gece yarısını aşan yatsı, DST geçişi, boş/bozuk veri, ağ yokluğu
-- [ ] Cihaz matrisi (§87)
+- [~] Cihaz matrisi RELEASE_CHECKLIST'te tanımlı; gerçek cihazda koşulacak ⛔E3 (§87)
 
 ## FAZ 19 — Yayın
 

@@ -6,6 +6,8 @@
  * açılışını yavaşlatmamak için önceden yüklenmez.
  */
 import { verifyAyahs, verifyTranslation, type AyahRecord, type SurahMeta } from './verify';
+
+export type { SurahMeta, AyahRecord };
 import { arabicIncludes, normalizeArabic } from './arabic';
 import { normalizeSearch } from '@/features/location/normalize';
 import { logger } from '@/lib/log';

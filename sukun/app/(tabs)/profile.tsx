@@ -20,6 +20,11 @@ export default function ProfileScreen() {
   return (
     <Screen scroll>
       <SectionHeader title={t('profile.title')} subtitle={t('profile.guest')} />
+      <Card padding="sm">
+        <ListItem title={t('account.title')} icon="user" onPress={() => router.push('/account')} />
+        <ListItem title={t('notification.center')} icon="bell" onPress={() => router.push('/notifications-center')} />
+        <ListItem title={t('diagnostics.title')} icon="info" onPress={() => router.push('/diagnostics')} />
+      </Card>
 
       <SectionHeader title={t('settings.appearance')} />
       <Column gap="sm">
@@ -49,6 +54,7 @@ export default function ProfileScreen() {
       <Card padding="sm">
         <ListItem title={t('reminder.title')} icon="bell" onPress={() => router.push('/reminders')} />
         <ListItem title={t('prayer.settings')} icon="clock" onPress={() => router.push('/prayer-settings')} />
+        <ListItem title={t('audio.title')} icon="play" onPress={() => router.push('/recitation')} />
       </Card>
 
       <SectionHeader title={t('settings.about')} />

@@ -1,8 +1,9 @@
 /** Global arama — şartname §51. */
 import React, { useMemo, useState } from 'react';
+import { View } from 'react-native';
 import { router, Stack } from 'expo-router';
 import {
-  Screen, Field, Card, Column, Row, Text, Badge, EmptyState, Banner,
+  Screen, Field, Card, Column, Row, Text, Badge, EmptyState, Banner, VirtualList,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -41,7 +42,7 @@ export default function SearchScreen() {
   };
 
   return (
-    <Screen scroll motif="girih">
+    <Screen motif="girih">
       <Stack.Screen options={{ headerShown: true, title: t('search.title') }} />
 
       <Field
@@ -57,20 +58,29 @@ export default function SearchScreen() {
         sonuclar.length === 0 ? (
           <EmptyState icon="search" title={t('quran.noResults')} description={t('search.hint')} />
         ) : (
-          <Column gap="md" style={{ marginTop: theme.spacing.md }}>
-            <Text variant="caption" tone="muted">{t('search.results', { count: sonuclar.length })}</Text>
-            {sonuclar.map((r, i) => (
-              <Card key={`${r.kind}-${r.href}-${i}`} onPress={() => router.push(r.href as never)}>
-                <Column gap="xs">
-                  <Row gap="sm" align="center">
-                    <Badge label={etiket(r.kind)} tone="neutral" />
-                    <Text variant="bodyStrong" style={{ flex: 1 }}>{r.title}</Text>
-                  </Row>
-                  {r.subtitle ? <Text variant="caption" tone="muted" lines={2}>{r.subtitle}</Text> : null}
-                </Column>
-              </Card>
-            ))}
-          </Column>
+          <View style={{ flex: 1, marginTop: theme.spacing.md }}>
+            <VirtualList
+              data={sonuclar}
+              keyExtractor={(r, i) => `${r.kind}-${r.href}-${i}`}
+              separators={false}
+              header={
+                <Text variant="caption" tone="muted" style={{ paddingBottom: theme.spacing.sm }}>
+                  {t('search.results', { count: sonuclar.length })}
+                </Text>
+              }
+              renderItem={(r) => (
+                <Card onPress={() => router.push(r.href as never)} style={{ marginBottom: theme.spacing.md }}>
+                  <Column gap="xs">
+                    <Row gap="sm" align="center">
+                      <Badge label={etiket(r.kind)} tone="neutral" />
+                      <Text variant="bodyStrong" style={{ flex: 1 }}>{r.title}</Text>
+                    </Row>
+                    {r.subtitle ? <Text variant="caption" tone="muted" lines={2}>{r.subtitle}</Text> : null}
+                  </Column>
+                </Card>
+              )}
+            />
+          </View>
         )
       ) : (
         <Banner tone="info" title={t('search.title')} description={t('search.hint')} />

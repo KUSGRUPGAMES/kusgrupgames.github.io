@@ -269,3 +269,19 @@ Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
   İngilizce ayrı yazıldı), kullanım koşulları ve destek sayfası. Gizlilik
   metni "hesap yok, sunucu yok" gerçeğini olduğu gibi anlatıyor ve reklam
   sınırlarını tek tek sayıyor.
+
+### Engelsiz kalan maddeler kapatıldı
+
+- **Sanal listeler** (§80): 114 sure, 99 esmâ, arama sonuçları ve bildirim
+  listesi artık görünen kadarı çiziliyor. Bir ekran yüzlerce satırı `.map()`
+  ile çizmeye başlarsa sınama uyarıyor.
+- **Bildirim merkezi** (§65): vakit bildirimleri ve özel hatırlatıcılar tek
+  listede, zaman sırasında; "yeniden kur" düğmesiyle plan tazeleniyor.
+- **Çökme kaydı** (§85): rapor **bir servise gönderilmiyor**. Son 20 hata
+  cihazda tutuluyor, kişisel veri maskeleniyor ve kullanıcı isterse destek
+  e-postasına kendisi ekliyor — ne gönderdiğini görerek.
+- **Hesap ekranı** (§57, §59): "giriş yap" ekranı yok çünkü hesap yok. Ekran
+  asıl sorulan soruyu yanıtlıyor: hangi veri nerede duruyor, kaç kayıt var,
+  nasıl silinir.
+- **Ezan sesi** (§17) dürüstçe kısmi işaretlendi: bildirim sistem sesini
+  kullanıyor; ezan kaydı bundan ayrı bir lisans meselesi.

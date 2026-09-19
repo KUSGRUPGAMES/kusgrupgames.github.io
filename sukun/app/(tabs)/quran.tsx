@@ -1,15 +1,24 @@
-/** Kur'an ana ekranı — şartname §27, §29, §30. */
-import React, { useMemo, useState } from 'react';
+/**
+ * Kur'an ana ekranı — şartname §27, §29, §30, §80.
+ *
+ * Sure ve cüz listeleri sanallaştırılmıştır: 114 satırı tek seferde çizmek
+ * hem açılışı hem tema değişimini yavaşlatıyordu.
+ */
+import React, { useCallback, useMemo, useState } from 'react';
+import { View } from 'react-native';
 import { router } from 'expo-router';
 import {
-  Screen, SectionHeader, Card, ListItem, Segmented, Row, Column, Text, Badge, Button, EmptyState, SourceNote,
+  Screen, SectionHeader, Card, ListItem, Segmented, Row, Column, Text,
+  Badge, Button, EmptyState, SourceNote, VirtualList,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
-import { getSurahs, getJuzStarts, getSource } from '@/features/quran/data';
-import { useReadingStore } from '@/store/reading';
+import { getSurahs, getJuzStarts, getSource, type SurahMeta } from '@/features/quran/data';
+import { useReadingStore, type Bookmark } from '@/store/reading';
 
 type Sekme = 'surahs' | 'juz' | 'bookmarks';
+
+const SATIR_YUKSEKLIGI = 68;
 
 export default function QuranScreen() {
   const t = useT();
@@ -22,14 +31,48 @@ export default function QuranScreen() {
   const cuzler = useMemo(() => getJuzStarts(), []);
   const kaynak = useMemo(() => getSource(), []);
 
-  const sureAdi = (n: number) => sureler.find((s) => s.number === n)?.nameTr ?? String(n);
+  const sureAdi = useCallback(
+    (n: number) => sureler.find((s) => s.number === n)?.nameTr ?? String(n),
+    [sureler],
+  );
 
-  return (
-    <Screen scroll motif="girih">
+  const sureSatiri = useCallback((s: SurahMeta) => (
+    <ListItem
+      title={`${s.number}. ${s.nameTr}`}
+      subtitle={`${t('quran.ayahCount', { count: s.ayahCount })} · ${s.revelation === 'mekki' ? t('quran.mekki') : t('quran.medeni')}`}
+      value={s.nameAr}
+      onPress={() => router.push(`/reader?surah=${s.number}&ayah=1`)}
+    />
+  ), [t]);
+
+  const cuzSatiri = useCallback((c: { juz: number; surah: number; ayah: number }) => (
+    <ListItem
+      title={t('quran.juzNo', { n: c.juz })}
+      subtitle={`${sureAdi(c.surah)} ${c.ayah}`}
+      onPress={() => router.push(`/reader?surah=${c.surah}&ayah=${c.ayah}`)}
+    />
+  ), [t, sureAdi]);
+
+  const yerImiSatiri = useCallback((b: Bookmark) => (
+    <ListItem
+      title={`${sureAdi(b.surah)} ${b.ayah}`}
+      {...(b.note ? { subtitle: b.note } : {})}
+      right={<Badge label={b.color} tone="neutral" />}
+      onPress={() => router.push(`/reader?surah=${b.surah}&ayah=${b.ayah}`)}
+    />
+  ), [sureAdi]);
+
+  /** Liste üstünde duran, kaydırmayla birlikte hareket eden bölüm. */
+  const baslik = (
+    <Column gap="md" style={{ paddingBottom: theme.spacing.md }}>
       <SectionHeader title={t('quran.title')} />
 
       {position ? (
-        <Card accent motif="starLattice" onPress={() => router.push(`/reader?surah=${position.surah}&ayah=${position.ayah}`)}>
+        <Card
+          accent
+          motif="starLattice"
+          onPress={() => router.push(`/reader?surah=${position.surah}&ayah=${position.ayah}`)}
+        >
           <Column gap="xs">
             <Text variant="caption" tone="onAccent">{t('quran.continue')}</Text>
             <Text variant="title3" tone="onAccent">
@@ -39,7 +82,7 @@ export default function QuranScreen() {
         </Card>
       ) : null}
 
-      <Row gap="sm" style={{ marginTop: theme.spacing.lg }}>
+      <Row gap="sm">
         <Button
           label={t('common.search')}
           icon="search"
@@ -66,54 +109,55 @@ export default function QuranScreen() {
         onChange={(v) => setSekme(v as Sekme)}
         accessibilityLabel={t('quran.title')}
       />
+    </Column>
+  );
 
-      {sekme === 'surahs' ? (
-        <Card padding="sm" style={{ marginTop: theme.spacing.md }}>
-          {sureler.map((s) => (
-            <ListItem
-              key={s.number}
-              title={`${s.number}. ${s.nameTr}`}
-              subtitle={`${t('quran.ayahCount', { count: s.ayahCount })} · ${s.revelation === 'mekki' ? t('quran.mekki') : t('quran.medeni')}`}
-              value={s.nameAr}
-              onPress={() => router.push(`/reader?surah=${s.number}&ayah=1`)}
-            />
-          ))}
-        </Card>
-      ) : null}
-
-      {sekme === 'juz' ? (
-        <Card padding="sm" style={{ marginTop: theme.spacing.md }}>
-          {cuzler.map((c) => (
-            <ListItem
-              key={c.juz}
-              title={t('quran.juzNo', { n: c.juz })}
-              subtitle={`${sureAdi(c.surah)} ${c.ayah}`}
-              onPress={() => router.push(`/reader?surah=${c.surah}&ayah=${c.ayah}`)}
-            />
-          ))}
-        </Card>
-      ) : null}
-
-      {sekme === 'bookmarks' ? (
-        bookmarks.length === 0 ? (
-          <EmptyState icon="bookmark" title={t('quran.noBookmarks')} description={t('empty.body')} />
-        ) : (
-          <Card padding="sm" style={{ marginTop: theme.spacing.md }}>
-            {bookmarks.map((b) => (
-              <ListItem
-                key={b.id}
-                title={`${sureAdi(b.surah)} ${b.ayah}`}
-                {...(b.note ? { subtitle: b.note } : {})}
-                right={<Badge label={b.color} tone="neutral" />}
-                onPress={() => router.push(`/reader?surah=${b.surah}&ayah=${b.ayah}`)}
-              />
-            ))}
-          </Card>
-        )
-      ) : null}
-
+  const kunye = (
+    <Column gap="xs" style={{ paddingTop: theme.spacing.lg }}>
       <SourceNote source={kaynak.name} license={kaynak.metadataLicense} />
       <Text variant="micro" tone="subtle">{t('quran.sourceNote')}</Text>
+    </Column>
+  );
+
+  return (
+    <Screen motif="girih" padding="lg">
+      <View style={{ flex: 1 }}>
+        {sekme === 'surahs' ? (
+          <VirtualList
+            data={sureler}
+            keyExtractor={(s) => String(s.number)}
+            renderItem={sureSatiri}
+            itemHeight={SATIR_YUKSEKLIGI}
+            header={baslik}
+            footer={kunye}
+          />
+        ) : null}
+
+        {sekme === 'juz' ? (
+          <VirtualList
+            data={cuzler}
+            keyExtractor={(c) => String(c.juz)}
+            renderItem={cuzSatiri}
+            itemHeight={SATIR_YUKSEKLIGI}
+            header={baslik}
+            footer={kunye}
+          />
+        ) : null}
+
+        {sekme === 'bookmarks' ? (
+          <VirtualList
+            data={bookmarks}
+            keyExtractor={(b) => b.id}
+            renderItem={yerImiSatiri}
+            itemHeight={SATIR_YUKSEKLIGI}
+            header={baslik}
+            footer={kunye}
+            empty={
+              <EmptyState icon="bookmark" title={t('quran.noBookmarks')} description={t('empty.body')} />
+            }
+          />
+        ) : null}
+      </View>
     </Screen>
   );
 }

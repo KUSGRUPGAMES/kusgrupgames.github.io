@@ -25,5 +25,6 @@ export { Banner, type BannerProps, type BannerTone } from './Banner';
 export { ProLock, type ProLockProps } from './ProLock';
 export { ArabicText, type ArabicTextProps } from './ArabicText';
 export { SourceNote, type SourceNoteProps } from './SourceNote';
+export { VirtualList, type VirtualListProps } from './VirtualList';
 export { Motif, type MotifProps } from './motif/Motif';
 export { motifTile, MOTIF_NAMES, type MotifName, type MotifTile } from './motif/patterns';

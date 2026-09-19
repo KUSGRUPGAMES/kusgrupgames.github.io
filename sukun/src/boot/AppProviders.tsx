@@ -16,12 +16,18 @@ import { FONT_ASSETS } from '@/lib/i18n/fonts';
 import { applyUiDirection } from '@/lib/i18n/rtl';
 import { ErrorBoundary } from '@/ui/ErrorBoundary';
 import { configureLogging } from '@/lib/log';
+import { recordCrash, configureCrashReporter } from '@/lib/crash/reporter';
 import { KEYS } from '@/lib/storage';
 import { hydrateAll } from './persistence';
 import { kv } from './storage';
+import { Brand } from '@/config/brand';
+import Constants from 'expo-constants';
 
 // Üretimde debug/info günlüğe yazılmaz (§83).
 configureLogging({ minLevel: __DEV__ ? 'debug' : 'warn' });
+
+// Çökme kayıtları cihazda tutulur; kalıcılık hidrasyonda bağlanır.
+configureCrashReporter({});
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -120,6 +126,10 @@ function AppErrorBoundary({ children }: { children: React.ReactNode }) {
       title={t('error.crashTitle')}
       description={t('error.crashBody')}
       retryLabel={t('error.restart')}
+      onError={(error, componentStack) => {
+        // Rapor cihazda kalır; bir servise gönderilmez (D12, §85).
+        recordCrash(error, { version: Brand.version, variant: String(Constants.expoConfig?.extra?.variant ?? '') }, componentStack);
+      }}
     >
       {children}
     </ErrorBoundary>

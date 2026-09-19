@@ -13,7 +13,7 @@ export type IconName =
   | 'chevronRight' | 'chevronLeft' | 'chevronDown' | 'check' | 'close'
   | 'bell' | 'bellOff' | 'share' | 'lock' | 'plus' | 'minus' | 'search'
   | 'moon' | 'sun' | 'location' | 'calendar' | 'user' | 'users'
-  | 'sparkle' | 'play' | 'pause' | 'bookmark' | 'info' | 'alert' | 'refresh' | 'star';
+  | 'sparkle' | 'play' | 'pause' | 'bookmark' | 'info' | 'alert' | 'refresh' | 'star' | 'copy';
 
 export interface IconProps {
   name: IconName;
@@ -91,6 +91,8 @@ function render(name: IconName, p: P): React.ReactNode {
       return <><Path d="M12 3.5 21.5 20h-19Z" {...p} /><Path d="M12 10v4.5" {...p} /><Circle cx={12} cy={17.4} r={0.9} fill={p.stroke} stroke="none" /></>;
     case 'refresh':
       return <><Path d="M20 12a8 8 0 1 1-2.6-5.9" {...p} /><Polyline points="20,3.5 20,7 16.5,7" {...p} /></>;
+    case 'copy':
+      return <><Path d="M9 9h10v12H9z" {...p} /><Path d="M15 9V3H5v12h4" {...p} /></>;
     case 'star': {
       const pts: string[] = [];
       for (let i = 0; i < 10; i++) {

@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { Stack } from 'expo-router';
 import {
   Screen, SectionHeader, Card, Column, Row, Text, ListItem, Segmented,
-  Toggle, Button, Banner, Badge, ProgressBar, SourceNote,
+  Toggle, Button, Banner, Badge, ProgressBar, SourceNote, VirtualList,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -102,25 +102,30 @@ export default function RecitationScreen() {
           <ProgressBar value={indirme.done / Math.max(1, indirme.total)} />
         </Column>
       ) : null}
-      <Card padding="sm">
-        {sureler.map((s) => (
-          <ListItem
-            key={s.number}
-            title={`${s.number}. ${s.nameTr}`}
-            subtitle={t('quran.ayahCount', { count: s.ayahCount })}
-            chevron={false}
-            right={
-              <Button
-                label={t('audio.download')}
-                icon="share"
-                variant="ghost"
-                size="sm"
-                disabled={indirme !== null}
-                onPress={() => { void sureIndir(s.number, s.ayahCount); }}
-              />
-            }
-          />
-        ))}
+      {/* 114 satır: kendi kaydırmasını yönetmeden, sabit yükseklikte çizilir. */}
+      <Card padding="sm" style={{ height: 420 }}>
+        <VirtualList
+          data={sureler}
+          keyExtractor={(s) => String(s.number)}
+          itemHeight={64}
+          renderItem={(s) => (
+            <ListItem
+              title={`${s.number}. ${s.nameTr}`}
+              subtitle={t('quran.ayahCount', { count: s.ayahCount })}
+              chevron={false}
+              right={
+                <Button
+                  label={t('audio.download')}
+                  icon="share"
+                  variant="ghost"
+                  size="sm"
+                  disabled={indirme !== null}
+                  onPress={() => { void sureIndir(s.number, s.ayahCount); }}
+                />
+              }
+            />
+          )}
+        />
       </Card>
 
       <View style={{ marginTop: theme.spacing.lg }}>
