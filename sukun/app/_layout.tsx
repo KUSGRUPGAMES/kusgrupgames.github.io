@@ -52,6 +52,7 @@ function RootStack() {
         <Stack.Screen name="search" />
         <Stack.Screen name="reminders" />
         <Stack.Screen name="recitation" />
+        <Stack.Screen name="share-card" />
       </Stack>
     </>
   );

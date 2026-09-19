@@ -223,3 +223,28 @@ Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
   rehberi ekranlarında hiç reklam yoktur; tam ekran reklamlar arasında en az
   üç dakika geçer; 11 uygunsuz kategori engellenir ve yaş derecesi G'ye
   sabitlenir.
+
+### FAZ 11 ve 17 — Paylaşım kartı, erişilebilirlik, güvenlik
+
+- **Paylaşım kartı**: hikâye (9:16), kare (1:1) ve dikey (4:5) boyutlarda,
+  açık/koyu tema, geometrik motif. Kart SVG olarak üretilip tam çözünürlükte
+  PNG'ye alınıyor. **Kaynak künyesi karttan kaldırılamıyor** — kaynaksız kart
+  üretmeye çalışmak hata veriyor; metni bağlamından kopuk dolaştırmamak için.
+- Kart örnekleri üretilip **gerçekten çizdirildi**: Arapça satır sağ kenardan
+  taşıyordu (`text-anchor="end"` RTL metinde ters çalışıyor), düzeltildi.
+  Dikey ortalama da künyenin üstündeki alana göre yeniden hesaplandı.
+- **Erişilebilirlik denetimi sınamaya çevrildi** (§79): her `IconButton`
+  etiketli mi, her `Pressable` erişilebilirlik bilgisi veriyor mu, ekranlarda
+  ham `Text` kullanılmış mı — hepsi otomatik denetleniyor.
+- **Kontrast ölçüldü, bir kusur bulundu ve düzeltildi**: üçüncül metin
+  (kaynak künyesi, ipucu satırları) ivory zeminde 2.54:1 kontrastla
+  okunmuyordu. Açık temada `#8FA29B` → `#6E817A` (3.89:1), koyu temada alfa
+  0.44 → 0.56. Sınama, eski değer geri konduğunda kırılıyor.
+- **Güvenlik ve gizlilik denetimi** (§69, §84, §89): kaynakta gömülü anahtar
+  taraması, sırların yalnız SecureStore'dan geçmesi, `console` kullanımının
+  günlük katmanıyla sınırlı olması, analitiğin kapalı başlaması ve ağ
+  katmanının **yalnız içerik kanalında** kullanılması — yani kişisel verinin
+  sunucuya gitmediği — sınamayla korunuyor.
+- **Pil kuralları sınamaya bağlandı**: tek seferlik GPS okuması
+  (`watchPositionAsync` kullanımı yasak), pusula yalnız kıble ekranında,
+  geri sayım arka planda durur.

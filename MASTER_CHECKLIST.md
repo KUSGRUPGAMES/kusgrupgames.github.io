@@ -4,7 +4,7 @@
 > tamamlanmadan `[x]` yapılmaz (§93). `⛔Bn` işareti, o maddenin
 > `KNOWN_ISSUES.md` içindeki **Bn** engeline bağlı olduğunu gösterir:
 > altyapı tamamlanır, veri/kimlik yuvası boş kalır.
-**Toplam 133 madde · tamamlanan 74 · kısmen tamamlanan 7 · dış engele bağlı 22**
+**Toplam 133 madde · tamamlanan 80 · kısmen tamamlanan 7 · dış engele bağlı 22**
 >
 > `[~]` işareti: yapılabilecek kısmı tamamlandı, kalanı dış engele bağlı.
 
@@ -130,7 +130,7 @@
 
 - [x] Akıllı global arama (§51) — sure adı, âyet başvurusu (2:255 / bakara 255), dua, esmâ, bilgi, Arapça metin
 - [x] Türkçe + Arapça normalizasyon, diacritics-aware (§78)
-- [ ] Share card generator: story/square/portrait, kaynak görünür (§62)
+- [x] Paylaşım kartı: hikâye/kare/dikey, açık-koyu tema, kaynak künyesi **kaldırılamaz** (§62)
 - [x] Birleşik favoriler (§63) — dua, esmâ, âyet aynı listede
 - [x] Özel hatırlatıcılar (§64) — sabit saat ve vakte göre, hafta günü seçimi
 
@@ -172,12 +172,12 @@
 
 ## FAZ 17 — Erişilebilirlik, performans, güvenlik
 
-- [ ] VoiceOver/TalkBack, Dynamic Type, kontrast, dokunma hedefleri (§79)
-- [ ] Reduced motion, accessibility labels (§79)
+- [x] VoiceOver/TalkBack etiketleri, Dynamic Type sınırı, WCAG AA kontrast, 44 birim dokunma hedefi (§79) — hepsi sınamayla denetleniyor
+- [x] Reduced motion (titreşim ve animasyon durur), erişilebilirlik etiketleri (§79)
 - [ ] 60 FPS, lazy loading, sanal listeler, memoization (§80)
-- [ ] Pil optimizasyonu: GPS/pusula/countdown (§81)
-- [ ] Güvenlik: .env, SecureStore, input validation, rate limit (§89)
-- [ ] Privacy: hassas veri analytics'e gitmez (§69, §84)
+- [x] Pil: tek seferlik GPS, pusula yalnız kıble ekranında, geri sayım arka planda durur (§81) — sınamayla denetleniyor
+- [x] Güvenlik: gömülü sır taraması, SecureStore, her girdi şemadan geçer (§89)
+- [x] Gizlilik: konum/e-posta/not günlükte maskeli, analitik kapalı başlar, kişisel veri sunucuya gitmiyor (§69, §84)
 - [ ] Crash reporting + PII scrub (§85)
 
 ## FAZ 18 — Test

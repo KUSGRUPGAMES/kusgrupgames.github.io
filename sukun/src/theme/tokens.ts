@@ -28,7 +28,10 @@ export const palette = {
   ink900: '#0C1512',
   ink700: '#24312C',
   ink500: '#566862',
-  ink300: '#8FA29B',
+  // WCAG AA: üçüncül metin de en az 3:1 olmalı. Eski değer (#8FA29B) ivory
+  // zeminde 2.54:1 veriyordu — künye satırı okunmuyordu, kontrast sınaması
+  // yakaladı. Bu değer 3.89:1.
+  ink300: '#6E817A',
 
   white: '#FFFFFF',
   black: '#000000',

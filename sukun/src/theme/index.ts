@@ -76,7 +76,8 @@ export const darkTheme: Theme = {
     border: 'rgba(255,255,255,0.10)',
     text: palette.ivory50,
     textMuted: 'rgba(251,248,241,0.68)',
-    textSubtle: 'rgba(251,248,241,0.44)',
+    // Koyu zeminde 0.44 alfa yükseltilmiş yüzeylerde 3:1'in altına düşüyordu.
+    textSubtle: 'rgba(251,248,241,0.56)',
     accent: palette.emerald300,
     onAccent: palette.emerald900,
     highlight: palette.gold400,

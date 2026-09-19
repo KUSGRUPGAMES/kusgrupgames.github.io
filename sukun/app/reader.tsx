@@ -7,7 +7,7 @@
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, View, Share } from 'react-native';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, router, useLocalSearchParams } from 'expo-router';
 import {
   Screen, Card, Row, Column, Text, ArabicText, IconButton, Sheet, Banner,
   SectionHeader, Stepper, Segmented, Field, Button, Badge, SourceNote, Divider,
@@ -244,6 +244,25 @@ export default function ReaderScreen() {
                 variant="secondary"
                 size="sm"
                 onPress={() => { dinle(secili.ayah); setSecili(null); }}
+              />
+              <Button
+                label={t('share.title')}
+                icon="share"
+                variant="secondary"
+                size="sm"
+                onPress={() => {
+                  const meal = mealler[secili.ayah - 1] ?? '';
+                  const kunye = t('quran.translationSource', {
+                    name: mealKunye.name, rights: t('quran.publicDomain'),
+                  });
+                  router.push(
+                    `/share-card?body=${encodeURIComponent(meal)}` +
+                    `&arabic=${encodeURIComponent(secili.text)}` +
+                    `&reference=${encodeURIComponent(`${sure.nameTr} ${secili.ayah}`)}` +
+                    `&source=${encodeURIComponent(kunye)}`,
+                  );
+                  setSecili(null);
+                }}
               />
               <Button
                 label={t('quran.shareAyah')}
