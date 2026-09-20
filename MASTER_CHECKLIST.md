@@ -191,6 +191,23 @@
 - [x] Uç durum matrisi (§88) — kutup enlemleri, gece yarısını aşan yatsı, DST geçişi, boş/bozuk veri, ağ yokluğu
 - [~] Cihaz matrisi RELEASE_CHECKLIST'te tanımlı; gerçek cihazda koşulacak ⛔E3 (§87)
 
+## FAZ 19b — Marka (BEŞ)
+
+- [x] Marka adı BEŞ, sembol 5; eski ad kullanıcıya görünen her yerden kaldırıldı (D15)
+- [x] Koyu ve açık master logo — **birebir aynı geometri**, ikisinde de İslami desen
+- [x] Vektör kaynak (`tools/brand/mark.js` + `assets/brand/*.svg`)
+- [x] Duyarlı işaret: tam / orta / mikro kademe, küçük boy ölçülerek denetlendi
+- [x] iOS ikonu, Android adaptive + monokrom ikon, açılış, favicon
+- [x] Design token'ları merkezi; tema dışında düz renk kodu yasak (sınamayla)
+- [x] Açık tema fildişine geçirildi, saf beyaz yüzey kaldırıldı
+- [x] Bildirim metinleri markaya uyarlandı (başlık vakit adını tekrar etmiyor)
+- [x] Mağaza adı, alt başlık, anahtar kelimeler, iki mağaza açıklaması
+- [x] Ekran görüntüsü hikâyesi (7 kare) yazıldı
+- [x] `BRAND_GUIDELINES.md`
+- [x] Marka tutarlılık sınaması (`brand.test.ts`)
+- [~] Widget · Live Activity · Dynamic Island · Watch — tasarımları kılavuzda
+      tanımlı, native hedef gerektiği için kodda yok ⛔B6/B7
+
 ## FAZ 19 — Yayın
 
 - [x] Ortam ayrımı: development/staging/production, ayrı bundle id (§96)

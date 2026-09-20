@@ -160,7 +160,7 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 |---|---|
 | TypeScript | ✅ `tsc --noEmit` temiz |
 | Lint | ✅ `eslint --max-warnings=0` temiz |
-| Test | ✅ 40 suite / 524 test (mantık + bileşen) |
+| Test | ✅ 44 suite / 561 test (mantık + bileşen) |
 | Veritabanı | ✅ `bash sukun/tools/verify-db.sh` — migration + RLS + kapsama |
 | Paketleme | ✅ `npm run bundle` — Metro paketi üretiliyor |
 | Görsel geçiş | ✅ `npm run preview` — 42 ekran + 85 sn'lik gezinme videosu, hepsi çiziyor |

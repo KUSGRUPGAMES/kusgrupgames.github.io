@@ -78,8 +78,8 @@ export default function NotificationsCenterScreen() {
     if (!verildi) return;
     const plan = planNotifications(gunler, bildirimAyari);
     const n = await applyPlan(plan, {
-      title: (key) => label(key),
-      body: (item) => t('prayer.entered', { name: label(item.key) }),
+      title: () => t('notification.enteredTitle'),
+      body: (item) => t('notification.enteredBody', { name: label(item.key) }),
     }, { sound: settings.notifications.sound });
     setKurulu(n);
   }, [gunler, bildirimAyari, label, t, settings.notifications.sound]);

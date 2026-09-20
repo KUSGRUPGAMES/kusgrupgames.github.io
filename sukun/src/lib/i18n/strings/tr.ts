@@ -52,6 +52,11 @@ export const tr = {
   'prayer.remaining': 'Kalan süre',
   'prayer.remainingTo': '{name} vaktine {time}',
   'prayer.entered': '{name} vakti girdi',
+  // Bildirim başlığı vakit adını tekrar etmez: işletim sistemi zaten uygulama
+  // adını (BEŞ) üstte gösteriyor, gövdede de vakit adı yazıyor.
+  'notification.enteredTitle': 'Vaktin geldi',
+  'notification.enteredBody': '{name} namazı başladı.',
+  'notification.beforeTitle': '{name} yaklaşıyor',
   'prayer.todayTimes': 'Bugünün vakitleri',
   'prayer.monthly': 'Aylık takvim',
   'prayer.method': 'Hesaplama yöntemi',

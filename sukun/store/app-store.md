@@ -122,3 +122,23 @@ sabitlenmiştir.
 "Veri Toplanmıyor" — konum, ibadet kayıtları ve notlar cihazdan çıkmaz.
 Reklam SDK'sı kullanıldığında yalnız reklam kimliği; ayrıntısı
 `app-privacy.md` içinde.
+
+## Ekran görüntüsü hikâyesi
+
+Sıra önemlidir: mağazada ilk iki kare görülür, gerisi kaydırmaya bağlıdır.
+
+| # | Başlık | Ekran |
+|---|---|---|
+| 1 | BEŞ · 5 Vakit, Daima Yanında. | Ana sayfa, geri sayım halkası |
+| 2 | Vakti hiçbir zaman kaçırma | Vakit listesi + bildirim ayarı |
+| 3 | Kur'an-ı Kerim · Oku, dinle, kaldığın yerden devam et | Okuyucu, Arapça + meal |
+| 4 | Kıble · Yönünü kolayca bul | Kıble pusulası |
+| 5 | Zikir ve dua · Her an yanında | Zikirmatik |
+| 6 | Ramazan · İmsaktan iftara | Ramazan ekranı |
+| 7 | İbadetlerini düzenle | İbadet defteri |
+
+Metinler **dinî iddia ya da garanti içermez**: "sevap kazandırır", "namazını
+kaçırtmaz" gibi ifadeler hem yanlış hem mağaza reddi sebebidir.
+
+Üretim: `npm run preview` ekranları çeker; mağaza boyutlarına ölçekleme
+yayın öncesi yapılır (RELEASE_CHECKLIST).
