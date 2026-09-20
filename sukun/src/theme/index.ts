@@ -49,10 +49,12 @@ const shared = { spacing, radius, opacity, typography, duration, easing };
 export const lightTheme: Theme = {
   name: 'light',
   colors: {
-    background: palette.ivory50,
-    surface: palette.white,
+    // Sayfa hafif koyu krem, kartlar daha açık krem. Saf beyaz kullanılmaz
+    // (BRAND_GUIDELINES: açık tema fildişidir, steril beyaz değil).
+    background: palette.ivory200,
+    surface: palette.ivory50,
     surfaceRaised: palette.ivory100,
-    border: palette.ivory200,
+    border: palette.ivory300,
     text: palette.ink900,
     textMuted: palette.ink500,
     textSubtle: palette.ink300,

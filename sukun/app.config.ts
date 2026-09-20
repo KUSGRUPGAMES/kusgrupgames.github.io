@@ -60,6 +60,9 @@ const config: ExpoConfig = {
     versionCode: Number(BUILD),
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
+      // Android 13+ temalı ikonlar: launcher kullanıcının duvar kâğıdından
+      // renk alır, bu yüzden tek renk (beyaz siluet) bir katman ister.
+      monochromeImage: './assets/adaptive-icon-mono.png',
       backgroundColor: ZEMIN,
     },
     permissions: ['ACCESS_COARSE_LOCATION', 'ACCESS_FINE_LOCATION'],

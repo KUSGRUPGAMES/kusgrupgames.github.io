@@ -400,7 +400,7 @@ export const tr = {
   'diagnostics.localOnly': 'Bu kayıtlar cihazında durur, hiçbir yere gönderilmez. Destek istersen kendin ekleyebilirsin.',
   'diagnostics.copied': 'Panoya kopyalandı',
   'account.title': 'Hesap',
-  'account.guestOnly': 'Sükûn hesapsız çalışır',
+  'account.guestOnly': '{app} hesapsız çalışır',
   'account.guestBody': 'Kayıt olmanız gerekmiyor. Vakitler, Kuran, meal ve bütün takipler telefonunuzda hesaplanır ve orada kalır.',
   'account.noSync': 'Cihazlar arası eşitleme şu an yok. Telefonunuzun kendi yedeklemesi açıksa uygulama verisi ona dahil olur.',
   'account.dataLocation': 'Verilerin nerede',

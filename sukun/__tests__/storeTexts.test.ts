@@ -89,7 +89,7 @@ describe('ad tutarlılığı', () => {
   });
 
   it('mağaza adı marka adıyla başlıyor', () => {
-    // "Ezan Vakti" bize ait değil, "Sükûn" ait. Marka önde durur.
+    // "Ezan vakti" bize ait değil, "BEŞ" ait. Marka önde durur.
     expect(BRAND.storeName.startsWith(BRAND.appName)).toBe(true);
   });
 

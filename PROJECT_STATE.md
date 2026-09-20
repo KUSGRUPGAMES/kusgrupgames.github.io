@@ -7,7 +7,7 @@
 
 | | |
 |---|---|
-| Kod adı | **Sükûn** (geçici marka, `BrandConfig` üzerinden tek noktadan değişir) |
+| Marka | **BEŞ** — sembol `5` (D15). `BrandConfig` tek kaynak; paket kimliği `com.kusgrup.sukun` olarak kaldı |
 | Klasör | `sukun/` |
 | Sürüm | 0.1.0 (ilk üretim sürümü hedefi: 1.0.0) |
 | Teknoloji | Expo SDK 54 · React Native 0.81.5 · React 19 · TypeScript (strict) · expo-router 6 |
@@ -164,7 +164,7 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 | Veritabanı | ✅ `bash sukun/tools/verify-db.sh` — migration + RLS + kapsama |
 | Paketleme | ✅ `npm run bundle` — Metro paketi üretiliyor |
 | Görsel geçiş | ✅ `npm run preview` — 42 ekran + 85 sn'lik gezinme videosu, hepsi çiziyor |
-| İkon ve açılış | ✅ `node tools/gen-icon.js` — rub'ül hizb işareti, ikon/adaptive/splash/favicon |
+| Marka varlıkları | ✅ `node tools/gen-brand.js` — 5 işareti, koyu/açık, mikro, monokrom, SVG kaynak |
 | iOS CI | ✅ `sukun-ios.yml` — kalite kapısı + imzasız simulator derlemesi |
 | iOS yayın | ⚙️ `sukun-release-ios.yml` — elle çalışır, TestFlight'a yükler (secret'lara bağlı) |
 | Android CI | ⚙️ `sukun-android.yml` — kalite kapısı + AAB + debug APK |

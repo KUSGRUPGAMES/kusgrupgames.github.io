@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="zemin" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#0A483A"/><stop offset="1" stop-color="#04211B"/>
+    </linearGradient>
+    <linearGradient id="isaret" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#DFC482"/>
+      <stop offset="0.5" stop-color="#C9A756"/>
+      <stop offset="1" stop-color="#8A6A1F"/>
+    </linearGradient>
+  </defs>
+  
+  <g transform="translate(30.7,30.7) scale(0.94) translate(-28,-16)">
+    <path d="M442.7,396.3A266,266 0 1 1 254.0,698.2L346.6,685.3A172,192 0 1 0 468.6,467.4Z M366,230 L466,230 L520,510 L426,476 Z M366,230 C512,188 642,170 744,190 C788,198 806,172 814,142 C830,212 792,266 714,262 C634,258 538,272 466,306 Z M424,806 L608,806 L608,846 L424,846 Z M470,816 C464,772 482,752 516,724 C550,752 568,772 562,816 Z M512,724 L520,724 L520,706 L512,706 Z M431,846 L431,752 L449,752 L449,846 Z M425,752 L455,752 L455,740 L425,740 Z M431,740 L431,722 L449,722 L449,740 Z M427,722 L440,694 L453,722 Z M583,846 L583,752 L601,752 L601,846 Z M577,752 L607,752 L607,740 L577,740 Z M583,740 L583,722 L601,722 L601,740 Z M579,722 L592,694 L605,722 Z M516.0,671.0A23,23 0 1 1 516.0,717.0A23,23 0 1 1 516.0,671.0ZM529.0,675.0A19,19 0 1 0 529.0,713.0A19,19 0 1 0 529.0,675.0Z" fill-rule="nonzero" fill="url(#isaret)"/>
+  </g>
+</svg>

@@ -1,4 +1,4 @@
-# App Store — mağaza metinleri (Sükûn v1.0.0)
+# App Store — mağaza metinleri (BEŞ v1.0.0)
 
 App Store Connect → Uygulama Bilgileri ve Sürüm alanları.
 
@@ -11,13 +11,14 @@ App Store Connect → Uygulama Bilgileri ve Sürüm alanları.
 ## Ad (30 karakter sınırı)
 
 ```
-Sükûn: Ezan Vakti ve Kur’an
+BEŞ – Ezan & Namaz Vakitleri
 ```
-(27 karakter)
+(28 karakter)
 
-Marka önde durur çünkü "Sükûn" bize ait, "ezan vakti" değil — onu kimse
+Marka önde durur çünkü "BEŞ" bize ait, "ezan vakti" değil — onu kimse
 sahiplenemez. Arama sıralaması kelimenin başlıkta **bulunmasına** bakar,
-kaçıncı sırada olduğuna değil; bu yüzden marka feda edilmeden ikisi de alınır.
+kaçıncı sırada olduğuna değil; bu yüzden marka feda edilmeden hem "ezan"
+hem "namaz vakitleri" tek başlığa sığar.
 
 **Kullanılmayacaklar ve sebebi:**
 - `Pro` — uygulama ücretsiz, Pro yalnız bir katman. Apple ücretsiz uygulamanın
@@ -28,16 +29,16 @@ kaçıncı sırada olduğuna değil; bu yüzden marka feda edilmeden ikisi de al
 ## Alt başlık (30 karakter sınırı)
 
 ```
-Namaz vakti, kıble, meal, dua
+Kur’an, kıble, dua ve zikir
 ```
-(29 karakter)
+(27 karakter)
 
 ## Anahtar kelimeler (100 karakter sınırı, virgülle, boşluksuz)
 
 ```
-kuran,kible,vakit,imsakiye,iftar,sahur,zikirmatik,tesbih,hatim,mukabele,ramazan,oruç,kaza,elmalılı
+kuran,kible,meal,imsakiye,iftar,sahur,zikirmatik,tesbih,hatim,mukabele,ramazan,oruç,kaza,elmalılı
 ```
-(98 karakter)
+(96 karakter)
 
 `kuran` ve `kible` şapkasız/kesmesiz biçimleriyle burada: insanlar telefonda
 böyle yazıyor, başlıkta ise doğru yazım (`Kur’an`, `kıble`) duruyor. İkisi de
@@ -56,7 +57,7 @@ Ezan ve namaz vakitleri telefonunda hesaplanır — internet, hesap, sunucu yok.
 ## Açıklama (4000 karakter sınırı)
 
 ```
-Sükûn; ezan vakitlerini, kıble yönünü ve Kur’an-ı Kerim’in tamamını tek bir sade uygulamada toplar. Vakitler telefonunda güneşin konumundan hesaplanır — bir sunucuya sorulmaz, internet gerektirmez. Uçakta, yurt dışında, hattın çekmediği yerde de doğru çalışır.
+BEŞ; ezan vakitlerini, kıble yönünü ve Kur’an-ı Kerim’in tamamını tek bir sade uygulamada toplar. Vakitler telefonunda güneşin konumundan hesaplanır — bir sunucuya sorulmaz, internet gerektirmez. Uçakta, yurt dışında, hattın çekmediği yerde de doğru çalışır.
 
 HESAP YOK, SUNUCU YOK
 Adınızı, e-postanızı, telefon numaranızı sormuyoruz. Konumunuz, ayarlarınız, ibadet kayıtlarınız, notlarınız ve zikir sayılarınız telefonunuzdan hiç çıkmıyor — bize ulaşmıyor, çünkü onları alacak bir sunucumuz yok.
@@ -98,7 +99,7 @@ REKLAM KURALLARI — KODA YAZILI
 Vakit girmeden önceki 15 dakikada ve girdikten sonraki 30 dakikada reklam gösterilmez. Kur’an okuyucu, kıble, zikirmatik ve namaz rehberi ekranlarında hiç reklam yoktur. Alkol, kumar, flört, siyaset, silah ve benzeri kategoriler engellidir. Pro aboneliği reklamları tamamen kapatır.
 
 DÜRÜSTLÜK NOTU
-Vakit hesabı yönteme, konuma ve rakıma bağlıdır; resmî ilanla bir iki dakika farklılık gösterebilir. Hicrî tarih aritmetiktir ve rüyete dayalı ilandan bir gün sapabilir. Bunları gizlemiyor, ilgili ekranda yazıyoruz. Sükûn bir yardımcı araçtır; dinî hüküm vermez.
+Vakit hesabı yönteme, konuma ve rakıma bağlıdır; resmî ilanla bir iki dakika farklılık gösterebilir. Hicrî tarih aritmetiktir ve rüyete dayalı ilandan bir gün sapabilir. Bunları gizlemiyor, ilgili ekranda yazıyoruz. BEŞ bir yardımcı araçtır; dinî hüküm vermez.
 ```
 
 ## Sürüm notları (4000 karakter sınırı)

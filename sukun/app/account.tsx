@@ -40,7 +40,7 @@ export default function AccountScreen() {
 
       <Card accent motif="starLattice">
         <Column gap="sm">
-          <Text variant="title3" tone="onAccent">{t('account.guestOnly')}</Text>
+          <Text variant="title3" tone="onAccent">{t('account.guestOnly', { app: Brand.appName })}</Text>
           <Text variant="body" tone="onAccent">{t('account.guestBody')}</Text>
         </Column>
       </Card>

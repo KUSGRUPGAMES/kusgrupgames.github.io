@@ -123,7 +123,7 @@ describe('ortam ayrımı', () => {
 
     expect(uretim.ios?.bundleIdentifier).toBe('com.kusgrup.sukun');
     expect(uretim.android?.package).toBe('com.kusgrup.sukun');
-    expect(uretim.name).toBe('Sükûn');
+    expect(uretim.name).toBe('BEŞ');
 
     // Aynı telefonda yan yana durabilsinler.
     expect(gelistirme.ios?.bundleIdentifier).toBe('com.kusgrup.sukun.dev');

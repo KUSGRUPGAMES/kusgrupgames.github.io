@@ -23,7 +23,7 @@ describe('yön katmanı', () => {
   });
 
   it('Türkçe özel harfler Arapça sanılmaz', () => {
-    for (const s of ['ığüşöçİĞÜŞÖÇ', 'Kur’an meali', 'Sükûn']) {
+    for (const s of ['ığüşöçİĞÜŞÖÇ', 'Kur’an meali', 'BEŞ', 'BEŞ – Ezan & Namaz Vakitleri']) {
       expect(containsArabic(s)).toBe(false);
       expect(textDirection(s)).toBe('ltr');
     }

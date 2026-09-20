@@ -1,4 +1,4 @@
-# Google Play — mağaza metinleri (Sükûn v1.0.0)
+# Google Play — mağaza metinleri (BEŞ v1.0.0)
 
 Play Console → Ana mağaza girişi.
 
@@ -12,26 +12,26 @@ Play Console → Ana mağaza girişi.
 ## Uygulama adı (30 karakter sınırı)
 
 ```
-Sükûn: Ezan Vakti ve Kur’an
+BEŞ – Ezan & Namaz Vakitleri
 ```
-(27 karakter)
+(28 karakter)
 
 İki mağazada aynı ad kullanılır: marka tek bir biçimde akılda kalsın diye.
 
 ## Kısa açıklama (80 karakter sınırı)
 
 ```
-Namaz vakitleri, kıble, Elmalılı meali ve zikirmatik — çevrimdışı çalışır
+Kur’an, kıble, Elmalılı meali, dua ve zikirmatik — çevrimdışı çalışır
 ```
-(73 karakter)
+(69 karakter)
 
-Başlıkta "Ezan Vakti" var, burada "Namaz vakitleri" — Play iki alanı da
-taradığı için her iki ifade de kazanılmış olur.
+Başlıkta "Ezan" ve "Namaz Vakitleri" birlikte var; kısa açıklama Kur'an,
+kıble ve zikri ekler. Play iki alanı da taradığı için hepsi kazanılır.
 
 ## Tam açıklama (4000 karakter sınırı)
 
 ```
-Sükûn; ezan vakitlerini, kıble yönünü ve Kur’an-ı Kerim’in tamamını tek bir sade uygulamada toplar. Namaz vakitleri telefonunda güneşin konumundan hesaplanır — bir sunucuya sorulmaz, internet gerektirmez. Uçakta, yurt dışında, hattın çekmediği yerde de doğru çalışır.
+BEŞ; ezan vakitlerini, kıble yönünü ve Kur’an-ı Kerim’in tamamını tek bir sade uygulamada toplar. Namaz vakitleri telefonunda güneşin konumundan hesaplanır — bir sunucuya sorulmaz, internet gerektirmez. Uçakta, yurt dışında, hattın çekmediği yerde de doğru çalışır.
 
 ★ HESAP YOK, SUNUCU YOK
 Adınızı, e-postanızı, telefon numaranızı sormuyoruz. Konumunuz, ayarlarınız, ibadet kayıtlarınız, notlarınız ve zikir sayılarınız telefonunuzdan hiç çıkmıyor — bize ulaşmıyor, çünkü onları alacak bir sunucumuz yok. Uygulamayı silerseniz hepsi onunla birlikte gider.
@@ -65,14 +65,14 @@ Kaza namazı sayaçları ve toplu giriş, gün gün ibadet defteri, oruç takibi
 ★ AYRICA
 Zekât hesaplama (altın veya gümüş nisabı seçmeli, metodoloji ekranda yazılı), Esmâü'l-Hüsnâ, 14 kategoride dua, adım adım namaz rehberi, hicrî takvim ve yaklaşan dinî günler, Hac ve Umre rehberi, 43 maddelik İslami bilgi kütüphanesi, paylaşılabilir âyet kartları.
 
-★ BEŞ DİL
+★ DİL DESTEĞİ
 Türkçe, İngilizce, Arapça, Almanca, Fransızca. Arapça seçildiğinde arayüz sağdan sola döner.
 
 ★ REKLAM KURALLARI — KODA YAZILI
 Vakit girmeden önceki 15 dakikada ve girdikten sonraki 30 dakikada reklam gösterilmez. Kur’an okuyucu, kıble, zikirmatik ve namaz rehberi ekranlarında hiç reklam yoktur. Alkol, kumar, flört, siyaset, silah ve benzeri kategoriler engellidir. Pro aboneliği reklamları tamamen kapatır. Ücretsiz sürümde vakitler, kıble, Kur’an, meal, zikirmatik, kaza takibi, dualar ve rehberler tam olarak kullanılabilir.
 
 ★ DÜRÜSTLÜK NOTU
-Vakit hesabı yönteme, konuma ve rakıma bağlıdır; resmî ilanla bir iki dakika farklılık gösterebilir. Hicrî tarih aritmetik hesaplanır ve rüyete dayalı ilandan bir gün sapabilir. Kıble yönü telefonunuzun pusulasının doğruluğuna bağlıdır. Bunları gizlemiyor, ilgili ekranda yazıyoruz. Sükûn bir yardımcı araçtır; dinî hüküm (fetva) vermez ve bir din görevlisinin yerini tutmaz.
+Vakit hesabı yönteme, konuma ve rakıma bağlıdır; resmî ilanla bir iki dakika farklılık gösterebilir. Hicrî tarih aritmetik hesaplanır ve rüyete dayalı ilandan bir gün sapabilir. Kıble yönü telefonunuzun pusulasının doğruluğuna bağlıdır. Bunları gizlemiyor, ilgili ekranda yazıyoruz. BEŞ bir yardımcı araçtır; dinî hüküm (fetva) vermez ve bir din görevlisinin yerini tutmaz.
 ```
 
 ## Kategori

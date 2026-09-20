@@ -105,6 +105,9 @@ ve bilinen değerlerle karşılaştırıldı. Çalışan ve sınanmış kod taş
 
 ## D8 — Marka adı
 
+> ⚠️ **BU KARAR GEÇERSİZ (deprecated).** Yerini D15 aldı: marka **BEŞ**.
+> Aşağıdaki gerekçe tarihsel kayıt olarak duruyor.
+
 **Karar:** Geçici marka **Sükûn**. Mağaza adı `Sükûn: Namaz Vakti ve Kur'an`.
 Tümü `src/config/brand.ts` içinde tek noktadan yönetilir.
 
@@ -262,3 +265,34 @@ bir liste bayatlar ve kullanıcı "ses gelmiyor" der. Sonuç: 18 okuyucu,
 mükerrer baskılar ayıklanmış, hepsinin Türkçe adı yazılmış.
 
 **Sonuç:** B4 kalktı.
+
+---
+
+## D15 — Marka: BEŞ, sembol: 5
+
+**Karar:** Marka adı **BEŞ**, sembol özel çizilmiş bir **5**. Mağaza adı
+`BEŞ – Ezan & Namaz Vakitleri`. Slogan *5 Vakit, Daima Yanında.* D10'daki
+geçici "Sükûn" markası geçersizdir.
+
+| | |
+|---|---|
+| Marka adı | BEŞ |
+| Sembol | 5 (kâsesinde kubbe, iki minare, hilal) |
+| Koyu tema ana rengi | Deep Emerald `#04211B` – `#004A3B` |
+| Açık tema ana rengi | Warm Ivory `#F4EFE3` – `#FDFBF6` |
+| Vurgu | Muted Gold `#C9A65A` |
+| Motif | Rub'ül hizb — sekiz köşeli yıldız örgüsü, %5–6 opaklık |
+
+**Neden BEŞ:** ilk çağrışım beş vakit namaz. Ad kısa, Türkçe, akılda kalıcı ve
+**sahiplenilebilir** — "ezan vakti" jenerik bir arama terimidir, kimse onu
+marka olarak sahiplenemez. Sembolün çift katmanlı okunması (önce rakam, sonra
+siluet) markayı taklit edilebilir bir klişeden ayırır.
+
+**Paket kimliği neden değişmedi:** `com.kusgrup.sukun` olduğu gibi kaldı.
+Kimliği değiştirmek imzayı, App Store Connect kaydını ve kurulu uygulamaları
+kırar; buna karşılık kazanç sıfırdır, çünkü paket kimliği kullanıcıya hiçbir
+yerde görünmez. Yalnız kullanıcıya görünen alanlar değişti.
+
+**Tek kaynak:** `sukun/tools/brand/mark.js` işaretin geometrisini, `tokens.ts`
+paleti tutar. Rasterlar `node tools/gen-brand.js` ile üretilir; hiçbir görsel
+elle çizilip depoya konmaz. Ayrıntı: `sukun/BRAND_GUIDELINES.md`.

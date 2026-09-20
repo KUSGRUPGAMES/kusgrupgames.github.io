@@ -3,27 +3,32 @@
  * Ham değerler burada durur; bileşenler **asla** düz renk kodu yazmaz,
  * her zaman tema üzerinden okur.
  *
- * Renk karakteri: Deep Emerald Green · Ivory/Warm White · Muted Gold.
+ * Renk karakteri: Deep Emerald Green · Warm Ivory/Cream · Muted Gold.
+ * BEŞ marka paleti (BRAND_GUIDELINES.md). Açık temada saf beyaz **kullanılmaz**:
+ * ürünün karakteri sıcak fildişidir, steril beyaz onu jenerik bir mobil
+ * uygulamaya çeviriyordu.
  */
 
 /** Ham palet. Tema katmanı bunlardan anlamlı rolleri türetir. */
 export const palette = {
   emerald900: '#04211B',
-  emerald800: '#06342A',
-  emerald700: '#0A483A',
-  emerald600: '#0E5C49',
-  emerald500: '#137a61',
+  emerald800: '#003F32',
+  emerald700: '#004A3B',
+  emerald600: '#005343',
+  emerald500: '#0A6A55',
   emerald400: '#2E9B80',
   emerald300: '#63BFA6',
 
   gold600: '#8A6A1F',
-  gold500: '#B08D3A',
-  gold400: '#C9A756',
-  gold300: '#DFC482',
+  gold500: '#A8853F',
+  gold400: '#C9A65A',
+  gold300: '#D6B46A',
+  gold200: '#E3C88A',
 
-  ivory50: '#FBF8F1',
-  ivory100: '#F4EFE3',
-  ivory200: '#E7DFCD',
+  ivory50: '#FDFBF6',
+  ivory100: '#FAF7EF',
+  ivory200: '#F4EFE3',
+  ivory300: '#E7DFCD',
 
   ink900: '#0C1512',
   ink700: '#24312C',

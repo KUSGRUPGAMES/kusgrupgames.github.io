@@ -12,7 +12,7 @@ const icerik: CardContent = {
   body: 'Ey iman edenler! Sabır ve namazla yardım isteyin.',
   reference: 'Bakara 153',
   source: 'Elmalılı Hamdi Yazır meali · kamu malı',
-  brand: 'Sükûn',
+  brand: 'BEŞ',
 };
 
 describe('XML kaçırma', () => {
@@ -93,7 +93,7 @@ describe('kart üretimi', () => {
   it('kaynak künyesi karttan silinemez', () => {
     const svg = buildCardSvg({ format: 'square', content: icerik, palette: palet });
     expect(svg).toContain('Elmalılı');
-    expect(svg).toContain('Sükûn');
+    expect(svg).toContain('BEŞ');
   });
 
   it('kaynaksız kart üretilmez', () => {

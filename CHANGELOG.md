@@ -4,6 +4,39 @@ Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
 
 ## [Yayınlanmadı] — 0.1.0
 
+### Yeniden markalama: Sükûn → BEŞ
+
+Marka adı **BEŞ**, sembol özel çizilmiş bir **5** (D15). Geçici "Sükûn"
+markası geçersiz işaretlendi.
+
+- `tools/brand/mark.js`: işaretin **tek kaynağı**. Rakamın alt kâsesinin iç
+  boşluğunda kubbe, iki minare ve alem hilali durur — ilk bakışta `5`, ikinci
+  bakışta siluet. Cami yapıştırılmış bir klip-art değil: tabanı kâsenin iç alt
+  kenarının altına taşarak geometriye kaynaşır.
+- Koyu ve açık varyant **birebir aynı yolları** kullanır; yalnız renk değişir.
+  İkisinde de aynı rub'ül hizb deseni bulunur. `mark.js` tema bilmez.
+- Duyarlı işaret: `tamYol` (≥128px) · `ortaYol` (48–128px) · `mikroYol` (≤48px).
+  Ölçüldü: 24 piksel ve altında cami detayı çamura dönüşüyor, mikro kademe
+  bu yüzden var.
+- Palet direktife göre yenilendi: emerald `#003F32`–`#005343`, ivory
+  `#F4EFE3`–`#FDFBF6`, muted gold `#C9A65A`. Açık temada **saf beyaz
+  kaldırıldı** — steril beyaz ürünü jenerik bir mobil uygulamaya çeviriyordu.
+- `assets/brand/`: SVG kaynak + koyu/açık/mikro/monokrom rasterlar. Android
+  13+ temalı ikon için `adaptive-icon-mono.png` eklendi.
+- Mağaza adı `BEŞ – Ezan & Namaz Vakitleri` (28 karakter): "ezan" ve "namaz
+  vakitleri" artık tek başlıkta. Alt başlık, anahtar kelimeler ve iki mağaza
+  açıklaması yeniden yazıldı.
+- Yayın sayfaları (TR + EN), `account.guestOnly` metni ve sınamalar geçirildi.
+  Marka adı hiçbir metne gömülü değil; `brand.json` tek kaynak.
+- `BRAND_GUIDELINES.md`: ad, sembol geometrisi (birim ölçülerle), duyarlı
+  kademeler, renk tabloları, desen kuralları, yanlış kullanımlar ve henüz
+  native hedefi olmayan yüzeylerin (widget, Live Activity, Watch) tasarımı.
+- **Paket kimliği değişmedi** (`com.kusgrup.sukun`): kimliği değiştirmek imzayı,
+  App Store Connect kaydını ve kurulu uygulamaları kırar, kazancı sıfırdır —
+  kullanıcıya hiçbir yerde görünmez.
+
+Kapı: tsc + eslint + 550 test yeşil; 42 ekran yeni palette çizdirilip bakıldı.
+
 ### Mağaza adı ve mağaza metinleri
 
 - Mağaza adı `Sükûn: Namaz Vakti ve Kur’an` → **`Sükûn: Ezan Vakti ve Kur’an`**.
