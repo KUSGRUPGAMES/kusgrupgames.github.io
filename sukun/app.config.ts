@@ -15,6 +15,17 @@ const suffix: Record<Variant, string> = {
   production: '',
 };
 
+/** Zümrüt zemin (palette.emerald900). İkon, açılış ekranı ve Android maskesi
+ *  aynı rengi kullanır; üçü ayrışırsa açılışta renk sıçraması görünür. */
+const ZEMIN = '#04211B';
+
+/**
+ * Mağaza, aynı (sürüm, build) çiftini ikinci kez kabul etmez. CI her
+ * çalıştırmada artan `run_number`'ı buraya verir; yerelde 1 kalır.
+ * Kullanıcıya görünen sürüm `Brand.version`'dan gelmeye devam eder.
+ */
+const BUILD = process.env.BUILD_NUMBER ?? '1';
+
 const nameSuffix: Record<Variant, string> = {
   development: ' (dev)',
   staging: ' (staging)',
@@ -26,6 +37,7 @@ const config: ExpoConfig = {
   slug: 'sukun',
   version: Brand.version,
   orientation: 'portrait',
+  icon: './assets/icon.png',
   scheme: 'sukun',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
@@ -33,24 +45,49 @@ const config: ExpoConfig = {
   ios: {
     bundleIdentifier: Brand.bundleId.ios + suffix[variant],
     supportsTablet: true,
+    // App Store ikonu saydamlık kabul etmez; icon.png zeminli üretilir.
+    icon: './assets/icon.png',
+    buildNumber: BUILD,
     infoPlist: {
       // Kıraat arka planda sürsün ve kilit ekranından yönetilebilsin (§32).
       UIBackgroundModes: ['audio'],
-      // İzin metinleri App Review'da okunur: ne için istendiği açıkça yazılır.
-      NSLocationWhenInUseUsageDescription:
-        'Namaz vakitleri ve kıble yönü bulunduğun konuma göre hesaplanır. İzin vermezsen şehri elle seçebilirsin.',
       NSMotionUsageDescription:
         'Kıble pusulası, telefonun yönünü okumak için hareket algılayıcısını kullanır.',
     },
   },
   android: {
     package: Brand.bundleId.android + suffix[variant],
-    adaptiveIcon: { backgroundColor: '#04211B' },
+    versionCode: Number(BUILD),
+    adaptiveIcon: {
+      foregroundImage: './assets/adaptive-icon.png',
+      backgroundColor: ZEMIN,
+    },
     permissions: ['ACCESS_COARSE_LOCATION', 'ACCESS_FINE_LOCATION'],
   },
+  web: { favicon: './assets/favicon.png' },
   plugins: [
     'expo-router',
+    ['expo-splash-screen', {
+      image: './assets/splash-icon.png',
+      imageWidth: 200,
+      resizeMode: 'contain',
+      backgroundColor: ZEMIN,
+      // Koyu temada da aynı zemin: açılıştan ana ekrana geçerken sıçrama olmaz.
+      dark: { image: './assets/splash-icon.png', backgroundColor: ZEMIN },
+    }],
     'expo-localization',
+    // Konum izni yalnız **uygulama açıkken**. expo-location eklentisi kendi
+    // İngilizce varsayılanlarıyla üç anahtar birden yazıyor; "Always" izni
+    // hiç kullanılmadığı hâlde beyan edilmiş oluyordu. App Review kullanılmayan
+    // arka plan konum iznini sorar ve reddeder — `false` anahtarı siler.
+    ['expo-location', {
+      locationWhenInUsePermission:
+        'Namaz vakitleri ve kıble yönü bulunduğun konuma göre hesaplanır. İzin vermezsen şehri elle seçebilirsin.',
+      locationAlwaysAndWhenInUsePermission: false,
+      locationAlwaysPermission: false,
+      isIosBackgroundLocationEnabled: false,
+      isAndroidBackgroundLocationEnabled: false,
+    }],
     ['expo-audio', { microphonePermission: false }],
     ['expo-font', { fonts: ['./assets/fonts/Amiri-Regular.ttf', './assets/fonts/AmiriQuran-Regular.ttf'] }],
   ],

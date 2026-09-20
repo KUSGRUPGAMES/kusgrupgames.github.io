@@ -158,11 +158,14 @@ describe('pil ve izinler', () => {
   });
 
   it('izin metinleri ne için istendiğini yazıyor', () => {
+    // Konum metni artık `infoPlist` içinde değil, expo-location eklentisinin
+    // seçeneğinde: eklenti kendi İngilizce varsayılanlarını yazıp üstüne
+    // kullanılmayan "Always" iznini de ekliyordu (bkz. appConfig.test.ts).
     const s = oku(join(ROOT, 'app.config.ts'));
-    expect(s).toContain('NSLocationWhenInUseUsageDescription');
-    expect(s).toContain('NSMotionUsageDescription');
-    // Metin boş ya da tek kelime olamaz.
-    const m = /NSLocationWhenInUseUsageDescription:\s*\n?\s*'([^']+)'/.exec(s);
-    expect((m?.[1] ?? '').length).toBeGreaterThan(40);
+    for (const anahtar of ['locationWhenInUsePermission', 'NSMotionUsageDescription']) {
+      const m = new RegExp(`${anahtar}:\\s*\\n?\\s*'([^']+)'`).exec(s);
+      // Metin boş ya da tek kelime olamaz; App Review bunu okur.
+      expect({ anahtar, uzunluk: (m?.[1] ?? '').length > 40 }).toEqual({ anahtar, uzunluk: true });
+    }
   });
 });
