@@ -196,8 +196,8 @@
 - [x] Ortam ayrımı: development/staging/production, ayrı bundle id (§96)
 - [x] README, ARCHITECTURE, RELEASE_CHECKLIST, CONTENT_SOURCES, DECISIONS, KNOWN_ISSUES (§97)
 - [x] Semantic versioning — marka ve paket sürümü eşitliği sınanıyor (§98)
-- [ ] iOS store gereklilikleri (§90)  ⛔B6
-- [ ] Google Play gereklilikleri (§91)  ⛔B7
+- [~] iOS store gereklilikleri (§90) — metinler, sınır denetimi ve gizlilik etiketleri hazır; kayıt açılması ⛔B6
+- [~] Google Play gereklilikleri (§91) — metinler ve veri güvenliği formu hazır; kayıt açılması ⛔B7
 - [x] Son denetim: yarım iş işareti, kayıtsız ekran, olmayan yönlendirme, tanımsız çeviri anahtarı taraması (§101)
 - [~] Beş kullanıcı yolculuğu RELEASE_CHECKLIST'e yazıldı; gerçek cihazda elle koşulacak ⛔E3 (§102)
 - [ ] /final-screenshots/ (§110)

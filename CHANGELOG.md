@@ -4,6 +4,22 @@ Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
 
 ## [Yayınlanmadı] — 0.1.0
 
+### Mağaza adı ve mağaza metinleri
+
+- Mağaza adı `Sükûn: Namaz Vakti ve Kur’an` → **`Sükûn: Ezan Vakti ve Kur’an`**.
+  Türkiye'de en çok aranan iki ifade "ezan vakti" ve "namaz vakti"; başlıkta
+  yalnız ikincisi vardı. Şimdi "Ezan Vakti" başlıkta, "Namaz vakti" alt
+  başlıkta — ikisi de görünür alanda. Marka önde kalıyor çünkü "Sükûn" bize
+  ait, "ezan vakti" değil.
+- `store/app-store.md` ve `store/play-store.md` yazıldı: ad, alt başlık,
+  anahtar kelimeler, tanıtım metni ve 4000 karakterlik açıklamalar. Sükûn'un
+  `store/` klasörü hiç yoktu (FAZ 19).
+- `storeTexts.test.ts`: her alanın karakter sınırına sığdığını, anahtar
+  kelimelerin başlıkta geçen sözcükleri tekrar etmediğini (üç alan birlikte
+  tarandığı için boşa yer demek), iki mağazada ve `brand.json` içinde aynı
+  adın yazdığını ve adda "Pro"/"Diyanet" gibi yanıltıcı ya da başkasına ait
+  sözcük bulunmadığını denetler.
+
 ### Görsel geçiş — ekran görüntüsü ve video turuyla yakalanan hatalar
 
 Uygulamanın 42 ekranı web hedefinde gerçekten çizdirilip tek tek incelendi;
