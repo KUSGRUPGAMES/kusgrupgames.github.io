@@ -73,12 +73,24 @@ describe('görsel varlıklar', () => {
     expect(exp.android?.adaptiveIcon?.foregroundImage).toBe('./assets/adaptive-icon.png');
   });
 
-  it('açılış ekranı kurulu ve zemin rengi ikonunkiyle aynı', () => {
+  it('açılış ekranı iki temada da paketin zeminini kullanıyor', () => {
     const splash = eklenti(exp, 'expo-splash-screen');
     expect(splash).not.toBeNull();
-    expect(splash?.image).toBe('./assets/splash-icon.png');
-    // Üçü ayrışırsa açılıştan ana ekrana geçerken renk sıçraması görünür.
-    expect(splash?.backgroundColor).toBe(exp.android?.adaptiveIcon?.backgroundColor);
+    // Açık tema: warmIvory zemin + zümrüt sembol.
+    expect(splash?.image).toBe('./assets/brand/splash-icon-light.png');
+    expect(splash?.backgroundColor).toBe('#F7F3E8');
+    // Koyu tema: deepEmerald zemin + altın sembol. Android maskesiyle aynı
+    // renk olmalı, yoksa açılıştan ana ekrana geçerken renk sıçraması olur.
+    const koyu = splash?.dark as { image?: string; backgroundColor?: string } | undefined;
+    expect(koyu?.image).toBe('./assets/splash-icon.png');
+    expect(koyu?.backgroundColor).toBe(exp.android?.adaptiveIcon?.backgroundColor);
+  });
+
+  it('Android bildirim ikonu tek renk siluet', () => {
+    // Renkli ikon verilirse durum çubuğunda beyaz bir kare görünür.
+    const bildirim = eklenti(exp, 'expo-notifications');
+    expect(bildirim?.icon).toBe('./assets/brand/notification-icon.png');
+    expect(bildirim?.color).toBe('#003F32');
   });
 });
 

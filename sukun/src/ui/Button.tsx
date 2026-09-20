@@ -36,7 +36,7 @@ export function Button({
   const padX = size === 'sm' ? theme.spacing.md : theme.spacing.xl;
 
   const fills: Record<ButtonVariant, ViewStyle> = {
-    primary: { backgroundColor: theme.colors.accent },
+    primary: { backgroundColor: theme.colors.accentSurface },
     secondary: { backgroundColor: theme.colors.surfaceRaised, borderWidth: 1, borderColor: theme.colors.border },
     ghost: { backgroundColor: 'transparent' },
     danger: { backgroundColor: theme.colors.danger },

@@ -20,7 +20,15 @@ export interface ThemeColors {
   /** Üçüncül / ipucu metni. */
   textSubtle: string;
   /** Marka vurgusu (emerald). */
+  /** Ön plan vurgusu: ikon, bağlantı, seçili sekme. Zeminin üstünde okunur. */
   accent: string;
+  /**
+   * Marka yüzeyi: hero kartı, birincil düğme, seçili çip. Üstüne `onAccent`
+   * yazılır. `accent`ten ayrıdır çünkü ikisi TERS yön ister: koyu temada ön
+   * plan vurgusu AÇIK olmalı, dolgu yüzeyi ise KOYU. Tek token'a sıkıştırılınca
+   * koyu temada hero kartı nane yeşiline dönüyor, marka zümrütü kayboluyordu.
+   */
+  accentSurface: string;
   /** Marka vurgusu üzerindeki metin. */
   onAccent: string;
   /** Altın vurgu — sayılar, geri sayım, kandil. */
@@ -51,15 +59,17 @@ export const lightTheme: Theme = {
   colors: {
     // Sayfa hafif koyu krem, kartlar daha açık krem. Saf beyaz kullanılmaz
     // (BRAND_GUIDELINES: açık tema fildişidir, steril beyaz değil).
-    background: palette.ivory200,
+    // Zemin markanın warmIvory'si: açık ikonun zeminiyle birebir aynı renk.
+    background: palette.ivory100,
     surface: palette.ivory50,
-    surfaceRaised: palette.ivory100,
-    border: palette.ivory300,
+    surfaceRaised: palette.ivory200,
+    border: palette.ivory200,
     text: palette.ink900,
     textMuted: palette.ink500,
     textSubtle: palette.ink300,
     accent: palette.emerald600,
-    onAccent: palette.white,
+    accentSurface: palette.emerald600,
+    onAccent: palette.ivory50,
     highlight: palette.gold600,
     danger: palette.danger,
     warning: palette.warning,
@@ -81,7 +91,8 @@ export const darkTheme: Theme = {
     // Koyu zeminde 0.44 alfa yükseltilmiş yüzeylerde 3:1'in altına düşüyordu.
     textSubtle: 'rgba(251,248,241,0.56)',
     accent: palette.emerald300,
-    onAccent: palette.emerald900,
+    accentSurface: palette.emerald700,
+    onAccent: palette.ivory50,
     highlight: palette.gold400,
     danger: '#E0715A',
     warning: '#E0A052',

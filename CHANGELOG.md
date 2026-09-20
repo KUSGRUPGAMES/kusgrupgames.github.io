@@ -4,6 +4,39 @@ Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
 
 ## [Yayınlanmadı] — 0.1.0
 
+### Marka varlıkları verilen pakete geçirildi (D16)
+
+Marka sahibi kendi tasarımını gönderdi. Depoda çizilen işaret
+(`tools/brand/mark.js`) kaldırıldı; artık tek kaynak `assets/brand/`.
+
+- Paket olduğu gibi depoya alındı: 10 SVG, 12 PNG, `brand.tokens.json`,
+  `CLAUDE_HANDOFF.md`, referans panosu.
+- `tools/gen-brand.js` yeniden yazıldı: hiçbir şey çizmez, yalnız verilen
+  SVG'leri Expo'nun beklediği adlara rasterler.
+- iOS ikonunda zemin köşe yarıçapı üretim anında sıfırlanıyor (paket kuralı 3):
+  verilen master `rx="220"` taşıyor, Apple kendi maskesini uyguladığı için iki
+  yuvarlama üst üste binince köşelerde açık bir hâle kalıyordu.
+- Android bildirim rozeti bağlandı (`expo-notifications`, paket kuralı 5);
+  prebuild beş yoğunlukta `notification_icon.png` yerleştiriyor.
+- Açılış ekranı iki temada ayrı: koyu `#003F32` + altın sembol, açık `#F7F3E8`
+  + zümrüt sembol.
+- Palet `brand.tokens.json`'a bağlandı; `brand.test.ts` altı marka rengini
+  paketle karşılaştırıyor. Altın rampasının açık uçları ikonun gradyan
+  duraklarından alındı.
+- Uygulama içi `rubElHizb` motifi paketin karosunun birebir aynısı oldu —
+  arayüzde iki üst üste kare, ikonda sekiz köşeli yıldız vardı, tutmuyordu.
+- **`accent` ikiye ayrıldı.** Deep Emerald zemin olunca koyu temada hero kartı
+  nane yeşiline dönüştü: tek token hem dolgu yüzeyi hem ön plan vurgusuydu ve
+  koyu temada bu ikisi ters yön ister. `accentSurface` eklendi, kontrast
+  sınaması ikisini ayrı ölçüyor.
+- `brand.test.ts` yeniden yazıldı: koyu ve açık ikonun **yol verileri eşit
+  olmalı** (paketin pazarlıksız kuralı), on dosyanın hepsi aynı geometriyi
+  taşımalı, depoda logoyu çizen bir üretici bulunmamalı, renkler paketle
+  aynı olmalı.
+
+Kapı: tsc + eslint + 569 test + Metro paketi + Android prebuild yeşil;
+42 ekran yeni palette çizdirilip bakıldı.
+
 ### Yeniden markalama: Sükûn → BEŞ
 
 Marka adı **BEŞ**, sembol özel çizilmiş bir **5** (D15). Geçici "Sükûn"

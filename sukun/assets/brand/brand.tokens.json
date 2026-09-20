@@ -1,0 +1,17 @@
+{
+  "brandName": "BEŞ",
+  "brandSymbol": "5",
+  "colors": {
+    "deepEmerald": "#003F32",
+    "emerald": "#005343",
+    "warmIvory": "#F7F3E8",
+    "softBeige": "#EADFC7",
+    "mutedGold": "#D6B46A",
+    "goldDark": "#B98E42"
+  },
+  "usage": {
+    "appDisplayName": "BEŞ",
+    "suggestedStoreTitle": "BEŞ – Ezan & Namaz Vakitleri",
+    "tagline": "5 Vakit, Daima Yanında."
+  }
+}

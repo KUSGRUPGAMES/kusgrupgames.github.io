@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192"><defs>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#FFF9E9"/>
+    <stop offset=".42" stop-color="#E9D19B"/>
+    <stop offset=".78" stop-color="#D6B46A"/>
+    <stop offset="1" stop-color="#B98E42"/>
+  </linearGradient>
+  <pattern id="patternDark" width="96" height="96" patternUnits="userSpaceOnUse">
+    <path d="M48 4 62 24 88 24 72 44 80 70 56 62 48 88 40 62 16 70 24 44 8 24 34 24Z"
+          fill="none" stroke="#3E8B76" stroke-width="1.4" opacity=".20"/>
+    <circle cx="48" cy="48" r="25" fill="none" stroke="#3E8B76" stroke-width="1" opacity=".13"/>
+  </pattern>
+  <pattern id="patternLight" width="96" height="96" patternUnits="userSpaceOnUse">
+    <path d="M48 4 62 24 88 24 72 44 80 70 56 62 48 88 40 62 16 70 24 44 8 24 34 24Z"
+          fill="none" stroke="#C9A65A" stroke-width="1.4" opacity=".18"/>
+    <circle cx="48" cy="48" r="25" fill="none" stroke="#C9A65A" stroke-width="1" opacity=".11"/>
+  </pattern>
+</defs><rect width="192" height="192" fill="#F7F3E8"/><rect width="192" height="192" fill="url(#patternLight)"/></svg>

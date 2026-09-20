@@ -3,32 +3,39 @@
  * Ham değerler burada durur; bileşenler **asla** düz renk kodu yazmaz,
  * her zaman tema üzerinden okur.
  *
- * Renk karakteri: Deep Emerald Green · Warm Ivory/Cream · Muted Gold.
- * BEŞ marka paleti (BRAND_GUIDELINES.md). Açık temada saf beyaz **kullanılmaz**:
- * ürünün karakteri sıcak fildişidir, steril beyaz onu jenerik bir mobil
- * uygulamaya çeviriyordu.
+ * BEŞ marka paleti. Adlandırılmış renkler **verilen marka paketinden** gelir:
+ * `assets/brand/brand.tokens.json`. Ara basamaklar (tema katmanları için
+ * gereken açık/koyu tonlar) o beş renkten türetilmiştir; marka renkleri
+ * burada birebir yazılıdır ve `brand.test.ts` paketle karşılaştırır.
+ *
+ * Altın rampasının açık iki ucu (`gold300`, `gold200`) uydurma değildir:
+ * verilen `BES_AppIcon_Dark.svg` içindeki altın gradyanın duraklarıdır.
+ * Böylece arayüzün altını ikonun altınıyla aynı olur.
+ *
+ * Açık temada saf beyaz **kullanılmaz**: ürünün karakteri sıcak fildişidir,
+ * steril beyaz onu jenerik bir mobil uygulamaya çeviriyordu.
  */
 
 /** Ham palet. Tema katmanı bunlardan anlamlı rolleri türetir. */
 export const palette = {
-  emerald900: '#04211B',
-  emerald800: '#003F32',
-  emerald700: '#004A3B',
-  emerald600: '#005343',
-  emerald500: '#0A6A55',
+  emerald900: '#003F32',   // paket: deepEmerald — koyu tema zemini, ikon zemini
+  emerald800: '#004A3E',
+  emerald700: '#005343',   // paket: emerald
+  emerald600: '#006451',
+  emerald500: '#0A7A62',
   emerald400: '#2E9B80',
   emerald300: '#63BFA6',
 
-  gold600: '#8A6A1F',
-  gold500: '#A8853F',
-  gold400: '#C9A65A',
-  gold300: '#D6B46A',
-  gold200: '#E3C88A',
+  gold600: '#8A6A1F',      // açık zeminde okunabilir koyu altın (WCAG)
+  gold500: '#B98E42',      // paket: goldDark
+  gold400: '#D6B46A',      // paket: mutedGold
+  gold300: '#E9D19B',      // ikon gradyanı
+  gold200: '#FFF9E9',      // ikon gradyanı
 
   ivory50: '#FDFBF6',
-  ivory100: '#FAF7EF',
-  ivory200: '#F4EFE3',
-  ivory300: '#E7DFCD',
+  ivory100: '#F7F3E8',     // paket: warmIvory — açık tema zemini, ikon zemini
+  ivory200: '#EADFC7',     // paket: softBeige
+  ivory300: '#DCCFB2',
 
   ink900: '#0C1512',
   ink700: '#24312C',

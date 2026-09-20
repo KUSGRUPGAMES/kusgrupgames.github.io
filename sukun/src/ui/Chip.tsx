@@ -26,8 +26,8 @@ export function Chip({ label, selected = false, onPress, disabled = false }: Chi
         paddingHorizontal: theme.spacing.lg,
         borderRadius: theme.radius.pill,
         borderWidth: 1,
-        borderColor: selected ? theme.colors.accent : theme.colors.border,
-        backgroundColor: selected ? theme.colors.accent : 'transparent',
+        borderColor: selected ? theme.colors.accentSurface : theme.colors.border,
+        backgroundColor: selected ? theme.colors.accentSurface : 'transparent',
         opacity: disabled ? theme.opacity.disabled : pressed ? 0.75 : 1,
       })}
     >

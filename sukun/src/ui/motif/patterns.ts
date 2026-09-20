@@ -23,19 +23,32 @@ export interface MotifTile {
   strokeWidth: number;
 }
 
-/** İki üst üste bindirilmiş kare — rub'ül hizb (sekizli yıldız). */
+/**
+ * Rub'ül hizb — **verilen marka paketinin** deseni.
+ *
+ * Geometri `assets/brand/svg/BES_Pattern_Dark.svg` içindeki karodan birebir
+ * alınmıştır (96 birimlik karo; burada istenen boya ölçeklenir). Uygulamanın
+ * hero yüzeyleriyle uygulama ikonu böylece aynı motifi taşır — daha önce
+ * arayüzde iki üst üste kare, ikonda sekiz köşeli yıldız vardı ve ikisi
+ * birbirini tutmuyordu.
+ */
 function rubElHizb(size: number): MotifTile {
-  const c = size / 2;
-  const r = size * 0.34;
-  const square = (rot: number): string => {
-    const pts: string[] = [];
-    for (let i = 0; i < 4; i++) {
-      const a = rot + (Math.PI / 2) * i;
-      pts.push(`${(c + r * Math.cos(a)).toFixed(2)},${(c + r * Math.sin(a)).toFixed(2)}`);
-    }
-    return `M${pts.join('L')}Z`;
-  };
-  return { size, paths: [square(0), square(Math.PI / 4)], fill: false, strokeWidth: 1.1 };
+  const k = size / 96;
+  const o = (n: number) => (n * k).toFixed(2);
+  const yildiz = `M${o(48)} ${o(4)} ${o(62)} ${o(24)} ${o(88)} ${o(24)} ${o(72)} ${o(44)} `
+    + `${o(80)} ${o(70)} ${o(56)} ${o(62)} ${o(48)} ${o(88)} ${o(40)} ${o(62)} `
+    + `${o(16)} ${o(70)} ${o(24)} ${o(44)} ${o(8)} ${o(24)} ${o(34)} ${o(24)}Z`;
+  // Karodaki daire. Yay (`A`) komutu **kullanılmaz**: karo sınaması yolların
+  // karo dışına taşmadığını sayıları okuyarak denetliyor ve göreli yay
+  // deltaları (negatif sayılar) o denetimi yanlış yere düşürüyor. Bu ölçekte
+  // 24 kenarlı çokgen daireden ayırt edilmez.
+  const cx = 48 * k, cy = 48 * k, r = 25 * k;
+  const kenar = 24;
+  const daire = `M${Array.from({ length: kenar }, (_, i) => {
+    const a = (2 * Math.PI * i) / kenar;
+    return `${(cx + r * Math.cos(a)).toFixed(2)},${(cy + r * Math.sin(a)).toFixed(2)}`;
+  }).join('L')}Z`;
+  return { size, paths: [yildiz, daire], fill: false, strokeWidth: 1.4 * k };
 }
 
 /** Girih örgüsü — köşegen kesişimler, sürekli desen. */

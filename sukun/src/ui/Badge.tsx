@@ -9,7 +9,7 @@ export type BadgeTone = 'accent' | 'highlight' | 'neutral' | 'danger' | 'success
 export function Badge({ label, tone = 'neutral' }: { label: string; tone?: BadgeTone }) {
   const theme = useTheme();
   const bg: Record<BadgeTone, string> = {
-    accent: theme.colors.accent,
+    accent: theme.colors.accentSurface,
     highlight: theme.colors.highlight,
     neutral: theme.colors.surfaceRaised,
     danger: theme.colors.danger,

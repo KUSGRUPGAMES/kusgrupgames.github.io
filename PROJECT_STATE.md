@@ -160,11 +160,11 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 |---|---|
 | TypeScript | ✅ `tsc --noEmit` temiz |
 | Lint | ✅ `eslint --max-warnings=0` temiz |
-| Test | ✅ 44 suite / 561 test (mantık + bileşen) |
+| Test | ✅ 44 suite / 569 test (mantık + bileşen) |
 | Veritabanı | ✅ `bash sukun/tools/verify-db.sh` — migration + RLS + kapsama |
 | Paketleme | ✅ `npm run bundle` — Metro paketi üretiliyor |
 | Görsel geçiş | ✅ `npm run preview` — 42 ekran + 85 sn'lik gezinme videosu, hepsi çiziyor |
-| Marka varlıkları | ✅ `node tools/gen-brand.js` — 5 işareti, koyu/açık, mikro, monokrom, SVG kaynak |
+| Marka varlıkları | ✅ **verilen paket** (`assets/brand/`, D16); `gen-brand.js` yalnız rasterler |
 | iOS CI | ✅ `sukun-ios.yml` — kalite kapısı + imzasız simulator derlemesi |
 | iOS yayın | ⚙️ `sukun-release-ios.yml` — elle çalışır, TestFlight'a yükler (secret'lara bağlı) |
 | Android CI | ⚙️ `sukun-android.yml` — kalite kapısı + AAB + debug APK |

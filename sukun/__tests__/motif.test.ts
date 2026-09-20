@@ -34,8 +34,13 @@ describe('geometrik motifler', () => {
     }
   });
 
-  it('rubElHizb iki kare çizer — sekizli yıldız bunların üst üste binmesidir', () => {
-    expect(motifTile('rubElHizb').paths).toHaveLength(2);
+  it('rubElHizb marka paketinin karosunu çiziyor: yıldız + daire', () => {
+    const t = motifTile('rubElHizb', 96);
+    expect(t.paths).toHaveLength(2);
+    // Paketin 96 birimlik karosu birebir: ilk köşe (48,4), daire yarıçapı 25.
+    expect(t.paths[0]).toContain('M48.00 4.00');
+    // Daire 24 kenarlı çokgenle çizilir; en sağ nokta (48+25, 48).
+    expect(t.paths[1]).toContain('73.00,48.00');
   });
 
   it('bilinmeyen ada karşı tip güvenliği: liste tam MotifName kümesidir', () => {

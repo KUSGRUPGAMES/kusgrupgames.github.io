@@ -296,3 +296,37 @@ yerde görünmez. Yalnız kullanıcıya görünen alanlar değişti.
 **Tek kaynak:** `sukun/tools/brand/mark.js` işaretin geometrisini, `tokens.ts`
 paleti tutar. Rasterlar `node tools/gen-brand.js` ile üretilir; hiçbir görsel
 elle çizilip depoya konmaz. Ayrıntı: `sukun/BRAND_GUIDELINES.md`.
+
+---
+
+## D16 — Marka varlıkları dışarıdan verilen pakettir
+
+**Karar:** BEŞ logosu, sembolü, deseni ve renkleri `sukun/assets/brand/`
+altındaki **verilen paketten** gelir. Depo bu logoyu çizmez, izlemez, yeniden
+üretmez, bir görüntü üretecine vermez. Paketin kendi kuralları
+`assets/brand/docs/CLAUDE_HANDOFF.md` içindedir ve `BRAND_GUIDELINES.md`'den
+önce gelir.
+
+**Neden:** D15'te işareti bu depoda çizmiştik (`tools/brand/mark.js`). Marka
+sahibi kendi tasarımını gönderdi; bir markanın iki kaynağı olamaz. Üretilen
+çizim kaldırıldı, `gen-brand.js` artık yalnız verilen SVG'leri platformun
+beklediği adlara **rasterler**.
+
+**İki teknik uyarlama** (ikisi de paketin kendi maddesi):
+
+1. iOS ikonunda zemin dikdörtgeninin `rx="220"` köşe yarıçapı üretim anında
+   sıfırlanır (kural 3). Apple kendi maskesini uyguluyor; iki yuvarlama üst
+   üste binince köşelerde açık renk bir hâle kalıyor. Sembole dokunulmaz,
+   kaynak dosya değişmez.
+2. Android ön katmanının arkası paketin Deep Emerald'ıyla doldurulur (kural 4).
+
+**Paketteki PNG'ler ikon üretiminde kullanılmadı.** İki sebeple: SVG'lerden
+farklı bir çizim taşıyorlar ve etraflarında pişmiş beyaz kenar boşluğu ile
+gölge var — uygulama ikonu tam kanar olmalıdır. Paketin kendi belgesi de
+SVG'leri kaynak ilan ediyor. PNG'ler referans olarak depoda duruyor.
+
+**Yan etki — `accent` ikiye ayrıldı.** Paketin Deep Emerald'ı (`#003F32`) koyu
+tema zemini olunca hero kartı nane yeşiline dönüştü: tek `accent` token'ı hem
+dolgu yüzeyi hem ön plan vurgusu olarak kullanılıyordu ve koyu temada bu ikisi
+ters yön ister. `accentSurface` eklendi; kontrast sınaması ikisini ayrı ayrı
+ölçüyor.

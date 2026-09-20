@@ -23,7 +23,7 @@ export function Card({
 }: CardProps) {
   const theme = useTheme();
   const base: ViewStyle = {
-    backgroundColor: accent ? theme.colors.accent : theme.colors.surface,
+    backgroundColor: accent ? theme.colors.accentSurface : theme.colors.surface,
     borderRadius: theme.radius[radius],
     padding: theme.spacing[padding],
     borderWidth: accent ? 0 : 1,

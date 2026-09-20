@@ -64,8 +64,16 @@ describe('renk kontrastı', () => {
     expect(contrast(tema.colors.textMuted, tema.colors.surface)).toBeGreaterThanOrEqual(AA_NORMAL);
   });
 
-  it.each(temalar)('%s tema: vurgu üzerindeki metin AA geçer', (_ad, tema) => {
-    expect(contrast(tema.colors.onAccent, tema.colors.accent)).toBeGreaterThanOrEqual(AA_NORMAL);
+  it.each(temalar)('%s tema: marka yüzeyindeki metin AA geçer', (_ad, tema) => {
+    // `onAccent` artık `accentSurface` üstünde durur. İkisi ayrıldı: koyu
+    // temada ön plan vurgusu AÇIK, dolgu yüzeyi KOYU olmak zorunda.
+    expect(contrast(tema.colors.onAccent, tema.colors.accentSurface)).toBeGreaterThanOrEqual(AA_NORMAL);
+  });
+
+  it.each(temalar)('%s tema: vurgu rengi zemin ve yüzey üstünde AA geçer', (_ad, tema) => {
+    // `accent` bağlantı metni ve ikon rengidir; zeminin üstünde okunmalı.
+    expect(contrast(tema.colors.accent, tema.colors.background)).toBeGreaterThanOrEqual(AA_NORMAL);
+    expect(contrast(tema.colors.accent, tema.colors.surface)).toBeGreaterThanOrEqual(AA_NORMAL);
   });
 
   it.each(temalar)('%s tema: uyarı ve hata renkleri en az büyük metin eşiğini geçer', (_ad, tema) => {

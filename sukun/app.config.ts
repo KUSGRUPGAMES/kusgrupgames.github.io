@@ -15,9 +15,16 @@ const suffix: Record<Variant, string> = {
   production: '',
 };
 
-/** Zümrüt zemin (palette.emerald900). İkon, açılış ekranı ve Android maskesi
- *  aynı rengi kullanır; üçü ayrışırsa açılışta renk sıçraması görünür. */
-const ZEMIN = '#04211B';
+/**
+ * Deep Emerald — **verilen marka paketinin** rengi
+ * (`assets/brand/brand.tokens.json` → colors.deepEmerald). İkon zemini,
+ * açılış ekranı ve Android maskesi aynı değeri kullanır; üçü ayrışırsa
+ * açılıştan ana ekrana geçerken renk sıçraması görünür.
+ */
+const ZEMIN = '#003F32';
+
+/** Warm Ivory — açık tema açılış zemini (paket: colors.warmIvory). */
+const ZEMIN_ACIK = '#F7F3E8';
 
 /**
  * Mağaza, aynı (sürüm, build) çiftini ikinci kez kabul etmez. CI her
@@ -81,15 +88,23 @@ const config: ExpoConfig = {
   plugins: [
     'expo-router',
     ['expo-splash-screen', {
-      image: './assets/splash-icon.png',
+      image: './assets/brand/splash-icon-light.png',
       imageWidth: 200,
       resizeMode: 'contain',
-      backgroundColor: ZEMIN,
-      // Koyu temada da aynı zemin: açılıştan ana ekrana geçerken sıçrama olmaz.
+      backgroundColor: ZEMIN_ACIK,
+      // Koyu tema paketin koyu ikonuyla, açık tema açık ikonuyla aynı zemini
+      // ve aynı sembol varyantını kullanır.
       dark: { image: './assets/splash-icon.png', backgroundColor: ZEMIN },
     }],
     'expo-localization',
     'expo-system-ui',
+    // Android bildirim küçük ikonu **tek renk siluet** olmalı: sistem onu
+    // alfa kanalından okur ve kendi rengiyle boyar. Renkli ikon verilirse
+    // durum çubuğunda beyaz bir kare görünür (paket kuralı 5).
+    ['expo-notifications', {
+      icon: './assets/brand/notification-icon.png',
+      color: ZEMIN,
+    }],
     // Konum izni yalnız **uygulama açıkken**. expo-location eklentisi kendi
     // İngilizce varsayılanlarıyla üç anahtar birden yazıyor; "Always" izni
     // hiç kullanılmadığı hâlde beyan edilmiş oluyordu. App Review kullanılmayan
