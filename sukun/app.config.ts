@@ -63,6 +63,16 @@ const config: ExpoConfig = {
       backgroundColor: ZEMIN,
     },
     permissions: ['ACCESS_COARSE_LOCATION', 'ACCESS_FINE_LOCATION'],
+    // Kütüphaneler kendi manifest'lerinde izin bildirir ve birleştirici
+    // bunları uygulamaya taşır. Uygulama **mikrofon kullanmıyor** — kıraat
+    // yalnız çalınır, hiçbir yerde kayıt yok; Play mikrofon iznini gerekçe
+    // ister ve gerekçesizse yayını reddeder. Diğer üçü de kullanılmıyor.
+    blockedPermissions: [
+      'android.permission.RECORD_AUDIO',
+      'android.permission.SYSTEM_ALERT_WINDOW',
+      'android.permission.READ_EXTERNAL_STORAGE',
+      'android.permission.WRITE_EXTERNAL_STORAGE',
+    ],
   },
   web: { favicon: './assets/favicon.png' },
   plugins: [
@@ -76,6 +86,7 @@ const config: ExpoConfig = {
       dark: { image: './assets/splash-icon.png', backgroundColor: ZEMIN },
     }],
     'expo-localization',
+    'expo-system-ui',
     // Konum izni yalnız **uygulama açıkken**. expo-location eklentisi kendi
     // İngilizce varsayılanlarıyla üç anahtar birden yazıyor; "Always" izni
     // hiç kullanılmadığı hâlde beyan edilmiş oluyordu. App Review kullanılmayan
@@ -88,7 +99,10 @@ const config: ExpoConfig = {
       isIosBackgroundLocationEnabled: false,
       isAndroidBackgroundLocationEnabled: false,
     }],
-    ['expo-audio', { microphonePermission: false }],
+    // `recordAudioAndroid: false` eklentinin izni hiç eklememesini sağlar;
+    // kütüphanenin kendi manifest'indeki bildirim ise `blockedPermissions`
+    // ile silinir. İkisi birden gerekiyor.
+    ['expo-audio', { microphonePermission: false, recordAudioAndroid: false }],
     ['expo-font', { fonts: ['./assets/fonts/Amiri-Regular.ttf', './assets/fonts/AmiriQuran-Regular.ttf'] }],
   ],
   experiments: { typedRoutes: true },

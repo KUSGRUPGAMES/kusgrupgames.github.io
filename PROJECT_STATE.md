@@ -164,8 +164,12 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 | Veritabanı | ✅ `bash sukun/tools/verify-db.sh` — migration + RLS + kapsama |
 | Paketleme | ✅ `npm run bundle` — Metro paketi üretiliyor |
 | Görsel geçiş | ✅ `npm run preview` — 42 ekran + 85 sn'lik gezinme videosu, hepsi çiziyor |
-| iOS build | henüz denenmedi (B6 — Apple hesabı) |
-| Android build | henüz denenmedi |
+| İkon ve açılış | ✅ `node tools/gen-icon.js` — rub'ül hizb işareti, ikon/adaptive/splash/favicon |
+| iOS CI | ✅ `sukun-ios.yml` — kalite kapısı + imzasız simulator derlemesi |
+| iOS yayın | ⚙️ `sukun-release-ios.yml` — elle çalışır, TestFlight'a yükler (secret'lara bağlı) |
+| Android CI | ⚙️ `sukun-android.yml` — kalite kapısı + AAB + debug APK |
+| iOS build | ✅ CI'da imzasız derleniyor; imzalı TestFlight yapısı secret'lara bağlı |
+| Android build | ⚙️ `sukun-android.yml` eklendi, ilk koşu bekliyor |
 
 ## Kritik kararlar (özet — ayrıntı DECISIONS.md)
 

@@ -50,15 +50,10 @@ jobs:
       - name: Uretilen projeyi dogrula
         working-directory: sukun
         run: |
-          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png \
-            || { echo "::error::uygulama ikonu yerlestirilmemis"; exit 1; }
-          echo "ikon yerinde"
-          # Arka plan konum izni istenmiyor; Play bunu ayrica beyan ettirir ve
-          # gerekcesiz istenirse yayini reddeder.
-          if grep -q 'ACCESS_BACKGROUND_LOCATION' android/app/src/main/AndroidManifest.xml; then
-            echo "::error::kullanilmayan ACCESS_BACKGROUND_LOCATION izni var"; exit 1
-          fi
-          echo "arka plan konum izni yok (dogrulandi)"
+          # Expo ikonlari .webp olarak yazar; uzantiyi varsaymiyoruz.
+          IKON=$(ls android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.* 2>/dev/null | head -1)
+          test -n "$IKON" || { echo "::error::uygulama ikonu yerlestirilmemis"; exit 1; }
+          echo "ikon yerinde: $IKON"
           grep -m1 'versionCode' android/app/build.gradle
 
       - name: Imza anahtarini yerlestir (secret varsa)
@@ -94,6 +89,33 @@ jobs:
           else
             ./gradlew bundleRelease --no-daemon --stacktrace
           fi
+
+      # Kutuphaneler kendi manifest'lerinde izin bildirir; gercegi ancak
+      # BIRLESMIS manifest gosterir. Kaynak manifest'e bakmak yaniltir:
+      # `blockedPermissions` satiri silmez, `tools:node="remove"` isaretler ve
+      # silme islemi derleme sirasinda olur.
+      - name: Birlesmis manifest izinlerini dogrula
+        working-directory: sukun/android
+        run: |
+          M=$(find app/build/intermediates -name AndroidManifest.xml -path '*erged*' -path '*elease*' | head -1)
+          test -n "$M" || { echo "::error::birlesmis manifest bulunamadi"; exit 1; }
+          echo "manifest: $M"
+          grep -oE 'android.permission.[A-Z_]+' "$M" | sort -u
+
+          # Uygulama mikrofon kullanmiyor: kiraat yalnizca CALINIR, hicbir
+          # yerde kayit yok. Play mikrofon iznini gerekce ister.
+          for K in RECORD_AUDIO SYSTEM_ALERT_WINDOW ACCESS_BACKGROUND_LOCATION; do
+            if grep -q "android.permission.$K" "$M"; then
+              echo "::error::kullanilmayan izin pakete girdi: $K"; exit 1
+            fi
+          done
+          echo "mikrofon, ekran ustu ve arka plan konum izni yok (dogrulandi)"
+
+          # Bunun tersi de hata: vakit bildirimi urunun ana isi, izin
+          # dusmus olursa Android 13+ cihazlarda hicbir bildirim gorunmez.
+          grep -q 'android.permission.POST_NOTIFICATIONS' "$M" \
+            || { echo "::error::POST_NOTIFICATIONS yok - vakit bildirimleri calismaz"; exit 1; }
+          echo "bildirim izni yerinde"
 
       - name: Debug APK uret (telefona kurmak icin)
         working-directory: sukun/android
