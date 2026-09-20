@@ -1,0 +1,109 @@
+name: Sukun Android derleme
+
+# Kalite kapisi + AAB (Play icin) + debug APK (telefona dogrudan kurmak icin).
+# Imza anahtari secret olarak eklenirse imzali AAB, eklenmezse imzasiz uretir.
+#
+# Diger urunler Capacitor, Sukun Expo. Ayni matrise sokmak neredeyse her adima
+# bir `if` eklemek demekti; bu yuzden Sukun'un kendi dosyasi var.
+on:
+  push:
+    branches: ['**']
+    paths:
+      - '.github/workflows/sukun-android.yml'
+      - 'sukun/**'
+  workflow_dispatch:
+
+jobs:
+  android:
+    name: Sukun Android
+    runs-on: ubuntu-latest
+    env:
+      APP_VARIANT: production
+      BUILD_NUMBER: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: sukun/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          # Java 21: bu depoda 17 ile 'invalid source release: 21' bir kez yasandi.
+          java-version: '21'
+
+      - name: Bagimliliklar
+        working-directory: sukun
+        run: npm ci --no-audit --no-fund
+
+      - name: tsc + eslint + test
+        working-directory: sukun
+        run: npm run gate
+
+      - name: Native projeyi uret
+        working-directory: sukun
+        run: npx expo prebuild --platform android --clean
+
+      - name: Uretilen projeyi dogrula
+        working-directory: sukun
+        run: |
+          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png \
+            || { echo "::error::uygulama ikonu yerlestirilmemis"; exit 1; }
+          echo "ikon yerinde"
+          # Arka plan konum izni istenmiyor; Play bunu ayrica beyan ettirir ve
+          # gerekcesiz istenirse yayini reddeder.
+          if grep -q 'ACCESS_BACKGROUND_LOCATION' android/app/src/main/AndroidManifest.xml; then
+            echo "::error::kullanilmayan ACCESS_BACKGROUND_LOCATION izni var"; exit 1
+          fi
+          echo "arka plan konum izni yok (dogrulandi)"
+          grep -m1 'versionCode' android/app/build.gradle
+
+      - name: Imza anahtarini yerlestir (secret varsa)
+        id: imza
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "imzali=evet" >> "$GITHUB_OUTPUT"
+            echo "imzali derleme"
+          else
+            echo "imzali=hayir" >> "$GITHUB_OUTPUT"
+            echo "imza anahtari yok - imzasiz derleme (Play'e yuklenemez, yalnizca dogrulama)"
+          fi
+
+      - name: AAB uret
+        working-directory: sukun/android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        # Imza, build.gradle'i yamalamak yerine Gradle'in kendi
+        # `android.injected.signing.*` ozellikleriyle veriliyor: uretilen
+        # proje her derlemede sifirdan yazildigi icin yama kalici olmazdi.
+        run: |
+          if [ "${{ steps.imza.outputs.imzali }}" = "evet" ]; then
+            ./gradlew bundleRelease --no-daemon --stacktrace \
+              -Pandroid.injected.signing.store.file="$RUNNER_TEMP/release.jks" \
+              -Pandroid.injected.signing.store.password="$KEYSTORE_PASSWORD" \
+              -Pandroid.injected.signing.key.alias="$KEY_ALIAS" \
+              -Pandroid.injected.signing.key.password="$KEY_PASSWORD"
+          else
+            ./gradlew bundleRelease --no-daemon --stacktrace
+          fi
+
+      - name: Debug APK uret (telefona kurmak icin)
+        working-directory: sukun/android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sukun-android
+          path: |
+            sukun/android/app/build/outputs/bundle/release/*.aab
+            sukun/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 30
