@@ -69,7 +69,7 @@
 - [x] Arapça metin içe aktarma (Tanzil) + doğrulama + checksum (§74) — 6236 âyet, bilinen sayılarla sınandı
 - [x] Reader: Arapça / Arapça+Meal / Meal modları — hepsi çalışıyor (§28)
 - [~] Reader ayarları: yazı boyutu ve tema tamam; satır aralığı hareke güvenliği için sabit oranlı, sayfa kipi FAZ 5'te (§28)
-- [~] Âyet aksiyonları: favori, yer imi, not, paylaş tamam (kaynak künyesiyle); dinle ⛔B4, meal ⛔B1, tefsir ⛔B2 (§28)
+- [~] Âyet aksiyonları: favori, yer imi, not, paylaş, dinle ve meal tamam (kaynak künyesiyle); tefsir ⛔B2 (§28)
 - [x] Son okunan + devam et (§29)
 - [x] Yer imleri: renk, etiket, not (§30)
 - [~] Favoriler tamam; koleksiyonlar FAZ 11'de (§31)
@@ -103,7 +103,7 @@
 
 ## FAZ 8 — İbadet rehberi ve takip
 
-- [~] Namaz rehberi: abdest, hazırlık, kılınış, rekât sayıları, seferîlik, özür — 6 bölüm, 33 adım. Okunan sûrelerin Arapça metni ⛔B1 (§40)
+- [~] Namaz rehberi: abdest, hazırlık, kılınış, rekât sayıları, seferîlik, özür — 6 bölüm, 33 adım. Namazda okunan sûre ve duaların Arapça metni **eksik**: B1 kalktığı için artık engel yok, yazılacak (§40)
 - [x] Kaza namazı: 6 sayaç, toplu giriş, +/-, geçmiş, geri alma, ilerleme (§41)
 - [x] İbadet defteri: gün gün namaz, Kuran dakikası, not (§42)
 - [x] Oruç takibi: Ramazan/kaza/nafile (§49)

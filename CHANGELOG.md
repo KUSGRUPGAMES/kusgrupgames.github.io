@@ -47,6 +47,27 @@ Uygulamanın 42 ekranı web hedefinde gerçekten çizdirilip tek tek incelendi;
 
 Kalite kapısı: 524 sınama, `tsc` + `eslint` + Android paketi yeşil.
 
+### Yayın sayfaları — kırık bağlantılar
+
+- `brand.json` içindeki `termsUrl` olmayan bir sayfayı gösteriyordu
+  (`docs/sukun/terms.html` yazılmamıştı). App Review hem gizlilik hem
+  koşul adresini açtığı için bu doğrudan ret sebebiydi.
+- İngilizce gizlilik sayfasının menüsü de olmayan `terms.html` ve
+  `support.html` sayfalarına bağlanıyordu.
+- İngilizce **Terms of Use** ve **Support** sayfaları yazıldı (çeviri değil,
+  Türkçesiyle aynı özü taşıyan ayrı metin); Türkçe sayfalara "English"
+  bağlantısı, `docs/index.html` kartına doğru adresler eklendi.
+- `docsLinks.test.ts`: her yerel bağlantının bir dosyaya gittiğini,
+  `brand.json` adreslerinin var olan sayfalara karşılık geldiğini ve her
+  sayfanın diğer dildeki karşılığının bulunduğunu denetler.
+
+### Durum dosyalarında bayat kayıt
+
+- `MASTER_CHECKLIST.md` iki maddeyi hâlâ B1/B4 engeline bağlı gösteriyordu;
+  ikisi de çözülmüştü. Âyet aksiyonları satırı güncellendi; namaz rehberinde
+  okunan sûrelerin Arapça metni artık "engelli" değil, **eksik** olarak
+  işaretlendi.
+
 
 ### FAZ 0 — Repository audit, mimari, durum dosyaları
 
