@@ -301,6 +301,11 @@ elle çizilip depoya konmaz. Ayrıntı: `sukun/BRAND_GUIDELINES.md`.
 
 ## D16 — Marka varlıkları dışarıdan verilen pakettir
 
+> **GEÇERSİZ — yerine D17 geçti.** Bu karar paketin **SVG** dosyalarını kaynak
+> ilan ediyordu. Marka sahibi o SVG'lerin onaylanan logonun elle yapılmış
+> yaklaşık rekonstrüksiyonları olduğunu ve marka tasarımını bozduğunu
+> bildirdi. Kayıt olarak duruyor; uygulanan kural D17'dir.
+
 **Karar:** BEŞ logosu, sembolü, deseni ve renkleri `sukun/assets/brand/`
 altındaki **verilen paketten** gelir. Depo bu logoyu çizmez, izlemez, yeniden
 üretmez, bir görüntü üretecine vermez. Paketin kendi kuralları
@@ -330,3 +335,55 @@ tema zemini olunca hero kartı nane yeşiline dönüştü: tek `accent` token'ı
 dolgu yüzeyi hem ön plan vurgusu olarak kullanılıyordu ve koyu temada bu ikisi
 ters yön ister. `accentSurface` eklendi; kontrast sınaması ikisini ayrı ayrı
 ölçüyor.
+
+## D17 — Logonun tek kaynağı bitmiş master PNG'dir
+
+**Karar:** BEŞ logosu yalnız iki dosyadan gelir:
+
+```
+sukun/assets/brand/png/BES_AppIcon_Dark_1024.png
+sukun/assets/brand/png/BES_AppIcon_Light_1024.png
+```
+
+Bu depoda logo **çizilmez**: vektör yolu üretilmez, yazı tipiyle "5" yazılmaz,
+cami/minare/hilal kurulmaz, logo CSS ya da React Native/SVG ile yeniden
+yaratılmaz. Logonun geometrisi hiçbir koşulda değişmez; ölçeklerken yalnız
+en-boy oranı korunur.
+
+**Neden:** D16 paketin SVG'lerini kaynak seçmişti ve üretilen ikonlar marka
+tasarımını bozdu — o SVG'ler onaylanan logonun **yaklaşık
+rekonstrüksiyonlarıydı**. Bir markanın tek bir doğrusu olur; o doğru, marka
+sahibinin teslim ettiği bitmiş rasterdir. Elle çizilmiş `assets/brand/svg/`
+klasörü (on dosya) ve ondan türeyen desen PNG'leri depodan kaldırıldı.
+
+**`tools/gen-brand.js`'in yaptığı iş üçle sınırlı, üçü de geometriye dokunmaz:**
+
+1. **Kırpma.** Master, logoyu kâğıt üzerinde sunan bir kompozisyon: kutucuğun
+   çevresinde ince açık zemin ve yumuşak gölge var. Launcher ikonu tam kare ve
+   taşmalı olmak zorunda olduğundan kutucuğun kenarı ölçülür, sunum çerçevesi
+   atılır.
+2. **Ölçekleme.** Yalnız en-boy oranı korunarak; kısa kenar doldurulur, uzun
+   kenardan simetrik kırpılır. Hiçbir yönde esnetme yok — `brand.test.ts` bunu
+   masterın oranıyla karşılaştırarak ölçüyor.
+3. **Alfa ayıklama.** Şeffaf sembol, tek renk siluet ve Android ön planı
+   masterın kendi piksellerinden parlaklık eşiğiyle ayrılır. Şekil masterın
+   şeklidir.
+
+**Üç teknik uyarlama, üçü de platformun dayattığı şey:**
+
+- **iOS ikonunda köşe yuvarlaması giderilir.** Master kutucuğu yuvarlak köşeli;
+  Apple kendi maskesini uyguluyor ve iki yuvarlama üst üste binince köşede açık
+  renk bir hâle kalıyor. Köşe, kutucuğun kenar piksellerinin ışınsal
+  uzatılmasıyla doldurulur; logoya değmez. Çıktı alfasız (colorType 2) yazılır,
+  çünkü Apple saydam ikon kabul etmiyor.
+- **Android tek renk yüzeyleri** (bildirim küçük ikonu, Android 13 temalı ikon)
+  işletim sisteminin zorunlu kıldığı **tek istisnadır**: oraya renk taşınamaz,
+  masterdan çıkarılan siluet konur.
+- **Android uyarlanabilir ikon** güvenli daireye göre ölçeklenir. Sınırlayıcı
+  dikdörtgeni %66'ya oturtmak yetmedi: "5"in üst kanadı ile alt kâsesi köşelere
+  uzandığı için piksellerin %1,5'i dairenin dışında kalıyordu. Ölçü artık
+  merkezden en uzak opak piksel; sonuç görünen dairenin %85'i kadar bir logo.
+
+**Arayüzdeki geometrik motif logo değildir.** `src/ui/motif/patterns.ts`
+içindeki sekiz köşeli yıldız ve örgü, İslam sanatının ortak dilinden gelen bir
+yüzey dokusudur; marka işareti taşımaz ve logo yerine geçmez.

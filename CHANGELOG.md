@@ -4,7 +4,33 @@ Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
 
 ## [Yayınlanmadı] — 0.1.0
 
-### Marka varlıkları verilen pakete geçirildi (D16)
+### Logonun kaynağı bitmiş master PNG oldu (D17)
+
+Marka sahibi, pakette gelen `BES_AppIcon_*.svg` / `BES_Symbol_*.svg`
+dosyalarının onaylanan logonun **elle yapılmış yaklaşık rekonstrüksiyonları**
+olduğunu ve marka tasarımını bozduğunu bildirdi. Logo artık yalnız
+`assets/brand/png/BES_AppIcon_{Dark,Light}_1024.png` dosyalarından gelir.
+
+- On SVG dosyası ve onlardan türeyen desen PNG'leri depodan kaldırıldı.
+- `tools/gen-brand.js` yeniden yazıldı: Playwright yerine piksel işi
+  (`pngjs`). Yaptığı üç şey — sunum çerçevesini kırpmak, en-boy oranını
+  koruyarak ölçeklemek, alfa ayıklamak — logonun geometrisine dokunmaz.
+- iOS ikonu artık **alfasız** (PNG colorType 2) yazılıyor; köşe yuvarlaması
+  kutucuğun kenar piksellerinin ışınsal uzatılmasıyla gideriliyor. Master'ın
+  çevresindeki beyaz kâğıt kenarı ve gölge ikona hiç girmiyor.
+- Android uyarlanabilir ikon güvenli daireye **merkezden en uzak opak piksele
+  göre** ölçekleniyor: sınırlayıcı dikdörtgeni %66'ya oturtmak yetmiyordu,
+  piksellerin %1,5'i dairenin dışında kalıyor ve yuvarlak maskeli
+  başlatıcılarda kırpılıyordu.
+- `brand.test.ts` yeniden yazıldı: master oranı ile üretilenin oranı
+  karşılaştırılıyor (esnetme yakalanıyor), iOS ikonunun alfasızlığı ve köşe
+  rengi, güvenli daire, tek renk yüzeylerin gerçekten tek renk olduğu, `.svg`
+  dönmediği ve üreticide yol verisi/`font-family` bulunmadığı denetleniyor.
+  Üçü de mutasyonla sınandı.
+- Arayüzdeki `rubElHizb` motifinin **logo olmadığı** belgelendi; marka işareti
+  taşımayan genel bir yüzey dokusudur.
+
+### Marka varlıkları verilen pakete geçirildi (D16, yerine D17 geçti)
 
 Marka sahibi kendi tasarımını gönderdi. Depoda çizilen işaret
 (`tools/brand/mark.js`) kaldırıldı; artık tek kaynak `assets/brand/`.

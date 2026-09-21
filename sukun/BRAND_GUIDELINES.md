@@ -44,50 +44,70 @@ durmaz, aşırı süslü Osmanlı estetiğine kaçmaz, altına boğulmaz.
 Büyük, özel çizilmiş bir **5**. Rakamın alt kâsesinin iç boşluğunda cami
 kubbesi, iki minare ve hilal durur — ilk bakışta `5`, ikinci bakışta siluet.
 
-**Kaynak dosyalar** (`assets/brand/svg/`):
+### Tek kaynak: bitmiş master PNG
 
-| Dosya | Ne için |
+| Dosya | Ne |
 |---|---|
-| `BES_AppIcon_Dark.svg` | koyu tema master ikonu |
-| `BES_AppIcon_Light.svg` | açık tema master ikonu |
-| `BES_Symbol_Gold.svg` | saydam sembol (altın) |
-| `BES_Symbol_Emerald.svg` | saydam sembol (zümrüt) |
-| `BES_Symbol_Monochrome_Black/White.svg` | tek renk siluet |
-| `BES_Android_Adaptive_Foreground.svg` | Android ön katmanı |
-| `BES_Android_Notification_Monochrome.svg` | Android bildirim rozeti |
-| `BES_Pattern_Dark/Light.svg` | marka deseni |
+| `assets/brand/png/BES_AppIcon_Dark_1024.png` | koyu tema master ikonu |
+| `assets/brand/png/BES_AppIcon_Light_1024.png` | açık tema master ikonu |
+| `assets/brand/png/BES_AppIcon_*_{32..512}.png` | aynı çizimin pratik boyları |
+| `assets/brand/reference/BES_Brand_Guideline_Board.png` | görsel referans panosu |
 
-Sembolün yerel sınır kutusu **x 210–806, y 105–872** (1024 birimlik kutuda) ve
-bu on dosyanın hepsinde **birebir aynıdır**; `brand.test.ts` yol verilerini
-karşılaştırarak doğrular.
+**Logo bu depoda çizilmez.** Vektör yolu üretilmez, yazı tipiyle "5" yazılmaz,
+cami/minare/hilal kurulmaz, logo CSS ya da React Native/SVG ile yeniden
+yaratılmaz. Geometrisi hiçbir koşulda değişmez; ölçeklerken yalnız en-boy oranı
+korunur (D17).
 
-### Değişmez kural
+> **Bir kez tersi yapıldı.** Pakette on adet `BES_*.svg` geliyordu ve platform
+> ikonları onlardan üretilmişti. O dosyalar onaylanan logonun **elle yapılmış
+> yaklaşık rekonstrüksiyonlarıydı** ve marka tasarımını bozdu. Klasör depodan
+> kaldırıldı; `brand.test.ts` `assets/brand/` altında bir daha `.svg`
+> belirmediğini ve `gen-brand.js` içinde yol verisi/`<svg>`/`font-family`
+> bulunmadığını denetliyor.
 
-**Koyu ve açık aynı yolları kullanır.** Farkları yalnız zemin rengi
-(`#003F32` / `#F7F3E8`) ve sembolün dolgusudur. İki logo gibi görünmesi kabul
-edilmez; sınama iki dosyanın `d` değerlerinin eşit olmasını şart koşar.
+### Üretim
 
-### Rasterleme
+`node tools/gen-brand.js` masterdan platform varlıklarını çıkarır. Yaptığı iş
+üçle sınırlıdır ve üçü de logonun geometrisine dokunmaz:
 
-`node tools/gen-brand.js` verilen SVG'leri Expo'nun beklediği adlara ve
-boyutlara **yalnız rasterler**. İki teknik uyarlama vardır, ikisi de paketin
-kendi maddesi:
+1. **Kırpma.** Master, logoyu kâğıt üzerinde sunan bir kompozisyondur:
+   kutucuğun çevresinde ince açık zemin ve yumuşak bir gölge var. Kenar
+   parlaklık basamağından ölçülür, sunum çerçevesi atılır.
+2. **Ölçekleme.** Yalnız en-boy oranı korunarak; kısa kenar doldurulur, uzun
+   kenardan simetrik kırpılır. Esnetme yok — sınama üretilenin oranını masterın
+   oranıyla karşılaştırıyor.
+3. **Alfa ayıklama.** Saydam sembol, tek renk siluet ve Android ön planı
+   masterın kendi piksellerinden parlaklık eşiğiyle ayrılır.
 
-1. **iOS ikonunda yuvarlak köşe kaldırılır** (kural 3). Verilen master
-   `rx="220"` taşır; Apple kendi maskesini uyguladığı için iki yuvarlama üst
-   üste binerse köşelerde açık renk bir hâle kalır. Yalnız zemin
-   dikdörtgeninin köşe yarıçapı üretim anında sıfırlanır — sembole
-   dokunulmaz, kaynak dosya değişmez.
-2. **Android ön katmanının arkası** paketin Deep Emerald'ıyla doldurulur
-   (kural 4); verilen foreground saydamdır.
+Üç teknik uyarlama, üçü de platformun dayattığı şey:
 
-### Paketteki PNG'ler hakkında
+- **iOS ikonunda köşe yuvarlaması giderilir.** Master kutucuğu yuvarlak köşeli;
+  Apple kendi maskesini uyguluyor ve iki yuvarlama üst üste binince köşede açık
+  renk bir hâle kalıyor (CLAUDE_HANDOFF kuralı 3). Köşe, kutucuğun kenar
+  piksellerinin ışınsal uzatılmasıyla doldurulur. Çıktı **alfasız** yazılır;
+  Apple saydam ikon kabul etmiyor.
+- **Android tek renk yüzeyleri** — bildirim küçük ikonu ve Android 13 temalı
+  ikon — işletim sisteminin zorunlu kıldığı **tek istisnadır**: renk taşınamaz,
+  masterdan çıkarılan siluet konur.
+- **Android uyarlanabilir ikon** merkezden en uzak opak piksele göre
+  ölçeklenir. Sınırlayıcı dikdörtgeni %66'ya oturtmak yetmiyordu: "5"in üst
+  kanadı ile alt kâsesi köşelere uzandığı için piksellerin %1,5'i güvenli
+  dairenin dışında kalıyordu.
 
-`assets/brand/png/` içindeki rasterler pakette geldiği gibi durur ama
-**platform ikonları onlardan üretilmez**. İki sebeple: (a) SVG'lerden farklı
-bir çizim taşıyorlar, (b) etraflarında pişmiş beyaz kenar boşluğu ve gölge
-var — uygulama ikonu tam kanar (full-bleed) olmalı, saydamlık ve pişmiş gölge
-kabul edilmez. Paketin kendi belgesi de SVG'leri kaynak ilan ediyor.
+### Üretilen dosyalar
+
+| Dosya | Boy | Nerede |
+|---|---|---|
+| `assets/icon.png` | 1024 | iOS uygulama ikonu, App Store pazarlama ikonu |
+| `assets/adaptive-icon.png` | 1024 | Android ön katman (zemin `#003F32`) |
+| `assets/adaptive-icon-mono.png` | 1024 | Android 13+ temalı ikon |
+| `assets/splash-icon.png` | 1024 | koyu açılış ekranı (altın sembol) |
+| `assets/favicon.png` | 96 | web |
+| `assets/brand/splash-icon-light.png` | 1024 | açık açılış ekranı (zümrüt sembol) |
+| `assets/brand/notification-icon.png` | 512 | Android durum çubuğu |
+| `assets/brand/app-icon-ios-light.png` | 1024 | açık tema ikon karşılığı |
+| `assets/brand/logo-dark/light.png` | 512 | mağaza, tanıtım, büyük marka kullanımı |
+| `assets/brand/symbol-micro-light/dark.png` | 256 | Watch, Dynamic Island, rozet |
 
 ## 4. Duyarlı (responsive) işaret
 
@@ -96,10 +116,10 @@ markanın ölçek kademeleridir.
 
 | Kademe | Dosya | Kullanım |
 |---|---|---|
-| Tam | `BES_AppIcon_Dark/Light.svg` | uygulama ikonu, açılış, mağaza |
-| Saydam | `BES_Symbol_Gold/Emerald.svg` | hero, paylaşım kartı, Pro ekranı |
-| Tek renk | `BES_Symbol_Monochrome_*.svg` | Watch, Dynamic Island, rozet |
-| Bildirim | `BES_Android_Notification_Monochrome.svg` | Android durum çubuğu |
+| Tam | `brand/logo-dark.png`, `brand/logo-light.png` | uygulama ikonu, açılış, mağaza |
+| Saydam | `splash-icon.png`, `brand/splash-icon-light.png` | hero, paylaşım kartı, Pro ekranı |
+| Tek renk | `brand/symbol-micro-light/dark.png` | Watch, Dynamic Island, rozet |
+| Bildirim | `brand/notification-icon.png` | Android durum çubuğu |
 
 Paket kuralı 10: **çok küçük yüzeylerde ayrıntılı cami küçültülmez**, tek
 renk/sadeleşmiş sembol kullanılır. Ölçüldü: 24 piksel ve altında kubbe ile
@@ -148,9 +168,9 @@ jenerik bir mobil uygulamaya çeviriyordu.
 | `gold300` | `#E9D19B` | — | ikon gradyanı |
 | `gold200` | `#FFF9E9` | — | ikon gradyanı (en açık) |
 
-`gold300` ve `gold200` uydurma değildir: verilen `BES_AppIcon_Dark.svg`
-içindeki altın gradyanın duraklarıdır. Arayüzün altını böylece ikonun
-altınıyla birebir aynı olur.
+`gold300` ve `gold200` uydurma değildir: master ikondaki altının açık
+duraklarından okunmuştur. Arayüzün altını böylece ikonun altınıyla aynı
+aileden olur.
 
 **Altın yalnız vurgudur.** Gövde metni asla altın değildir; açık zeminde küçük
 altın metin erişilebilirlik sınamasından geçmez.
@@ -159,10 +179,10 @@ altın metin erişilebilirlik sınamasından geçmez.
 
 ## 6. İslami geometrik desen
 
-Tek bir desen ailesi: **sekiz köşeli yıldız + daire**. Geometri verilen
-`BES_Pattern_Dark/Light.svg` karosundan birebir alınmıştır ve uygulamanın
-`rubElHizb` motifi de artık **aynı karoyu** çizer — daha önce arayüzde iki üst
-üste kare, ikonda sekiz köşeli yıldız vardı ve ikisi birbirini tutmuyordu.
+Tek bir desen ailesi: **sekiz köşeli yıldız + daire**. Bu **logo değildir**:
+rub'ül hizb, İslam sanatının ortak geometrik dilinden gelen bir yüzey
+dokusudur, marka işareti taşımaz ve logonun yerine geçmez. Logo hiçbir koşulda
+kodla çizilmediği için (D17) arayüzde yalnız bu doku üretilir.
 
 - Karo: 96 birim, kusursuz tekrar (seamless)
 - Yıldız çizgisi 1,4 birim · daire çizgisi 1 birim
@@ -189,15 +209,14 @@ assets/
   brand/                     ← VERİLEN PAKET, olduğu gibi
     brand.tokens.json        renk ve ad kaynağı
     docs/CLAUDE_HANDOFF.md   paketin kendi kuralları
-    svg/                     master vektörler
-    png/                     paketin rasterları (referans; ikon üretilmez)
+    png/                     BİTMİŞ MASTER — logonun tek kaynağı
     reference/               görsel referans panosu
-    ── aşağıdakiler gen-brand.js ile paketten üretilir ──
+    ── aşağıdakiler gen-brand.js ile masterdan üretilir ──
     app-icon-ios-light.png   iOS açık varyant
+    logo-dark/light.png      büyük marka kullanımı (512)
     notification-icon.png    Android bildirim rozeti
     splash-icon-light.png    açık tema açılış sembolü
     symbol-micro-dark/light.png
-    pattern-dark/light.png
   icon.png                   iOS + mağaza (köşesiz, saydamlık yok)
   adaptive-icon.png          Android ön katman
   adaptive-icon-mono.png     Android 13+ temalı ikon
@@ -239,12 +258,12 @@ tasarım yapılmaz.
 
 | Yüzey | Gereken hedef | Kullanılacak varlık | Renkler |
 |---|---|---|---|
-| iOS widget | WidgetKit | `brand/pattern-dark.png` zemin + `BES_Symbol_Gold.svg` | zemin `#003F32`, vakit adı `#FDFBF6`, geri sayım `#D6B46A` |
-| Live Activity (kilit ekranı) | ActivityKit | `BES_Symbol_Gold.svg` | zemin `#003F32`, metin `#FDFBF6`, ilerleme `#D6B46A` |
-| Dynamic Island — compact | ActivityKit | `BES_Symbol_Monochrome_White.svg` | sol: sembol, sağ: kalan süre |
-| Dynamic Island — expanded | ActivityKit | `BES_Symbol_Gold.svg` | sembol · vakit adı · saat · geri sayım |
-| Apple Watch | watchOS hedefi | `BES_Symbol_Monochrome_White.svg` | OLED siyah zemin; complication'da cami ayrıntısı gösterilmez |
-| Android widget | AppWidgetProvider | `brand/pattern-dark.png` + `BES_Symbol_Gold.svg` | iOS widget'la aynı |
+| iOS widget | WidgetKit | `splash-icon.png` (altın sembol) | zemin `#003F32`, vakit adı `#FDFBF6`, geri sayım `#D6B46A` |
+| Live Activity (kilit ekranı) | ActivityKit | `splash-icon.png` | zemin `#003F32`, metin `#FDFBF6`, ilerleme `#D6B46A` |
+| Dynamic Island — compact | ActivityKit | `brand/symbol-micro-light.png` | sol: sembol, sağ: kalan süre |
+| Dynamic Island — expanded | ActivityKit | `splash-icon.png` | sembol · vakit adı · saat · geri sayım |
+| Apple Watch | watchOS hedefi | `brand/symbol-micro-light.png` | OLED siyah zemin; complication'da cami ayrıntısı gösterilmez |
+| Android widget | AppWidgetProvider | `splash-icon.png` | iOS widget'la aynı |
 
 Küçük yüzeylerde **tek renk sembol** kullanılır (paket kuralı 10): ayrıntılı
 cami 24 piksel ve altında çamura dönüşüyor.

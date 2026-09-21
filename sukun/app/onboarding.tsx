@@ -6,7 +6,7 @@
  * ve sonradan ayarlardan değiştirilebilir.
  */
 import React, { useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import { router, Stack } from 'expo-router';
 import {
   Screen, Card, Column, Row, Text, Button, ListItem, ProgressBar, Banner, Field, EmptyState, Motif,
@@ -21,6 +21,8 @@ import { useLocationStore } from '@/store/locations';
 import { useSettingsStore } from '@/store/settings';
 import { METHODS } from '@/features/prayer/methods';
 import { markOnboardingDone } from '@/boot/persistence';
+// Logo dosya olarak gelir, kodla çizilmez (D17).
+import logoSembol from '../assets/splash-icon.png';
 
 const TOPLAM = 5;
 
@@ -70,6 +72,14 @@ export default function OnboardingScreen() {
       {adim === 1 ? (
         <Card accent motif="starLattice" padding="xxl">
           <Column gap="md" align="center">
+            {/* Altın sembol zümrüt kartın üstünde durduğu için saydam varyant. */}
+            <Image
+              source={logoSembol}
+              style={{ width: 96, height: 96 }}
+              resizeMode="contain"
+              accessibilityElementsHidden
+              importantForAccessibility="no"
+            />
             <Text variant="display" tone="onAccent">{Brand.appName}</Text>
             <Text variant="body" tone="onAccent" align="center">{t('onboarding.welcomeBody')}</Text>
           </Column>

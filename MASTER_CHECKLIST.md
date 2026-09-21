@@ -194,8 +194,9 @@
 ## FAZ 19b — Marka (BEŞ)
 
 - [x] Marka adı BEŞ, sembol 5; eski ad kullanıcıya görünen her yerden kaldırıldı (D15)
-- [x] Koyu ve açık master logo — **verilen paketten**, birebir aynı yol verileri (sınamayla)
-- [x] Vektör kaynak: `assets/brand/svg/` — paket olduğu gibi, depoda çizim yok
+- [x] Koyu ve açık master logo — **bitmiş master PNG'den** (D17); depoda logo çizilmez
+- [x] Elle çizilmiş `assets/brand/svg/` kaldırıldı; `.svg` dönerse sınama düşüyor
+- [x] Esnetme yok: üretilen ikonun oranı masterınkiyle karşılaştırılıyor
 - [x] Duyarlı işaret: tam / orta / mikro kademe, küçük boy ölçülerek denetlendi
 - [x] iOS ikonu (köşesiz), Android adaptive + monokrom ikon, bildirim rozeti, açılış, favicon
 - [x] Design token'ları merkezi; tema dışında düz renk kodu yasak (sınamayla)

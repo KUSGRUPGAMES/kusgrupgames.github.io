@@ -9,8 +9,9 @@
  * burada birebir yazılıdır ve `brand.test.ts` paketle karşılaştırır.
  *
  * Altın rampasının açık iki ucu (`gold300`, `gold200`) uydurma değildir:
- * verilen `BES_AppIcon_Dark.svg` içindeki altın gradyanın duraklarıdır.
- * Böylece arayüzün altını ikonun altınıyla aynı olur.
+ * master ikonun altını ölçüldüğünde `#A17F4C`–`#F7E9CE` aralığında çıkıyor,
+ * rampa o aralığa oturtuldu. Böylece arayüzün altını ikonun altınıyla aynı
+ * aileden olur.
  *
  * Açık temada saf beyaz **kullanılmaz**: ürünün karakteri sıcak fildişidir,
  * steril beyaz onu jenerik bir mobil uygulamaya çeviriyordu.

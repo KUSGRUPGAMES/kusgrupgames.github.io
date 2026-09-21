@@ -1,5 +1,13 @@
 # BEŞ — Claude Code Asset Handoff
 
+> **OVERRIDE (marka sahibi, D17).** Bu belge SVG dosyalarını kaynak ilan
+> ediyor. Marka sahibi o SVG'lerin onaylanan logonun **elle yapılmış yaklaşık
+> rekonstrüksiyonları** olduğunu ve marka tasarımını bozduğunu bildirdi; on
+> SVG dosyası depodan kaldırıldı. Logonun tek kaynağı `png/` altındaki bitmiş
+> master ikonlardır. Belge, paketin geri kalanı (renkler, ad, kullanım
+> kuralları) hâlâ geçerli olduğu için olduğu gibi duruyor — çatıştığı yerde
+> `../../../DECISIONS.md` D17 kazanır.
+
 ## Non-negotiable brand rule
 - Brand name: **BEŞ**
 - Visual symbol: **5**

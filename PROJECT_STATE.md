@@ -164,7 +164,7 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 | Veritabanı | ✅ `bash sukun/tools/verify-db.sh` — migration + RLS + kapsama |
 | Paketleme | ✅ `npm run bundle` — Metro paketi üretiliyor |
 | Görsel geçiş | ✅ `npm run preview` — 42 ekran + 85 sn'lik gezinme videosu, hepsi çiziyor |
-| Marka varlıkları | ✅ **verilen paket** (`assets/brand/`, D16); `gen-brand.js` yalnız rasterler |
+| Marka varlıkları | ✅ **bitmiş master PNG** (`assets/brand/png/`, D17); `gen-brand.js` kırpar, ölçekler, alfa ayıklar — çizmez |
 | iOS CI | ✅ `sukun-ios.yml` — kalite kapısı + imzasız simulator derlemesi |
 | iOS yayın | ⚙️ `sukun-release-ios.yml` — elle çalışır, TestFlight'a yükler (secret'lara bağlı) |
 | Android CI | ⚙️ `sukun-android.yml` — kalite kapısı + AAB + debug APK |

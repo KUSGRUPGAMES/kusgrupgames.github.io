@@ -24,13 +24,12 @@ export interface MotifTile {
 }
 
 /**
- * Rub'ül hizb — **verilen marka paketinin** deseni.
+ * Rub'ül hizb — arka plan dokusu.
  *
- * Geometri `assets/brand/svg/BES_Pattern_Dark.svg` içindeki karodan birebir
- * alınmıştır (96 birimlik karo; burada istenen boya ölçeklenir). Uygulamanın
- * hero yüzeyleriyle uygulama ikonu böylece aynı motifi taşır — daha önce
- * arayüzde iki üst üste kare, ikonda sekiz köşeli yıldız vardı ve ikisi
- * birbirini tutmuyordu.
+ * Bu **logo değildir**: sekiz köşeli yıldız ve daire, İslam sanatının ortak
+ * geometrik dilinden gelir; markaya ait bir işaret taşımaz. Logo hiçbir
+ * koşulda kodla çizilmez (DECISIONS D17), o yüzden burada yalnız yüzey
+ * dokusu üretilir. Karo 96 birimliktir, istenen boya ölçeklenir.
  */
 function rubElHizb(size: number): MotifTile {
   const k = size / 96;
