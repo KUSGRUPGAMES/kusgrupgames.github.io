@@ -3,15 +3,35 @@
  * Ham değerler burada durur; bileşenler **asla** düz renk kodu yazmaz,
  * her zaman tema üzerinden okur.
  *
- * BEŞ marka paleti. Adlandırılmış renkler **verilen marka paketinden** gelir:
- * `assets/brand/brand.tokens.json`. Ara basamaklar (tema katmanları için
- * gereken açık/koyu tonlar) o beş renkten türetilmiştir; marka renkleri
- * burada birebir yazılıdır ve `brand.test.ts` paketle karşılaştırır.
+ * **Renkler logodan ölçüldü.** Marka paketinin `brand.tokens.json` dosyası
+ * beş "önerilen değer" veriyor (`#003F32`, `#D6B46A` …) ama onaylı logonun
+ * kendisi o değerleri kullanmıyor: zemin düz bir yeşil değil, yukarıdan aşağı
+ * koyulaşan bir gradyan; altın da tek ton değil, açık bir şampanyadan bronza
+ * inen bir rampa. Uygulama düz "önerilen" değerleri kullandığı için logonun
+ * yanında yavan duruyordu. Artık bütün marka renkleri
+ * `assets/brand/png/BES_AppIcon_{Dark,Light}_1024.png` masterlarının
+ * piksellerinden **ölçülerek** alınıyor; `brand.test.ts` her çalıştığında
+ * masterı yeniden ölçüp buradaki değerlerle karşılaştırıyor (D17, D18).
  *
- * Altın rampasının açık iki ucu (`gold300`, `gold200`) uydurma değildir:
- * master ikonun altını ölçüldüğünde `#A17F4C`–`#F7E9CE` aralığında çıkıyor,
- * rampa o aralığa oturtuldu. Böylece arayüzün altını ikonun altınıyla aynı
- * aileden olur.
+ * Ölçüm penceresi masterın iç bölgesi (120–900), sınıflama parlaklıkla:
+ *
+ * | Token | Kaynak | Ölçülen |
+ * |---|---|---|
+ * | `emerald950` | koyu zemin %10 dilimi | `#000D08` |
+ * | `emerald900` | koyu zemin ortancası | `#011D13` |
+ * | `emerald800` | koyu zemin %90 dilimi | `#042B21` |
+ * | `gold500` | altın %5 dilimi | `#A88652` |
+ * | `gold400` | altın ortancası | `#D3B685` |
+ * | `gold300` | altın %70 dilimi | `#E9CFA6` |
+ * | `gold200` | altın %95 dilimi | `#F6E5C8` |
+ * | `ivory50` | açık zemin %90 dilimi | `#FBF6EC` |
+ * | `ivory100` | açık zemin ortancası | `#F6F1E4` |
+ * | `ivory200` | açık zemin %10 dilimi | `#EDE4D3` |
+ * | `ink900` | açık masterdaki figür ortancası | `#011E17` |
+ *
+ * Ara basamaklar (`emerald700`, `emerald600`, `emerald500`, `ivory300`,
+ * `gold600`) ölçülen uçlar arasından türetilmiştir; hepsi WCAG sınamasından
+ * geçer.
  *
  * Açık temada saf beyaz **kullanılmaz**: ürünün karakteri sıcak fildişidir,
  * steril beyaz onu jenerik bir mobil uygulamaya çeviriyordu.
@@ -19,38 +39,47 @@
 
 /** Ham palet. Tema katmanı bunlardan anlamlı rolleri türetir. */
 export const palette = {
-  emerald900: '#003F32',   // paket: deepEmerald — koyu tema zemini, ikon zemini
-  emerald800: '#004A3E',
-  emerald700: '#005343',   // paket: emerald
-  emerald600: '#006451',
-  emerald500: '#0A7A62',
+  // --- Zümrüt: koyu masterın zemin gradyanı.
+  emerald950: '#000D08',   // ölçüm: koyu zemin %10 — gradyanın dibi
+  emerald900: '#011D13',   // ölçüm: koyu zemin ortancası — koyu tema tabanı
+  emerald850: '#03241B',   // türetilmiş: koyu temada kart yüzeyi
+  emerald800: '#042B21',   // ölçüm: koyu zemin %90 — gradyanın tepesi
+  emerald700: '#06382B',   // türetilmiş: yükseltilmiş yüzey
+  emerald600: '#0A4636',   // türetilmiş: marka yüzeyi (hero kart, düğme)
+  emerald500: '#0A5A45',   // türetilmiş: açık temada bağlantı ve ikon (AA)
   emerald400: '#2E9B80',
-  emerald300: '#63BFA6',
+  emerald300: '#63BFA6',   // koyu temada ön plan vurgusu
 
-  gold600: '#8A6A1F',      // açık zeminde okunabilir koyu altın (WCAG)
-  gold500: '#B98E42',      // paket: goldDark
-  gold400: '#D6B46A',      // paket: mutedGold
-  gold300: '#E9D19B',      // ikon gradyanı
-  gold200: '#FFF9E9',      // ikon gradyanı
+  // --- Altın: koyu masterdaki "5"in rampası.
+  gold600: '#8A6A2A',      // türetilmiş: açık zeminde okunabilir koyu altın
+  gold500: '#A88652',      // ölçüm: altın %5 — rampanın koyu ucu
+  gold400: '#D3B685',      // ölçüm: altın ortancası — markanın imza altını
+  gold300: '#E9CFA6',      // ölçüm: altın %70
+  gold200: '#F6E5C8',      // ölçüm: altın %95 — parlama
 
-  ivory50: '#FDFBF6',
-  ivory100: '#F7F3E8',     // paket: warmIvory — açık tema zemini, ikon zemini
-  ivory200: '#EADFC7',     // paket: softBeige
-  ivory300: '#DCCFB2',
+  // --- Fildişi: açık masterın zemini.
+  ivory25: '#FDFAF3',      // türetilmiş: açık temada kart yüzeyi
+  ivory50: '#FBF6EC',      // ölçüm: açık zemin %90 — kartın üst ucu
+  ivory100: '#F6F1E4',     // ölçüm: açık zemin ortancası — açık tema tabanı
+  ivory200: '#EDE4D3',     // ölçüm: açık zemin %10 — gradyanın dibi
+  ivory300: '#DFD4BC',     // türetilmiş: kenarlık ve ayırıcı
 
-  ink900: '#0C1512',
-  ink700: '#24312C',
-  ink500: '#566862',
+  // --- Metin: açık masterdaki figürün koyusu.
+  ink900: '#011E17',       // ölçüm: açık master figür ortancası
+  ink700: '#20302A',
+  ink500: '#4F625B',
   // WCAG AA: üçüncül metin de en az 3:1 olmalı. Eski değer (#8FA29B) ivory
   // zeminde 2.54:1 veriyordu — künye satırı okunmuyordu, kontrast sınaması
-  // yakaladı. Bu değer 3.89:1.
+  // yakaladı. Bu değer fildişi zeminde 3.9:1.
   ink300: '#6E817A',
 
   white: '#FFFFFF',
   black: '#000000',
 
-  danger: '#B4452F',
-  warning: '#B9761F',
+  // Uyarı rampası da fildişi zemine göre koyulaştırıldı: eski `#B9761F`
+  // gradyanın alt durağında (`ivory200`) 2.93:1 veriyordu, eşiğin altında.
+  danger: '#A83F2A',
+  warning: '#A96A17',
   success: '#2E9B80',
 } as const;
 

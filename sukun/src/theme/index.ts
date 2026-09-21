@@ -5,8 +5,14 @@
 import { palette, spacing, radius, opacity, typography, duration, easing } from './tokens';
 
 export interface ThemeColors {
-  /** Ekranın en alt katmanı. */
+  /** Ekranın en alt katmanı (gradyan çizilemeyen yerlerde düz karşılığı). */
   background: string;
+  /**
+   * Ekran zemininin gradyan durakları — **yukarıdan aşağı**, tıpkı logonun
+   * zemini gibi. Uygulama tek düz renk kullandığı için logonun yanında yavan
+   * duruyordu: masterın zemini üstte `#042B21`, altta `#000D08`.
+   */
+  backgroundGradient: readonly [string, string];
   /** Kart ve yüzeyler. */
   surface: string;
   /** Kart üzerindeki ikincil yüzey. */
@@ -29,8 +35,22 @@ export interface ThemeColors {
    * koyu temada hero kartı nane yeşiline dönüyor, marka zümrütü kayboluyordu.
    */
   accentSurface: string;
+  /** Marka yüzeyinin gradyan durakları — ikonun kutucuğuyla aynı iniş. */
+  accentGradient: readonly [string, string];
   /** Marka vurgusu üzerindeki metin. */
   onAccent: string;
+  /**
+   * Marka yüzeyi üzerindeki altın: geri sayım halkası, rozet, sayı.
+   *
+   * `highlight`ten ayrıdır ve iki temada da **aynıdır**, çünkü altın her
+   * zaman zümrüdün üstünde durur — logodaki eşleşmenin ta kendisi. Açık
+   * temada `highlight` fildişi zemine göre koyulaştırılmış altındır; o rengi
+   * zümrüt hero kartına koyunca 2.25:1'e düşüyor ve geri sayım halkası
+   * kayboluyordu.
+   */
+  onAccentHighlight: string;
+  /** Marka yüzeyi üzerindeki ince çizgi (halka yatağı, ayırıcı). */
+  onAccentBorder: string;
   /** Altın vurgu — sayılar, geri sayım, kandil. */
   highlight: string;
   danger: string;
@@ -61,20 +81,26 @@ export const lightTheme: Theme = {
     // (BRAND_GUIDELINES: açık tema fildişidir, steril beyaz değil).
     // Zemin markanın warmIvory'si: açık ikonun zeminiyle birebir aynı renk.
     background: palette.ivory100,
-    surface: palette.ivory50,
+    backgroundGradient: [palette.ivory50, palette.ivory200],
+    surface: palette.ivory25,
     surfaceRaised: palette.ivory200,
-    border: palette.ivory200,
+    border: palette.ivory300,
     text: palette.ink900,
     textMuted: palette.ink500,
     textSubtle: palette.ink300,
-    accent: palette.emerald600,
+    accent: palette.emerald500,
+    // Açık temada bile hero kartı **ikonun koyu zümrüdüdür**: marka orada
+    // görünür. Fildişi sayfa + koyu zümrüt kart + altın sayı = logonun kendisi.
     accentSurface: palette.emerald600,
+    accentGradient: [palette.emerald600, palette.emerald900],
     onAccent: palette.ivory50,
+    onAccentHighlight: palette.gold400,
+    onAccentBorder: 'rgba(251,246,236,0.20)',
     highlight: palette.gold600,
     danger: palette.danger,
     warning: palette.warning,
     success: palette.emerald500,
-    motif: palette.emerald700,
+    motif: palette.emerald600,
   },
   ...shared,
 };
@@ -83,16 +109,20 @@ export const darkTheme: Theme = {
   name: 'dark',
   colors: {
     background: palette.emerald900,
-    surface: palette.emerald800,
+    backgroundGradient: [palette.emerald800, palette.emerald950],
+    surface: palette.emerald850,
     surfaceRaised: palette.emerald700,
     border: 'rgba(255,255,255,0.10)',
     text: palette.ivory50,
-    textMuted: 'rgba(251,248,241,0.68)',
+    textMuted: 'rgba(251,246,236,0.70)',
     // Koyu zeminde 0.44 alfa yükseltilmiş yüzeylerde 3:1'in altına düşüyordu.
-    textSubtle: 'rgba(251,248,241,0.56)',
+    textSubtle: 'rgba(251,246,236,0.58)',
     accent: palette.emerald300,
-    accentSurface: palette.emerald700,
+    accentSurface: palette.emerald600,
+    accentGradient: [palette.emerald600, palette.emerald950],
     onAccent: palette.ivory50,
+    onAccentHighlight: palette.gold400,
+    onAccentBorder: 'rgba(251,246,236,0.18)',
     highlight: palette.gold400,
     danger: '#E0715A',
     warning: '#E0A052',

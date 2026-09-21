@@ -26,6 +26,15 @@ function RootStack() {
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: theme.colors.background },
+          // Yirmi beş ekran kendi başlığını açıyor (`headerShown: true`).
+          // Başlık çubuğu temalanmazsa React Navigation kendi varsayılanını
+          // kullanıyor: koyu temada sayfanın üstünde **bembeyaz** bir şerit
+          // kalıyordu. Renk gradyanın üst durağıdır, böylece başlıkla sayfa
+          // arasında çizgi görünmez (D18).
+          headerStyle: { backgroundColor: theme.colors.backgroundGradient[0] },
+          headerTintColor: theme.colors.text,
+          headerTitleStyle: { color: theme.colors.text },
+          headerShadowVisible: false,
         }}
       >
         <Stack.Screen name="(tabs)" />

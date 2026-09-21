@@ -82,6 +82,11 @@ export default function HomeScreen() {
               {live?.next ? (
                 <CountdownRing
                   progress={live.progress}
+                  // Halka marka kartının üstünde: altın ve yatak zümrüde göre
+                  // seçilir. Açık temanın koyulaştırılmış altını burada
+                  // 2.25:1'e düşüyor ve halka kayboluyordu (D18).
+                  color={theme.colors.onAccentHighlight}
+                  trackColor={theme.colors.onAccentBorder}
                   // 40 puntoluk geri sayım varsayılan 168'lik halkaya
                   // sığmıyor, rakamlar çemberin dışına taşıyordu.
                   size={208}

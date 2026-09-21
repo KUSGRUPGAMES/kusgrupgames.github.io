@@ -99,7 +99,7 @@ korunur (D17).
 | Dosya | Boy | Nerede |
 |---|---|---|
 | `assets/icon.png` | 1024 | iOS uygulama ikonu, App Store pazarlama ikonu |
-| `assets/adaptive-icon.png` | 1024 | Android ön katman (zemin `#003F32`) |
+| `assets/adaptive-icon.png` | 1024 | Android ön katman (zemin `#011D13`) |
 | `assets/adaptive-icon-mono.png` | 1024 | Android 13+ temalı ikon |
 | `assets/splash-icon.png` | 1024 | koyu açılış ekranı (altın sembol) |
 | `assets/favicon.png` | 96 | web |
@@ -129,51 +129,78 @@ minare çamura dönüşüyor.
 
 ## 5. Renkler
 
-Adlandırılmış marka renkleri **paketten** gelir
-(`assets/brand/brand.tokens.json`); `brand.test.ts` ikisini karşılaştırır.
-Ara basamaklar tema katmanları için o renklerden türetilmiştir.
-Ekranlarda düz renk kodu yazılmaz.
+**Renkler logonun kendisinden ölçülür.** Paketin `brand.tokens.json`'u beş
+"önerilen değer" veriyor (`#003F32`, `#D6B46A`, `#F7F3E8` …) ama onaylı logo
+onları kullanmıyor: zemin düz bir yeşil değil, yukarıdan aşağı koyulaşan bir
+gradyan; altın da tek ton değil, açık şampanyadan bronza inen bir rampa.
+Uygulama düz önerilen değerleri kullandığı sürece logonun yanında yavan
+duruyordu — kullanıcı bunu bildirdi ve haklıydı (D18).
 
-### Zümrüt
+Ölçüm penceresi masterın iç bölgesi (120–900 piksel), sınıflama parlaklıkla.
+`brand.test.ts` her çalıştığında masterı yeniden ölçüp paletle karşılaştırır;
+kanal başına 2 birimden fazla sapma sınamayı düşürür.
 
-| Token | HEX | Paket adı | Kullanım |
+### Zümrüt — koyu masterın zemin gradyanı
+
+| Token | HEX | Kaynak | Kullanım |
 |---|---|---|---|
-| `emerald900` | `#003F32` | **deepEmerald** | koyu tema zemini, ikon zemini, açılış |
-| `emerald800` | `#004A3E` | — | koyu tema yüzeyi |
-| `emerald700` | `#005343` | **emerald** | koyu tema yükseltilmiş yüzey |
-| `emerald600` | `#006451` | — | açık temada vurgu |
-| `emerald500` | `#0A7A62` | — | — |
+| `emerald950` | `#000D08` | **ölçüm:** zemin %10 | gradyanın dibi |
+| `emerald900` | `#011D13` | **ölçüm:** zemin ortancası | koyu tema tabanı, açılış, Android maskesi |
+| `emerald850` | `#03241B` | türetilmiş | koyu temada kart yüzeyi |
+| `emerald800` | `#042B21` | **ölçüm:** zemin %90 | gradyanın tepesi, başlık çubuğu |
+| `emerald700` | `#06382B` | türetilmiş | yükseltilmiş yüzey |
+| `emerald600` | `#0A4636` | türetilmiş | marka yüzeyi (hero kart, düğme, bildirim rozeti) |
+| `emerald500` | `#0A5A45` | türetilmiş | açık temada bağlantı ve ikon |
 | `emerald400` | `#2E9B80` | — | başarı |
-| `emerald300` | `#63BFA6` | — | koyu temada vurgu |
+| `emerald300` | `#63BFA6` | — | koyu temada ön plan vurgusu |
 
-### Fildişi
+### Fildişi — açık masterın zemini
 
-| Token | HEX | Paket adı | Kullanım |
+| Token | HEX | Kaynak | Kullanım |
 |---|---|---|---|
-| `ivory50` | `#FDFBF6` | — | açık tema kart yüzeyi |
-| `ivory100` | `#F7F3E8` | **warmIvory** | açık tema zemini, açık ikon zemini |
-| `ivory200` | `#EADFC7` | **softBeige** | kenarlık, yükseltilmiş yüzey |
-| `ivory300` | `#DCCFB2` | — | daha belirgin kenarlık |
+| `ivory25` | `#FDFAF3` | türetilmiş | açık temada kart yüzeyi |
+| `ivory50` | `#FBF6EC` | **ölçüm:** açık zemin %90 | gradyanın tepesi |
+| `ivory100` | `#F6F1E4` | **ölçüm:** açık zemin ortancası | açık tema tabanı, açılış |
+| `ivory200` | `#EDE4D3` | **ölçüm:** açık zemin %10 | gradyanın dibi, yükseltilmiş yüzey |
+| `ivory300` | `#DFD4BC` | türetilmiş | kenarlık ve ayırıcı |
 
 **Saf beyaz (`#FFFFFF`) ana yüzeylerde kullanılmaz.** Steril beyaz ürünü
 jenerik bir mobil uygulamaya çeviriyordu.
 
-### Altın
+### Altın — koyu masterdaki "5"in rampası
 
-| Token | HEX | Paket adı | Kullanım |
+| Token | HEX | Kaynak | Kullanım |
 |---|---|---|---|
-| `gold600` | `#8A6A1F` | — | açık zeminde okunabilir koyu altın (WCAG) |
-| `gold500` | `#B98E42` | **goldDark** | gradyanın koyu ucu |
-| `gold400` | `#D6B46A` | **mutedGold** | koyu temada vurgu |
-| `gold300` | `#E9D19B` | — | ikon gradyanı |
-| `gold200` | `#FFF9E9` | — | ikon gradyanı (en açık) |
-
-`gold300` ve `gold200` uydurma değildir: master ikondaki altının açık
-duraklarından okunmuştur. Arayüzün altını böylece ikonun altınıyla aynı
-aileden olur.
+| `gold600` | `#8A6A2A` | türetilmiş | açık zeminde okunabilir koyu altın (WCAG) |
+| `gold500` | `#A88652` | **ölçüm:** altın %5 | rampanın koyu ucu |
+| `gold400` | `#D3B685` | **ölçüm:** altın ortancası | **markanın imza altını** |
+| `gold300` | `#E9CFA6` | **ölçüm:** altın %70 | açık uç |
+| `gold200` | `#F6E5C8` | **ölçüm:** altın %95 | parlama |
 
 **Altın yalnız vurgudur.** Gövde metni asla altın değildir; açık zeminde küçük
 altın metin erişilebilirlik sınamasından geçmez.
+
+### Metin
+
+`ink900` (`#011E17`) açık masterdaki figürün ortancasıdır: gövde metni
+markanın kendi koyu yeşilidir, nötr bir gri-siyah değil.
+
+### Gradyan ve "marka yüzeyi"
+
+Logonun zemini düz olmadığı için uygulamanınki de düz değil:
+
+| Rol | Açık tema | Koyu tema |
+|---|---|---|
+| `backgroundGradient` | `ivory50` → `ivory200` | `emerald800` → `emerald950` |
+| `accentGradient` | `emerald600` → `emerald900` | `emerald600` → `emerald950` |
+
+**Hero kartı iki temada da ikonun koyu zümrüdüdür.** Açık temada bile: fildişi
+sayfa + koyu zümrüt kart + altın sayı = logonun kendisi.
+
+`onAccentHighlight` (`gold400`) ayrı bir roldür ve **iki temada da aynıdır**,
+çünkü altın her zaman zümrüdün üstünde durur. Açık temanın `highlight`i
+fildişi zemine göre koyulaştırılmış altındır; onu zümrüt karta koyunca
+kontrast 2,25:1'e düşüyor ve geri sayım halkası kayboluyordu.
 
 ---
 
@@ -258,8 +285,8 @@ tasarım yapılmaz.
 
 | Yüzey | Gereken hedef | Kullanılacak varlık | Renkler |
 |---|---|---|---|
-| iOS widget | WidgetKit | `splash-icon.png` (altın sembol) | zemin `#003F32`, vakit adı `#FDFBF6`, geri sayım `#D6B46A` |
-| Live Activity (kilit ekranı) | ActivityKit | `splash-icon.png` | zemin `#003F32`, metin `#FDFBF6`, ilerleme `#D6B46A` |
+| iOS widget | WidgetKit | `splash-icon.png` (altın sembol) | zemin `#011D13`, vakit adı `#FBF6EC`, geri sayım `#D3B685` |
+| Live Activity (kilit ekranı) | ActivityKit | `splash-icon.png` | zemin `#011D13`, metin `#FBF6EC`, ilerleme `#D3B685` |
 | Dynamic Island — compact | ActivityKit | `brand/symbol-micro-light.png` | sol: sembol, sağ: kalan süre |
 | Dynamic Island — expanded | ActivityKit | `splash-icon.png` | sembol · vakit adı · saat · geri sayım |
 | Apple Watch | watchOS hedefi | `brand/symbol-micro-light.png` | OLED siyah zemin; complication'da cami ayrıntısı gösterilmez |

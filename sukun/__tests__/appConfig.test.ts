@@ -17,6 +17,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { palette } from '@/theme/tokens';
 
 const KOK = join(__dirname, '..');
 
@@ -76,13 +77,16 @@ describe('görsel varlıklar', () => {
   it('açılış ekranı iki temada da paketin zeminini kullanıyor', () => {
     const splash = eklenti(exp, 'expo-splash-screen');
     expect(splash).not.toBeNull();
-    // Açık tema: warmIvory zemin + zümrüt sembol.
+    // Açık tema: fildişi zemin + zümrüt sembol. Değer uygulamanın kendi
+    // paletinden gelmeli; yapılandırma ile tema ayrışırsa açılıştan ana
+    // ekrana geçerken renk sıçraması görünür (D18).
     expect(splash?.image).toBe('./assets/brand/splash-icon-light.png');
-    expect(splash?.backgroundColor).toBe('#F7F3E8');
-    // Koyu tema: deepEmerald zemin + altın sembol. Android maskesiyle aynı
-    // renk olmalı, yoksa açılıştan ana ekrana geçerken renk sıçraması olur.
+    expect(splash?.backgroundColor).toBe(palette.ivory100);
+    // Koyu tema: masterın zemin ortancası + altın sembol. Android maskesiyle
+    // aynı renk olmalı.
     const koyu = splash?.dark as { image?: string; backgroundColor?: string } | undefined;
     expect(koyu?.image).toBe('./assets/splash-icon.png');
+    expect(koyu?.backgroundColor).toBe(palette.emerald900);
     expect(koyu?.backgroundColor).toBe(exp.android?.adaptiveIcon?.backgroundColor);
   });
 
@@ -90,7 +94,9 @@ describe('görsel varlıklar', () => {
     // Renkli ikon verilirse durum çubuğunda beyaz bir kare görünür.
     const bildirim = eklenti(exp, 'expo-notifications');
     expect(bildirim?.icon).toBe('./assets/brand/notification-icon.png');
-    expect(bildirim?.color).toBe('#003F32');
+    // Rozet beyaz bildirim zemininde durur; açılış zemini kadar koyu bir
+    // yeşil orada okunmuyor, marka yüzeyi rengi kullanılır.
+    expect(bildirim?.color).toBe(palette.emerald600);
   });
 });
 

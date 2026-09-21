@@ -80,6 +80,53 @@ function gorsel(yol: string): PNG {
 }
 /** Alfası dolu bölge. */
 const alfaKutusu = (yol: string) => kutula(gorsel(yol), (i, d) => (d[i + 3] ?? 0) >= 128);
+/**
+ * Masterın iç bölgesinden bir piksel kümesinin parlaklık yüzdeliği.
+ *
+ * Pencere (120–900) kutucuğun kesinlikle içinde ve yuvarlak köşelerden uzak;
+ * sunum çerçevesine hiç değmiyor. Sınıflama parlaklıkla yapılır, böylece
+ * üreticinin kutucuk bulma mantığı burada tekrarlanmaz.
+ */
+const kumeler = new Map<string, [number, number, number, number][]>();
+
+function kume(dosya: string, ad: string, sec: (r: number, g: number, b: number, L: number) => boolean) {
+  const anahtar = `${dosya}:${ad}`;
+  const hazir = kumeler.get(anahtar);
+  if (hazir) return hazir;
+  const png = PNG.sync.read(readFileSync(join(PAKET, 'png', dosya)));
+  const px: [number, number, number, number][] = [];
+  for (let y = 120; y <= 900; y += 1) {
+    for (let x = 120; x <= 900; x += 1) {
+      const i = (y * png.width + x) * 4;
+      const r = png.data[i] ?? 0; const g = png.data[i + 1] ?? 0; const b = png.data[i + 2] ?? 0;
+      const L = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      if (sec(r, g, b, L)) px.push([L, r, g, b]);
+    }
+  }
+  px.sort((a, b) => a[0] - b[0]);
+  kumeler.set(anahtar, px);
+  return px;
+}
+
+function dilim(dosya: string, ad: string, sec: (r: number, g: number, b: number, L: number) => boolean, f: number): string {
+  const px = kume(dosya, ad, sec);
+  const v = px[Math.min(px.length - 1, Math.floor(px.length * f))] ?? [0, 0, 0, 0];
+  return `#${[v[1], v[2], v[3]].map((c) => c.toString(16).padStart(2, '0')).join('').toUpperCase()}`;
+}
+
+const KOYU_MASTER = 'BES_AppIcon_Dark_1024.png';
+const ACIK_MASTER = 'BES_AppIcon_Light_1024.png';
+const zeminDilimi = (f: number) => dilim(KOYU_MASTER, 'zemin', (_r, _g, _b, L) => L < 70, f);
+const altinDilimi = (f: number) => dilim(KOYU_MASTER, 'altin', (r, _g, b, L) => r - b > 40 && L > 100, f);
+const acikDilimi = (f: number) => dilim(ACIK_MASTER, 'zemin', (_r, _g, _b, L) => L > 170, f);
+const figurDilimi = (f: number) => dilim(ACIK_MASTER, 'figur', (_r, _g, _b, L) => L < 70, f);
+
+/** İki rengin kanal başına en büyük farkı. */
+function fark(a: string, b: string): number {
+  const oku16 = (h: string, i: number) => parseInt(h.slice(1 + i * 2, 3 + i * 2), 16);
+  return Math.max(...[0, 1, 2].map((i) => Math.abs(oku16(a, i) - oku16(b, i))));
+}
+
 /** Altın figür: kâğıt zemin nötr (R−B ≈ 10), altın sıcaktır (R−B > 40). */
 const altinKutusu = (yol: string) => kutula(gorsel(yol), (i, d) => {
   const r = d[i] ?? 0; const g = d[i + 1] ?? 0; const b = d[i + 2] ?? 0;
@@ -284,19 +331,62 @@ describe('marka adı', () => {
 });
 
 describe('renk disiplini', () => {
-  it('paletteki marka renkleri pakettekiyle birebir aynı', () => {
+  it('marka renkleri logonun kendisinden ölçülmüş', () => {
+    // D18: paketin `brand.tokens.json`'u beş "önerilen değer" veriyor ama
+    // onaylı logo onları kullanmıyor — zemin gradyan, altın rampa. Uygulama
+    // düz önerilen değerleri kullandığı için logonun yanında yavan duruyordu.
+    // Bu sınama masterı her çalıştığında yeniden ölçüp paletle karşılaştırır.
     const eslesme: [string, string][] = [
-      ['emerald900', TOKENS.colors.deepEmerald],
-      ['emerald700', TOKENS.colors.emerald],
-      ['ivory100', TOKENS.colors.warmIvory],
-      ['ivory200', TOKENS.colors.softBeige],
-      ['gold400', TOKENS.colors.mutedGold],
-      ['gold500', TOKENS.colors.goldDark],
+      ['emerald950', zeminDilimi(0.1)],
+      ['emerald900', zeminDilimi(0.5)],
+      ['emerald800', zeminDilimi(0.9)],
+      ['gold500', altinDilimi(0.05)],
+      ['gold400', altinDilimi(0.5)],
+      ['gold300', altinDilimi(0.7)],
+      ['gold200', altinDilimi(0.95)],
+      ['ivory50', acikDilimi(0.9)],
+      ['ivory100', acikDilimi(0.5)],
+      ['ivory200', acikDilimi(0.1)],
+      ['ink900', figurDilimi(0.5)],
     ];
-    for (const [token, renk] of eslesme) {
+    for (const [token, olculen] of eslesme) {
       const m = new RegExp(`${token}:\\s*'(#[0-9A-Fa-f]{6})'`).exec(PALET);
-      expect({ token, renk: m?.[1]?.toUpperCase() }).toEqual({ token, renk: renk.toUpperCase() });
+      const yazili = (m?.[1] ?? '').toUpperCase();
+      // Kanal başına 2 birimlik pay: master değişirse fark hemen görünür,
+      // JPEG benzeri yuvarlama gürültüsü ise sınamayı kırmaz.
+      expect({ token, yazili, olculen, uyum: yazili !== '' && fark(yazili, olculen) <= 2 })
+        .toEqual({ token, yazili, olculen, uyum: true });
     }
+  });
+
+  it('paketin önerdiği düz değerler artık kullanılmıyor', () => {
+    // `#003F32` masterın zemin dağılımının en açık ucunda; düz kullanılınca
+    // ikonun yanında açık ve yavan kalıyordu (kullanıcı bunu bildirdi).
+    // Yalnız **değer** konumlarına bakılır; açıklama satırları eski değeri
+    // neden bıraktığımızı anlatmak için anabilir.
+    const degerler = [...PALET.matchAll(/:\s*'(#[0-9A-Fa-f]{6})'/g)].map((m) => (m[1] ?? '').toUpperCase());
+    for (const eski of [TOKENS.colors.deepEmerald, TOKENS.colors.mutedGold, TOKENS.colors.warmIvory]) {
+      expect({ eski, var: degerler.includes(eski.toUpperCase()) }).toEqual({ eski, var: false });
+    }
+  });
+
+  it('zemin gradyanı masterın inişini taşıyor', () => {
+    const tema = oku(join(KOK, 'src/theme/index.ts'));
+    const koyu = tema.slice(tema.indexOf('export const darkTheme'));
+    const acik = tema.slice(tema.indexOf('export const lightTheme'), tema.indexOf('export const darkTheme'));
+    // Üst durak alt duraktan açık olmalı; ters çevrilirse ekran tepeden
+    // aşağı açılıyor ve ikonla ters düşüyor.
+    expect(koyu).toContain('backgroundGradient: [palette.emerald800, palette.emerald950]');
+    expect(acik).toContain('backgroundGradient: [palette.ivory50, palette.ivory200]');
+    // Marka kartı iki temada da ikonun kutucuğu gibi koyulaşır.
+    expect(koyu).toContain('accentGradient: [palette.emerald600, palette.emerald950]');
+    expect(acik).toContain('accentGradient: [palette.emerald600, palette.emerald900]');
+  });
+
+  it('marka yüzeyindeki altın iki temada da aynı — logodaki eşleşme', () => {
+    const tema = oku(join(KOK, 'src/theme/index.ts'));
+    const kez = [...tema.matchAll(/onAccentHighlight:\s*palette\.(\w+)/g)].map((m) => m[1]);
+    expect(kez).toEqual(['gold400', 'gold400']);
   });
 
   it('tema dışında düz renk kodu yazılmıyor', () => {

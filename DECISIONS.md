@@ -387,3 +387,57 @@ klasörü (on dosya) ve ondan türeyen desen PNG'leri depodan kaldırıldı.
 **Arayüzdeki geometrik motif logo değildir.** `src/ui/motif/patterns.ts`
 içindeki sekiz köşeli yıldız ve örgü, İslam sanatının ortak dilinden gelen bir
 yüzey dokusudur; marka işareti taşımaz ve logo yerine geçmez.
+
+## D18 — Uygulamanın renkleri logodan ölçülür
+
+**Karar:** Bütün marka renkleri, paketin "önerilen değerleri" yerine
+`sukun/assets/brand/png/BES_AppIcon_{Dark,Light}_1024.png` masterlarının
+**piksellerinden ölçülerek** alınır. Ekran zemini ve marka kartı düz renk
+değil, logonun kendi inişini taşıyan birer gradyandır.
+
+**Neden:** Kullanıcı bildirdi: *"logonun arka fondaki yeşil rengi çok güzel
+fakat uygulamadaki o kadar iyi değil, daha basit duruyor. Ayrıca logodaki 5
+sayısının rengi de uygulama içindeki arka fon rengi ile uyuşmuyor."* Ölçünce
+ikisi de doğru çıktı:
+
+- Paketin `deepEmerald`i `#003F32`. Masterın zemini ise `#000D08`–`#042B21`
+  arasında bir gradyan, ortancası `#011D13`. Yani uygulama, zengin bir
+  gradyanın **en açık dilimini** alıp bütün ekrana düz sürüyordu.
+- Paketin `mutedGold`u `#D6B46A`; masterın altını `#A88652`–`#F6E5C8`
+  rampası, ortancası `#D3B685`. Uygulamanınki daha sarı ve daha doygundu,
+  logonun şampanya altınıyla yan yana durmuyordu.
+
+**Ne değişti:**
+
+1. Palet ölçülen değerlerle yeniden kuruldu (zümrüt, altın, fildişi, metin).
+   `ink900` bile artık açık masterdaki figürün rengi: gövde metni nötr bir
+   gri-siyah değil, markanın koyu yeşili.
+2. `backgroundGradient` ve `accentGradient` rolleri eklendi; `Screen` ve
+   `Card accent` arkalarına `react-native-svg` ile o inişi çiziyor.
+   (`expo-linear-gradient` yalnız bunun için eklenmedi — motif katmanı zaten
+   aynı motoru kullanıyor.)
+3. **Hero kartı iki temada da ikonun koyu zümrüdü.** Açık temada bile:
+   fildişi sayfa + koyu zümrüt kart + altın sayı = logonun kendisi.
+4. `onAccentHighlight` ve `onAccentBorder` rolleri eklendi. Altın, zümrüdün
+   üstünde iki temada da aynıdır; açık temanın fildişi zemine göre
+   koyulaştırılmış altını (`highlight`) zümrüt kartta 2,25:1'e düşüyor ve
+   geri sayım halkası kayboluyordu.
+5. Üç geri sayım halkası (ana sayfa, zikirmatik, Ramazan) bu rollere geçti.
+   Zikirmatikte ilerleme de yatak da fildişiydi; sayaç ilerlemiyormuş gibi
+   duruyordu.
+6. `app.config.ts` açılış ve Android maske renkleri paletten gelir; sınama
+   ikisinin ayrışmasını yakalıyor (ayrışırlarsa açılıştan ana ekrana geçerken
+   renk sıçraması görünür).
+
+**Yol boyunca çıkan gerçek hata:** Yirmi beş ekran kendi başlığını açıyor
+(`headerShown: true`) ve kök yığın başlığı temalamıyordu. React Navigation
+kendi varsayılanını kullandığı için **koyu temada sayfanın üstünde bembeyaz
+bir şerit** duruyordu. Başlık artık gradyanın üst durağını alıyor;
+`finalAudit.test.ts` hem kökün temalamasını hem de hiçbir ekranın kendi
+başlık rengini yazmamasını denetliyor.
+
+**Sınama:** `brand.test.ts` masterı her çalıştığında yeniden ölçüp on bir
+palet değerini kanal başına 2 birim toleransla karşılaştırıyor ve paketin
+önerdiği düz değerlerin geri dönmediğini denetliyor. `contrast.test.ts` artık
+gradyanın **iki ucunu da** ölçüyor: yalnız ortalama renge bakmak sayfanın
+altındaki koyu/açık ucu gözden kaçırıyordu.

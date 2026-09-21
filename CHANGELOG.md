@@ -4,6 +4,27 @@ Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
 
 ## [Yayınlanmadı] — 0.1.0
 
+### Uygulamanın renkleri logodan ölçüldü (D18)
+
+Kullanıcı bildirdi: logonun yeşili güzel, uygulamanınki yavan; altın da
+uygulamanın zeminiyle uyuşmuyor. Ölçünce ikisi de doğru çıktı — paketin
+"önerilen değerleri" logonun kendi pikselleriyle aynı değil.
+
+- Bütün marka renkleri masterdan **ölçülerek** alındı: zemin `#011D13`
+  (paket `#003F32` diyordu), altın `#D3B685` (paket `#D6B46A`), fildişi
+  `#F6F1E4`, metin `#011E17`.
+- Ekran zemini ve marka kartı artık düz değil, logonun kendi inişini taşıyan
+  birer gradyan (`Gradient` bileşeni, `react-native-svg`).
+- Hero kartı iki temada da ikonun koyu zümrüdü; üstündeki altın
+  (`onAccentHighlight`) iki temada da aynı — logodaki eşleşmenin kendisi.
+- Üç geri sayım halkası bu rollere geçti. Zikirmatikte ilerleme de yatak da
+  fildişiydi, sayaç ilerlemiyormuş gibi duruyordu.
+- **Koyu temada başlık çubuğu bembeyazdı.** Yirmi beş ekran kendi başlığını
+  açıyor ve kök yığın başlığı temalamıyordu; React Navigation varsayılanı
+  devreye giriyordu. Düzeltildi ve sınamaya bağlandı.
+- `contrast.test.ts` artık gradyanın iki ucunu da ölçüyor; `brand.test.ts`
+  masterı her çalıştığında yeniden ölçüp paletle karşılaştırıyor.
+
 ### Logonun kaynağı bitmiş master PNG oldu (D17)
 
 Marka sahibi, pakette gelen `BES_AppIcon_*.svg` / `BES_Symbol_*.svg`

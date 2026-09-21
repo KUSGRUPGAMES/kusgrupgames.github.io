@@ -4,6 +4,7 @@ import { ScrollView, View, type ViewStyle, RefreshControl } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Motif } from './motif/Motif';
+import { Gradient } from './Gradient';
 import type { MotifName } from './motif/patterns';
 import type { Spacing } from '@/theme/tokens';
 
@@ -32,6 +33,8 @@ export function Screen({
   };
   return (
     <View style={[{ flex: 1, backgroundColor: theme.colors.background }, style]}>
+      {/* Zemin logonun kendi inişini taşır; düz renk yavan duruyordu (D18). */}
+      <Gradient colors={theme.colors.backgroundGradient} />
       {motif ? <Motif name={motif} /> : null}
       {scroll ? (
         <ScrollView

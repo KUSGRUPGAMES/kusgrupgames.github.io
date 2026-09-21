@@ -52,47 +52,81 @@ const AA_BUYUK = 3;
 
 const temalar: [string, Theme][] = [['açık', lightTheme], ['koyu', darkTheme]];
 
+/**
+ * Ekran zemini artık düz değil, gradyan (D18). Metin gradyanın **her iki
+ * ucunda** da okunmalı: yalnız ortalama renge bakmak, sayfanın altındaki
+ * koyu/açık ucu gözden kaçırır.
+ */
+const zeminler = (tema: Theme): [string, string][] => [
+  ['background', tema.colors.background],
+  ['gradyan üst', tema.colors.backgroundGradient[0]],
+  ['gradyan alt', tema.colors.backgroundGradient[1]],
+  ['surface', tema.colors.surface],
+  ['surfaceRaised', tema.colors.surfaceRaised],
+];
+
 describe('renk kontrastı', () => {
-  it.each(temalar)('%s tema: birincil metin zeminde AA geçer', (_ad, tema) => {
-    expect(contrast(tema.colors.text, tema.colors.background)).toBeGreaterThanOrEqual(AA_NORMAL);
-    expect(contrast(tema.colors.text, tema.colors.surface)).toBeGreaterThanOrEqual(AA_NORMAL);
-    expect(contrast(tema.colors.text, tema.colors.surfaceRaised)).toBeGreaterThanOrEqual(AA_NORMAL);
+  it.each(temalar)('%s tema: birincil metin her zeminde AA geçer', (_ad, tema) => {
+    for (const [ad, zemin] of zeminler(tema)) {
+      expect({ ad, gecti: contrast(tema.colors.text, zemin) >= AA_NORMAL }).toEqual({ ad, gecti: true });
+    }
   });
 
   it.each(temalar)('%s tema: ikincil metin AA geçer', (_ad, tema) => {
-    expect(contrast(tema.colors.textMuted, tema.colors.background)).toBeGreaterThanOrEqual(AA_NORMAL);
-    expect(contrast(tema.colors.textMuted, tema.colors.surface)).toBeGreaterThanOrEqual(AA_NORMAL);
+    for (const [ad, zemin] of zeminler(tema)) {
+      expect({ ad, gecti: contrast(tema.colors.textMuted, zemin) >= AA_NORMAL }).toEqual({ ad, gecti: true });
+    }
   });
 
   it.each(temalar)('%s tema: marka yüzeyindeki metin AA geçer', (_ad, tema) => {
     // `onAccent` artık `accentSurface` üstünde durur. İkisi ayrıldı: koyu
     // temada ön plan vurgusu AÇIK, dolgu yüzeyi KOYU olmak zorunda.
-    expect(contrast(tema.colors.onAccent, tema.colors.accentSurface)).toBeGreaterThanOrEqual(AA_NORMAL);
+    // Kart da gradyanlı; iki durak da denetlenir.
+    for (const zemin of [tema.colors.accentSurface, ...tema.colors.accentGradient]) {
+      expect({ zemin, gecti: contrast(tema.colors.onAccent, zemin) >= AA_NORMAL })
+        .toEqual({ zemin, gecti: true });
+    }
   });
 
-  it.each(temalar)('%s tema: vurgu rengi zemin ve yüzey üstünde AA geçer', (_ad, tema) => {
+  it.each(temalar)('%s tema: marka yüzeyindeki altın büyük metin eşiğini geçer', (_ad, tema) => {
+    // Geri sayım halkası ve rozet burada duruyor. Açık temanın koyulaştırılmış
+    // altını (`highlight`) zümrüt kartta 2.25:1'e düşüyordu; `onAccentHighlight`
+    // bu yüzden ayrı bir rol ve iki temada da logonun altını.
+    for (const zemin of [tema.colors.accentSurface, ...tema.colors.accentGradient]) {
+      expect({ zemin, gecti: contrast(tema.colors.onAccentHighlight, zemin) >= AA_BUYUK })
+        .toEqual({ zemin, gecti: true });
+    }
+  });
+
+  it.each(temalar)('%s tema: vurgu rengi her zeminde AA geçer', (_ad, tema) => {
     // `accent` bağlantı metni ve ikon rengidir; zeminin üstünde okunmalı.
-    expect(contrast(tema.colors.accent, tema.colors.background)).toBeGreaterThanOrEqual(AA_NORMAL);
-    expect(contrast(tema.colors.accent, tema.colors.surface)).toBeGreaterThanOrEqual(AA_NORMAL);
+    for (const [ad, zemin] of zeminler(tema)) {
+      expect({ ad, gecti: contrast(tema.colors.accent, zemin) >= AA_NORMAL }).toEqual({ ad, gecti: true });
+    }
   });
 
   it.each(temalar)('%s tema: uyarı ve hata renkleri en az büyük metin eşiğini geçer', (_ad, tema) => {
     for (const renk of [tema.colors.danger, tema.colors.warning, tema.colors.success]) {
-      expect(contrast(renk, tema.colors.background)).toBeGreaterThanOrEqual(AA_BUYUK);
-      expect(contrast(renk, tema.colors.surface)).toBeGreaterThanOrEqual(AA_BUYUK);
+      for (const [ad, zemin] of zeminler(tema)) {
+        expect({ renk, ad, gecti: contrast(renk, zemin) >= AA_BUYUK }).toEqual({ renk, ad, gecti: true });
+      }
     }
   });
 
   it.each(temalar)('%s tema: altın vurgu büyük metin eşiğini geçer', (_ad, tema) => {
-    expect(contrast(tema.colors.highlight, tema.colors.background)).toBeGreaterThanOrEqual(AA_BUYUK);
-    expect(contrast(tema.colors.highlight, tema.colors.surface)).toBeGreaterThanOrEqual(AA_BUYUK);
+    for (const [ad, zemin] of zeminler(tema)) {
+      expect({ ad, gecti: contrast(tema.colors.highlight, zemin) >= AA_BUYUK }).toEqual({ ad, gecti: true });
+    }
   });
 
   it('üçüncül metin yalnız büyük/ikincil kullanım için yeterlidir ve bu bilinçlidir', () => {
     // `textSubtle` künye ve ipucu satırlarında kullanılır; AA normal eşiğini
-    // geçmesi beklenmez ama 3:1'in altına düşmemelidir.
+    // geçmesi beklenmez ama 3:1'in altına düşmemelidir — gradyanın iki
+    // ucunda da.
     for (const [, tema] of temalar) {
-      expect(contrast(tema.colors.textSubtle, tema.colors.background)).toBeGreaterThanOrEqual(AA_BUYUK);
+      for (const [ad, zemin] of zeminler(tema)) {
+        expect({ ad, gecti: contrast(tema.colors.textSubtle, zemin) >= AA_BUYUK }).toEqual({ ad, gecti: true });
+      }
     }
   });
 

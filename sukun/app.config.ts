@@ -16,15 +16,26 @@ const suffix: Record<Variant, string> = {
 };
 
 /**
- * Deep Emerald — **verilen marka paketinin** rengi
- * (`assets/brand/brand.tokens.json` → colors.deepEmerald). İkon zemini,
- * açılış ekranı ve Android maskesi aynı değeri kullanır; üçü ayrışırsa
- * açılıştan ana ekrana geçerken renk sıçraması görünür.
+ * Koyu açılış zemini — **logodan ölçülen** değer (D18).
+ *
+ * Paketin `brand.tokens.json`'u burada `#003F32` öneriyor ama logonun kendi
+ * zemini o değil: masterın piksellerinde zemin `#000D08`–`#042B21` arasında
+ * bir gradyan, ortancası `#011D13`. Düz `#003F32` ikonun yanında açık ve
+ * yavan kalıyordu. İkon zemini, açılış ekranı, Android maskesi ve uygulama
+ * teması aynı değeri kullanır (`palette.emerald900`); ayrışırlarsa açılıştan
+ * ana ekrana geçerken renk sıçraması görünür.
  */
-const ZEMIN = '#003F32';
+const ZEMIN = '#011D13';
 
-/** Warm Ivory — açık tema açılış zemini (paket: colors.warmIvory). */
-const ZEMIN_ACIK = '#F7F3E8';
+/** Açık açılış zemini — açık masterın zemin ortancası (`palette.ivory100`). */
+const ZEMIN_ACIK = '#F6F1E4';
+
+/**
+ * Android bildirim rozetinin tint rengi. Rozet beyaz bildirim zemininde
+ * durur; açılış zemini kadar koyu bir yeşil orada okunmuyor, marka yüzeyi
+ * rengi (`palette.emerald600`) kullanılır.
+ */
+const VURGU = '#0A4636';
 
 /**
  * Mağaza, aynı (sürüm, build) çiftini ikinci kez kabul etmez. CI her
@@ -103,7 +114,7 @@ const config: ExpoConfig = {
     // durum çubuğunda beyaz bir kare görünür (paket kuralı 5).
     ['expo-notifications', {
       icon: './assets/brand/notification-icon.png',
-      color: ZEMIN,
+      color: VURGU,
     }],
     // Konum izni yalnız **uygulama açıkken**. expo-location eklentisi kendi
     // İngilizce varsayılanlarıyla üç anahtar birden yazıyor; "Always" izni

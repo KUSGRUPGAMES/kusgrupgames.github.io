@@ -26,5 +26,6 @@ export { ProLock, type ProLockProps } from './ProLock';
 export { ArabicText, type ArabicTextProps } from './ArabicText';
 export { SourceNote, type SourceNoteProps } from './SourceNote';
 export { VirtualList, type VirtualListProps } from './VirtualList';
+export { Gradient, type GradientProps } from './Gradient';
 export { Motif, type MotifProps } from './motif/Motif';
 export { motifTile, MOTIF_NAMES, type MotifName, type MotifTile } from './motif/patterns';

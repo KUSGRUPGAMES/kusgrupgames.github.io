@@ -74,7 +74,11 @@ export default function DhikrScreen() {
             <CountdownRing
               progress={hedef > 0 ? sayac / hedef : 0}
               size={200}
-              color={theme.colors.onAccent}
+              // Yatak `border` iken açık temada fildişi bir çember çiziyordu ve
+              // ilerleme de fildişi olduğu için sayaç hiç ilerlemiyor gibi
+              // duruyordu. Artık logonun altını + saydam yatak (D18).
+              color={theme.colors.onAccentHighlight}
+              trackColor={theme.colors.onAccentBorder}
             >
               <Column align="center" gap="xxs">
                 <Text variant="display" tone="onAccent">{String(sayac)}</Text>

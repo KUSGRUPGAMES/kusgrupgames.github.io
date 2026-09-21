@@ -13,12 +13,14 @@ export interface CountdownRingProps {
   size?: number;
   thickness?: number;
   color?: string;
+  /** Halkanın yatağı. Marka kartının üstünde `onAccentBorder` verilir. */
+  trackColor?: string;
   children?: React.ReactNode;
   accessibilityLabel?: string;
 }
 
 export function CountdownRing({
-  progress, size = 168, thickness = 10, color, children, accessibilityLabel,
+  progress, size = 168, thickness = 10, color, trackColor, children, accessibilityLabel,
 }: CountdownRingProps) {
   const theme = useTheme();
   const v = Number.isFinite(progress) ? Math.min(1, Math.max(0, progress)) : 0;
@@ -31,7 +33,7 @@ export function CountdownRing({
       style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}
     >
       <Svg width={size} height={size} style={{ position: 'absolute' }}>
-        <Circle cx={size / 2} cy={size / 2} r={r} stroke={theme.colors.border} strokeWidth={thickness} fill="none" />
+        <Circle cx={size / 2} cy={size / 2} r={r} stroke={trackColor ?? theme.colors.border} strokeWidth={thickness} fill="none" />
         <Circle
           cx={size / 2}
           cy={size / 2}

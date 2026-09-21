@@ -3,6 +3,7 @@ import React from 'react';
 import { View, Pressable, type ViewStyle, type StyleProp } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Motif } from './motif/Motif';
+import { Gradient } from './Gradient';
 import type { MotifName } from './motif/patterns';
 import type { Spacing, Radius } from '@/theme/tokens';
 
@@ -32,6 +33,8 @@ export function Card({
   };
   const inner = (
     <>
+      {/* Marka kartı ikonun kutucuğu gibi koyulaşır (D18). */}
+      {accent ? <Gradient colors={theme.colors.accentGradient} /> : null}
       {motif ? <Motif name={motif} color={accent ? theme.colors.onAccent : undefined} /> : null}
       {children}
     </>

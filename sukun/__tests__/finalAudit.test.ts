@@ -174,6 +174,35 @@ describe('gezinme iskeleti', () => {
     expect(oncesi.match(/\breturn\b/g) ?? []).toHaveLength(1);
   });
 
+  it('başlık çubuğu temadan renk alıyor', () => {
+    // Yirmi beş ekran `headerShown: true` diyor. Kök yığın başlığı
+    // temalamazsa React Navigation kendi varsayılanını kullanıyor ve koyu
+    // temada sayfanın üstünde bembeyaz bir şerit kalıyordu (D18).
+    const acanlar = uygulamaDosyalari
+      .filter((f) => basename(f) !== '_layout.tsx')
+      .filter((f) => /headerShown:\s*true/.test(oku(f)));
+    expect(acanlar.length).toBeGreaterThan(10);
+    for (const anahtar of ['headerStyle', 'headerTintColor', 'headerTitleStyle']) {
+      expect({ anahtar, var: kok.includes(anahtar) }).toEqual({ anahtar, var: true });
+    }
+    expect(kok).toContain('theme.colors.backgroundGradient[0]');
+    // Hiçbir ekran kendi başına başlık rengi yazmamalı; tek yerden gelir.
+    const suclular = acanlar.filter((f) => /headerStyle|headerTintColor/.test(oku(f)));
+    expect(suclular.map((f) => basename(f))).toEqual([]);
+  });
+
+  it('marka kartındaki halkalar on-accent rollerini kullanıyor', () => {
+    // Üç geri sayım halkası da `<Card accent>` içinde duruyor. İlerleme
+    // `onAccent` (fildişi) verilince açık temada yatak da fildişi kalıyor ve
+    // halka hiç ilerlemiyormuş gibi görünüyordu; ayrıca logonun altın/zümrüt
+    // eşleşmesi kayboluyordu (D18).
+    const suclular = uygulamaDosyalari.filter((f) => {
+      const k = oku(f);
+      return k.includes('<CountdownRing') && /color=\{theme\.colors\.onAccent\}/.test(k);
+    });
+    expect(suclular.map((f) => basename(f))).toEqual([]);
+  });
+
   it('onboarding kapısı bir ekranın içinde duruyor', () => {
     // Kapı kökte değil, kök yığının bir ekranı olan sekme düzenindedir;
     // `Redirect` ancak orada gezinme bağlamı bulur.

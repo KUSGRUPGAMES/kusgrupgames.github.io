@@ -85,7 +85,14 @@ export default function RamadanScreen() {
               yazısının altında "İftara kalan" sayıyordu — kimse oruçlu
               değilken iftar saymak yanlış. */}
           {durum.active && live ? (
-            <CountdownRing progress={live.progress} color={theme.colors.onAccent} size={190}>
+            <CountdownRing
+              progress={live.progress}
+              size={190}
+              // Marka kartının üstündeki halka logonun eşleşmesini taşır:
+              // altın ilerleme, fildişi-saydam yatak (D18).
+              color={theme.colors.onAccentHighlight}
+              trackColor={theme.colors.onAccentBorder}
+            >
               <Column align="center" gap="xxs">
                 <Text variant="caption" tone="onAccent">
                   {iftarGecti ? t('ramadan.imsak') : t('ramadan.iftar')}
