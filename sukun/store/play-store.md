@@ -34,7 +34,10 @@ kıble ve zikri ekler. Play iki alanı da taradığı için hepsi kazanılır.
 BEŞ; ezan vakitlerini, kıble yönünü ve Kur’an-ı Kerim’in tamamını tek bir sade uygulamada toplar. Namaz vakitleri telefonunda güneşin konumundan hesaplanır — bir sunucuya sorulmaz, internet gerektirmez. Uçakta, yurt dışında, hattın çekmediği yerde de doğru çalışır.
 
 ★ HESAP YOK, SUNUCU YOK
-Adınızı, e-postanızı, telefon numaranızı sormuyoruz. Konumunuz, ayarlarınız, ibadet kayıtlarınız, notlarınız ve zikir sayılarınız telefonunuzdan hiç çıkmıyor — bize ulaşmıyor, çünkü onları alacak bir sunucumuz yok. Uygulamayı silerseniz hepsi onunla birlikte gider.
+Adınızı, e-postanızı, telefon numaranızı sormuyoruz. Konumunuz, ayarlarınız, ibadet kayıtlarınız, notlarınız ve zikir sayılarınız telefonunuzdan hiç çıkmıyor — bize ulaşmıyor, çünkü onları alacak bir sunucumuz yok.
+
+YEDEK SİZDE
+Bütün kayıtlarınızı tek bir dosyaya aktarıp yeni telefonunuza taşıyabilirsiniz. Dosya sizde kalır; uygulama onu hiçbir yere göndermez. Uygulamayı silerseniz hepsi onunla birlikte gider.
 
 ★ EZAN VE NAMAZ VAKİTLERİ
 Sıradaki vakte saniye saniye geri sayım. Günün altı vakti tek bakışta, ay boyu vakit takvimi tek ekranda. Her vakit için ayrı bildirim kurabilirsiniz.

@@ -122,6 +122,7 @@
 - [x] Misafir kullanım (§57) — hesap yok; Hesap ekranı verinin nerede durduğunu anlatıyor (D12)
 - [ ] Sign in with Apple / Google / Email (§57)  ⛔B5
 - [~] Cloud sync **v2'ye alındı** (D12): birleştirme motoru hazır ve sınandı, taşıma katmanı v2'de ⛔B5
+- [x] Yerine **yerel yedek** geldi (D19): dışa aktar / geri yükle, iki kip, 16 sınama
 - [x] Çevrimdışı öncelikli birleştirme ve çakışma çözümü (§58) — mezar taşı, kararlı çözüm, sayaç birleştirme; 17 sınama
 - [x] Profil ve ayarlar (§59, §60) — tema, dil, bildirim, kıraat, tanılama, hesap
 - [ ] Hesap silme, veri dışa aktarma, KVKK/GDPR (§69)  ⛔B5

@@ -13,6 +13,7 @@ import { useReadingStore, type Bookmark, type ReadingPosition } from '@/store/re
 import { useWorshipStore, type WorshipSnapshot } from '@/store/worship';
 import { configureCrashReporter, type CrashRecord } from '@/lib/crash/reporter';
 import type { SavedLocation } from '@/features/location/types';
+import type { BackupPayload } from '@/features/backup/backup';
 import { kv } from './storage';
 
 const savedLocationSchema = z.object({
@@ -195,4 +196,43 @@ export async function hydrateAll(): Promise<BootState> {
 
 export async function markOnboardingDone(): Promise<void> {
   await kv.write(KEYS.onboardingDone, true);
+}
+
+/**
+ * Yedek için bütün kullanıcı verisinin anlık kesiti — DECISIONS D19.
+ *
+ * Mağazalardan okunur, depodan değil: depoya yazma abonelikle ve gecikmeli
+ * olduğu için dosyadan okumak "az önce yapılan değişiklik yedeğe girmedi"
+ * hatasına açıktır.
+ */
+export function snapshotAll(): BackupPayload {
+  const konum = useLocationStore.getState();
+  const okuma = useReadingStore.getState();
+  const ibadet = useWorshipStore.getState();
+  return {
+    settings: useSettingsStore.getState().settings,
+    locations: { locations: konum.locations, activeId: konum.activeId },
+    favorites: useFavoriteStore.getState().items,
+    homeLayout: useHomeLayoutStore.getState().cards,
+    reading: { position: okuma.position, bookmarks: okuma.bookmarks },
+    worship: {
+      sessions: ibadet.sessions, khatms: ibadet.khatms, reminders: ibadet.reminders,
+      qada: ibadet.qada, qadaHistory: ibadet.qadaHistory,
+      days: ibadet.days, fasts: ibadet.fasts,
+    },
+  };
+}
+
+/**
+ * Birleştirilmiş kesiti mağazalara yazar; abonelikler depoya kendiliğinden
+ * yazar. Hidrasyon yolunun aynısı kullanılır — geri yükleme için ikinci bir
+ * yazma yolu açmak, iki yolun zamanla ayrışması demektir.
+ */
+export function applySnapshot(payload: BackupPayload): void {
+  useSettingsStore.getState().hydrate(payload.settings);
+  useLocationStore.getState().hydrate(payload.locations.locations, payload.locations.activeId);
+  useFavoriteStore.getState().hydrate(payload.favorites);
+  useHomeLayoutStore.getState().hydrate(payload.homeLayout);
+  useReadingStore.getState().hydrate(payload.reading.position, payload.reading.bookmarks);
+  useWorshipStore.getState().hydrate(payload.worship);
 }

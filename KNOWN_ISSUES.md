@@ -10,7 +10,7 @@ Bilinen eksikler ve engeller. Kapanan madde `CHANGELOG.md`'ye taşınır.
 | B2 | **Tefsir** lisansı yok | §34 Tefsir | Adı belirtilen bir tefsir için lisans |
 | B3 | **Hadis** külliyatı lisansı yok | §23 Günün Hadisi, §52 Hadis kütüphanesi | Lisanslı hadis veri kümesi |
 | ~~B4~~ | ~~Kıraat kayıtları lisansı yok~~ — **çözüldü**: Islamic Network CDN'inden akış, 18 okuyucu (D14) | §32 Kur'an Audio, §33 offline audio | Okuyucu/yapımcı izni |
-| B5 | **Supabase** production projesi yok — **v1'i engellemiyor** (D12); yalnız v2 eşitleme/topluluk/AI için gerekir | §57–59 hesap/sync, §70–72 veritabanı/RLS/admin | Supabase projesi + anahtarlar |
+| B5 | **Supabase** production projesi yok — **v1'i engellemiyor** (D12); yalnız v2 eşitleme/topluluk/AI için gerekir. Kayıt taşıma ihtiyacı yerel yedekle karşılandı (D19) | §57–59 hesap/sync, §70–72 veritabanı/RLS/admin | Supabase projesi + anahtarlar |
 | B6 | **Apple Developer** hesabı bu ortamda yok | §18 Live Activities, §19 iOS widget, §67 StoreKit | Apple hesabı + sertifika + ürün tanımları |
 | B7 | **Google Play** ürünleri tanımlı değil | §67 abonelik | Play Console'da abonelik ürünleri |
 | B8 | **AI sağlayıcı anahtarı** yok | §56 AI asistan | LLM API anahtarı + vektör deposu |

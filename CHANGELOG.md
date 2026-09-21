@@ -4,6 +4,28 @@ Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
 
 ## [Yayınlanmadı] — 0.1.0
 
+### Yerel yedek: dışa aktar ve geri yükle (D19)
+
+Cihazlar arası eşitlemenin arkasındaki gerçek ihtiyaç — kaydı kaybetmemek ve
+yeni telefona taşımak — sunucu istemiyor. Hesap ekranına yedek dosyası eklendi.
+
+- Konumlar, yer imleri, favoriler, zikir oturumları, kaza sayaçları ve
+  geçmişi, ibadet defteri, oruç kaydı, hatimler, hatırlatıcılar ve ayarlar
+  tek bir JSON dosyasına yazılıyor; dosya sistemin paylaşım tepsisine
+  veriliyor, uygulama hiçbir yere göndermiyor.
+- Geri yüklemede iki kip: **Birleştir** (hiçbir kayıt silinmez) ve
+  **Yedeği yerine koy**. Hatimde okunan cüzler birleşir, ibadet defteri gün
+  gün birleşir, favorinin ilk eklenme anı korunur.
+- Kaza sayaçları ve ayarlar ancak cihaz boşken yedekten alınır; doluysa
+  cihazınki korunur ve bu ekranda söylenir. Sebebi D19'da yazılı: sayaçların
+  ortak atası yok, birleştirmek sessizce yanlış sonuç verir.
+- Bozuk dosya, başka uygulamanın dosyası ve **daha yeni sürümden gelen yedek**
+  ayrı ayrı reddediliyor; sonuncusunda kullanıcıya uygulamayı güncellemesi
+  söyleniyor.
+- **Olmayan özelliği vaat eden metin düzeltildi:** `profile.guestBody`
+  "hesap açarsan cihazlar arasında eşitlenir" diyordu; hesap da eşitleme de
+  yok.
+
 ### Uygulamanın renkleri logodan ölçüldü (D18)
 
 Kullanıcı bildirdi: logonun yeşili güzel, uygulamanınki yavan; altın da

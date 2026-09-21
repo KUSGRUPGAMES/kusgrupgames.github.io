@@ -62,6 +62,9 @@ BEŞ; ezan vakitlerini, kıble yönünü ve Kur’an-ı Kerim’in tamamını te
 HESAP YOK, SUNUCU YOK
 Adınızı, e-postanızı, telefon numaranızı sormuyoruz. Konumunuz, ayarlarınız, ibadet kayıtlarınız, notlarınız ve zikir sayılarınız telefonunuzdan hiç çıkmıyor — bize ulaşmıyor, çünkü onları alacak bir sunucumuz yok.
 
+YEDEK SİZDE
+Bütün kayıtlarınızı tek bir dosyaya aktarıp yeni telefonunuza taşıyabilirsiniz. Dosya sizde kalır; uygulama onu hiçbir yere göndermez.
+
 SIRADAKİ VAKTE GERİ SAYIM
 Bir sonraki vaktin adı, saati ve kalan süre saniye saniye görünür. Günün altı vakti tek bakışta, ay boyunca vakit takvimi tek ekranda.
 

@@ -441,3 +441,50 @@ palet değerini kanal başına 2 birim toleransla karşılaştırıyor ve paketi
 önerdiği düz değerlerin geri dönmediğini denetliyor. `contrast.test.ts` artık
 gradyanın **iki ucunu da** ölçüyor: yalnız ortalama renge bakmak sayfanın
 altındaki koyu/açık ucu gözden kaçırıyordu.
+
+## D19 — "Eşitleme" yerine yerel yedek dosyası
+
+**Karar:** Cihazlar arası eşitleme v1'de yok ve v2'ye erteleniyor (D12). Onun
+yerine kullanıcıya **yedek dosyası** verildi: Hesap ekranından bütün kişisel
+kaydı tek bir JSON dosyasına aktarabiliyor ve başka bir cihazda geri
+yükleyebiliyor. Dosya hiçbir yere gönderilmiyor; sistemin paylaşım tepsisine
+veriliyor, nereye koyacağına kullanıcı karar veriyor.
+
+**Neden:** "Eşitleme istiyorum" cümlesinin arkasındaki gerçek ihtiyaç ikisi —
+*kayıtlarımı kaybetmeyeyim* ve *yeni telefona taşıyayım*. İkisi de sunucu
+istemez. Sunucu istemek ise hesap, kimlik doğrulama ve kişisel verinin
+cihazdan çıkması demek; ürünün en güçlü tarafını (hiçbir şeyin cihazdan
+çıkmaması, "Veri Toplanmıyor" gizlilik etiketi) kendi elimizle bozardık.
+Gerçek çok cihazlı eşitleme — iki telefonu sürekli aynı tutmak — hâlâ v2'de ve
+hâlâ Supabase istiyor.
+
+**Birleştirme kuralları** (`src/features/backup/backup.ts`, saf ve Node'da
+sınanabilir; dosya işleri `file.ts` içinde):
+
+| Veri | Kural | Neden |
+|---|---|---|
+| Konum, yer imi, zikir oturumu, hatırlatıcı | kimlik birliği, daha yeni kazanır | hiçbir kayıt kaybolmaz |
+| Favori | kimlik birliği, **ilk** eklenme anı korunur | "3 yıldır favorimde" bilgisi değerlidir |
+| Hatim | okunan cüzler **birleşir** | son yazan kazanırsa okunmuş cüz silinir |
+| İbadet defteri | gün gün birleşir; namaz kaydı korunur, Kur'an dakikası ikisinin büyüğü, boş not yedekten dolar | bir cihazdaki kayıt yutulmaz |
+| Kaza sayacı, ayarlar, ana sayfa düzeni | cihaz **boşsa** yedekten, doluysa cihazınki | aşağıda |
+
+**Sayaçlar neden birleştirilmiyor.** Kaza sayacının ortak atası yok: iki
+telefonda da kaza kılınmışsa "topla" da "en büyüğü al" da yanlış sonuç verir.
+`qadaHistory` bir günlük ama 200 kayıtla sınırlı ve `setQada` oraya yazmıyor,
+yani sayacı geçmişten yeniden hesaplamak da güvenli değil. Bu yüzden kural
+açık tutuldu: cihaz hiç kullanılmamışsa (sayaçlar sıfır, geçmiş boş, oturum
+yok, defter boş, yer imi yok) yedekten alınır — *yeni telefon* durumu budur.
+Cihazda veri varsa cihazınki korunur ve kullanıcıya ekranda böyle söylenir.
+Tam kontrol isteyen için ikinci kip var: **"Yedeği yerine koy"** her şeyi
+yedekten yazar.
+
+**Reddedilen dosyalar ayrı ayrı anlatılır:** bozuk JSON, başka uygulamanın
+dosyası, şemaya uymayan içerik ve **daha yeni bir sürümden gelen yedek**.
+Sonuncusu önemli: bilmediğimiz alanları olan bir yedeği yarım uygulamak
+sessiz veri kaybıdır; kullanıcıya "önce uygulamayı güncelle" denir.
+
+**Yol boyunca çıkan hata:** `profile.guestBody` metni "hesap açarsan
+favorilerin ve ilerlemen cihazlar arasında eşitlenir" diyordu. Hesap da
+eşitleme de yok; olmayan bir özelliği vaat etmek hem yanlış hem de mağaza
+incelemesinde ret sebebi. Metin gerçeği söyleyecek biçimde düzeltildi.
