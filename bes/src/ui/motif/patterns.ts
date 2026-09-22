@@ -1,14 +1,28 @@
 /**
  * Geometrik motif dili — şartname §9.
  *
- * Kural: motifler **soyut geometridir**. Hiçbir canlı figürü, hiçbir insan
- * yüzü, hiçbir Kâbe/cami fotoğrafı kullanılmaz; İslam sanatının kendi
- * dili olan çokgen örgü (girih), sekizli yıldız (rub'ül hizb), sekizgen
- * petek ve kemer hattı ile sınırlıdır. Hepsi düşük opaklıkta, arka planda
+ * Kural: motifler **soyut geometridir**. Hiçbir canlı figür, hiçbir insan
+ * yüzü, hiçbir Kâbe/cami fotoğrafı kullanılmaz; İslam sanatının kendi dili
+ * olan çokgen örgü (girih), sekiz köşeli yıldız (rub'ül hizb), sekizgen
+ * döşeme ve mihrap kemeri ile sınırlıdır. Hepsi düşük opaklıkta arka planda
  * kalır; okunabilirliği asla düşürmez.
  *
- * Her desen tek bir "karo" üretir; karo SVG `<Pattern>` ile döşenir.
- * Yollar birim kare (0..size) içinde tanımlıdır, ölçek dışarıdan verilir.
+ * ## Bu dosya bir kez baştan yazıldı — sebebi önemli
+ *
+ * İlk sürümde `rubElHizb` karosu **altı köşeli** bir yıldız çiziyordu: köşe
+ * listesinde 12 nokta vardı, yani 6 dış uç. Bir namaz uygulamasının arka
+ * planında tekrar eden altı köşeli yıldız Davud yıldızı olarak okunur.
+ * Sınama da yanlıştı — koordinatları ezberleyip hatayı kilitlemişti. Artık
+ * sınama **geometriyi** denetliyor: sekiz uç sayılıyor.
+ *
+ * İkinci sorun biçimseldi. Desenler "kareye damgalanmış tek tek şekiller"di;
+ * İslam bezemesi böyle çalışmaz — süreklidir, örgüdür, karo sınırında kesilip
+ * komşu karoda devam eder. Karolar artık **kenar eşlemeli** kuruluyor: motif
+ * karenin merkezine ve dört köşesine birden yerleştiriliyor, böylece
+ * `<pattern>` karoyu kırptığında komşu karo eksik parçayı tamamlıyor.
+ * Koordinatların karo dışına taşması bu yüzden **doğrudur**, hata değil.
+ *
+ * Her desen tek bir karo üretir; karo SVG `<Pattern>` ile döşenir.
  */
 
 export type MotifName = 'rubElHizb' | 'girih' | 'octagonGrid' | 'arch' | 'starLattice' | 'plain';
@@ -23,90 +37,147 @@ export interface MotifTile {
   strokeWidth: number;
 }
 
+const n = (v: number) => v.toFixed(2);
+const kapali = (pts: [number, number][]) => `M${pts.map(([x, y]) => `${n(x)},${n(y)}`).join('L')}Z`;
+
 /**
- * Rub'ül hizb — arka plan dokusu.
+ * Sekiz köşeli yıldız — rub'ül hizb işaretinin geometrisi: **üst üste binmiş
+ * iki kare**, biri 45° döndürülmüş. Sekiz ucun hepsi merkezden eşit uzaklıkta.
  *
- * Bu **logo değildir**: sekiz köşeli yıldız ve daire, İslam sanatının ortak
- * geometrik dilinden gelir; markaya ait bir işaret taşımaz. Logo hiçbir
- * koşulda kodla çizilmez (DECISIONS D17), o yüzden burada yalnız yüzey
- * dokusu üretilir. Karo 96 birimliktir, istenen boya ölçeklenir.
+ * İki kare olarak çizilir, tek bir zikzak çokgen olarak değil: örgü etkisi
+ * kenarların birbirini kesmesinden doğar, İslam bezemesini bezeme yapan da
+ * budur. Tek çokgen çizmek yıldızı bir "damga"ya çevirir.
+ */
+function yildizYollari(cx: number, cy: number, r: number): string[] {
+  const a = r / Math.SQRT2;                     // eksenel karenin yarı kenarı
+  const kare: [number, number][] = [[cx - a, cy - a], [cx + a, cy - a], [cx + a, cy + a], [cx - a, cy + a]];
+  const elmas: [number, number][] = [[cx, cy - r], [cx + r, cy], [cx, cy + r], [cx - r, cy]];
+  return [kapali(kare), kapali(elmas)];
+}
+
+/** Düzgün çokgen; daire yerine kullanılır (yay komutu `A` bilerek yok). */
+function cokgen(cx: number, cy: number, r: number, kenar: number, faz = 0): string {
+  const pts: [number, number][] = Array.from({ length: kenar }, (_, i) => {
+    const t = faz + (2 * Math.PI * i) / kenar;
+    return [cx + r * Math.cos(t), cy + r * Math.sin(t)];
+  });
+  return kapali(pts);
+}
+
+/** Motifi karonun merkezine ve dört köşesine koyar — kenar eşlemeli döşeme. */
+function orgu(size: number, ciz: (cx: number, cy: number) => string[]): string[] {
+  const merkezler: [number, number][] = [
+    [size / 2, size / 2], [0, 0], [size, 0], [0, size], [size, size],
+  ];
+  return merkezler.flatMap(([x, y]) => ciz(x, y));
+}
+
+/**
+ * Rub'ül hizb — Kur'an'da hizb bölümlerini gösteren ۞ işaretinin geometrisi.
+ *
+ * Bu **logo değildir**: sekiz köşeli yıldız ve daire İslam sanatının ortak
+ * dilinden gelir, markaya ait bir işaret taşımaz. Logo hiçbir koşulda kodla
+ * çizilmez (DECISIONS D17); burada yalnız yüzey dokusu üretilir.
  */
 function rubElHizb(size: number): MotifTile {
-  const k = size / 96;
-  const o = (n: number) => (n * k).toFixed(2);
-  const yildiz = `M${o(48)} ${o(4)} ${o(62)} ${o(24)} ${o(88)} ${o(24)} ${o(72)} ${o(44)} `
-    + `${o(80)} ${o(70)} ${o(56)} ${o(62)} ${o(48)} ${o(88)} ${o(40)} ${o(62)} `
-    + `${o(16)} ${o(70)} ${o(24)} ${o(44)} ${o(8)} ${o(24)} ${o(34)} ${o(24)}Z`;
-  // Karodaki daire. Yay (`A`) komutu **kullanılmaz**: karo sınaması yolların
-  // karo dışına taşmadığını sayıları okuyarak denetliyor ve göreli yay
-  // deltaları (negatif sayılar) o denetimi yanlış yere düşürüyor. Bu ölçekte
-  // 24 kenarlı çokgen daireden ayırt edilmez.
-  const cx = 48 * k, cy = 48 * k, r = 25 * k;
-  const kenar = 24;
-  const daire = `M${Array.from({ length: kenar }, (_, i) => {
-    const a = (2 * Math.PI * i) / kenar;
-    return `${(cx + r * Math.cos(a)).toFixed(2)},${(cy + r * Math.sin(a)).toFixed(2)}`;
-  }).join('L')}Z`;
-  return { size, paths: [yildiz, daire], fill: false, strokeWidth: 1.4 * k };
+  const r = size * 0.34;
+  return {
+    size,
+    paths: orgu(size, (cx, cy) => [...yildizYollari(cx, cy, r), cokgen(cx, cy, r * 0.34, 24)]),
+    fill: false,
+    strokeWidth: Math.max(0.6, size * 0.014),
+  };
 }
 
-/** Girih örgüsü — köşegen kesişimler, sürekli desen. */
+/**
+ * Girih örgüsü — sekizgen/kare döşemesinin (4.8.8) üstüne oturan sekiz köşeli
+ * yıldız. Sekizgen komşularıyla kenar paylaşır, köşelerde kalan boşluğu 45°
+ * döndürülmüş kare doldurur: düzlemde boşluk kalmaz, örgü sürer.
+ */
 function girih(size: number): MotifTile {
-  const s = size;
-  const h = s / 2;
-  const q = s / 4;
+  const t = size / (1 + Math.SQRT2);            // sekizgenin kenarı
+  const R = t / (2 * Math.sin(Math.PI / 8));    // çevrel yarıçap
+  const kareR = t / Math.SQRT2;                 // köşe karesinin çevrel yarıçapı
+  const c = size / 2;
+  const kose: [number, number][] = [[0, 0], [size, 0], [0, size], [size, size]];
   return {
-    size: s,
+    size,
     paths: [
-      `M0,${h} L${q},${q} L${h},0 L${s - q},${q} L${s},${h} L${s - q},${s - q} L${h},${s} L${q},${s - q} Z`,
-      `M${q},${q} L${s - q},${s - q}`,
-      `M${s - q},${q} L${q},${s - q}`,
+      cokgen(c, c, R, 8, Math.PI / 8),
+      ...yildizYollari(c, c, R * 0.72),
+      ...kose.map(([x, y]) => cokgen(x, y, kareR, 4, Math.PI / 4)),
     ],
     fill: false,
-    strokeWidth: 1,
+    strokeWidth: Math.max(0.6, size * 0.012),
   };
 }
 
-/** Sekizgen petek — geniş yüzeylerde sakin doku. */
+/**
+ * Sekizgen döşeme — kesik kare döşemesi (4.8.8), geniş yüzeylerde sakin doku.
+ * Yıldız yok; yalnız sekizgen ve köşe karesi. Zeminin kendisi okunurluğu
+ * bozmadan dolu görünsün diye.
+ */
 function octagonGrid(size: number): MotifTile {
-  const s = size;
-  const k = s * 0.2929; // 1 - cos(45°) oranı: düzgün sekizgen köşesi
+  const t = size / (1 + Math.SQRT2);
+  const R = t / (2 * Math.sin(Math.PI / 8));
+  const kareR = t / Math.SQRT2;
+  const kose: [number, number][] = [[0, 0], [size, 0], [0, size], [size, size]];
   return {
-    size: s,
-    paths: [`M${k},0 L${s - k},0 L${s},${k} L${s},${s - k} L${s - k},${s} L${k},${s} L0,${s - k} L0,${k} Z`],
+    size,
+    paths: [
+      cokgen(size / 2, size / 2, R, 8, Math.PI / 8),
+      ...kose.map(([x, y]) => cokgen(x, y, kareR, 4, Math.PI / 4)),
+    ],
     fill: false,
-    strokeWidth: 1,
+    strokeWidth: Math.max(0.6, size * 0.012),
   };
 }
 
-/** Sivri kemer sırası — mihrap/ revak hattı. */
+/**
+ * Mihrap/revak hattı — sivri kemer dizisi.
+ *
+ * Kemerler **sürekli bir impost hattından** doğar ve karo kenarında yarım
+ * sütunla kesilir; komşu karo öbür yarısını getirir, revak kesintisiz akar.
+ * Önceki sürümde kemerler havada duruyor, aralarında boşluk kalıyordu.
+ */
 function arch(size: number): MotifTile {
   const s = size;
-  const w = s * 0.5;
-  const x0 = s * 0.25;
-  const top = s * 0.18;
+  const taban = s * 0.94;                       // impost hattı
+  const tepe = s * 0.10;                        // kemerin tepesi
+  const omuz = s * 0.55;                        // kemerin doğduğu yükseklik
+  // **Kemer sivridir, yuvarlak değil.** Bir kez yuvarlak çıktı: denetim
+  // noktası tepeyle aynı yükseklikteydi (`Q0,tepe → s/2,tepe`), bu da tepede
+  // teğeti yatay bırakıp kemeri yarım daireye çeviriyordu. Denetim noktası
+  // tepenin **altına** indirilince iki yarım tepede sivri uçla birleşiyor.
+  const denetim = tepe + (omuz - tepe) * 0.42;
+  const yariSutun = (x: number) => `M${n(x)},${n(taban)}L${n(x)},${n(omuz)}`;
+  const kemer = `M0.00,${n(omuz)}Q0.00,${n(denetim)} ${n(s / 2)},${n(tepe)}`
+    + `Q${n(s)},${n(denetim)} ${n(s)},${n(omuz)}`;
   return {
-    size: s,
+    size,
     paths: [
-      `M${x0},${s} L${x0},${s * 0.55} Q${x0},${top} ${x0 + w / 2},${top} Q${x0 + w},${top} ${x0 + w},${s * 0.55} L${x0 + w},${s}`,
+      `M0.00,${n(taban)}L${n(s)},${n(taban)}`,  // sürekli taban hattı
+      kemer,
+      yariSutun(0), yariSutun(s),
     ],
     fill: false,
-    strokeWidth: 1.2,
+    strokeWidth: Math.max(0.6, size * 0.014),
   };
 }
 
-/** Yıldız kafes — sekiz kollu yıldızın kafes hâli, kart başlıklarında. */
+/**
+ * Yıldız kafesi — khatam: sekiz köşeli yıldızlar hem karo merkezinde hem dört
+ * köşesinde, uçları birbirine değecek sıklıkta. Kart başlıklarında kullanılır.
+ * Daire yok, yalnız örgü; rub'ül hizb'den farkı budur.
+ */
 function starLattice(size: number): MotifTile {
-  const c = size / 2;
-  const outer = size * 0.46;
-  const inner = size * 0.19;
-  const pts: string[] = [];
-  for (let i = 0; i < 16; i++) {
-    const a = (Math.PI / 8) * i - Math.PI / 2;
-    const r = i % 2 === 0 ? outer : inner;
-    pts.push(`${(c + r * Math.cos(a)).toFixed(2)},${(c + r * Math.sin(a)).toFixed(2)}`);
-  }
-  return { size, paths: [`M${pts.join('L')}Z`], fill: false, strokeWidth: 1 };
+  const r = size * 0.35;
+  return {
+    size,
+    paths: orgu(size, (cx, cy) => yildizYollari(cx, cy, r)),
+    fill: false,
+    strokeWidth: Math.max(0.6, size * 0.012),
+  };
 }
 
 const BUILDERS: Record<Exclude<MotifName, 'plain'>, (size: number) => MotifTile> = {

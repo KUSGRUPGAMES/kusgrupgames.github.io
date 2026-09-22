@@ -188,22 +188,35 @@ export function buildCardSvg(options: BuildCardOptions): string {
     '</svg>';
 }
 
-/** Düşük opaklıkta sekizli yıldız örgüsü (§9). */
+/**
+ * Düşük opaklıkta sekiz köşeli yıldız örgüsü (§9) — uygulamanın kendi
+ * `rubElHizb` motifiyle aynı geometri: üst üste binmiş iki kare.
+ *
+ * Yıldız karonun **merkezine ve dört köşesine** birden konur. Önceki sürümde
+ * yalnız merkezde duruyordu ve desen "kareye damgalanmış tek tek yıldızlar"
+ * gibi okunuyordu; İslam bezemesi süreklidir, karo sınırında kesilip komşu
+ * karoda devam eder.
+ */
 function motifTanimi(renk: string, width: number, height: number): string {
   const karo = 120;
-  const c = karo / 2;
   const r = karo * 0.34;
-  const kare = (rot: number) => {
+  const kare = (cx: number, cy: number, rot: number) => {
     const pts: string[] = [];
     for (let i = 0; i < 4; i++) {
       const a = rot + (Math.PI / 2) * i;
-      pts.push(`${(c + r * Math.cos(a)).toFixed(1)},${(c + r * Math.sin(a)).toFixed(1)}`);
+      pts.push(`${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`);
     }
     return `M${pts.join('L')}Z`;
   };
-  return `<defs><pattern id="motif" width="${karo}" height="${karo}" patternUnits="userSpaceOnUse">` +
-    `<path d="${kare(0)}" fill="none" stroke="${renk}" stroke-width="1.4"/>` +
-    `<path d="${kare(Math.PI / 4)}" fill="none" stroke="${renk}" stroke-width="1.4"/>` +
-    `</pattern></defs>` +
-    `<rect width="${width}" height="${height}" fill="url(#motif)" opacity="0.07"/>`;
+  const merkezler: [number, number][] = [
+    [karo / 2, karo / 2], [0, 0], [karo, 0], [0, karo], [karo, karo],
+  ];
+  const yollar = merkezler
+    .flatMap(([cx, cy]) => [kare(cx, cy, Math.PI / 4), kare(cx, cy, 0)])
+    .map((d) => `<path d="${d}" fill="none" stroke="${renk}" stroke-width="1.4"/>`)
+    .join('');
+  return `<defs><pattern id="motif" width="${karo}" height="${karo}" patternUnits="userSpaceOnUse">`
+    + yollar
+    + `</pattern></defs>`
+    + `<rect width="${width}" height="${height}" fill="url(#motif)" opacity="0.07"/>`;
 }
