@@ -1,5 +1,6 @@
 /** Kur'an araması — şartname §35, §78. */
 import React, { useMemo, useState } from 'react';
+import { View } from 'react-native';
 import { router, Stack } from 'expo-router';
 import {
   Screen, Field, Card, Column, Row, Text, ArabicText, Badge, Segmented, EmptyState, SourceNote,
@@ -41,13 +42,17 @@ export default function QuranSearchScreen() {
     <Screen scroll motif="girih">
       <Stack.Screen options={{ headerShown: true, title: t('common.search') }} />
 
+      {/* Etiket "Arapça metinde ara" diyordu ama hemen altındaki seçici
+          mealde de aramaya izin veriyor; ikisi birbiriyle çelişiyordu. */}
       <Field
-        label={t('quran.searchArabic')}
+        label={t('quran.searchField')}
         hint={t('quran.searchHint')}
         value={sorgu}
         onChangeText={setSorgu}
         autoCorrect={false}
       />
+
+      <View style={{ height: theme.spacing.md }} />
 
       <Segmented
         options={[
@@ -62,7 +67,7 @@ export default function QuranSearchScreen() {
 
       {sorgu.trim().length >= 2 ? (
         sonuclar.length === 0 ? (
-          <EmptyState icon="search" title={t('quran.noResults')} description={t('quran.searchHint')} />
+          <EmptyState icon="search" title={t('quran.noResults')} description={t('quran.searchNoResultBody')} />
         ) : (
           <Column gap="md" style={{ marginTop: theme.spacing.md }}>
             <Text variant="caption" tone="muted">{t('quran.searchResults', { count: sonuclar.length })}</Text>

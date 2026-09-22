@@ -189,6 +189,8 @@ export const tr = {
   'quran.juzNo': '{n}. cüz',
   'quran.pageNo': '{n}. sayfa',
   'quran.searchArabic': 'Arapça metinde ara',
+  'quran.searchField': 'Kur’an’da ara',
+  'quran.searchNoResultBody': 'Harekesiz yazmayı ya da daha kısa bir sözcük denemeyi dene.',
   'quran.searchHint': 'Harekesiz yazabilirsin',
   'quran.searchOnlyArabic': 'Arama şimdilik yalnız Arapça metinde çalışıyor. Meal araması, meal lisansı tamamlandığında eklenecek.',
   'quran.searchResults': '{count} sonuç',

@@ -71,6 +71,10 @@ numarası sütunuyla karışıyor, Arapçada sözcük ortadan bölünüyordu
 tam ad sığıyor. Sınama artık çevrilmiş metnin karakter sayısıyla
 kısaltılmasını yasaklıyor.
 
+**Kur’an arama ekranı kendisiyle çelişiyordu:** alan etiketi "Arapça metinde
+ara" diyordu ama hemen altındaki seçici mealde aramaya da izin veriyor.
+Etiket "Kur’an’da ara" oldu, seçici de kendi başlığıyla ayrıldı.
+
 **Kesme işareti iki türlüydü.** Sure listesinde dokuz ad düz kesme kullanıyordu
 (`En'âm`, `A'râf`, `Sebe'` …) ama arayüzün geri kalanı tipografik kesmeyi
 (`Kur’an`, `Esmâü’l-Hüsnâ`, `Ümmü’l-Kurâ`). Aynı listede iki farklı işaret
