@@ -167,7 +167,7 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 | Marka varlıkları | ✅ **bitmiş master PNG** (`assets/brand/png/`, D17); `gen-brand.js` kırpar, ölçekler, alfa ayıklar — çizmez |
 | Renk paleti | ✅ masterın piksellerinden **ölçülüyor** (D18); zemin ve marka kartı gradyanlı, iki tema da ayarlı |
 | Veri taşıma | ✅ **yerel yedek** (D19): dışa aktar / geri yükle; bulut eşitleme hâlâ v2 |
-| Dil | ✅ arayüzün **tamamı** beş dilde (538 anahtar × 5, sınamaya bağlı); uzun içerik Türkçe (T5) |
+| Dil | ✅ arayüzün **tamamı** beş dilde (573 anahtar × 5, sınamaya bağlı); uzun içerik Türkçe (T5) |
 | Mağaza varlıkları | ✅ `store/screenshots/` — iki mağazanın istediği bütün boyutlar (`npm run store:shots`) |
 | Gizlilik | ✅ reklam yok, izleyici yok, analitik yok, hesap yok; iddialar sınamaya bağlı |
 | iOS CI | ✅ `sukun-ios.yml` — kalite kapısı + imzasız simulator derlemesi |

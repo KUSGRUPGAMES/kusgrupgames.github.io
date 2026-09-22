@@ -16,7 +16,7 @@ namaz rehberi, Hac ve Umre rehberi, 43 maddelik bilgi kütüphanesi, arama,
 paylaşım kartı ve yerel yedek.
 
 **Beş dil:** arayüzün tamamı Türkçe, İngilizce, Arapça, Almanca ve
-Fransızca (538 anahtar × 5). Kur'an meali ve bilgi yazıları Türkçedir.
+Fransızca (573 anahtar × 5). Kur'an meali ve bilgi yazıları Türkçedir.
 
 **Gizlilik:** hesap yok, sunucu yok, reklam yok, izleyici yok, analitik yok.
 Kişisel veri cihazdan çıkmıyor. İki mağaza formunda da "veri toplanmıyor".
@@ -25,7 +25,8 @@ Kişisel veri cihazdan çıkmıyor. İki mağaza formunda da "veri toplanmıyor"
 
 - Mağaza metinleri ve yasal sayfalar uygulamada bulunmayan reklam ve Pro
   aboneliğini anlatıyordu — hepsi gerçeğe göre yeniden yazıldı.
-- Dört dilde çeviri kapsamı %12'ydi; %100'e çıkarıldı ve sınamaya bağlandı.
+- Dört dilde çeviri kapsamı %12'ydi (573 anahtardan 63'ü); %100'e çıkarıldı ve
+  sınamaya bağlandı — yeni bir anahtar dört dile de yazılmadan kapı geçmiyor.
 - İbadet defterindeki seçici dar ekranda üst üste biniyordu.
 - Koyu temada gezinme başlığı bembeyaz kalıyordu.
 - Mağaza ekran görüntüleri ve öne çıkan görsel üretildi (`npm run store:shots`).
