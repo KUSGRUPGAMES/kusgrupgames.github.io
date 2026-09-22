@@ -11,11 +11,16 @@
 | Klasör | `sukun/` |
 | Sürüm | 1.0.0 (ilk üretim sürümü hedefi: 1.0.0) |
 | Teknoloji | Expo SDK 54 · React Native 0.81.5 · React 19 · TypeScript (strict) · expo-router 6 |
-| Backend | Supabase (PostgreSQL + Auth + Storage + Edge Functions + RLS) |
+| Backend | **v1'de yok** — uygulama tamamen cihazda çalışır (D12). Supabase şeması yazılı ama v1 onu kullanmıyor; v2 eşitleme/topluluk için hazır bekliyor (B5) |
 
 ## Mevcut faz
 
-**FAZ 10 — Hesap ve eşitleme** (FAZ 0–9 tamamlandı)
+**Yayın hazırlığı tamamlandı — v1.0.0 mağazaya verilmeye hazır.**
+
+Kalan iş insan/hesap eylemidir: Apple Developer ve Play Console'a yükleme,
+iki konsolun gizlilik formu, ve `RELEASE_CHECKLIST.md` §5'teki beş kullanıcı
+yolculuğunun **gerçek cihazda** bir kez daha geçilmesi (pusula donanımı,
+Dynamic Type ölçeği ve RTL aynalama bu kapsayıcıda denenemiyor — E3).
 
 ## Tamamlanan
 
