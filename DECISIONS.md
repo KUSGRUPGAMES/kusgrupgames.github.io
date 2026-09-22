@@ -569,3 +569,57 @@ kaydı, iki gizlilik sayfası, iki destek kutusu ve iki bakım hattı demek.
 âyette geçiyor ve BEŞ'in `bes/src/**` yorumlarında ürün adı olarak anılıyordu.
 Âyet metnine dokunulmadı; yalnız yorumlardaki ürün atıfları yeniden yazıldı.
 Kör bir toplu değiştirme dinî metni bozardı.
+
+---
+
+## D23 — Paket kimliği kalıbı: `com.kusgrupgames.<ürün>`
+
+**Karar:** Yayıncı adı **KUS GRUP GAMES**, tek kaynağı `bes/src/config/brand.json`
+içindeki `publisher` alanı. Paket kimliği kalıbı `com.kusgrupgames.<ürün>`.
+Beş üründe birden uygulandı:
+
+| Ürün | Eski | Yeni |
+|---|---|---|
+| bes | `com.kusgrup.bes` | `com.kusgrupgames.bes` |
+| slot | `com.kusgrup.slot` | `com.kusgrupgames.slot` |
+| latch | `com.kusgrup.latch` | `com.kusgrupgames.latch` |
+| orbita | `com.kusgrup.orbita` | `com.kusgrupgames.orbita` |
+| lull | `com.kusgrup.lull` | `com.kusgrupgames.lull` |
+
+**Neden:** `com.kusgrup.` öneki "games"i düşüren bir **kısaltmaydı** ve depodaki
+diğer her kimlikle çelişiyordu — GitHub organizasyonu `KUSGRUPGAMES`, Pages
+adresi `kusgrupgames.github.io`, e-posta `kusgrupgames@gmail.com`. Ürün sahibi
+kuralı açıkça koydu: profil KUS GRUP GAMES, kafaya göre kısaltma yok. Kimlik
+birden çok biçimde yazıldığında mağaza kaydı, AdMob kaydı ve derin bağlantı
+birbirini tutmuyor; hangisinin doğru olduğu da belli olmuyor.
+
+**Neden şimdi yapılabildi:** hiçbir ürün yayınlanmadı. Paket kimliği ilk
+yayından sonra **değiştirilemez** — bir gün gecikse bu düzeltme imkânsız
+olurdu. D21'in "kimliği değiştirmek imzayı ve kurulu uygulamaları kırar"
+gerekçesi aynı sebeple burada da geçerli değil.
+
+**Kısaltmama kuralı sınamaya bağlandı.** `brand.test.ts` yayıncı adını tek
+kaynaktan okuyup paket kimliğini, destek e-postasını ve site adresini ondan
+**türeterek** karşılaştırıyor; biri elle kısaltılırsa sınama kırmızı yanar.
+
+**Tarih silinmedi:** D21 ve `CHANGELOG.md` içindeki eski kimlik kayıtları
+olduğu gibi duruyor.
+
+---
+
+## D24 — Gizlilik ve koşullar bağlantıları uygulamadan açılır
+
+**Karar:** Profil ve Hesap ekranlarındaki "Gizlilik" ve "Kullanım koşulları"
+satırları `src/lib/legal.ts` üzerinden sistem tarayıcısını açar. Adresler
+`brand.json`'daki `privacyUrl` / `termsUrl` alanlarından gelir.
+
+**Neden:** Bu satırlar `chevron` ile çiziliyor ama `onPress` almıyordu.
+`ListItem`, `onPress` yoksa dokunulabilir olmayan düz bir `View` döndürüyor —
+yani ok işareti "dokun" diyor, dokunulunca **hiçbir şey olmuyordu**. Üç satır
+birden ölüydü ve `brand.json`'daki iki adres alanını uygulamada hiçbir dosya
+okumuyordu. Apple gizlilik bağlantısının çalışmasını açıkça şart koşar; bu
+hâliyle App Review'dan dönerdi.
+
+**Sınama:** `brand.test.ts` iki şeyi birden denetliyor — bu iki satırın
+`openLegalPage` çağırdığını, ve genel kural olarak `chevron` taşıyan hiçbir
+`ListItem`'ın `onPress`siz kalmadığını (`chevron={false}` muaf).

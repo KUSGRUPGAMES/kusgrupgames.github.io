@@ -20,7 +20,7 @@ otomatik yazar. macOS gerektirir. Depo kokundeki iOS is akisi da bunu kullanir.
 
 ## 2. Xcode → App hedefi → General
 - **Display Name:** `Orbita`
-- **Bundle Identifier:** `com.kusgrup.orbita`
+- **Bundle Identifier:** `com.kusgrupgames.orbita`
 - **Version:** `1.0.0` · **Build:** `1`
 - **Supported Destinations:** yalnız **iPhone** (iPad'i kaldır — yoksa App Store iPad ekran görüntüsü ister)
 - **Device Orientation:** yalnız **Portrait**

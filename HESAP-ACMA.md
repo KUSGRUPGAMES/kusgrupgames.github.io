@@ -13,6 +13,29 @@ davetlerini mümkün olan en erken günde başlat.
 > ama bu **yayına değil, paranın hesabına geçmesine** engeldir. Yayın öncesi
 > yapılacak iş PIN beklemek değil, **ödeme profilini tamamlamaktır**.
 
+## Yayıncı kimliği — her üç konsolda da aynı
+
+| | |
+|---|---|
+| Yayıncı adı | **KUS GRUP GAMES** |
+| Paket kimliği kalıbı | `com.kusgrupgames.<ürün>` |
+| E-posta | `kusgrupgames@gmail.com` |
+| Site | `https://kusgrupgames.github.io/<ürün>` |
+
+Kısaltma yok: `com.kusgrup.` biçimi bir kez yazıldı, "games" düşüyordu ve
+diğer kimliklerle çelişiyordu (DECISIONS D23). Paket kimliği yayından sonra
+**değiştirilemez**; konsola girmeden önce bu tablodan kopyala.
+
+> **Şahıs hesabında yayıncı adı kendiliğinden KUS GRUP GAMES olmaz.**
+> - **Play Console:** geliştirici adını sen yazıyorsun — kayıt sırasında
+>   doğrudan `KUS GRUP GAMES` gir.
+> - **App Store:** "Individual" üyelikte Apple **yasal adını** gösterir.
+>   `KUS GRUP GAMES` yazması için üyelik onaylandıktan sonra App Store
+>   Connect → **Business** → *Legal Entity Name* alanından ad değişikliği
+>   talebi açman gerekir. Bunu kayıt gününde başlat; sonradan hatırlamak zor.
+
+---
+
 ## Başlamadan önce masada olsun
 
 - [ ] Kimlik (kendin için, kimseye göndermeden — sadece doğrulama ekranına)
@@ -40,9 +63,9 @@ davetlerini mümkün olan en erken günde başlat.
 
 | Oyun | Android app | iOS app | Reklam birimleri |
 |---|---|---|---|
-| Slot | com.kusgrup.slot | com.kusgrup.slot | Interstitial + Rewarded |
-| Latch | com.kusgrup.latch | com.kusgrup.latch | Interstitial + Rewarded |
-| Orbita | com.kusgrup.orbita | com.kusgrup.orbita | Interstitial + Rewarded |
+| Slot | com.kusgrupgames.slot | com.kusgrupgames.slot | Interstitial + Rewarded |
+| Latch | com.kusgrupgames.latch | com.kusgrupgames.latch | Interstitial + Rewarded |
+| Orbita | com.kusgrupgames.orbita | com.kusgrupgames.orbita | Interstitial + Rewarded |
 
 > Uygulamalar henüz mağazada olmadığı için "Hayır, yayında değil" seçeneğini işaretle.
 > Her uygulama için **App ID** + **Interstitial ID** + **Rewarded ID** üretilecek:

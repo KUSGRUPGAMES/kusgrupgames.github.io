@@ -4,9 +4,9 @@ Play Console → Ana mağaza girişi.
 
 > **Kimlik** — konsolda birebir bu değerler girilir:
 > uygulama adı **BEŞ** · yayıncı **KUS GRUP GAMES** ·
-> paket kimliği `com.kusgrup.bes` · destek `kusgrupgames@gmail.com` ·
+> paket kimliği `com.kusgrupgames.bes` · destek `kusgrupgames@gmail.com` ·
 > site `https://kusgrupgames.github.io/bes`.
-> Paket kimliği yayından sonra değiştirilemez (DECISIONS D21).
+> Paket kimliği yayından sonra değiştirilemez (DECISIONS D23).
 
 
 > **App Store'dan farkı:** Play'de **ayrı anahtar kelime alanı yoktur**.

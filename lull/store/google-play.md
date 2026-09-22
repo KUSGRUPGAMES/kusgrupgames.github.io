@@ -1,6 +1,6 @@
 # Google Play — mağaza girişi (kopyala-yapıştır)
 
-Paket: `com.kusgrup.lull` · Sürüm 1.0.0 (versionCode 1) · Kategori: **Sağlık ve Fitness**
+Paket: `com.kusgrupgames.lull` · Sürüm 1.0.0 (versionCode 1) · Kategori: **Sağlık ve Fitness**
 İçerik derecelendirmesi: **3+** · Reklam içerir: **Hayır** · Uygulama içi satın alma: **Hayır**
 
 ## Uygulama adı (max 30)

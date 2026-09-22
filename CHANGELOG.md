@@ -7,7 +7,7 @@ Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
 İlk mağaza sürümü. Hesapsız, sunucusuz, **tamamen ücretsiz ve reklamsız**
 çalışan bir namaz vakti ve Kur'an uygulaması.
 
-**Kapsam:** altı vakit ve aylık takvim (yedi hesaplama yöntemi, vakit başına
+**Kapsam:** beş vakit ve güneş doğuşu, aylık takvim (yedi hesaplama yöntemi, vakit başına
 dakika düzeltmesi), kıble pusulası, Kur'an-ı Kerim'in tamamı (Tanzil metni +
 Elmalılı meali, 18 okuyucunun kıraati, çevrimdışı indirme), zikirmatik,
 kaza takibi, ibadet defteri, oruç ve hatim takibi, zekât ve fitre hesabı,
@@ -20,6 +20,37 @@ Fransızca (573 anahtar × 5). Kur'an meali ve bilgi yazıları Türkçedir.
 
 **Gizlilik:** hesap yok, sunucu yok, reklam yok, izleyici yok, analitik yok.
 Kişisel veri cihazdan çıkmıyor. İki mağaza formunda da "veri toplanmıyor".
+
+### Kimlik: KUS GRUP GAMES (D23)
+
+Paket kimliği kalıbı `com.kusgrup.<ürün>` → **`com.kusgrupgames.<ürün>`**, beş
+üründe birden. Eski önek "games"i düşüren bir kısaltmaydı ve GitHub
+organizasyonu (`KUSGRUPGAMES`), Pages adresi ve e-posta ile çelişiyordu.
+Hiçbir ürün yayınlanmadığı için hâlâ değiştirilebiliyordu; ilk yayından sonra
+imkânsız olurdu.
+
+Yayıncı adı artık `bes/src/config/brand.json` içinde tek kaynakta
+(`publisher: "KUS GRUP GAMES"`) ve uygulamanın Hakkında kartında görünüyor.
+Sınama paket kimliğini, destek e-postasını ve site adresini bu addan
+**türeterek** karşılaştırıyor — biri elle kısaltılırsa kapı geçmiyor.
+
+### Gizlilik bağlantısı çalışmıyordu (D24)
+
+Profil ve Hesap ekranlarındaki "Gizlilik" ve "Kullanım koşulları" satırları ok
+işareti gösteriyor ama **hiçbir şey yapmıyordu**: `ListItem`, `onPress`
+verilmediğinde dokunulabilir olmayan düz bir `View` döndürüyor. `brand.json`
+içindeki iki adres alanını uygulamada hiçbir dosya okumuyordu. Apple gizlilik
+bağlantısının açılmasını şart koşar; bu hâliyle App Review'dan dönerdi.
+Satırlar `src/lib/legal.ts` üzerinden sistem tarayıcısını açıyor ve "ok işareti
+varsa dokunulabilir olmalı" kuralı tüm ekranlarda sınamaya bağlandı.
+
+### Mağaza kareleri ve "altı vakit"
+
+Kareler yeniden tasarlandı; cihaz artık karenin alt kenarından taşıyor.
+Önceki düzende ana sayfadaki "Hicrî takvim" kartı telefonun içinde yazının
+ortasından kesiliyordu. Mağaza metinlerinde ve karelerde "altı vakit" ifadesi
+**"beş vakit ve güneş doğuşu"** oldu: uygulamanın adı BEŞ, namaz beş vakit
+bilinir, güneş doğuşu bir namaz vakti değildir.
 
 ### Bu sürümde kapatılan yayın engelleri
 

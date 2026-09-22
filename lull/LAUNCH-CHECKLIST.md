@@ -146,7 +146,7 @@ native hazırlık betikleri bu bayrakları okuyup izinleri ve SDK anahtarların�
 - [ ] AAB yükle → Kapalı test → sonra Üretim
 
 ### App Store
-- [ ] App Store Connect → Yeni uygulama → bundle id `com.kusgrup.lull`
+- [ ] App Store Connect → Yeni uygulama → bundle id `com.kusgrupgames.lull`
 - [ ] Metinler: `store/app-store.md`
 - [ ] Ekran görüntüleri: `assets/screenshots/ios69-*.png` (6.9") veya `ios65-*.png` (6.5") — App Store Connect hangi slotu gösteriyorsa
 - [ ] App Privacy: `store/app-privacy.md`

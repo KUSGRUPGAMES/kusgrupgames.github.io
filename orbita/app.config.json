@@ -4,7 +4,7 @@
   "appName": "Orbita",
   "version": "1.0.1",
   "versionCode": 1,
-  "bundleId": "com.kusgrup.orbita",
+  "bundleId": "com.kusgrupgames.orbita",
   "supportEmail": "kusgrupgames@gmail.com",
   "pagesBaseUrl": "https://kusgrupgames.github.io/orbita",
   "iap": {

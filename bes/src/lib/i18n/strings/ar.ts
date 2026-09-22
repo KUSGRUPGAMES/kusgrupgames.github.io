@@ -155,7 +155,7 @@ export const ar: Partial<Record<StringKey, string>> = {
   'settings.languageRestart': 'أعد تشغيل التطبيق ليتغيّر اتجاه الكتابة.',
   'settings.notifications': 'الإشعارات', 'settings.sound': 'الصوت',
   'settings.vibration': 'الاهتزاز', 'settings.about': 'حول', 'settings.privacy': 'الخصوصية',
-  'settings.terms': 'شروط الاستخدام', 'settings.version': 'الإصدار',
+  'settings.terms': 'شروط الاستخدام', 'settings.publisher': 'الناشر', 'settings.version': 'الإصدار',
 
   'pro.title': 'برو', 'pro.unlock': 'يُفتح مع برو', 'pro.monthly': 'شهري',
   'pro.yearly': 'سنوي', 'pro.restore': 'استعادة المشتريات', 'pro.manage': 'إدارة الاشتراك',

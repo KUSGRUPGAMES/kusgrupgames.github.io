@@ -1,14 +1,15 @@
 {
   "appName": "BEŞ",
   "storeName": "BEŞ – Ezan & Namaz Vakitleri",
+  "publisher": "KUS GRUP GAMES",
   "tagline": "5 Vakit, Daima Yanında.",
   "supportEmail": "kusgrupgames@gmail.com",
   "website": "https://kusgrupgames.github.io/bes",
   "privacyUrl": "https://kusgrupgames.github.io/bes/privacy.html",
   "termsUrl": "https://kusgrupgames.github.io/bes/terms.html",
   "bundleId": {
-    "ios": "com.kusgrup.bes",
-    "android": "com.kusgrup.bes"
+    "ios": "com.kusgrupgames.bes",
+    "android": "com.kusgrupgames.bes"
   },
   "version": "1.0.0"
 }

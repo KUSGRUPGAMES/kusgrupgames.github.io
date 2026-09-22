@@ -155,7 +155,7 @@ export const fr: Partial<Record<StringKey, string>> = {
   'settings.languageRestart': "Redémarrez l'application pour changer le sens d'écriture.",
   'settings.notifications': 'Notifications', 'settings.sound': 'Son',
   'settings.vibration': 'Vibration', 'settings.about': 'À propos', 'settings.privacy': 'Confidentialité',
-  'settings.terms': "Conditions d'utilisation", 'settings.version': 'Version',
+  'settings.terms': "Conditions d'utilisation", 'settings.publisher': 'Éditeur', 'settings.version': 'Version',
 
   'pro.title': 'Pro', 'pro.unlock': 'Débloqué avec Pro', 'pro.monthly': 'Mensuel',
   'pro.yearly': 'Annuel', 'pro.restore': 'Restaurer les achats', 'pro.manage': "Gérer l'abonnement",

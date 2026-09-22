@@ -139,12 +139,12 @@ describe('ortam ayrımı', () => {
     const uretim = URETIM;
     const gelistirme = cozumle('development');
 
-    expect(uretim.ios?.bundleIdentifier).toBe('com.kusgrup.bes');
-    expect(uretim.android?.package).toBe('com.kusgrup.bes');
+    expect(uretim.ios?.bundleIdentifier).toBe('com.kusgrupgames.bes');
+    expect(uretim.android?.package).toBe('com.kusgrupgames.bes');
     expect(uretim.name).toBe('BEŞ');
 
     // Aynı telefonda yan yana durabilsinler.
-    expect(gelistirme.ios?.bundleIdentifier).toBe('com.kusgrup.bes.dev');
+    expect(gelistirme.ios?.bundleIdentifier).toBe('com.kusgrupgames.bes.dev');
     expect(gelistirme.name).toContain('dev');
   });
 });

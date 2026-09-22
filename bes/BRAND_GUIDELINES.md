@@ -22,7 +22,7 @@ Bir renk, ölçü ya da kullanım ne pakette ne burada yazıyorsa uydurulmaz.
 
 `Ş` harfi hiçbir yüzeyde bozulmamalıdır. Bunu `direction.test.ts` denetler.
 
-**Kimlik:** paket kimliği `com.kusgrup.bes`, Pages adresi
+**Kimlik:** paket kimliği `com.kusgrupgames.bes`, Pages adresi
 `https://kusgrupgames.github.io/bes`, derin bağlantı şeması `bes://`.
 Yayıncı adı **KUS GRUP GAMES**. Geçici geliştirme adı (`sukun`) depodan
 tamamen kalktı; gerekçe ve zamanlaması DECISIONS D21'de.

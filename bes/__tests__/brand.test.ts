@@ -32,7 +32,7 @@ const TOKENS = JSON.parse(oku(join(PAKET, 'brand.tokens.json'))) as {
 };
 
 const BRAND = JSON.parse(oku(join(KOK, 'src/config/brand.json'))) as {
-  appName: string; storeName: string; tagline: string;
+  appName: string; storeName: string; publisher: string; tagline: string;
   supportEmail: string; website: string; privacyUrl: string; termsUrl: string;
   bundleId: { ios: string; android: string };
   version: string;
@@ -324,11 +324,65 @@ describe('marka adı', () => {
   });
 
   it('paket kimliği ürünün kendi adı üzerinden ve iki platformda aynı', () => {
-    // D21: geçici geliştirme adı (`sukun`) depodan tamamen kalktı. Kardeş
-    // ürünlerin kalıbı: `com.kusgrup.<ürün>`. Kimlik yayınlandıktan sonra
-    // **değiştirilemez**, bu yüzden sabit yazılıp sınamaya bağlandı.
-    expect(BRAND.bundleId.ios).toBe('com.kusgrup.bes');
+    // D21: geçici geliştirme adı (`sukun`) depodan tamamen kalktı.
+    // D23: kalıp `com.kusgrupgames.<ürün>` — yayıncı **KUS GRUP GAMES**, eski
+    // `com.kusgrup.` öneki "games"i düşüren bir kısaltmaydı ve depodaki her
+    // kimlikle (kusgrupgames.github.io, kusgrupgames@gmail.com) çelişiyordu.
+    // Kimlik yayınlandıktan sonra **değiştirilemez**, bu yüzden sabit yazılıp
+    // sınamaya bağlandı.
+    expect(BRAND.bundleId.ios).toBe('com.kusgrupgames.bes');
     expect(BRAND.bundleId.android).toBe(BRAND.bundleId.ios);
+  });
+
+  it('yayıncı adı kısaltılmamış ve tek kaynakta', () => {
+    // Kullanıcının kuralı: profil **KUS GRUP GAMES**, kafaya göre kısaltma
+    // yok. Paket kimliği bir kez `com.kusgrup.bes` yazıldı — "games" düşmüştü
+    // ve depodaki her kimlikle (kusgrupgames.github.io, kusgrupgames@gmail.com)
+    // çelişiyordu. Yayıncı adı artık brand.json'da tek yerde duruyor.
+    expect(BRAND.publisher).toBe('KUS GRUP GAMES');
+    const ek = BRAND.publisher.toLowerCase().replace(/ /g, '');   // kusgrupgames
+    expect(BRAND.bundleId.ios).toBe(`com.${ek}.bes`);
+    expect(BRAND.supportEmail.startsWith(`${ek}@`)).toBe(true);
+    expect(BRAND.website).toContain(`${ek}.github.io`);
+  });
+
+  it('yayıncı adı gizlilik sayfalarında ve mağaza metinlerinde geçiyor', () => {
+    // İki konsol da yayıncıyı soruyor; gizlilik sayfasında yazmazsa kimin
+    // sorumlu olduğu belirsiz kalıyor ve App Review bunu sorar.
+    for (const f of [
+      join(DOCS, 'gizlilik.html'), join(DOCS, 'privacy.html'),
+      join(KOK, 'store', 'app-store.md'), join(KOK, 'store', 'play-store.md'),
+      join(KOK, 'store', 'app-privacy.md'),
+    ]) {
+      expect(oku(f)).toContain(BRAND.publisher);
+    }
+  });
+
+  it('gizlilik ve koşullar satırları gerçekten bir şey yapıyor', () => {
+    // **Hata düzeltmesi.** Bu satırlar `chevron` ile çiziliyor ama `onPress`
+    // almıyordu; `ListItem` onPress'siz bir `View` döndürdüğü için ok işareti
+    // "dokun" diyor, dokununca hiçbir şey olmuyordu. Apple gizlilik
+    // bağlantısının açılmasını şart koşar.
+    for (const f of [join(KOK, 'app', '(tabs)', 'profile.tsx'), join(KOK, 'app', 'account.tsx')]) {
+      const kaynak = oku(f);
+      expect(kaynak).toContain("onPress={() => openLegalPage('privacy')}");
+      expect(kaynak).toContain("onPress={() => openLegalPage('terms')}");
+      expect(kaynak).toContain('Brand.publisher');
+    }
+  });
+
+  it('hiçbir ekranda ölü ok işareti kalmadı', () => {
+    // Genel kural: `chevron` dokunulabilirlik vaat eder. `chevron={false}`
+    // (yalnız değer gösteren satır) muaf; gerisi `onPress` almalı.
+    const suclular: string[] = [];
+    for (const f of [...dosyalar(join(KOK, 'app'), ['.tsx']), ...dosyalar(join(KOK, 'src'), ['.tsx'])]) {
+      for (const etiket of oku(f).match(/<ListItem[^>]*?\/>/gs) ?? []) {
+        if (/\bchevron\b(?!\s*=\s*\{false\})/.test(etiket) && !etiket.includes('onPress')) {
+          suclular.push(`${f.slice(KOK.length + 1)}: ${etiket.replace(/\s+/g, ' ').slice(0, 80)}`);
+        }
+      }
+    }
+    expect(suclular).toEqual([]);
   });
 
   it('kimlik yüzeylerinin hepsi aynı ada bakar', () => {

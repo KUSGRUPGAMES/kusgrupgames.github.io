@@ -1,6 +1,6 @@
 # App Store Connect — mağaza girişi (kopyala-yapıştır)
 
-Bundle: `com.kusgrup.lull` · Sürüm 1.0.0 · Birincil kategori: **Health & Fitness**
+Bundle: `com.kusgrupgames.lull` · Sürüm 1.0.0 · Birincil kategori: **Health & Fitness**
 Yaş derecelendirmesi: **4+** · Yalnızca iPhone · Dikey
 
 ## Name (max 30)

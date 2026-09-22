@@ -53,8 +53,8 @@ android:screenOrientation="portrait"
 ```xml
 <string name="app_name">Slot</string>
 <string name="title_activity_main">Slot</string>
-<string name="package_name">com.kusgrup.slot</string>
-<string name="custom_url_scheme">com.kusgrup.slot</string>
+<string name="package_name">com.kusgrupgames.slot</string>
+<string name="custom_url_scheme">com.kusgrupgames.slot</string>
 ```
 > Cihazın ana ekranında görünen ad `app_name`. Play mağaza adı ("Slot: Fit the Shape")
 > ile aynı olmak zorunda değil; ana ekranda kısa ad daha iyi durur.

@@ -155,7 +155,7 @@ export const de: Partial<Record<StringKey, string>> = {
   'settings.languageRestart': 'Starte die App neu, damit sich die Schreibrichtung ändert.',
   'settings.notifications': 'Benachrichtigungen', 'settings.sound': 'Ton',
   'settings.vibration': 'Vibration', 'settings.about': 'Über', 'settings.privacy': 'Datenschutz',
-  'settings.terms': 'Nutzungsbedingungen', 'settings.version': 'Version',
+  'settings.terms': 'Nutzungsbedingungen', 'settings.publisher': 'Herausgeber', 'settings.version': 'Version',
 
   'pro.title': 'Pro', 'pro.unlock': 'Mit Pro freigeschaltet', 'pro.monthly': 'Monatlich',
   'pro.yearly': 'Jährlich', 'pro.restore': 'Käufe wiederherstellen', 'pro.manage': 'Abo verwalten',

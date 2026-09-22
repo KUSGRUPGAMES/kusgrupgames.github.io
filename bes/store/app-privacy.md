@@ -14,7 +14,7 @@ doldurulmaz: aşağıdaki her satır kodda karşılığı olduğu için böyledi
 | Uygulama adı | **BEŞ** |
 | Mağaza adı | **BEŞ – Ezan & Namaz Vakitleri** |
 | Yayıncı / geliştirici | **KUS GRUP GAMES** |
-| Paket kimliği (iOS ve Android) | `com.kusgrup.bes` |
+| Paket kimliği (iOS ve Android) | `com.kusgrupgames.bes` |
 | Destek e-postası | `kusgrupgames@gmail.com` |
 | Web sitesi | `https://kusgrupgames.github.io/bes` |
 

@@ -315,7 +315,7 @@ export const tr = {
   'settings.about': 'Hakkında',
   'settings.privacy': 'Gizlilik',
   'settings.terms': 'Kullanım koşulları',
-  'settings.version': 'Sürüm',
+  'settings.publisher': 'Yayıncı', 'settings.version': 'Sürüm',
 
   // --- abonelik (§67)
   'pro.title': 'Pro',

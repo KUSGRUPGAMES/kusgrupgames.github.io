@@ -20,7 +20,7 @@ const MAILONLY=["../docs/index.html"];
 // Bu uc sabit, dosyalarda SU AN yazili olan degerlerdir. app.config.json degisip
 // betik calistirildiktan sonra buraya da yeni deger yazilmalidir.
 // tools/check.js bunlarin bayat kalmasini HATA olarak yakalar.
-const OLD_MAIL="kusgrupgames@gmail.com", OLD_URL="https://kusgrupgames.github.io/slot", OLD_ID="com.kusgrup.slot";
+const OLD_MAIL="kusgrupgames@gmail.com", OLD_URL="https://kusgrupgames.github.io/slot", OLD_ID="com.kusgrupgames.slot";
 for(const f of FILES){
   const fp=p+"/"+f; if(!fs.existsSync(fp)) continue;
   const s=fs.readFileSync(fp,"utf8");

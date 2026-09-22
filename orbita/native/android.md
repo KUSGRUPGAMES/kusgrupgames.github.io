@@ -51,8 +51,8 @@ android:screenOrientation="portrait"
 ```xml
 <string name="app_name">Orbita</string>
 <string name="title_activity_main">Orbita</string>
-<string name="package_name">com.kusgrup.orbita</string>
-<string name="custom_url_scheme">com.kusgrup.orbita</string>
+<string name="package_name">com.kusgrupgames.orbita</string>
+<string name="custom_url_scheme">com.kusgrupgames.orbita</string>
 ```
 
 ## 5. `android/variables.gradle`
