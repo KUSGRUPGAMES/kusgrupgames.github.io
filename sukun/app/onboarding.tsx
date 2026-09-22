@@ -129,7 +129,10 @@ export default function OnboardingScreen() {
                 key={m.id}
                 title={yontemAdi(m.id)}
                 chevron={false}
-                {...(settings.method === m.id ? { value: '•' } : {})}
+                // Seçili satır bir noktayla işaretleniyordu: küçük, soluk ve
+                // ekran okuyucuya hiçbir şey söylemiyordu. Onay imi hem
+                // görülüyor hem `accessibilityState` ile duyuruluyor.
+                selected={settings.method === m.id}
                 onPress={() => update({ method: m.id })}
               />
             ))}

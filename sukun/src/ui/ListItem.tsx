@@ -18,14 +18,19 @@ export interface ListItemProps {
   disabled?: boolean;
   /** Sağda ok işareti göster (alt sayfaya gider). */
   chevron?: boolean;
+  /**
+   * Listeden seçilmiş satır. Sağda onay imi çizer ve ekran okuyucuya
+   * "seçili" olarak duyurur — nokta gibi sessiz bir işaret yetmiyor.
+   */
+  selected?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
 export function ListItem({
-  title, subtitle, value, icon, right, onPress, disabled = false, chevron, style,
+  title, subtitle, value, icon, right, onPress, disabled = false, chevron, selected, style,
 }: ListItemProps) {
   const theme = useTheme();
-  const showChevron = chevron ?? (!!onPress && !right);
+  const showChevron = chevron ?? (!!onPress && !right && !selected);
   const body = (
     <Row gap="md" align="center" style={{ minHeight: 52, paddingVertical: theme.spacing.sm }}>
       {icon ? <Icon name={icon} color={theme.colors.accent} /> : null}
@@ -35,6 +40,7 @@ export function ListItem({
       </Column>
       {value ? <Text variant="callout" tone="muted">{value}</Text> : null}
       {right}
+      {selected ? <Icon name="check" size={20} color={theme.colors.accent} /> : null}
       {showChevron ? <Icon name="chevronRight" size={18} color={theme.colors.textSubtle} /> : null}
     </Row>
   );
@@ -42,8 +48,8 @@ export function ListItem({
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityState={{ disabled, ...(selected === undefined ? {} : { selected }) }}
       accessibilityLabel={subtitle ? `${title}. ${subtitle}` : title}
-      accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [{ opacity: disabled ? theme.opacity.disabled : pressed ? 0.7 : 1 }, style]}

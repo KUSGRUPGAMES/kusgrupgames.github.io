@@ -52,7 +52,9 @@ export function Segmented<T extends string>({ options, value, onChange, accessib
               // birbirinin üstüne biniyordu (ibadet defteri). Sıfırlanmazsa
               // hücre metin genişliğinin altına inemez.
               minWidth: 0,
-              minHeight: 38,
+              // 44, Apple HIG'in en küçük dokunma hedefi; Android 48dp istiyor
+              // ama listede sıkışık durmasın diye hitSlop ile tamamlanıyor.
+              minHeight: 44,
               paddingHorizontal: theme.spacing.xs,
               alignItems: 'center',
               justifyContent: 'center',

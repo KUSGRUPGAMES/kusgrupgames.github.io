@@ -39,7 +39,7 @@ export function QiblaDial({ qibla, heading, aligned, size = 280, labels }: Qibla
         y1={c + dis * Math.sin(a)}
         x2={c + ic * Math.cos(a)}
         y2={c + ic * Math.sin(a)}
-        stroke={theme.colors.border}
+        stroke={theme.colors.hairline}
         strokeWidth={buyuk ? 2 : 1}
         strokeLinecap="round"
       />,
@@ -74,7 +74,7 @@ export function QiblaDial({ qibla, heading, aligned, size = 280, labels }: Qibla
       style={{ width: size, height: size, alignSelf: 'center' }}
     >
       <Svg width={size} height={size}>
-        <Circle cx={c} cy={c} r={r} stroke={theme.colors.border} strokeWidth={2} fill="none" />
+        <Circle cx={c} cy={c} r={r} stroke={theme.colors.hairline} strokeWidth={2} fill="none" />
         <G transform={`rotate(${donme} ${c} ${c})`}>
           {centikler}
           {yonYazisi(labels.n, 0)}

@@ -149,4 +149,17 @@ describe('dokunma hedefi boyutu', () => {
     // 'sm' 40 birim; bu durumda hitSlop ile 44'e tamamlanır.
     expect(s).toContain('hitSlop');
   });
+
+  it('dokunulabilir her bileşen 44 birimin altına düşmüyor', () => {
+    // Segment seçici 38, çip 36 birimdi. İkisi de parmakla vurulan gerçek
+    // denetimler: tema seçimi, ikindi hesabı, zikir seçimi, dua kategorisi.
+    // Apple HIG'in alt sınırı 44; altında kalan hedef titrek elde ıskalanır.
+    const olcu = (dosya: string) => {
+      const m = /minHeight:\s*(\d+)/.exec(kaynak(join(ROOT, 'src', 'ui', dosya)));
+      return Number(m?.[1] ?? 0);
+    };
+    for (const dosya of ['Segmented.tsx', 'Chip.tsx', 'ListItem.tsx', 'Field.tsx', 'Stepper.tsx']) {
+      expect({ dosya, yeterli: olcu(dosya) >= 44 }).toEqual({ dosya, yeterli: true });
+    }
+  });
 });

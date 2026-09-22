@@ -28,11 +28,17 @@ yazılır**; sessizce geçilmez.
 
 ## 4. Mağaza
 
-- [ ] Ekran görüntüleri güncel (§110)
+- [ ] `npm run store:shots` çalıştırıldı; `store/screenshots/` güncel
+      (App Store 1290×2796, Play 1080×1920, öne çıkan 1024×500, ikon 512×512)
 - [ ] Mağaza metinleri gözden geçirildi; **sağlık ya da dinî hüküm iddiası yok**
-- [ ] Gizlilik sayfası yayında: `docs/sukun/privacy.html`
-- [ ] Veri güvenliği formu: **kişisel veri toplanmıyor** (v1'de sunucu yok)
-- [ ] Yaş derecesi ve reklam kategorisi ayarları konsolda G'ye sabitlendi
+- [ ] **Metinler yalnız var olan özellikleri anlatıyor.** Bir kez tersi oldu:
+      açıklamada reklam kuralları ve Pro aboneliği yazıyordu, ikisi de kodda
+      dormant. "Metadata describes functionality not present" doğrudan ret
+      sebebidir. `security.test.ts` bunu artık denetliyor.
+- [ ] Gizlilik sayfası yayında: `docs/sukun/privacy.html` ve `gizlilik.html`
+- [ ] İki konsolun formu `store/app-privacy.md` içindeki yanıtlarla dolduruldu
+      (ikisinde de **veri toplanmıyor**)
+- [ ] Yaş derecesi 4+ / Herkes; reklam sorusu yok (reklam gösterilmiyor)
 - [ ] EU DSA tüccar beyanı dolduruldu
 
 ## 5. Elle sınama — beş kullanıcı yolculuğu (§102)
@@ -53,7 +59,11 @@ Her biri **gerçek cihazda**, uçak modunda bir kez daha tekrarlanır:
 ## 6. Son kontrol
 
 - [ ] Uçak modunda uygulama açılıyor ve çalışıyor (çevrimdışı ürün sözü)
-- [ ] Koyu ve açık temada bütün ekranlar okunuyor
-- [ ] Yazı boyutu en büyükte düzen kırılmıyor
-- [ ] VoiceOver/TalkBack ile ana akış geçilebiliyor
+- [x] Koyu ve açık temada bütün ekranlar okunuyor — `npm run preview`
+      dört geçiş çiziyor (açık, koyu, 320 piksel, Arapça) ve her karede
+      çalışma hatası, boş ekran ve yatay taşma denetleniyor
+- [ ] Yazı boyutu en büyükte düzen kırılmıyor *(gerçek cihazda; web hedefi
+      Dynamic Type ölçeğini uygulamıyor — 320 piksellik geçiş en yakın vekil)*
+- [ ] VoiceOver/TalkBack ile ana akış geçilebiliyor *(gerçek cihazda)*
 - [ ] Pil: pusula ekranı kapatıldığında ölçüm duruyor
+- [x] Beş dilin beşinde de arayüz tam çevrili (`i18n.test.ts` 538/538)

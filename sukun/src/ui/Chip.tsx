@@ -20,8 +20,9 @@ export function Chip({ label, selected = false, onPress, disabled = false }: Chi
       accessibilityState={{ selected, disabled }}
       disabled={disabled}
       onPress={onPress}
+      hitSlop={6}
       style={({ pressed }) => ({
-        minHeight: 36,
+        minHeight: 44,
         justifyContent: 'center',
         paddingHorizontal: theme.spacing.lg,
         borderRadius: theme.radius.pill,

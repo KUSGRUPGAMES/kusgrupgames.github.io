@@ -26,7 +26,7 @@ Bilinen eksikler ve engeller. Kapanan madde `CHANGELOG.md`'ye taşınır.
 |---|---|---|
 | E1 | Bu kapsayıcıda **macOS/Xcode yok** | iOS derlemesi yalnız CI'da (macOS runner) doğrulanabilir |
 | E2 | Bu kapsayıcıda **Android SDK yok** | Android derlemesi yalnız CI'da doğrulanabilir |
-| E3 | Simülatör/emülatör yok | Ekran görüntüleri ve gezinme videosu web hedefi (react-native-web) üzerinden alınır. 42 ekran + 85 sn'lik tur bu yolla çekildi ve incelendi; gerçek cihazda son bir bakış yine de gerekiyor. |
+| E3 | Simülatör/emülatör yok | Ekran görüntüleri ve gezinme videosu web hedefi (react-native-web) üzerinden alınır. **Dört geçiş × 32 ekran = 128 kare** (açık, koyu, 320 piksel, Arapça) her derlemede çizilip çalışma hatası, boş ekran ve yatay taşma açısından denetleniyor. Web hedefinin ulaşamadığı üç şey kalıyor ve **gerçek cihazda bakılmalı**: pusula donanımı, Dynamic Type ölçeği ve RTL aynalama (`I18nManager`). |
 
 ## Açık teknik borç
 
@@ -36,3 +36,4 @@ Bilinen eksikler ve engeller. Kapanan madde `CHANGELOG.md`'ye taşınır.
 | T2 | Haftalık takvim ekranı | `rangeSchedule` işlevi ve sınaması hazır; ekranı FAZ 3'te eklenecek. |
 | T4 | Esmâü'l-Hüsnâ Arapça yazımı | Okunuş ve Türkçe anlam tam; Arapça yazım doğrulanmış kaynaktan eklenecek. Ezberden dizilmeyeceği için bilerek boş (CONTENT_SOURCES kuralı 1). |
 | T3 | Bileşen (render) testleri | Saf mantık sınanıyor; bileşen ve E2E sınamaları FAZ 18'de eklenecek (§86). |
+| T5 | Uzun içerik yalnız Türkçe | Arayüzün tamamı beş dilde; ama Kur'an meali, dua metinleri, namaz/hac rehberi ve 43 bilgi maddesi Türkçe. Bunlar **çevrilmedi çünkü uydurulamaz**: dinî içerik doğrulanmış kaynaktan gelir (CONTENT_SOURCES kuralı 1). Mağaza metni bunu açıkça yazıyor. |

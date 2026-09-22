@@ -56,6 +56,15 @@ export interface ThemeColors {
   danger: string;
   warning: string;
   success: string;
+  /**
+   * İnce çizim çizgisi: pusula kadranı, halka yatağı, grafik ızgarası.
+   *
+   * `border`den ayrıdır. Kenarlık bir yüzeyi ayırmak için vardır ve koyu
+   * temada bilerek çok soluktur (%10 beyaz); pusula kadranı ise **okunması
+   * gereken bir çizim**. Aynı token kullanılınca koyu temada kadran neredeyse
+   * kayboluyordu.
+   */
+  hairline: string;
   /** Arka plan motifi rengi (düşük opaklıkla kullanılır). */
   motif: string;
 }
@@ -85,6 +94,7 @@ export const lightTheme: Theme = {
     surface: palette.ivory25,
     surfaceRaised: palette.ivory200,
     border: palette.ivory300,
+    hairline: palette.ivory300,
     text: palette.ink900,
     textMuted: palette.ink500,
     textSubtle: palette.ink300,
@@ -113,6 +123,7 @@ export const darkTheme: Theme = {
     surface: palette.emerald850,
     surfaceRaised: palette.emerald700,
     border: 'rgba(255,255,255,0.10)',
+    hairline: 'rgba(251,246,236,0.34)',
     text: palette.ivory50,
     textMuted: 'rgba(251,246,236,0.70)',
     // Koyu zeminde 0.44 alfa yükseltilmiş yüzeylerde 3:1'in altına düşüyordu.

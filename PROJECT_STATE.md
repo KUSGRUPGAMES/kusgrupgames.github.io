@@ -9,7 +9,7 @@
 |---|---|
 | Marka | **BEŞ** — sembol `5` (D15). `BrandConfig` tek kaynak; paket kimliği `com.kusgrup.sukun` olarak kaldı |
 | Klasör | `sukun/` |
-| Sürüm | 0.1.0 (ilk üretim sürümü hedefi: 1.0.0) |
+| Sürüm | 1.0.0 (ilk üretim sürümü hedefi: 1.0.0) |
 | Teknoloji | Expo SDK 54 · React Native 0.81.5 · React 19 · TypeScript (strict) · expo-router 6 |
 | Backend | Supabase (PostgreSQL + Auth + Storage + Edge Functions + RLS) |
 
@@ -167,6 +167,9 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 | Marka varlıkları | ✅ **bitmiş master PNG** (`assets/brand/png/`, D17); `gen-brand.js` kırpar, ölçekler, alfa ayıklar — çizmez |
 | Renk paleti | ✅ masterın piksellerinden **ölçülüyor** (D18); zemin ve marka kartı gradyanlı, iki tema da ayarlı |
 | Veri taşıma | ✅ **yerel yedek** (D19): dışa aktar / geri yükle; bulut eşitleme hâlâ v2 |
+| Dil | ✅ arayüzün **tamamı** beş dilde (538 anahtar × 5, sınamaya bağlı); uzun içerik Türkçe (T5) |
+| Mağaza varlıkları | ✅ `store/screenshots/` — iki mağazanın istediği bütün boyutlar (`npm run store:shots`) |
+| Gizlilik | ✅ reklam yok, izleyici yok, analitik yok, hesap yok; iddialar sınamaya bağlı |
 | iOS CI | ✅ `sukun-ios.yml` — kalite kapısı + imzasız simulator derlemesi |
 | iOS yayın | ⚙️ `sukun-release-ios.yml` — elle çalışır, TestFlight'a yükler (secret'lara bağlı) |
 | Android CI | ⚙️ `sukun-android.yml` — kalite kapısı + AAB + debug APK |

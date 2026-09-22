@@ -75,7 +75,9 @@ export default function PrayerSettingsScreen() {
             key={m.id}
             title={yontemAdi(m.id)}
             chevron={false}
-            {...(settings.method === m.id ? { value: '•' } : {})}
+            // Seçili satır bir noktayla işaretleniyordu: küçük, soluk ve
+            // ekran okuyucuya hiçbir şey söylemiyordu (D: erişilebilirlik).
+            selected={settings.method === m.id}
             onPress={() => update({ method: m.id })}
           />
         ))}
