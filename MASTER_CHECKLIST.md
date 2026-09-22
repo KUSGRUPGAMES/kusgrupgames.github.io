@@ -4,7 +4,10 @@
 > tamamlanmadan `[x]` yapılmaz (§93). `⛔Bn` işareti, o maddenin
 > `KNOWN_ISSUES.md` içindeki **Bn** engeline bağlı olduğunu gösterir:
 > altyapı tamamlanır, veri/kimlik yuvası boş kalır.
-**Toplam 133 madde · tamamlanan 95 · kısmen tamamlanan 12 · dış engele bağlı 22**
+**Toplam 148 madde · tamamlanan 109 · kısmen tamamlanan 16 · açık 23**
+>
+> Açık 23 maddenin 21'i `⛔` ile dış engele bağlı (hesap, lisans, anahtar);
+> kalan ikisi bilerek v1 kapsamı dışıdır ve aşağıda gerekçesi yazılıdır.
 >
 > `[~]` işareti: yapılabilecek kısmı tamamlandı, kalanı dış engele bağlı.
 
@@ -138,7 +141,8 @@
 ## FAZ 12 — Widget ve Live Activity
 
 - [ ] iOS widget: small/medium/large (§19)  ⛔B6
-- [ ] Android widget (§19)
+- [ ] Android widget (§19) — **v1 kapsamı dışı**: iOS widget'ı ⛔B6 ile bekliyor,
+      ikisi birlikte yazılacak ki davranış aynı olsun
 - [ ] Günün Âyeti / Hadisi widget (§19)  ⛔B1,B3
 - [ ] Live Activities: lock screen (§18)  ⛔B6
 - [ ] Dynamic Island: compact/minimal/expanded (§18)  ⛔B6
@@ -186,7 +190,8 @@
 - [x] Unit testler (§86) — 480 mantık sınaması
 - [~] Bütünleşme: içe aktarma boruhattı, içerik kanalı ve RLS uçtan uca sınanıyor; E2E cihaz testi ⛔E3 (§86)
 - [x] Component testler (§86) — jest-expo ile 16 bileşen sınaması
-- [ ] E2E testler (§86)
+- [ ] E2E testler (§86) — **v1 kapsamı dışı (T3)**: cihaz/emülatör yok (E3),
+      yerine dört geçişlik 128 karelik görsel denetim koşuyor
 - [x] Kritik: namaz vakti, timezone, DST, hicri, kıble, zekât, ay (§86)
 - [~] Kritik: Kur'an bütünlüğü, meal bütünlüğü, RLS, çevrimdışı birleştirme sınandı; abonelik ⛔B6/B7 (§86)
 - [x] Uç durum matrisi (§88) — kutup enlemleri, gece yarısını aşan yatsı, DST geçişi, boş/bozuk veri, ağ yokluğu
@@ -219,4 +224,6 @@
 - [~] Google Play gereklilikleri (§91) — metinler ve veri güvenliği formu hazır; kayıt açılması ⛔B7
 - [x] Son denetim: yarım iş işareti, kayıtsız ekran, olmayan yönlendirme, tanımsız çeviri anahtarı taraması (§101)
 - [~] Beş kullanıcı yolculuğu RELEASE_CHECKLIST'e yazıldı; gerçek cihazda elle koşulacak ⛔E3 (§102)
-- [ ] /final-screenshots/ (§110)
+- [x] Mağaza kareleri (§110) — `store/screenshots/`: App Store 1290×2796 ×7,
+      Play 1080×1920 ×7, öne çıkan görsel 1024×500, liste ikonu 512×512.
+      Kareler gerçek uygulama ekranlarından çerçeveleniyor (`npm run store:shots`)
