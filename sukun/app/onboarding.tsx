@@ -71,6 +71,9 @@ export default function OnboardingScreen() {
         <ProgressBar value={adim / TOPLAM} accessibilityLabel={t('onboarding.step', { current: adim, total: TOPLAM })} />
       </Column>
 
+      {/* Hoş geldin kartı dikeyde ortalanır: üstte ve altta eşit esnek boşluk. */}
+      {adim === 1 ? <View style={{ flex: 1 }} /> : null}
+
       {adim === 1 ? (
         <Card accent motif="starLattice" padding="xxl">
           <Column gap="md" align="center">
@@ -171,7 +174,11 @@ export default function OnboardingScreen() {
         </View>
       ) : null}
 
-      <Row gap="md" align="center" style={{ marginTop: theme.spacing.xxl }}>
+      {/* Hoş geldin adımı ekranın üçte birini kullanıp altını boş bırakıyordu;
+          esnek boşluk gezinme satırını alta indirir. */}
+      <View style={{ flex: 1, minHeight: theme.spacing.xxl }} />
+
+      <Row gap="md" align="center">
         {adim > 1 ? (
           <Button label={t('nav.back')} variant="ghost" onPress={() => { setUyari(null); setAdim(adim - 1); }} />
         ) : null}

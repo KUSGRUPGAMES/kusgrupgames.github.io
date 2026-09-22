@@ -71,6 +71,12 @@ numarası sütunuyla karışıyor, Arapçada sözcük ortadan bölünüyordu
 tam ad sığıyor. Sınama artık çevrilmiş metnin karakter sayısıyla
 kısaltılmasını yasaklıyor.
 
+**Açılış akışının düzeni.** Hoş geldin ekranı kartı üst üçte bire koyup
+altındaki her şeyi boş bırakıyor, "Başla" düğmesi kartın hemen altında
+asılı kalıyordu. `Screen` artık kısa içerikte de ekranı dolduruyor
+(`flexGrow`), kart dikeyde ortalanıyor ve gezinme düğmeleri beş adımın
+hepsinde altta duruyor.
+
 **Kur’an arama ekranı kendisiyle çelişiyordu:** alan etiketi "Arapça metinde
 ara" diyordu ama hemen altındaki seçici mealde aramaya da izin veriyor.
 Etiket "Kur’an’da ara" oldu, seçici de kendi başlığıyla ayrıldı.

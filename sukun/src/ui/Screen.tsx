@@ -30,6 +30,10 @@ export function Screen({
     paddingHorizontal: pad,
     paddingTop: topInset ? insets.top + pad : pad,
     paddingBottom: insets.bottom + pad,
+    // İçerik ekrandan kısaysa kapsayıcı yine de ekranı doldurur; böylece
+    // esnek bir boşluk düğmeleri alta itebilir (açılış akışı). İçerik
+    // uzunsa hiçbir şey değişmez.
+    flexGrow: 1,
   };
   return (
     <View style={[{ flex: 1, backgroundColor: theme.colors.background }, style]}>
