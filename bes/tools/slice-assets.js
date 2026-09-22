@@ -3,8 +3,11 @@
  *
  *     node tools/slice-assets.js
  *
- * Marka sahibi varlıkları **sayfa sayfa** gönderiyor: bir PNG'de onlarca ikon,
- * çerçeve ya da silüet yan yana duruyor. Uygulama bunları tek tek istiyor.
+ * Marka sahibi varlıkları bazen **sayfa sayfa** gönderiyor: bir PNG'de onlarca
+ * ikon, çerçeve ya da silüet yan yana duruyor. Uygulama bunları tek tek istiyor.
+ *
+ * Şu anki paket (`assets/brand/paket/`) zaten tek tek geldi; bu betik bir
+ * sonraki sayfa partisi için duruyor. Kaynak klasörü yoksa sessizce çıkar.
  *
  * Kesim **elle kırpılmaz**: parçalar saydam zeminle ayrıldığı için birbirine
  * değmeyen opak piksel kümeleri (bağlantılı bileşenler) bulunur ve her küme
@@ -86,6 +89,10 @@ function kes(png, { x0, y0, x1, y1 }) {
   return o;
 }
 
+if (!fs.existsSync(KAYNAK)) {
+  console.log(`Kesilecek sayfa yok: ${KAYNAK}`);
+  process.exit(0);
+}
 const sayfalar = fs.readdirSync(KAYNAK).filter((f) => f.endsWith('.png')).sort();
 fs.mkdirSync(CIKTI, { recursive: true });
 let toplam = 0;
