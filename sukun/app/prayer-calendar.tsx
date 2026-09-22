@@ -12,14 +12,14 @@ import { useSettingsStore } from '@/store/settings';
 import { monthSchedule } from '@/features/prayer/schedule';
 import { formatHM } from '@/features/prayer/calc';
 import { PRAYER_KEYS, type MethodId, type PrayerKey } from '@/features/prayer/methods';
-import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
+import { usePrayerShortLabel } from '@/features/prayer/components/PrayerList';
 import { zonedNow } from '@/lib/time/zone';
 
 export default function PrayerCalendarScreen() {
   const ayBicimi = useDateFormat({ month: 'long', year: 'numeric', timeZone: 'UTC' });
   const t = useT();
   const theme = useTheme();
-  const label = usePrayerLabel();
+  const kisaAd = usePrayerShortLabel();
   const konum = useLocationStore((s) => s.active());
   const settings = useSettingsStore((s) => s.settings);
   const bugun = useMemo(() => zonedNow(konum?.timezone ?? null), [konum]);
@@ -76,7 +76,7 @@ export default function PrayerCalendarScreen() {
           <View style={{ width: 34 }} />
           {PRAYER_KEYS.map((k) => (
             <View key={k} style={{ flex: 1, alignItems: 'center' }}>
-              <Text variant="micro" tone="subtle">{label(k).slice(0, 3)}</Text>
+              <Text variant="micro" tone="subtle" lines={1}>{kisaAd(k)}</Text>
             </View>
           ))}
         </Row>

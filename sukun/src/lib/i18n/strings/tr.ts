@@ -47,6 +47,15 @@ export const tr = {
   'prayer.asr': 'İkindi',
   'prayer.maghrib': 'Akşam',
   'prayer.isha': 'Yatsı',
+  // Aylık takvimin sütun başlıkları. Uzun ad `slice(0,3)` ile kesiliyordu:
+  // "Güneş" → "Gün" olup gün sütunuyla karışıyor, Arapçada ise sözcük
+  // ortadan bölünüyordu ("الشروق" → "الش").
+  'prayer.fajrShort': 'İmsak',
+  'prayer.sunriseShort': 'Güneş',
+  'prayer.dhuhrShort': 'Öğle',
+  'prayer.asrShort': 'İkindi',
+  'prayer.maghribShort': 'Akşam',
+  'prayer.ishaShort': 'Yatsı',
   'prayer.next': 'Sıradaki vakit',
   'prayer.current': 'Şu anki vakit',
   'prayer.remaining': 'Kalan süre',
@@ -219,6 +228,7 @@ export const tr = {
   'dhikr.reset': 'Sayacı sıfırla',
   'dhikr.completed': 'Hedefe ulaştın',
   'dhikr.tapToCount': 'Saymak için dokun',
+  'dhikr.noSessionsBody': 'Zikirmatikte saymaya başla; günlük ve haftalık toplamların burada birikir.',
   'dhikr.stats': 'Zikir istatistiği',
   'dhikr.today': 'Bugün',
   'dhikr.week': 'Son 7 gün',
@@ -352,6 +362,7 @@ export const tr = {
   'ramadan.imsak': 'İmsağa kalan',
   'ramadan.startsOn': 'Tahmini başlangıç',
   'ramadan.calendar': 'Ramazan takvimi',
+  'ramadan.dayColumn': 'Gün',
   'ramadan.approxNote': 'Ramazan tarihi hicrî hesaba dayanır; resmî ilan farklı olabilir.',
   'khatm.title': 'Mukabele ve hatim',
   'khatm.start': 'Hatim başlat',

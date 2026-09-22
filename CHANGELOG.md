@@ -64,6 +64,19 @@ yazımını yan yana görüyordu. Uygulama, doğru olan biçime çekildi:
 düzeltme imiyle yazılır ve anlam ayırt eder), `Kuran` → `Kur'an`,
 `ayet` → `âyet`, `Esmaül Hüsna` → `Esmâü'l-Hüsnâ`.
 
+**Aylık takvimin sütun başlıkları koddan kesiliyordu.** Uzun vakit adı
+`slice(0, 3)` ile kırpılıyordu: Türkçede "Güneş" → "Gün" olup soldaki gün
+numarası sütunuyla karışıyor, Arapçada sözcük ortadan bölünüyordu
+("الشروق" → "الش"). Her dile kendi kısaltması yazıldı; 320 pikselde bile
+tam ad sığıyor. Sınama artık çevrilmiş metnin karakter sayısıyla
+kısaltılmasını yasaklıyor.
+
+**Ramazan imsakiyesinin gün sütunu "Bugün" başlığını taşıyordu** — sütun
+otuz günü listeliyor. "Gün" oldu.
+
+**Zikir istatistiği ekranının boş durumu** "Saymak için dokun" diyordu; o
+ekranda dokunulacak sayaç yok, sayaç zikirmatikte. Metin gerçeği söylüyor.
+
 **Hatırlatıcı ekranında hafta Pazar'la başlıyordu.** Çipler JavaScript'in
 `getDay()` sırasıyla diziliyordu (0 = Pazar); Türkiye'de takvim Pazartesi'yle
 başlar ve ilk sıradaki "Paz" kısaltması Pazartesi sanılıyordu. Gösterim sırası

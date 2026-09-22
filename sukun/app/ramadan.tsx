@@ -118,7 +118,8 @@ export default function RamadanScreen() {
       <SectionHeader title={t('ramadan.calendar')} subtitle={konum.label} />
       <Card padding="sm">
         <Row style={{ paddingVertical: theme.spacing.xs }}>
-          <Text variant="micro" tone="subtle" style={{ width: 90 }}>{t('common.today')}</Text>
+          {/* Sütun başlığı "Bugün" yazıyordu; sütun otuz günü listeliyor. */}
+          <Text variant="micro" tone="subtle" style={{ width: 90 }}>{t('ramadan.dayColumn')}</Text>
           <View style={{ flex: 1, alignItems: 'center' }}>
             <Text variant="micro" tone="subtle">{t('prayer.fajr')}</Text>
           </View>

@@ -34,7 +34,9 @@ export default function DhikrStatsScreen() {
     return (
       <Screen>
         <Stack.Screen options={{ headerShown: true, title: t('dhikr.stats') }} />
-        <EmptyState icon="beads" title={t('dhikr.noSessions')} description={t('dhikr.tapToCount')} />
+        {/* Açıklama "Saymak için dokun" diyordu; bu ekranda dokunulacak sayaç
+            yok, sayaç zikirmatik ekranında. */}
+        <EmptyState icon="beads" title={t('dhikr.noSessions')} description={t('dhikr.noSessionsBody')} />
       </Screen>
     );
   }

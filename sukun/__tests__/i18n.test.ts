@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import { tr, CORE_KEYS, translate, translateVerbose, resolveLanguage, LANGUAGES, LANGUAGE_NAMES, type Language } from '@/lib/i18n';
 import { en } from '@/lib/i18n/strings/en';
 import { ar } from '@/lib/i18n/strings/ar';
@@ -131,6 +133,33 @@ describe('yerelleştirme', () => {
     for (const [anahtar, deger] of Object.entries(tr)) {
       for (const [kalip, dogru] of yanlis) {
         if (kalip.test(deger)) ihlal.push(`${anahtar}: "${deger}" → ${dogru}`);
+      }
+    }
+    expect(ihlal).toEqual([]);
+  });
+
+  it('çevrilmiş metin karakter sayısıyla kısaltılmıyor', () => {
+    // Aylık takvimin sütun başlıkları `label(k).slice(0, 3)` ile kesiliyordu.
+    // Türkçede "Güneş" → "Gün" olup gün numarası sütunuyla karışıyor,
+    // Arapçada ise sözcük ortadan bölünüyordu ("الشروق" → "الش"). Kısaltma
+    // her dilde ayrı bir anahtar olarak yazılır, koddan türetilmez.
+    const dosyalar = (dir: string): string[] => {
+      let out: string[] = [];
+      for (const ad of readdirSync(dir)) {
+        const tam = join(dir, ad);
+        if (statSync(tam).isDirectory()) out = out.concat(dosyalar(tam));
+        else if (ad.endsWith('.tsx') || ad.endsWith('.ts')) out.push(tam);
+      }
+      return out;
+    };
+    const kok = join(__dirname, '..');
+    const ihlal: string[] = [];
+    for (const yol of [...dosyalar(join(kok, 'app')), ...dosyalar(join(kok, 'src'))]) {
+      const kaynak = readFileSync(yol, 'utf8')
+        .replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+      // `t('x').slice(` ya da `label(k).slice(` — metni koddan kırpma.
+      if (/\b(t|label|kisaAd|yontemAdi|gunAdi|ayAdi)\([^)]*\)\s*\.slice\(/.test(kaynak)) {
+        ihlal.push(yol.slice(kok.length + 1));
       }
     }
     expect(ihlal).toEqual([]);
