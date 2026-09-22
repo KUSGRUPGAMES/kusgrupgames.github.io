@@ -5,7 +5,7 @@ yazılır**; sessizce geçilmez.
 
 ## 1. Kod sağlığı
 
-- [x] `npm run gate` yeşil — tsc + eslint + **611 sınama / 45 takım** (v1.0.0)
+- [x] `npm run gate` yeşil — tsc + eslint + **621 sınama / 45 takım** (v1.0.0)
 - [x] `npm run bundle` sorunsuz (Metro'nun yakaladığı hatalar kapıda görünmez)
 - [ ] `bash tools/verify-db.sh` — **v1'de çalıştırılmadı**: Supabase yok (B5), v1 sunucusuz
 - [x] Son denetim sınamaları geçiyor: taslak metin yok, her ekran kayıtlı,
