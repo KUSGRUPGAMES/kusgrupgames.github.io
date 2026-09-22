@@ -91,7 +91,7 @@ export default function RamadanScreen() {
               // Marka kartının üstündeki halka logonun eşleşmesini taşır:
               // altın ilerleme, fildişi-saydam yatak (D18).
               color={theme.colors.onAccentHighlight}
-              trackColor={theme.colors.onAccentBorder}
+              trackColor={theme.colors.onAccentTrack}
             >
               <Column align="center" gap="xxs">
                 <Text variant="caption" tone="onAccent">

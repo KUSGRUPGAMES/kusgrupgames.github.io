@@ -14,7 +14,11 @@ import { Brand } from '@/config/brand';
 // Görseller `import` ile alınır: `require()` lint kuralıyla yasak ve
 // `types/assets.d.ts` zaten `*.png` modülünü bildiriyor.
 import camiSiluet from '../../assets/brand/mosque-skyline.png';
-import markaSembol from '../../assets/brand/symbol-micro-light.png';
+// İki sembol var ve **temaya göre seçilir**. Açık temada açık renkli sembol
+// fildişi zeminde tamamen kayboluyordu; dosya adındaki "light/dark" sembolün
+// kendi rengidir, kullanılacağı temanın değil.
+import sembolAcikRenk from '../../assets/brand/symbol-micro-light.png';
+import sembolKoyuRenk from '../../assets/brand/symbol-micro-dark.png';
 import { useT } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useLocationStore } from '@/store/locations';
@@ -96,7 +100,7 @@ export default function HomeScreen() {
                   // seçilir. Açık temanın koyulaştırılmış altını burada
                   // 2.25:1'e düşüyor ve halka kayboluyordu (D18).
                   color={theme.colors.onAccentHighlight}
-                  trackColor={theme.colors.onAccentBorder}
+                  trackColor={theme.colors.onAccentTrack}
                   size={Math.round(kartGen * 0.46)}
                   accessibilityLabel={t('prayer.remainingTo', {
                     name: label(live.next.key),
@@ -163,7 +167,7 @@ export default function HomeScreen() {
         />
         <Column align="center" gap="xxs">
           <Image
-            source={markaSembol}
+            source={theme.name === 'dark' ? sembolAcikRenk : sembolKoyuRenk}
             resizeMode="contain"
             accessible
             accessibilityLabel={Brand.appName}

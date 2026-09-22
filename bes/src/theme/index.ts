@@ -73,6 +73,15 @@ export interface ThemeColors {
    * ayırt edilemiyordu (zekât ekranı).
    */
   controlBorder: string;
+  /**
+   * Marka kartı üstündeki halka/ilerleme yatağı.
+   *
+   * `onAccentBorder`den ayrıdır. O, kart içindeki kenarlıklar için soluk bir
+   * beyazdır; geri sayım halkasının yatağı ise **altın ailesinden** olmalı,
+   * yoksa halka gri bir çember gibi duruyor ve altın ilerleme yayı yatağa
+   * ait değilmiş gibi görünüyordu.
+   */
+  onAccentTrack: string;
   /** Arka plan motifi rengi (düşük opaklıkla kullanılır). */
   motif: string;
 }
@@ -115,6 +124,7 @@ export const lightTheme: Theme = {
     onAccent: palette.ivory50,
     onAccentHighlight: palette.gold400,
     onAccentBorder: 'rgba(251,246,236,0.20)',
+    onAccentTrack: 'rgba(211,182,133,0.26)',
     highlight: palette.gold600,
     danger: palette.danger,
     warning: palette.warning,
@@ -144,6 +154,7 @@ export const darkTheme: Theme = {
     onAccent: palette.ivory50,
     onAccentHighlight: palette.gold400,
     onAccentBorder: 'rgba(251,246,236,0.18)',
+    onAccentTrack: 'rgba(211,182,133,0.24)',
     highlight: palette.gold400,
     danger: '#E0715A',
     warning: '#E0A052',

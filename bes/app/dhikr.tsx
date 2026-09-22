@@ -78,7 +78,7 @@ export default function DhikrScreen() {
               // ilerleme de fildişi olduğu için sayaç hiç ilerlemiyor gibi
               // duruyordu. Artık logonun altını + saydam yatak (D18).
               color={theme.colors.onAccentHighlight}
-              trackColor={theme.colors.onAccentBorder}
+              trackColor={theme.colors.onAccentTrack}
             >
               <Column align="center" gap="xxs">
                 <Text variant="display" tone="onAccent">{String(sayac)}</Text>
