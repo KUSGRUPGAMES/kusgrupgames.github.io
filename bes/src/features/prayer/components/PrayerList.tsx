@@ -1,9 +1,16 @@
-/** Günün altı vakti — şartname §14. */
+/**
+ * Günün vakit listesi — beş vakit ve güneş doğuşu (§14).
+ *
+ * Tasarım, ürün sahibinin onayladığı ana sayfa taslağından gelir: her satırda
+ * vaktin kendi ikonu, sağda saat ve ok; **aktif vakit altın çerçeveli bir
+ * şeritle** vurgulanır. Önceki sürüm yalnız yazıyı kalınlaştırıyordu ve
+ * listede gözle bulunmuyordu.
+ */
 import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT, type StringKey } from '@/lib/i18n';
-import { Row, Text, Divider } from '@/ui';
+import { Row, Text, Divider, Icon, type IconName } from '@/ui';
 import { formatHM } from '../calc';
 import { PRAYER_KEYS, type PrayerKey } from '../methods';
 import type { DaySchedule } from '../schedule';
@@ -11,6 +18,15 @@ import type { DaySchedule } from '../schedule';
 const LABEL_KEY: Record<PrayerKey, 'prayer.fajr' | 'prayer.sunrise' | 'prayer.dhuhr' | 'prayer.asr' | 'prayer.maghrib' | 'prayer.isha'> = {
   fajr: 'prayer.fajr', sunrise: 'prayer.sunrise', dhuhr: 'prayer.dhuhr',
   asr: 'prayer.asr', maghrib: 'prayer.maghrib', isha: 'prayer.isha',
+};
+
+/**
+ * Vakte göre ikon: güneşin ufka göre yeri. İmsak ufkun altında, güneş
+ * doğarken, öğle tepede, ikindi alçalırken, akşam batarken, yatsı hilal.
+ */
+const ICON: Record<PrayerKey, IconName> = {
+  fajr: 'sunLow', sunrise: 'sunrise', dhuhr: 'sunHigh',
+  asr: 'sunLow', maghrib: 'sunset', isha: 'crescent',
 };
 
 const SHORT_KEY: Record<PrayerKey, StringKey> = {
@@ -45,20 +61,41 @@ export function PrayerList({ day, highlight }: { day: DaySchedule; highlight?: P
         const aktif = highlight === key;
         return (
           <View key={key}>
-            {i > 0 ? <Divider /> : null}
+            {i > 0 && !aktif ? <Divider /> : null}
             <Row
               align="center"
               justify="space-between"
-              style={{ paddingVertical: theme.spacing.md }}
+              style={{
+                paddingVertical: theme.spacing.md,
+                paddingHorizontal: aktif ? theme.spacing.sm : 0,
+                borderRadius: aktif ? theme.radius.md : 0,
+                borderWidth: aktif ? 1 : 0,
+                borderColor: aktif ? theme.colors.highlight : 'transparent',
+                backgroundColor: aktif ? theme.colors.onAccentBorder : 'transparent',
+              }}
               accessible
               accessibilityLabel={`${label(key)} ${formatHM(entry?.hours ?? null)}`}
             >
-              <Text variant={aktif ? 'bodyStrong' : 'body'} tone={aktif ? 'accent' : 'default'}>
-                {label(key)}
-              </Text>
-              <Text variant={aktif ? 'bodyStrong' : 'body'} tone={aktif ? 'accent' : 'muted'}>
-                {formatHM(entry?.hours ?? null)}
-              </Text>
+              <Row align="center" gap="sm">
+                <Icon
+                  name={ICON[key]}
+                  size={20}
+                  color={aktif ? theme.colors.highlight : theme.colors.textMuted}
+                />
+                <Text variant={aktif ? 'bodyStrong' : 'body'} tone={aktif ? 'accent' : 'default'}>
+                  {label(key)}
+                </Text>
+              </Row>
+              <Row align="center" gap="xs">
+                <Text variant={aktif ? 'bodyStrong' : 'body'} tone={aktif ? 'accent' : 'muted'}>
+                  {formatHM(entry?.hours ?? null)}
+                </Text>
+                <Icon
+                  name="chevronRight"
+                  size={16}
+                  color={aktif ? theme.colors.highlight : theme.colors.textSubtle}
+                />
+              </Row>
             </Row>
           </View>
         );

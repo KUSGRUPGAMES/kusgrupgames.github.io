@@ -4,11 +4,17 @@
  * sabittir (kapatılamaz), çünkü uygulamanın çekirdeği odur.
  */
 import React, { useMemo } from 'react';
-import { View } from 'react-native';
+import { View, Image, Pressable, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import {
-  Screen, SectionHeader, Card, Text, Column, CountdownRing, Button, EmptyState, Banner, Row,
+  Screen, Card, Text, Column, CountdownRing, Button, EmptyState, Banner, Row,
+  Icon, IconButton, OrnateFrame,
 } from '@/ui';
+import { Brand } from '@/config/brand';
+// Görseller `import` ile alınır: `require()` lint kuralıyla yasak ve
+// `types/assets.d.ts` zaten `*.png` modülünü bildiriyor.
+import camiSiluet from '../../assets/brand/mosque-skyline.png';
+import markaSembol from '../../assets/brand/symbol-micro-light.png';
 import { useT } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useLocationStore } from '@/store/locations';
@@ -49,6 +55,10 @@ export default function HomeScreen() {
   }, [konum, settings]);
 
   const live = useLiveView(input);
+  // Kemerli kart ekran genişliğine göre ölçeklenir; sabit yükseklik dar
+  // telefonlarda kemeri eziyordu.
+  const { width: ekranGen } = useWindowDimensions();
+  const kartGen = Math.max(260, Math.min(420, ekranGen - theme.spacing.lg * 2));
 
   const ctx = useMemo<DailyContext | null>(() => {
     if (!konum) return null;
@@ -76,8 +86,8 @@ export default function HomeScreen() {
     switch (id) {
       case 'nextPrayer':
         return (
-          <Card accent motif="starLattice" key={id}>
-            <Column gap="lg" align="center">
+          <OrnateFrame key={id} width={kartGen} height={Math.round(kartGen * 1.06)}>
+            <Column gap="md" align="center" style={{ flex: 1 }}>
               <Text variant="callout" tone="onAccent">{t('prayer.next')}</Text>
               {live?.next ? (
                 <CountdownRing
@@ -87,9 +97,7 @@ export default function HomeScreen() {
                   // 2.25:1'e düşüyor ve halka kayboluyordu (D18).
                   color={theme.colors.onAccentHighlight}
                   trackColor={theme.colors.onAccentBorder}
-                  // 40 puntoluk geri sayım varsayılan 168'lik halkaya
-                  // sığmıyor, rakamlar çemberin dışına taşıyordu.
-                  size={208}
+                  size={Math.round(kartGen * 0.46)}
                   accessibilityLabel={t('prayer.remainingTo', {
                     name: label(live.next.key),
                     time: formatCountdown(live.secondsToNext),
@@ -104,13 +112,27 @@ export default function HomeScreen() {
                 <Text variant="body" tone="onAccent" align="center">{t('prayer.polarNote')}</Text>
               )}
             </Column>
-          </Card>
+            {/* Cami silüeti kartın tabanına oturur. Marka paketinden gelen
+                çizimdir, kodla çizilmez (D17'nin aynı gerekçesi). */}
+            <Image
+              source={camiSiluet}
+              resizeMode="contain"
+              accessible={false}
+              style={{
+                position: 'absolute', left: 0, right: 0, bottom: 0,
+                width: kartGen, height: Math.round(kartGen * 0.30), opacity: 0.30,
+              }}
+            />
+          </OrnateFrame>
         );
       case 'todayTimes':
         return live ? (
           <Card key={id}>
             <Column gap="sm">
-              <Text variant="caption" tone="muted">{t('prayer.todayTimes')}</Text>
+              <Row align="center" gap="sm">
+                <Icon name="mosque" size={20} color={theme.colors.highlight} />
+                <Text variant="caption" tone="muted">{t('prayer.todayTimes')}</Text>
+              </Row>
               <PrayerList day={live.today} highlight={live.current} />
             </Column>
           </Card>
@@ -129,12 +151,54 @@ export default function HomeScreen() {
 
   return (
     <Screen scroll motif="rubElHizb">
-      <SectionHeader
-        title={konum.label}
-        subtitle={konum.country}
-        actionLabel={t('common.edit')}
-        onAction={() => router.push('/location')}
-      />
+      {/* Üst çubuk: solda bildirimler, ortada marka, sağda vakit ayarları.
+          Onaylanan taslaktaki düzen budur; daire içindeki düğmeler markanın
+          altın hattını taşır. */}
+      <Row align="center" justify="space-between" style={{ marginBottom: theme.spacing.md }}>
+        <IconButton
+          name="bell"
+          label={t('reminder.title')}
+          filled
+          onPress={() => router.push('/notifications-center')}
+        />
+        <Column align="center" gap="xxs">
+          <Image
+            source={markaSembol}
+            resizeMode="contain"
+            accessible
+            accessibilityLabel={Brand.appName}
+            style={{ width: 40, height: 40 }}
+          />
+          <Text variant="caption" tone="muted">{Brand.tagline}</Text>
+        </Column>
+        <IconButton
+          name="settings"
+          label={t('prayer.settings')}
+          filled
+          onPress={() => router.push('/prayer-settings')}
+        />
+      </Row>
+
+      {/* Konum hapı: iğne, şehir, ülke ve ok — taslaktaki satırın aynısı. */}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`${konum.label}, ${konum.country}`}
+        onPress={() => router.push('/location')}
+        style={{
+          flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm,
+          paddingVertical: theme.spacing.sm, paddingHorizontal: theme.spacing.md,
+          borderRadius: theme.radius.lg, borderWidth: 1,
+          borderColor: theme.colors.border, backgroundColor: theme.colors.surface,
+          marginBottom: theme.spacing.md,
+        }}
+      >
+        <Icon name="location" size={20} color={theme.colors.highlight} />
+        <Column gap="xxs" style={{ flex: 1 }}>
+          <Text variant="bodyStrong">{konum.label}</Text>
+          <Text variant="caption" tone="muted">{konum.country}</Text>
+        </Column>
+        <Icon name="chevronDown" size={18} color={theme.colors.textSubtle} />
+      </Pressable>
 
       <Column gap="md">
         {kartlar.filter((c) => c.visible).map((c) => kart(c.id))}

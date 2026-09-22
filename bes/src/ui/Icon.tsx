@@ -17,7 +17,8 @@ export type IconName =
   | 'bell' | 'bellOff' | 'share' | 'download' | 'trash' | 'lock' | 'plus' | 'minus' | 'search'
   | 'moon' | 'sun' | 'location' | 'calendar' | 'user' | 'users'
   | 'sparkle' | 'play' | 'pause' | 'bookmark' | 'info' | 'alert' | 'refresh' | 'star' | 'copy'
-  | 'crescentStar' | 'coins' | 'kaaba';
+  | 'crescentStar' | 'coins' | 'kaaba'
+  | 'sunrise' | 'sunHigh' | 'sunLow' | 'sunset' | 'crescent' | 'mosque';
 
 export interface IconProps {
   name: IconName;
@@ -97,6 +98,28 @@ function render(name: IconName, p: P): React.ReactNode {
     case 'minus': return <Path d="M5 12h14" {...p} />;
     case 'search':
       return <><Circle cx={11} cy={11} r={6.5} {...p} /><Line x1={16} y1={16} x2={20.5} y2={20.5} {...p} /></>;
+    // --- Vakit ikonları (ana sayfa vakit listesi) ---
+    // Her vaktin güneşin ufka göre yeri farklıdır; ikon bunu anlatır:
+    // imsak ufkun altında, güneş doğarken, öğle tepede, ikindi alçalırken,
+    // akşam batarken, yatsı hilal. Hepsi aynı güneş çizilirse liste okunmaz.
+    case 'sunrise':
+      return <><Path d="M3.5 19h17" {...p} /><Path d="M12 6.4v-3M5.6 9.1 4 7.5M18.4 9.1 20 7.5" {...p} />
+        <Path d="M6.4 19a5.6 5.6 0 0 1 11.2 0" {...p} /><Path d="M9 15.5 12 12.4l3 3.1" {...p} /></>;
+    case 'sunHigh':
+      return <><Circle cx={12} cy={11} r={4} {...p} /><Path d="M12 2.6v2M12 17.4v2M20.4 11h-2M5.6 11h-2M17.9 5.1l-1.4 1.4M7.5 15.5l-1.4 1.4M17.9 16.9l-1.4-1.4M7.5 6.5 6.1 5.1" {...p} /></>;
+    case 'sunLow':
+      return <><Path d="M3.5 19h17" {...p} /><Path d="M7.5 19a4.5 4.5 0 0 1 9 0" {...p} />
+        <Path d="M12 8.6V6.2M6.9 10.6 5.4 9.1M17.1 10.6l1.5-1.5" {...p} /></>;
+    case 'sunset':
+      return <><Path d="M3.5 19h17" {...p} /><Path d="M6.4 19a5.6 5.6 0 0 1 11.2 0" {...p} />
+        <Path d="M12 3.4v3M5.6 7.6 4 6M18.4 7.6 20 6" {...p} /><Path d="M9 9.4 12 12.5l3-3.1" {...p} /></>;
+    case 'crescent':
+      return <Path d="M19.4 15.6A8.4 8.4 0 0 1 8.4 4.6a8.4 8.4 0 1 0 11 11Z" {...p} />;
+    case 'mosque':
+      return <><Path d="M3.5 20.5v-7.2M20.5 20.5v-7.2M3.5 20.5h17" {...p} />
+        <Path d="M6.6 20.5v-6.2a5.4 5.4 0 0 1 10.8 0v6.2" {...p} />
+        <Path d="M12 8.9c1.6-1.5 1.6-3 0-4.2-1.6 1.2-1.6 2.7 0 4.2Z" {...p} />
+        <Path d="M9.8 20.5v-3.1a2.2 2.2 0 0 1 4.4 0v3.1" {...p} /></>;
     case 'moon': return <Path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" {...p} />;
     case 'sun':
       return <><Circle cx={12} cy={12} r={4.2} {...p} /><Path d="M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6M18.4 18.4l-1.6-1.6M7.2 7.2 5.6 5.6" {...p} /></>;

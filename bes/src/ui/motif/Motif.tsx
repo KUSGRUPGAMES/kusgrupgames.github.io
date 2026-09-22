@@ -21,7 +21,7 @@ export interface MotifProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export function Motif({ name = 'rubElHizb', tile = 48, opacity, color, style }: MotifProps) {
+export function Motif({ name = 'rubElHizb', tile = 128, opacity, color, style }: MotifProps) {
   const theme = useTheme();
   const id = useMemo(() => `motif${(uid += 1)}`, []);
   const t = useMemo(() => motifTile(name, tile), [name, tile]);
