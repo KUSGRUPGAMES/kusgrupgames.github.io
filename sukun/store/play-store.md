@@ -71,8 +71,8 @@ Zekât hesaplama (altın veya gümüş nisabı seçmeli, metodoloji ekranda yaz�
 ★ DİL DESTEĞİ
 Türkçe, İngilizce, Arapça, Almanca, Fransızca. Arapça seçildiğinde arayüz sağdan sola döner.
 
-★ REKLAM KURALLARI — KODA YAZILI
-Vakit girmeden önceki 15 dakikada ve girdikten sonraki 30 dakikada reklam gösterilmez. Kur’an okuyucu, kıble, zikirmatik ve namaz rehberi ekranlarında hiç reklam yoktur. Alkol, kumar, flört, siyaset, silah ve benzeri kategoriler engellidir. Pro aboneliği reklamları tamamen kapatır. Ücretsiz sürümde vakitler, kıble, Kur’an, meal, zikirmatik, kaza takibi, dualar ve rehberler tam olarak kullanılabilir.
+★ TAMAMEN ÜCRETSİZ, REKLAMSIZ
+Abonelik yok, uygulama içi satın alma yok, reklam yok. Hiçbir özellik kilitli değil. Reklam kimliğiniz okunmuyor; uygulamada izleyici, piksel ya da analitik kütüphanesi bulunmuyor.
 
 ★ DÜRÜSTLÜK NOTU
 Vakit hesabı yönteme, konuma ve rakıma bağlıdır; resmî ilanla bir iki dakika farklılık gösterebilir. Hicrî tarih aritmetik hesaplanır ve rüyete dayalı ilandan bir gün sapabilir. Kıble yönü telefonunuzun pusulasının doğruluğuna bağlıdır. Bunları gizlemiyor, ilgili ekranda yazıyoruz. BEŞ bir yardımcı araçtır; dinî hüküm (fetva) vermez ve bir din görevlisinin yerini tutmaz.
@@ -84,9 +84,11 @@ Uygulamalar → Yaşam Tarzı
 
 ## İçerik derecelendirmesi
 
-Herkes (3+). Kullanıcı üretimi içerik yok, satın alma içi ürün: abonelik.
+Herkes (3+). Kullanıcı üretimi içerik yok, uygulama içi satın alma yok,
+reklam yok.
 
 ## Veri güvenliği formu
 
-"Veri toplanmıyor" — konum, ibadet kayıtları ve notlar cihazdan çıkmaz.
-Reklam SDK'sı etkinken yalnız reklam kimliği. Ayrıntı: `app-privacy.md`.
+**"Veri toplanmıyor" ve "veri paylaşılmıyor"** — konum, ibadet kayıtları ve
+notlar cihazdan çıkmaz; hesap, reklam SDK'sı ve analitik yoktur. Konsolda
+verilecek yanıtların tamamı `app-privacy.md` içinde yazılıdır.

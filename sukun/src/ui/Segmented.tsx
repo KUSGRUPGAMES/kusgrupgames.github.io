@@ -4,7 +4,15 @@ import { Pressable, View } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Text } from './Text';
 
-export interface SegmentedOption<T extends string> { value: T; label: string }
+export interface SegmentedOption<T extends string> {
+  value: T;
+  label: string;
+  /**
+   * Dar ekranda gösterilecek kısa karşılık. Erişilebilirlik adı **her zaman**
+   * uzun `label`tır; ekran okuyucu kısaltmayı okumaz.
+   */
+  short?: string;
+}
 
 export interface SegmentedProps<T extends string> {
   options: readonly SegmentedOption<T>[];
@@ -15,6 +23,8 @@ export interface SegmentedProps<T extends string> {
 
 export function Segmented<T extends string>({ options, value, onChange, accessibilityLabel }: SegmentedProps<T>) {
   const theme = useTheme();
+  // Dört seçenekte hücre ~70 piksele düşüyor; `callout` taşıyor.
+  const variant = options.length >= 4 ? 'caption' : 'callout';
   return (
     <View
       accessibilityRole="radiogroup"
@@ -37,14 +47,22 @@ export function Segmented<T extends string>({ options, value, onChange, accessib
             onPress={() => onChange(o.value)}
             style={{
               flex: 1,
+              // `min-width: auto` esnek hücrenin içeriğinden küçülmesini
+              // engelliyor; dört uzun etiketli seçici 320 piksellik ekranda
+              // birbirinin üstüne biniyordu (ibadet defteri). Sıfırlanmazsa
+              // hücre metin genişliğinin altına inemez.
+              minWidth: 0,
               minHeight: 38,
+              paddingHorizontal: theme.spacing.xs,
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: theme.radius.pill,
               backgroundColor: active ? theme.colors.surface : 'transparent',
             }}
           >
-            <Text variant="callout" tone={active ? 'accent' : 'muted'}>{o.label}</Text>
+            <Text variant={variant} tone={active ? 'accent' : 'muted'} align="center" lines={1}>
+              {o.short ?? o.label}
+            </Text>
           </Pressable>
         );
       })}

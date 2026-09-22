@@ -111,6 +111,14 @@ jobs:
           done
           echo "mikrofon, ekran ustu ve arka plan konum izni yok (dogrulandi)"
 
+          # Reklam kimligi: uygulamada reklam yok. Play, bu izni bildirip
+          # kullanmayani da, kullanip bildirmeyeni de reddediyor. Gizlilik
+          # formunda "veri toplanmiyor" yaziyor; manifest onu tutmali.
+          if grep -q 'com.google.android.gms.permission.AD_ID' "$M"; then
+            echo "::error::AD_ID izni pakete girdi - reklam yok, gizlilik formu yanlis olur"; exit 1
+          fi
+          echo "reklam kimligi izni yok (dogrulandi)"
+
           # Bunun tersi de hata: vakit bildirimi urunun ana isi, izin
           # dusmus olursa Android 13+ cihazlarda hicbir bildirim gorunmez.
           grep -q 'android.permission.POST_NOTIFICATIONS' "$M" \

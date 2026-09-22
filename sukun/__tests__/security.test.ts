@@ -110,6 +110,49 @@ describe('gizlilik', () => {
     expect(s).toMatch(/analyticsOptIn:\s*z\.boolean\(\)\.default\(false\)/);
   });
 
+  /**
+   * Mağaza gizlilik formunda "veri toplanmıyor" yazıyor ve gizlilik
+   * sayfalarında "reklam yok, izleyici yok, analitik yok" deniyor
+   * (`store/app-privacy.md`). Bu üç cümle bir bağımlılık eklendiği an sessizce
+   * yalan olabilir; bağımlılık listesi o yüzden sınamaya bağlandı.
+   */
+  it('pakette reklam, izleme ya da analitik kütüphanesi yok', () => {
+    const pkg = JSON.parse(oku(join(ROOT, 'package.json'))) as {
+      dependencies?: Record<string, string>; devDependencies?: Record<string, string>;
+    };
+    const adlar = [...Object.keys(pkg.dependencies ?? {}), ...Object.keys(pkg.devDependencies ?? {})];
+    const yasak = /admob|google-mobile-ads|facebook|firebase|analytics|amplitude|mixpanel|segment|sentry|bugsnag|appsflyer|adjust|onesignal|branch|clevertap|posthog/i;
+    expect(adlar.filter((a) => yasak.test(a))).toEqual([]);
+  });
+
+  it('izleme izni istenmiyor, reklam kimliği kapalı', () => {
+    const cfg = oku(join(ROOT, 'app.config.ts'));
+    // iOS: App Tracking Transparency anahtarı varsa Apple izleme yaptığımızı
+    // varsayar ve gizlilik etiketleriyle çelişir.
+    expect(cfg).not.toContain('NSUserTrackingUsageDescription');
+    // Android: Play, AD_ID'yi bildirip kullanmayanı da reddediyor.
+    expect(cfg).toContain("'com.google.android.gms.permission.AD_ID'");
+  });
+
+  it('mağaza metinleri olmayan özelliği vaat etmiyor', () => {
+    // Reklam kuralları ve Pro aboneliği kodda **dormant**: hiçbir ekran
+    // `entitlements` ya da `ads` modülünü kullanmıyor. Mağaza açıklamasında
+    // bunlardan söz etmek, App Review'un "metadata describes functionality
+    // not present" gerekçesiyle reddettiği şeydir.
+    for (const dosya of ['store/app-store.md', 'store/play-store.md']) {
+      const metin = oku(join(ROOT, dosya));
+      const aciklama = metin.slice(metin.indexOf('## Açıklama'), metin.indexOf('## Sürüm notları'));
+      expect({ dosya, vaat: /Pro aboneliği|abonelik satın|reklam gösterilmez/i.test(aciklama) })
+        .toEqual({ dosya, vaat: false });
+    }
+  });
+
+  it('ekranların hiçbiri Pro kilidi ya da reklam yüzeyi çizmiyor', () => {
+    const ekranlar = kaynaklar.filter((p) => p.includes(`${sep}app${sep}`) || p.endsWith('.tsx'));
+    const suclular = ekranlar.filter((p) => /entitlementsFor|FREE_LIMITS|adDecision|<ProLock/.test(kodu(p)));
+    expect(suclular).toEqual([]);
+  });
+
   it('kişisel veri sunucuya gitmiyor — ağ katmanı yalnız içerik kanalında kullanılıyor', () => {
     const agKullananlar = kaynaklar.filter((p) => /from '@\/lib\/net\/request'/.test(kodu(p)));
     const izinli = ['content/channel.ts', 'net/request.ts'];

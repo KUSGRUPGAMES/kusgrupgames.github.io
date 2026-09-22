@@ -93,6 +93,11 @@ const config: ExpoConfig = {
       'android.permission.SYSTEM_ALERT_WINDOW',
       'android.permission.READ_EXTERNAL_STORAGE',
       'android.permission.WRITE_EXTERNAL_STORAGE',
+      // Reklam kimliği: uygulamada reklam yok ve okunmuyor. Play, bu izni
+      // bildirip kullanmayan uygulamayı da, kullanıp bildirmeyeni de
+      // reddediyor. Google Play Services'i çeken herhangi bir bağımlılık
+      // manifest'e sessizce ekleyebildiği için burada kapatılıyor.
+      'com.google.android.gms.permission.AD_ID',
     ],
   },
   web: { favicon: './assets/favicon.png' },

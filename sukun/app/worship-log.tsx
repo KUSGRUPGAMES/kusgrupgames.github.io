@@ -81,11 +81,13 @@ export default function WorshipLogScreen() {
               <Column gap="sm" style={{ paddingVertical: theme.spacing.sm }}>
                 <Text variant="bodyStrong">{label(slot)}</Text>
                 <Segmented
+                  // Dört uzun etiket 320 piksellik ekranda sığmıyor; kısa
+                  // karşılıklar gösterilir, ekran okuyucu uzununu okur.
                   options={[
-                    { value: 'none', label: t('log.notPrayed') },
-                    { value: 'alone', label: t('log.prayerAlone') },
-                    { value: 'jamaah', label: t('log.prayerJamaah') },
-                    { value: 'qada', label: t('log.prayerQada') },
+                    { value: 'none', label: t('log.notPrayed'), short: t('log.notPrayedShort') },
+                    { value: 'alone', label: t('log.prayerAlone'), short: t('log.prayerAloneShort') },
+                    { value: 'jamaah', label: t('log.prayerJamaah'), short: t('log.prayerJamaahShort') },
+                    { value: 'qada', label: t('log.prayerQada'), short: t('log.prayerQadaShort') },
                   ]}
                   value={deger ?? 'none'}
                   onChange={(v) => setPrayer(tarih, slot, v === 'none' ? null : (v as 'alone' | 'jamaah' | 'qada'))}

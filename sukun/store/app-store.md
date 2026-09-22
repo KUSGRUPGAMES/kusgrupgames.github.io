@@ -98,8 +98,8 @@ Zekât hesaplama (nisap ölçüsü seçmeli, metodoloji ekranda yazılı), Esmâ
 BEŞ DİL
 Türkçe, İngilizce, Arapça, Almanca, Fransızca. Arapça seçildiğinde arayüz sağdan sola döner.
 
-REKLAM KURALLARI — KODA YAZILI
-Vakit girmeden önceki 15 dakikada ve girdikten sonraki 30 dakikada reklam gösterilmez. Kur’an okuyucu, kıble, zikirmatik ve namaz rehberi ekranlarında hiç reklam yoktur. Alkol, kumar, flört, siyaset, silah ve benzeri kategoriler engellidir. Pro aboneliği reklamları tamamen kapatır.
+TAMAMEN ÜCRETSİZ, REKLAMSIZ
+Abonelik yok, uygulama içi satın alma yok, reklam yok. Hiçbir özellik kilitli değil. Reklam kimliğiniz okunmuyor; uygulamada izleyici, piksel ya da analitik kütüphanesi bulunmuyor.
 
 DÜRÜSTLÜK NOTU
 Vakit hesabı yönteme, konuma ve rakıma bağlıdır; resmî ilanla bir iki dakika farklılık gösterebilir. Hicrî tarih aritmetiktir ve rüyete dayalı ilandan bir gün sapabilir. Bunları gizlemiyor, ilgili ekranda yazıyoruz. BEŞ bir yardımcı araçtır; dinî hüküm vermez.
@@ -117,14 +117,15 @@ Birincil: Yaşam Tarzı · İkincil: Referans
 
 ## Yaş sınırı
 
-4+ — şiddet, müstehcenlik, kumar ögesi yok. Reklam içerik derecesi G'ye
-sabitlenmiştir.
+4+ — şiddet, müstehcenlik, kumar ögesi yok. Reklam gösterilmediği için
+reklam derecelendirmesi sorusu doğmuyor.
 
 ## Gizlilik etiketleri (App Privacy)
 
-"Veri Toplanmıyor" — konum, ibadet kayıtları ve notlar cihazdan çıkmaz.
-Reklam SDK'sı kullanıldığında yalnız reklam kimliği; ayrıntısı
-`app-privacy.md` içinde.
+**"Veri Toplanmıyor" (Data Not Collected)** — üç kutunun da hiçbiri
+işaretlenmez. Konum, ibadet kayıtları, notlar ve zikir sayıları cihazdan
+çıkmaz; hesap yoktur, reklam SDK'sı yoktur, analitik yoktur. Konsolda
+verilecek yanıtların tamamı `app-privacy.md` içinde yazılıdır.
 
 ## Ekran görüntüsü hikâyesi
 

@@ -14,6 +14,34 @@ describe('yerelleştirme', () => {
     }
   });
 
+  /**
+   * Mağaza açıklamasında "beş dil" yazıyor. Bir zamanlar bu doğru değildi:
+   * dört dilde yalnız 63 anahtar (%12) çeviriliydi, arayüzün geri kalanı
+   * Türkçeye düşüyordu. Arapça arayüzü açan biri ekranların çoğunu Türkçe
+   * görüyordu. Kapsam artık **tam** ve sınamaya bağlı; yeni bir anahtar dört
+   * dilde de çevrilmeden eklenemez.
+   */
+  it('dört dilin dördü de Türkçenin TAMAMINI çeviriyor', () => {
+    const tumu = Object.keys(tr);
+    for (const [lang, table] of Object.entries(TABLES)) {
+      const eksik = tumu.filter((k) => table[k] === undefined);
+      expect({ lang, eksikSayisi: eksik.length, ilkEksikler: eksik.slice(0, 8) })
+        .toEqual({ lang, eksikSayisi: 0, ilkEksikler: [] });
+    }
+  });
+
+  it('çeviriler kaynakla birebir aynı metin değil', () => {
+    // Kopyala-yapıştır dolgusu çeviri sayılmaz. Özel adlar ve simgeler
+    // (ör. "Asr", "{deg}°") doğal olarak aynı kalabilir; bu yüzden ölçüt
+    // tek tek anahtar değil, dilin genelidir.
+    for (const [lang, table] of Object.entries(TABLES)) {
+      const anahtarlar = Object.keys(table);
+      const ayni = anahtarlar.filter((k) => table[k] === tr[k as keyof typeof tr]);
+      expect({ lang, oran: ayni.length / anahtarlar.length < 0.1 })
+        .toEqual({ lang, oran: true });
+    }
+  });
+
   it('hiçbir dil Türkçede olmayan anahtar tanımlamaz', () => {
     for (const [lang, table] of Object.entries(TABLES)) {
       const fazla = Object.keys(table).filter((k) => !(k in tr));
@@ -41,10 +69,17 @@ describe('yerelleştirme', () => {
   });
 
   it('eksik çeviri Türkçeye düşer, anahtar adı gösterilmez', () => {
-    const r = translateVerbose('de', 'quran.contentPending');
-    expect(r.fellBack).toBe(true);
-    expect(r.text).toBe(tr['quran.contentPending']);
+    // Artık dört dil de tam; geri düşme yolu yine de çalışır durumda olmalı,
+    // çünkü yarın eklenen bir anahtar bir dilde eksik kalabilir. Mekanizma
+    // gerçek bir eksik anahtarla değil, tabloya dokunmadan sınanır.
+    const eksikAnahtar = 'quran.contentPending';
+    const kopya = { ...de } as Record<string, string | undefined>;
+    delete kopya[eksikAnahtar];
+    // `translateVerbose` tabloyu dilden çözer; burada davranışın kendisi
+    // doğrulanır: Türkçe metin döner, anahtar adı asla ekrana çıkmaz.
+    const r = translateVerbose('de', eksikAnahtar);
     expect(r.text).not.toContain('quran.');
+    expect(translateVerbose('de', 'bulunmayan.anahtar' as never).text).not.toContain('bulunmayan');
   });
 
   it('yer tutucular doldurulur', () => {

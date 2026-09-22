@@ -7,7 +7,7 @@
  * gözle görülerek yakalandı.
  *
  * Kullanım:
- *   npm run preview            → web derlemesi + 42 ekran + video
+ *   npm run preview            → web derlemesi + 4 geçiş × 32 ekran + video
  *   node tools/preview.js shots
  *   node tools/preview.js film
  *
@@ -82,9 +82,20 @@ const EKRANLAR = [
   ['70-ana-sayfa-duzeni', '/home-layout'], ['71-hesap', '/account'], ['72-tani', '/diagnostics'],
 ];
 
-const KOYU = [
-  ['80-koyu-ana-sayfa', '/'], ['81-koyu-okuyucu', '/reader?surah=36'],
-  ['82-koyu-kible', '/qibla'], ['83-koyu-profil', '/profile'],
+/**
+ * Denetim geçişleri.
+ *
+ * Tek bir tema ve tek bir ekran genişliği yetmiyor: bulunan hataların çoğu
+ * ya koyu temada ya da dar ekranda ortaya çıktı (koyu temada bembeyaz başlık
+ * çubuğu, dar ekranda taşan geri sayım). Her geçiş bütün ekranları çizer.
+ */
+const GECISLER = [
+  { ad: 'acik', klasor: 'acik', viewport: { width: 390, height: 844 }, tema: 'light' },
+  { ad: 'koyu', klasor: 'koyu', viewport: { width: 390, height: 844 }, tema: 'dark' },
+  // iPhone SE genişliği: düzen kırılmaları önce burada görünür.
+  { ad: 'dar', klasor: 'dar', viewport: { width: 320, height: 568 }, tema: 'light' },
+  // Arapça arayüz: sağdan sola akış ve uzun kelimeler.
+  { ad: 'arapca', klasor: 'ar', viewport: { width: 390, height: 844 }, tema: 'light', dil: 'ar' },
 ];
 
 const bekle = (p, ms) => p.waitForTimeout(ms);
@@ -107,82 +118,99 @@ function tarayiciAc() {
 
 const BAGLAM = { viewport: { width: 390, height: 844 }, locale: 'tr-TR', timezoneId: 'Europe/Istanbul' };
 
-/** Konumu ve onboarding durumunu hazır kabul ettirir. */
-async function tohumla(ctx) {
-  await ctx.addInitScript((y) => {
+/**
+ * Konumu, temayı ve dili hazır kabul ettirir.
+ *
+ * Tema ve dil depodan okunuyor; arayüzden tıklayarak geçmek her ekranda
+ * bir tur gezinme demekti ve bir kez de yanlış ekranda kaldı.
+ */
+async function tohumla(ctx, { tema = 'light', dil = 'tr' } = {}) {
+  await ctx.addInitScript((veri) => {
     localStorage.setItem('sukun.onboardingDone', 'true');
-    localStorage.setItem('sukun.locations', JSON.stringify({ locations: [y], activeId: y.id }));
-  }, ISTANBUL);
+    localStorage.setItem('sukun.locations', JSON.stringify({ locations: [veri.yer], activeId: veri.yer.id }));
+    localStorage.setItem('sukun.themeMode', JSON.stringify(veri.tema));
+    localStorage.setItem('sukun.settings', JSON.stringify({ language: veri.dil }));
+  }, { yer: ISTANBUL, tema, dil });
 }
 
 async function ekranlar(port) {
   fs.mkdirSync(SHOTS, { recursive: true });
   const kok = `http://127.0.0.1:${port}`;
   const browser = await tarayiciAc();
-  let sorunlu = 0;
+  /** Bulunan her sorun: { gecis, ekran, tur, ayrinti }. */
+  const sorunlar = [];
 
   // --- ilk açılış: tohumsuz, gerçek onboarding akışı
   {
+    const dizin = path.join(SHOTS, 'acilis');
+    fs.mkdirSync(dizin, { recursive: true });
     const ctx = await browser.newContext({ ...BAGLAM, deviceScaleFactor: 2 });
     const page = await ctx.newPage();
+    page.on('pageerror', (e) => sorunlar.push({ gecis: 'acilis', ekran: 'onboarding', tur: 'hata', ayrinti: String(e).slice(0, 160) }));
     await page.goto(`${kok}/`, { waitUntil: 'load' });
     await bekle(page, 3000);
-    await page.screenshot({ path: path.join(SHOTS, '01-acilis-1-hosgeldin.png') });
+    await page.screenshot({ path: path.join(dizin, '1-hosgeldin.png') });
 
     await yazi(page, 'Başla').first().click(); await bekle(page, 1200);
     const alan = page.locator('input').first();
     await alan.click(); await alan.type('İstanbul', { delay: 60 });
     await bekle(page, 1200);
-    await page.screenshot({ path: path.join(SHOTS, '02-acilis-2-konum-arama.png') });
+    await page.screenshot({ path: path.join(dizin, '2-konum-arama.png') });
 
     await yazi(page, 'İstanbul').first().click(); await bekle(page, 1200);
-    await page.screenshot({ path: path.join(SHOTS, '03-acilis-2-konum-secildi.png') });
+    await page.screenshot({ path: path.join(dizin, '3-konum-secildi.png') });
     await yazi(page, 'İleri').first().click(); await bekle(page, 1200);
-    await page.screenshot({ path: path.join(SHOTS, '04-acilis-3-yontem.png') });
+    await page.screenshot({ path: path.join(dizin, '4-yontem.png') });
     await yazi(page, 'İleri').first().click(); await bekle(page, 1200);
-    await page.screenshot({ path: path.join(SHOTS, '05-acilis-4-bildirim.png') });
+    await page.screenshot({ path: path.join(dizin, '5-bildirim.png') });
     await yazi(page, 'Geç').first().click(); await bekle(page, 1200);
-    await page.screenshot({ path: path.join(SHOTS, '06-acilis-5-hazir.png') });
+    await page.screenshot({ path: path.join(dizin, '6-hazir.png') });
     await ctx.close();
+    console.log('  . açılış akışı (6 kare)');
   }
 
-  // --- açık tema: bütün ekranlar
-  {
-    const ctx = await browser.newContext({ ...BAGLAM, deviceScaleFactor: 2 });
-    await tohumla(ctx);
+  for (const gecis of GECISLER) {
+    const dizin = path.join(SHOTS, gecis.klasor);
+    fs.mkdirSync(dizin, { recursive: true });
+    const ctx = await browser.newContext({
+      ...BAGLAM, viewport: gecis.viewport, deviceScaleFactor: 2,
+      ...(gecis.dil === 'ar' ? { locale: 'ar' } : {}),
+    });
+    await tohumla(ctx, { tema: gecis.tema, dil: gecis.dil ?? 'tr' });
     const page = await ctx.newPage();
-    page.on('pageerror', (e) => { sorunlu++; console.log('  ÇALIŞMA HATASI:', String(e).slice(0, 160)); });
+    let suAnki = '';
+    page.on('pageerror', (e) => sorunlar.push({ gecis: gecis.ad, ekran: suAnki, tur: 'hata', ayrinti: String(e).slice(0, 160) }));
+
+    console.log(`\n--- ${gecis.ad} (${gecis.viewport.width}×${gecis.viewport.height}${gecis.dil ? ', ' + gecis.dil : ''})`);
     for (const [ad, yol] of EKRANLAR) {
+      suAnki = ad;
       await page.goto(kok + yol, { waitUntil: 'load' });
-      await bekle(page, 1800);
-      const metin = (await page.evaluate(() => document.body.innerText)).trim();
-      await page.screenshot({ path: path.join(SHOTS, `${ad}.png`) });
-      const bos = metin.length < 12;
-      if (bos) sorunlu++;
-      console.log(`${bos ? 'BOŞ ' : '  . '}${ad.padEnd(24)} ${yol}`);
-    }
-    await ctx.close();
-  }
+      await bekle(page, gecis.dil === 'ar' ? 2200 : 1700);
+      const olcum = await page.evaluate(() => ({
+        metin: document.body.innerText.trim().length,
+        tasma: document.documentElement.scrollWidth - window.innerWidth,
+      }));
+      await page.screenshot({ path: path.join(dizin, `${ad}.png`) });
 
-  // --- koyu tema
-  {
-    const ctx = await browser.newContext({ ...BAGLAM, deviceScaleFactor: 2 });
-    await tohumla(ctx);
-    const page = await ctx.newPage();
-    await page.goto(`${kok}/profile`, { waitUntil: 'load' });
-    await bekle(page, 2000);
-    await yazi(page, 'Koyu').first().click(); await bekle(page, 1500);
-    for (const [ad, yol] of KOYU) {
-      await page.goto(kok + yol, { waitUntil: 'load' });
-      await bekle(page, 2000);
-      await page.screenshot({ path: path.join(SHOTS, `${ad}.png`) });
-      console.log(`  . ${ad}`);
+      const isaret = [];
+      if (olcum.metin < 12) { sorunlar.push({ gecis: gecis.ad, ekran: ad, tur: 'boş', ayrinti: '' }); isaret.push('BOŞ'); }
+      // Yatay taşma = düzen kırılması. 1 piksel yuvarlama payı bırakılır.
+      if (olcum.tasma > 1) {
+        sorunlar.push({ gecis: gecis.ad, ekran: ad, tur: 'taşma', ayrinti: `${olcum.tasma}px` });
+        isaret.push(`TAŞMA ${olcum.tasma}px`);
+      }
+      console.log(`${isaret.length ? '!!' : ' .'} ${ad.padEnd(24)} ${isaret.join(' ')}`);
     }
     await ctx.close();
   }
 
   await browser.close();
-  return sorunlu;
+
+  if (sorunlar.length > 0) {
+    console.log('\n=== SORUNLAR ===');
+    for (const s of sorunlar) console.log(`  ${s.gecis.padEnd(8)} ${s.ekran.padEnd(24)} ${s.tur} ${s.ayrinti}`);
+  }
+  return sorunlar.length;
 }
 
 async function film(port) {
@@ -285,7 +313,7 @@ async function film(port) {
     sunucu.close();
   }
   if (sorunlu > 0) {
-    console.error(`\n${sorunlu} ekran boş çizdi ya da hata verdi.`);
+    console.error(`\n${sorunlu} sorun bulundu (boş ekran, çalışma hatası ya da yatay taşma).`);
     process.exit(1);
   }
   console.log('\nHepsi çizdi.');

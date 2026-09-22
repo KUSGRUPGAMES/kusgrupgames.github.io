@@ -48,7 +48,15 @@ export function translateVerbose(
   const table = TABLES[lang];
   const raw = table[key];
   const fellBack = raw === undefined;
-  const source = raw ?? tr[key];
+  /**
+   * Türkçede de yoksa boş metin döner ve **çökmez**.
+   *
+   * Anahtarların çoğu derleme anında denetleniyor (`StringKey`), ama bir kısmı
+   * çalışma anında kuruluyor: ay evresi adı, ana sayfa kart kimliği, arama
+   * sonucu türü. Oralarda bir uyuşmazlık olursa ekranın komple çökmesi kabul
+   * edilemez; hiç olmazsa boş kalır. Anahtar adı asla kullanıcıya gösterilmez.
+   */
+  const source = raw ?? tr[key] ?? '';
   const missingParams: string[] = [];
   const text = source.replace(PLACEHOLDER, (_whole, name: string) => {
     const value = params?.[name];
