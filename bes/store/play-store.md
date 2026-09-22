@@ -47,7 +47,7 @@ YEDEK SİZDE
 Bütün kayıtlarınızı tek bir dosyaya aktarıp yeni telefonunuza taşıyabilirsiniz. Dosya sizde kalır; uygulama onu hiçbir yere göndermez. Uygulamayı silerseniz hepsi onunla birlikte gider.
 
 ★ EZAN VE NAMAZ VAKİTLERİ
-Sıradaki vakte saniye saniye geri sayım. Günün altı vakti tek bakışta, ay boyu vakit takvimi tek ekranda. Her vakit için ayrı bildirim kurabilirsiniz.
+Sıradaki vakte saniye saniye geri sayım. Beş vakit ve güneş doğuşu tek bakışta, ay boyu vakit takvimi tek ekranda. Her vakit için ayrı bildirim kurabilirsiniz.
 
 Yedi hesaplama yöntemi: Diyanet, Müslüman Dünya Birliği, ISNA, Mısır Genel Araştırma, Ümmü'l-Kurâ (Mekke), Karaçi ve Tahran. İkindi için Hanefî ve Şâfiî ölçüsü ayrı. Her vakte ayrı dakika düzeltmesi girip mahallenizin takvimiyle birebir tutturabilirsiniz.
 
