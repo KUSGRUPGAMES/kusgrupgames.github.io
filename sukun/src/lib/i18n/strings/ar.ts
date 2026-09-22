@@ -333,4 +333,22 @@ export const ar: Partial<Record<StringKey, string>> = {
   'backup.restoredMerge': 'أُضيف {count} سجلًا.',
   'backup.restoredReplace': 'حُمِّل كل ما في النسخة الاحتياطية.',
   'backup.countersKept': 'حُفظت عدّادات الفوائت والإعدادات الخاصة بهذا الجهاز.',
+
+  'hijriMonth.1': 'محرَّم', 'hijriMonth.2': 'صفر', 'hijriMonth.3': 'ربيع الأول',
+  'hijriMonth.4': 'ربيع الآخر', 'hijriMonth.5': 'جمادى الأولى', 'hijriMonth.6': 'جمادى الآخرة',
+  'hijriMonth.7': 'رجب', 'hijriMonth.8': 'شعبان', 'hijriMonth.9': 'رمضان',
+  'hijriMonth.10': 'شوّال', 'hijriMonth.11': 'ذو القعدة', 'hijriMonth.12': 'ذو الحجة',
+
+  'method.diyanet': 'ديانت (تركيا)', 'method.mwl': 'رابطة العالم الإسلامي',
+  'method.isna': 'الجمعية الإسلامية لأمريكا الشمالية', 'method.egypt': 'الهيئة المصرية العامة للمساحة',
+  'method.karachi': 'جامعة كراتشي', 'method.makkah': 'أم القرى (مكة)',
+  'method.tehran': 'معهد الجيوفيزياء بطهران',
+
+  'religiousDay.threeMonths': 'بداية الأشهر الثلاثة', 'religiousDay.regaib': 'ليلة الرغائب',
+  'religiousDay.miraj': 'ليلة الإسراء والمعراج', 'religiousDay.baraat': 'ليلة البراءة',
+  'religiousDay.ramadanStart': 'بداية رمضان', 'religiousDay.qadr': 'ليلة القدر',
+  'religiousDay.eidFitrEve': 'وقفة عيد الفطر', 'religiousDay.eidFitr': 'عيد الفطر',
+  'religiousDay.eidAdhaEve': 'وقفة عيد الأضحى', 'religiousDay.eidAdha': 'عيد الأضحى',
+  'religiousDay.hijriNewYear': 'رأس السنة الهجرية', 'religiousDay.ashura': 'يوم عاشوراء',
+  'religiousDay.mawlid': 'المولد النبوي',
 } as const;

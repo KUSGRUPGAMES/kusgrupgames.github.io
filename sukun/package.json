@@ -1,6 +1,6 @@
 {
   "name": "sukun",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -20,7 +20,8 @@
     "import:translation": "node --experimental-strip-types tools/import-translation.js",
     "probe:reciters": "node tools/probe-reciters.js",
     "test:logic": "jest --selectProjects mantik",
-    "test:ui": "jest --selectProjects bilesen"
+    "test:ui": "jest --selectProjects bilesen",
+    "store:shots": "node tools/store-shots.js"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",

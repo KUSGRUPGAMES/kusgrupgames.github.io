@@ -589,6 +589,27 @@ export const tr = {
   'ai.sources': 'Kaynaklar',
   'ai.disclaimer': 'Bu asistan bilgi verir, fetva vermez. Hüküm gerektiren sorularda bir din görevlisine danış.',
   'ai.refusal': 'Bu soru hüküm/fetva gerektiriyor; yanıtlamıyorum. Bir din görevlisine danışmanı öneririm.',
+
+  // --- hicrî ay adları, hesaplama yöntemleri ve dinî günler
+  // Bunlar veri dosyalarında Türkçe sabit olarak duruyordu; arayüz beş dile
+  // çevrilince ekranda tek Türkçe ada onlar kalmıştı.
+  'hijriMonth.1': 'Muharrem', 'hijriMonth.2': 'Safer', 'hijriMonth.3': 'Rebîülevvel',
+  'hijriMonth.4': 'Rebîülâhir', 'hijriMonth.5': 'Cemâziyelevvel', 'hijriMonth.6': 'Cemâziyelâhir',
+  'hijriMonth.7': 'Receb', 'hijriMonth.8': 'Şâban', 'hijriMonth.9': 'Ramazan',
+  'hijriMonth.10': 'Şevval', 'hijriMonth.11': 'Zilkade', 'hijriMonth.12': 'Zilhicce',
+
+  'method.diyanet': 'Diyanet (Türkiye)', 'method.mwl': 'Müslüman Dünya Birliği',
+  'method.isna': 'ISNA (Kuzey Amerika)', 'method.egypt': 'Mısır Genel Araştırma',
+  'method.karachi': 'Karaçi Üniversitesi', 'method.makkah': 'Ümmü’l-Kurâ (Mekke)',
+  'method.tehran': 'Tahran Jeofizik',
+
+  'religiousDay.threeMonths': 'Üç Ayların Başlangıcı', 'religiousDay.regaib': 'Regaib Kandili',
+  'religiousDay.miraj': 'Miraç Kandili', 'religiousDay.baraat': 'Berat Kandili',
+  'religiousDay.ramadanStart': 'Ramazan Başlangıcı', 'religiousDay.qadr': 'Kadir Gecesi',
+  'religiousDay.eidFitrEve': 'Ramazan Bayramı Arefe', 'religiousDay.eidFitr': 'Ramazan Bayramı',
+  'religiousDay.eidAdhaEve': 'Kurban Bayramı Arefe', 'religiousDay.eidAdha': 'Kurban Bayramı',
+  'religiousDay.hijriNewYear': 'Hicri Yılbaşı', 'religiousDay.ashura': 'Aşure Günü',
+  'religiousDay.mawlid': 'Mevlid Kandili',
 } as const;
 
 export type StringKey = keyof typeof tr;

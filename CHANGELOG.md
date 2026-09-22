@@ -2,6 +2,36 @@
 
 Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
 
+## [1.0.0] — ilk yayın adayı
+
+İlk mağaza sürümü. Hesapsız, sunucusuz, **tamamen ücretsiz ve reklamsız**
+çalışan bir namaz vakti ve Kur'an uygulaması.
+
+**Kapsam:** altı vakit ve aylık takvim (yedi hesaplama yöntemi, vakit başına
+dakika düzeltmesi), kıble pusulası, Kur'an-ı Kerim'in tamamı (Tanzil metni +
+Elmalılı meali, 18 okuyucunun kıraati, çevrimdışı indirme), zikirmatik,
+kaza takibi, ibadet defteri, oruç ve hatim takibi, zekât ve fitre hesabı,
+Ramazan modu, hicrî takvim ve dinî günler, Esmâü'l-Hüsnâ, 14 kategoride dua,
+namaz rehberi, Hac ve Umre rehberi, 43 maddelik bilgi kütüphanesi, arama,
+paylaşım kartı ve yerel yedek.
+
+**Beş dil:** arayüzün tamamı Türkçe, İngilizce, Arapça, Almanca ve
+Fransızca (538 anahtar × 5). Kur'an meali ve bilgi yazıları Türkçedir.
+
+**Gizlilik:** hesap yok, sunucu yok, reklam yok, izleyici yok, analitik yok.
+Kişisel veri cihazdan çıkmıyor. İki mağaza formunda da "veri toplanmıyor".
+
+### Bu sürümde kapatılan yayın engelleri
+
+- Mağaza metinleri ve yasal sayfalar uygulamada bulunmayan reklam ve Pro
+  aboneliğini anlatıyordu — hepsi gerçeğe göre yeniden yazıldı.
+- Dört dilde çeviri kapsamı %12'ydi; %100'e çıkarıldı ve sınamaya bağlandı.
+- İbadet defterindeki seçici dar ekranda üst üste biniyordu.
+- Koyu temada gezinme başlığı bembeyaz kalıyordu.
+- Mağaza ekran görüntüleri ve öne çıkan görsel üretildi (`npm run store:shots`).
+
+---
+
 ## [Yayınlanmadı] — 0.1.0
 
 ### Yerel yedek: dışa aktar ve geri yükle (D19)

@@ -13,7 +13,8 @@ import { DUAS } from '@/content/duas';
 import { KNOWLEDGE } from '@/content/knowledge';
 import { DIVINE_NAMES } from '@/content/names';
 import { useFavoriteStore } from '@/store/favorites';
-import { toHijri, HIJRI_MONTHS, upcomingReligiousDays } from '@/features/hijri/calc';
+import { toHijri, upcomingReligiousDays } from '@/features/hijri/calc';
+import { useHijriMonthName, useReligiousDayName } from '@/features/hijri/labels';
 import { moonState } from '@/features/moon/phase';
 import { isFriday, ramadanState, KAHF_SURAH } from '@/features/ramadan/calc';
 import { getQuranIndexSize, getAyahByIndex, getTranslationByIndex, getTranslationInfo } from '@/features/quran/data';
@@ -97,8 +98,9 @@ export function DailyNameCard({ ctx }: { ctx: DailyContext }) {
 
 export function HijriDateCard({ ctx }: { ctx: DailyContext }) {
   const t = useT();
+  const ayAdi = useHijriMonthName();
   const h = toHijri(new Date(ctx.now.getTime() + ctx.hijriOffset * 86400000));
-  const ay = HIJRI_MONTHS[h.month - 1] ?? '';
+  const ay = ayAdi(h.month);
   return (
     <Card onPress={() => router.push('/hijri')} accessibilityLabel={t('hijri.title')}>
       <Column gap="xs">
@@ -112,6 +114,7 @@ export function HijriDateCard({ ctx }: { ctx: DailyContext }) {
 
 export function ReligiousDayCard({ ctx }: { ctx: DailyContext }) {
   const t = useT();
+  const gunAdi = useReligiousDayName();
   const yaklasan = upcomingReligiousDays(ctx.now)[0];
   if (!yaklasan) return null;
   const kalan = yaklasan.daysAway === 0
@@ -124,7 +127,7 @@ export function ReligiousDayCard({ ctx }: { ctx: DailyContext }) {
       <Column gap="xs">
         <Text variant="caption" tone="muted">{t('religiousDay.upcoming')}</Text>
         <Row align="center" justify="space-between">
-          <Text variant="title3">{yaklasan.label}</Text>
+          <Text variant="title3">{gunAdi(yaklasan.id)}</Text>
           <Badge label={kalan} tone="highlight" />
         </Row>
       </Column>

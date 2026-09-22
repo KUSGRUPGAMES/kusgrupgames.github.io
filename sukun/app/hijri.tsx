@@ -8,13 +8,16 @@ import {
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT, useDateFormat } from '@/lib/i18n';
 import { useSettingsStore } from '@/store/settings';
-import { toHijri, fromHijri, HIJRI_MONTHS, upcomingReligiousDays } from '@/features/hijri/calc';
+import { toHijri, fromHijri, upcomingReligiousDays } from '@/features/hijri/calc';
+import { useHijriMonthName, useReligiousDayName } from '@/features/hijri/labels';
 import { moonState } from '@/features/moon/phase';
 
 type Yon = 'toHijri' | 'toGregorian';
 
 export default function HijriScreen() {
   const t = useT();
+  const ayAdi = useHijriMonthName();
+  const gunAdi = useReligiousDayName();
   const theme = useTheme();
   const settings = useSettingsStore((s) => s.settings);
   const update = useSettingsStore((s) => s.update);
@@ -41,7 +44,7 @@ export default function HijriScreen() {
     const d = new Date(c, b - 1, a);
     if (Number.isNaN(d.getTime())) return null;
     const h = toHijri(d);
-    return `${h.day} ${HIJRI_MONTHS[h.month - 1] ?? ''} ${h.year}`;
+    return `${h.day} ${ayAdi(h.month)} ${h.year}`;
   }, [girdi, yon]);
 
   return (
@@ -52,7 +55,7 @@ export default function HijriScreen() {
         <Column gap="xs" align="center">
           <Text variant="callout" tone="onAccent">{t('hijri.today')}</Text>
           <Text variant="title1" tone="onAccent">
-            {`${bugunHicri.day} ${HIJRI_MONTHS[bugunHicri.month - 1] ?? ''} ${bugunHicri.year}`}
+            {`${bugunHicri.day} ${ayAdi(bugunHicri.month)} ${bugunHicri.year}`}
           </Text>
         </Column>
       </Card>
@@ -100,7 +103,7 @@ export default function HijriScreen() {
             {i > 0 ? <Divider /> : null}
             <Row align="center" justify="space-between" style={{ paddingVertical: theme.spacing.sm }}>
               <Column flex={1} gap="xxs">
-                <Text variant="bodyStrong">{g.label}</Text>
+                <Text variant="bodyStrong">{gunAdi(g.id)}</Text>
                 <Text variant="caption" tone="muted">
                   {uzunTarih.format(g.date)}
                 </Text>

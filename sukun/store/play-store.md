@@ -69,7 +69,7 @@ Kaza namazı sayaçları ve toplu giriş, gün gün ibadet defteri, oruç takibi
 Zekât hesaplama (altın veya gümüş nisabı seçmeli, metodoloji ekranda yazılı), Esmâü'l-Hüsnâ, 14 kategoride dua, adım adım namaz rehberi, hicrî takvim ve yaklaşan dinî günler, Hac ve Umre rehberi, 43 maddelik İslami bilgi kütüphanesi, paylaşılabilir âyet kartları.
 
 ★ DİL DESTEĞİ
-Türkçe, İngilizce, Arapça, Almanca, Fransızca. Arapça seçildiğinde arayüz sağdan sola döner.
+Arayüzün tamamı Türkçe, İngilizce, Arapça, Almanca ve Fransızca. Arapça seçildiğinde yazı yönü sağdan sola döner. Kur’an meali (Elmalılı) ve bilgi yazıları Türkçedir.
 
 ★ TAMAMEN ÜCRETSİZ, REKLAMSIZ
 Abonelik yok, uygulama içi satın alma yok, reklam yok. Hiçbir özellik kilitli değil. Reklam kimliğiniz okunmuyor; uygulamada izleyici, piksel ya da analitik kütüphanesi bulunmuyor.

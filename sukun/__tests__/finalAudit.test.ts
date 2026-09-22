@@ -203,6 +203,31 @@ describe('gezinme iskeleti', () => {
     expect(suclular.map((f) => basename(f))).toEqual([]);
   });
 
+  it('hicrî ay, dinî gün ve yöntem adları ekranda dilden geliyor', () => {
+    // Bu adlar veri dosyalarında Türkçe sabit duruyor (hesap mantığı dile
+    // bağlı olmasın diye). Arayüz beş dile çevrildikten sonra ekranda tek
+    // Türkçe kalan yer onlardı; ekranlar artık `labels.ts` kancalarını
+    // kullanıyor ve doğrudan `label` okumak yasak.
+    const veriDosyalari = ['labels.ts', 'calc.ts', 'methods.ts'];
+    const suclular: string[] = [];
+    for (const f of [...uygulamaDosyalari, ...dosyalar(join(ROOT, 'src'))]) {
+      if (veriDosyalari.some((d) => f.endsWith(sep + d))) continue;
+      const k = oku(f);
+      // Ay adı dizisine doğrudan indislemek = Türkçeyi ekrana gömmek.
+      if (/HIJRI_MONTHS\[/.test(k)) suclular.push(`${basename(f)}: HIJRI_MONTHS`);
+      // Bu iki veri kümesini çizen ekranlarda `.label` okumak yasak: adı
+      // dilden almalılar. Kullanıcının kendi yazdığı konum etiketi
+      // (`konum.label`) bunun dışındadır — o çevrilmez, şehrin adıdır.
+      // Konum nesnesi ekranlarda `konum` ya da `aktif` diye taşınıyor.
+      const kalan = k.replace(/\b(konum|aktif|yer|p)\.label/g, '');
+      if (/\bMETHODS\b/.test(k) && /\.label\b/.test(kalan)) suclular.push(`${basename(f)}: METHODS`);
+      if (/upcomingReligiousDays/.test(k) && /\.label\b/.test(kalan)) {
+        suclular.push(`${basename(f)}: religiousDays`);
+      }
+    }
+    expect(suclular).toEqual([]);
+  });
+
   it('onboarding kapısı bir ekranın içinde duruyor', () => {
     // Kapı kökte değil, kök yığının bir ekranı olan sekme düzenindedir;
     // `Redirect` ancak orada gezinme bağlamı bulur.

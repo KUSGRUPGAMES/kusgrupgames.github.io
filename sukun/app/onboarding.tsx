@@ -19,6 +19,7 @@ import { requestDeviceLocation } from '@/features/location/device';
 import { requestPermission } from '@/features/notifications/service';
 import { useLocationStore } from '@/store/locations';
 import { useSettingsStore } from '@/store/settings';
+import { useMethodName } from '@/features/hijri/labels';
 import { METHODS } from '@/features/prayer/methods';
 import { markOnboardingDone } from '@/boot/persistence';
 // Logo dosya olarak gelir, kodla çizilmez (D17).
@@ -28,6 +29,7 @@ const TOPLAM = 5;
 
 export default function OnboardingScreen() {
   const t = useT();
+  const yontemAdi = useMethodName();
   const theme = useTheme();
   const [adim, setAdim] = useState(1);
   const [sorgu, setSorgu] = useState('');
@@ -125,7 +127,7 @@ export default function OnboardingScreen() {
             {Object.values(METHODS).map((m) => (
               <ListItem
                 key={m.id}
-                title={m.label}
+                title={yontemAdi(m.id)}
                 chevron={false}
                 {...(settings.method === m.id ? { value: '•' } : {})}
                 onPress={() => update({ method: m.id })}

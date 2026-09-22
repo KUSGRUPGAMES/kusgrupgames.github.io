@@ -333,4 +333,22 @@ export const fr: Partial<Record<StringKey, string>> = {
   'backup.restoredMerge': '{count} entrées ajoutées.',
   'backup.restoredReplace': 'Tout le contenu de la sauvegarde a été chargé.',
   'backup.countersKept': 'Les compteurs de prières à rattraper et les réglages de cet appareil ont été conservés.',
+
+  'hijriMonth.1': 'Mouharram', 'hijriMonth.2': 'Safar', 'hijriMonth.3': 'Rabi al-Awwal',
+  'hijriMonth.4': 'Rabi al-Thani', 'hijriMonth.5': 'Joumada al-Oula', 'hijriMonth.6': 'Joumada al-Akhira',
+  'hijriMonth.7': 'Rajab', 'hijriMonth.8': 'Chaabane', 'hijriMonth.9': 'Ramadan',
+  'hijriMonth.10': 'Chawwal', 'hijriMonth.11': 'Dhou al-Qida', 'hijriMonth.12': 'Dhou al-Hijja',
+
+  'method.diyanet': 'Diyanet (Turquie)', 'method.mwl': 'Ligue islamique mondiale',
+  'method.isna': "ISNA (Amérique du Nord)", 'method.egypt': 'Autorité générale égyptienne',
+  'method.karachi': 'Université de Karachi', 'method.makkah': 'Oumm al-Qoura (La Mecque)',
+  'method.tehran': 'Institut de géophysique de Téhéran',
+
+  'religiousDay.threeMonths': 'Début des trois mois sacrés', 'religiousDay.regaib': 'Laylat ar-Ragha\u2019ib',
+  'religiousDay.miraj': 'Laylat al-Mi\u2019raj', 'religiousDay.baraat': 'Laylat al-Bara\u2019a',
+  'religiousDay.ramadanStart': 'Début du Ramadan', 'religiousDay.qadr': 'Laylat al-Qadr',
+  'religiousDay.eidFitrEve': "Veille de l'Aïd al-Fitr", 'religiousDay.eidFitr': 'Aïd al-Fitr',
+  'religiousDay.eidAdhaEve': "Veille de l'Aïd al-Adha", 'religiousDay.eidAdha': 'Aïd al-Adha',
+  'religiousDay.hijriNewYear': 'Nouvel an hégirien', 'religiousDay.ashura': 'Jour de l\u2019Achoura',
+  'religiousDay.mawlid': 'Mawlid an-Nabi',
 } as const;

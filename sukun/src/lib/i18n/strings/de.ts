@@ -333,4 +333,22 @@ export const de: Partial<Record<StringKey, string>> = {
   'backup.restoredMerge': '{count} Einträge hinzugefügt.',
   'backup.restoredReplace': 'Alles aus der Sicherung wurde geladen.',
   'backup.countersKept': 'Zähler für Nachholgebete und Einstellungen dieses Geräts wurden beibehalten.',
+
+  'hijriMonth.1': 'Muharram', 'hijriMonth.2': 'Safar', 'hijriMonth.3': 'Rabi al-Awwal',
+  'hijriMonth.4': 'Rabi al-Thani', 'hijriMonth.5': 'Dschumada al-Ula', 'hijriMonth.6': 'Dschumada al-Achira',
+  'hijriMonth.7': 'Radschab', 'hijriMonth.8': 'Schaban', 'hijriMonth.9': 'Ramadan',
+  'hijriMonth.10': 'Schawwal', 'hijriMonth.11': 'Dhu l-Qada', 'hijriMonth.12': 'Dhu l-Hiddscha',
+
+  'method.diyanet': 'Diyanet (Türkei)', 'method.mwl': 'Muslimische Weltliga',
+  'method.isna': 'ISNA (Nordamerika)', 'method.egypt': 'Ägyptische Vermessungsbehörde',
+  'method.karachi': 'Universität Karatschi', 'method.makkah': 'Umm al-Qura (Mekka)',
+  'method.tehran': 'Geophysik-Institut Teheran',
+
+  'religiousDay.threeMonths': 'Beginn der drei heiligen Monate', 'religiousDay.regaib': 'Lailat ar-Ragha\u2019ib',
+  'religiousDay.miraj': 'Lailat al-Mi\u2019radsch', 'religiousDay.baraat': 'Lailat al-Bara\u2019a',
+  'religiousDay.ramadanStart': 'Beginn des Ramadan', 'religiousDay.qadr': 'Lailat al-Qadr',
+  'religiousDay.eidFitrEve': 'Vorabend des Ramadanfests', 'religiousDay.eidFitr': 'Ramadanfest',
+  'religiousDay.eidAdhaEve': 'Vorabend des Opferfests', 'religiousDay.eidAdha': 'Opferfest',
+  'religiousDay.hijriNewYear': 'Islamisches Neujahr', 'religiousDay.ashura': 'Aschura-Tag',
+  'religiousDay.mawlid': 'Mawlid an-Nabi',
 } as const;

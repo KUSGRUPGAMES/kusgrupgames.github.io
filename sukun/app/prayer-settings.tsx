@@ -7,6 +7,7 @@ import {
 import { useT } from '@/lib/i18n';
 import { useSettingsStore } from '@/store/settings';
 import { useLocationStore } from '@/store/locations';
+import { useMethodName } from '@/features/hijri/labels';
 import { METHODS, PRAYER_KEYS, type MethodId, type PrayerKey } from '@/features/prayer/methods';
 import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
 import { rangeSchedule } from '@/features/prayer/schedule';
@@ -16,6 +17,7 @@ import { zonedNow } from '@/lib/time/zone';
 
 export default function PrayerSettingsScreen() {
   const t = useT();
+  const yontemAdi = useMethodName();
   const label = usePrayerLabel();
   const settings = useSettingsStore((s) => s.settings);
   const update = useSettingsStore((s) => s.update);
@@ -71,7 +73,7 @@ export default function PrayerSettingsScreen() {
         {Object.values(METHODS).map((m) => (
           <ListItem
             key={m.id}
-            title={m.label}
+            title={yontemAdi(m.id)}
             chevron={false}
             {...(settings.method === m.id ? { value: '•' } : {})}
             onPress={() => update({ method: m.id })}

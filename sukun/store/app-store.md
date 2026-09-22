@@ -96,7 +96,7 @@ AYRICA
 Zekât hesaplama (nisap ölçüsü seçmeli, metodoloji ekranda yazılı), Esmâü'l-Hüsnâ, 14 kategoride dua, namaz rehberi, hicrî takvim ve yaklaşan dinî günler, Hac ve Umre rehberi, 43 maddelik İslami bilgi kütüphanesi.
 
 BEŞ DİL
-Türkçe, İngilizce, Arapça, Almanca, Fransızca. Arapça seçildiğinde arayüz sağdan sola döner.
+Arayüzün tamamı Türkçe, İngilizce, Arapça, Almanca ve Fransızca. Arapça seçildiğinde yazı yönü sağdan sola döner. Kur’an meali (Elmalılı) ve bilgi yazıları Türkçedir.
 
 TAMAMEN ÜCRETSİZ, REKLAMSIZ
 Abonelik yok, uygulama içi satın alma yok, reklam yok. Hiçbir özellik kilitli değil. Reklam kimliğiniz okunmuyor; uygulamada izleyici, piksel ya da analitik kütüphanesi bulunmuyor.
@@ -131,15 +131,24 @@ verilecek yanıtların tamamı `app-privacy.md` içinde yazılıdır.
 
 Sıra önemlidir: mağazada ilk iki kare görülür, gerisi kaydırmaya bağlıdır.
 
+Kareler `npm run store:shots` ile üretilir ve `store/screenshots/` altına
+yazılır: App Store için 1290×2796, Play için 1080×1920, ayrıca Play'in
+istediği 1024×500 öne çıkan görsel ve 512×512 liste ikonu.
+
 | # | Başlık | Ekran |
 |---|---|---|
-| 1 | BEŞ · 5 Vakit, Daima Yanında. | Ana sayfa, geri sayım halkası |
-| 2 | Vakti hiçbir zaman kaçırma | Vakit listesi + bildirim ayarı |
-| 3 | Kur'an-ı Kerim · Oku, dinle, kaldığın yerden devam et | Okuyucu, Arapça + meal |
-| 4 | Kıble · Yönünü kolayca bul | Kıble pusulası |
-| 5 | Zikir ve dua · Her an yanında | Zikirmatik |
-| 6 | Ramazan · İmsaktan iftara | Ramazan ekranı |
-| 7 | İbadetlerini düzenle | İbadet defteri |
+| 1 | Vakti hiç kaçırma | Ana sayfa, geri sayım halkası + vakit listesi |
+| 2 | Kur'an-ı Kerim | Okuyucu, Arapça + Elmalılı meali |
+| 3 | Ay boyu takvim | Vakit takvimi, otuz gün |
+| 4 | Zikirmatik | Sayaç, hedef, zikir seçimi |
+| 5 | Koyu tema | Ana sayfa, koyu |
+| 6 | Ramazan | Geri sayım + imsakiye |
+| 7 | İbadet defteri | Namaz, Kur'an dakikası, oruç |
+
+**Kıble ekranı bilerek karelerde yok:** tarayıcıda pusula donanımı olmadığı
+için kare "Pusula okunamıyor" uyarısıyla çıkıyor ve mağazada kusur gibi
+duruyor. Özellik açıklamada anlatılıyor; gerçek cihazda kare çekildiğinde
+listeye eklenir.
 
 Metinler **dinî iddia ya da garanti içermez**: "sevap kazandırır", "namazını
 kaçırtmaz" gibi ifadeler hem yanlış hem mağaza reddi sebebidir.
