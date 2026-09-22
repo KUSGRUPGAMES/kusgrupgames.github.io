@@ -1,0 +1,181 @@
+{
+  "cdn": "https://cdn.islamic.network/quran/audio",
+  "source": {
+    "name": "Islamic Network",
+    "url": "https://islamic.network",
+    "terms": "https://alquran.cloud/terms-and-conditions",
+    "note": "Kıraatler okuyucular veya mirasçıları tarafından Islamic Network’e lisanslanmıştır. Akış ve gömme serbesttir; telif okuyucularda kalır ve kaldırma talebi gelirse kaldırılır."
+  },
+  "probedAt": "2026-09-19",
+  "reciters": [
+    {
+      "id": "ar.abdulbasitmurattal",
+      "name": "Abdülbasit Abdüssamed (Murattal)",
+      "englishName": "Abdul Basit",
+      "bitrates": [
+        64
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.abdullahbasfar",
+      "name": "Abdullah Basfar",
+      "englishName": "Abdullah Basfar",
+      "bitrates": [
+        64
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.abdurrahmaansudais",
+      "name": "Abdurrahman es-Sudeys",
+      "englishName": "Abdurrahmaan As-Sudais",
+      "bitrates": [
+        64
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.abdulsamad",
+      "name": "Abdülbasit Abdüssamed",
+      "englishName": "Abdul Samad",
+      "bitrates": [
+        64
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.shaatree",
+      "name": "Ebu Bekir eş-Şatıri",
+      "englishName": "Abu Bakr Ash-Shaatree",
+      "bitrates": [
+        128,
+        64
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.ahmedajamy",
+      "name": "Ahmed el-Acemi",
+      "englishName": "Ahmed ibn Ali al-Ajamy",
+      "bitrates": [
+        128,
+        64
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.alafasy",
+      "name": "Mişari Raşid el-Afasi",
+      "englishName": "Alafasy",
+      "bitrates": [
+        128,
+        64
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.hanirifai",
+      "name": "Hani er-Rifai",
+      "englishName": "Hani Rifai",
+      "bitrates": [
+        64
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.husary",
+      "name": "Mahmud Halil el-Husari",
+      "englishName": "Husary",
+      "bitrates": [
+        128,
+        64
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.husarymujawwad",
+      "name": "Mahmud Halil el-Husari (Mücevved)",
+      "englishName": "Husary (Mujawwad)",
+      "bitrates": [
+        128,
+        64
+      ],
+      "style": "mucevved"
+    },
+    {
+      "id": "ar.hudhaify",
+      "name": "Ali el-Huzeyfi",
+      "englishName": "Hudhaify",
+      "bitrates": [
+        128,
+        64
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.mahermuaiqly",
+      "name": "Mahir el-Muaykılı",
+      "englishName": "Maher Al Muaiqly",
+      "bitrates": [
+        128,
+        64
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.minshawi",
+      "name": "Muhammed Sıddık el-Minşavi",
+      "englishName": "Minshawi",
+      "bitrates": [
+        128
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.minshawimujawwad",
+      "name": "Muhammed Sıddık el-Minşavi (Mücevved)",
+      "englishName": "Minshawy (Mujawwad)",
+      "bitrates": [
+        64
+      ],
+      "style": "mucevved"
+    },
+    {
+      "id": "ar.muhammadayyoub",
+      "name": "Muhammed Eyyub",
+      "englishName": "Muhammad Ayyoub",
+      "bitrates": [
+        128
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.muhammadjibreel",
+      "name": "Muhammed Cibril",
+      "englishName": "Muhammad Jibreel",
+      "bitrates": [
+        128
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.saoodshuraym",
+      "name": "Suud eş-Şüreym",
+      "englishName": "Saood bin Ibraaheem Ash-Shuraym",
+      "bitrates": [
+        64
+      ],
+      "style": "murattal"
+    },
+    {
+      "id": "ar.aymanswoaid",
+      "name": "Eymen Süveyd",
+      "englishName": "Ayman Sowaid",
+      "bitrates": [
+        64
+      ],
+      "style": "murattal"
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+name: BEŞ iOS yayin
+
+# ELLE calistirilir: GitHub -> Actions -> "BES iOS yayin" -> Run workflow.
+# Imzalar, IPA uretir ve App Store Connect'e (TestFlight) yukler.
+#
+# Gereken 4 secret (Settings -> Secrets and variables -> Actions):
+#   APPSTORE_ISSUER_ID   App Store Connect -> Integrations -> Keys -> Issuer ID
+#   APPSTORE_KEY_ID      ayni sayfadaki Key ID
+#   APPSTORE_PRIVATE_KEY indirilen AuthKey_XXX.p8 dosyasinin TAM icerigi
+#   APPSTORE_TEAM_ID     Membership -> Team ID (10 karakter)
+# .p8 dosyasi bir kez indirilir, tekrar indirilemez. Depoya ASLA koyma.
+#
+# ONKOSUL: App Store Connect'te `com.kusgrup.bes` bundle id'siyle bir
+# uygulama kaydi bulunmali. Imza profilini bu akis kendisi uretir, ama
+# uygulama kaydini uretemez.
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: 'TestFlight e yukle (kapali: yalnizca IPA uretir, indirip bakarsin)'
+        type: boolean
+        default: true
+
+jobs:
+  release:
+    name: BEŞ
+    runs-on: macos-latest
+    env:
+      APP_VARIANT: production
+      BUILD_NUMBER: ${{ github.run_number }}
+      ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+      KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+      KEY_P8: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+      TEAM_ID: ${{ secrets.APPSTORE_TEAM_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Secret'lar tam mi
+        run: |
+          eksik=""
+          [ -n "$ISSUER_ID" ] || eksik="$eksik APPSTORE_ISSUER_ID"
+          [ -n "$KEY_ID" ]    || eksik="$eksik APPSTORE_KEY_ID"
+          [ -n "$KEY_P8" ]    || eksik="$eksik APPSTORE_PRIVATE_KEY"
+          [ -n "$TEAM_ID" ]   || eksik="$eksik APPSTORE_TEAM_ID"
+          if [ -n "$eksik" ]; then
+            echo "::error::Eksik secret:$eksik"
+            echo "Settings -> Secrets and variables -> Actions -> New repository secret"
+            exit 1
+          fi
+          echo "Dort secret de yerinde."
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: bes/package-lock.json
+
+      - name: Bagimliliklar
+        working-directory: bes
+        run: npm ci --no-audit --no-fund
+
+      # Kirik kod imzalanip TestFlight'a gitmesin.
+      - name: Kalite kapisi
+        working-directory: bes
+        run: npm run gate
+
+      - name: Native projeyi uret
+        working-directory: bes
+        # Build numarasi BUILD_NUMBER ile app.config.ts'ten gelir; pbxproj'u
+        # sonradan sed'lemeye gerek yok. App Store Connect ayni (surum, build)
+        # ciftini ikinci kez kabul etmez, run_number her calistirmada artar.
+        run: npx expo prebuild --platform ios --clean
+
+      - name: Projeyi dogrula
+        working-directory: bes
+        run: |
+          WS=$(ls -d ios/*.xcworkspace | head -1)
+          AD=$(basename "$WS" .xcworkspace)
+          echo "SEMA=$AD" >> "$GITHUB_ENV"
+          echo "sema: $AD"
+          PLIST="ios/$AD/Info.plist"
+          echo "surum:  $(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$PLIST")"
+          echo "build:  $(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$PLIST")"
+          IKON=$(ls ios/$AD/Images.xcassets/AppIcon.appiconset/*.png 2>/dev/null | head -1)
+          test -n "$IKON" || { echo "::error::uygulama ikonu yerlestirilmemis"; exit 1; }
+
+      - name: API anahtarini yerlestir
+        run: |
+          mkdir -p ~/private_keys
+          printf '%s\n' "$KEY_P8" > ~/private_keys/AuthKey_$KEY_ID.p8
+          chmod 600 ~/private_keys/AuthKey_$KEY_ID.p8
+
+      - name: Arsivle (imzasiz)
+        working-directory: bes/ios
+        # ARSIV BILEREK IMZASIZ. Xcode'un otomatik imzasinda arsivleme adimi
+        # GELISTIRME kimligiyle imzalanir; magaza imzasi bir sonraki adimda,
+        # disa aktarmada atilir. Arsivi imzalatmaya calisirsak Xcode gelistirme
+        # profili uretmek ister, o da EN AZ BIR KAYITLI CIHAZ sarti koyar:
+        #   "Your team has no devices from which to generate a provisioning profile"
+        # Magaza (dagitim) profili cihaz istemez. Bu yuzden imzayi tamamen
+        # disa aktarma adimina birakiyoruz; cihaz kaydi hic gerekmiyor.
+        #
+        # pipefail SART: boru hattinin cikis kodu tail'e aittir, yani arsivleme
+        # cokse bile adim YESIL gorunur ve hata ancak bir sonraki adimda
+        # "arsiv bulunamadi" diye ortaya cikar. Bu bir kez yasandi.
+        run: |
+          set -o pipefail
+          xcodebuild -workspace "$SEMA.xcworkspace" -scheme "$SEMA" \
+            -configuration Release -destination 'generic/platform=iOS' \
+            -archivePath "$PWD/build/App.xcarchive" archive \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO | tail -60
+          ls -la build/App.xcarchive/Products/Applications
+
+      - name: IPA uret
+        working-directory: bes/ios
+        # method adi Xcode 16'da "app-store-connect", oncesinde "app-store".
+        # Hangi surumun kurulu oldugunu varsaymak yerine ikisini de deniyoruz.
+        run: |
+          yaz() {
+            cat > ExportOptions.plist <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>$1</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>uploadSymbols</key><true/>
+            <key>destination</key><string>export</string>
+          </dict></plist>
+          PLIST
+          }
+          disar() {
+            xcodebuild -exportArchive \
+              -archivePath "$PWD/build/App.xcarchive" \
+              -exportPath "$PWD/build/ipa" \
+              -exportOptionsPlist ExportOptions.plist \
+              -allowProvisioningUpdates \
+              -authenticationKeyPath ~/private_keys/AuthKey_$KEY_ID.p8 \
+              -authenticationKeyID "$KEY_ID" \
+              -authenticationKeyIssuerID "$ISSUER_ID"
+          }
+          yaz app-store-connect
+          if ! disar; then
+            echo "app-store-connect kabul edilmedi, eski ad deneniyor: app-store"
+            yaz app-store
+            disar
+          fi
+          ls -la build/ipa
+
+      - name: TestFlight e yukle
+        if: ${{ inputs.upload }}
+        working-directory: bes/ios
+        run: |
+          IPA=$(ls build/ipa/*.ipa | head -1)
+          echo "yuklenen: $IPA"
+          xcrun altool --upload-app -t ios -f "$IPA" \
+            --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID"
+          echo "Yuklendi. App Store Connect -> TestFlight'ta islenmesi 5-30 dk surer."
+
+      - name: IPA'yi sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: bes-ios-ipa
+          path: bes/ios/build/ipa/*.ipa
+          if-no-files-found: error

@@ -1,0 +1,139 @@
+name: BEŞ Android derleme
+
+# Kalite kapisi + AAB (Play icin) + debug APK (telefona dogrudan kurmak icin).
+# Imza anahtari secret olarak eklenirse imzali AAB, eklenmezse imzasiz uretir.
+#
+# Diger urunler Capacitor, BES Expo. Ayni matrise sokmak neredeyse her adima
+# bir `if` eklemek demekti; bu yuzden BES'in kendi dosyasi var.
+on:
+  push:
+    branches: ['**']
+    paths:
+      - '.github/workflows/bes-android.yml'
+      - 'bes/**'
+  workflow_dispatch:
+
+jobs:
+  android:
+    name: BEŞ Android
+    runs-on: ubuntu-latest
+    env:
+      APP_VARIANT: production
+      BUILD_NUMBER: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: bes/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          # Java 21: bu depoda 17 ile 'invalid source release: 21' bir kez yasandi.
+          java-version: '21'
+
+      - name: Bagimliliklar
+        working-directory: bes
+        run: npm ci --no-audit --no-fund
+
+      - name: tsc + eslint + test
+        working-directory: bes
+        run: npm run gate
+
+      - name: Native projeyi uret
+        working-directory: bes
+        run: npx expo prebuild --platform android --clean
+
+      - name: Uretilen projeyi dogrula
+        working-directory: bes
+        run: |
+          # Expo ikonlari .webp olarak yazar; uzantiyi varsaymiyoruz.
+          IKON=$(ls android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.* 2>/dev/null | head -1)
+          test -n "$IKON" || { echo "::error::uygulama ikonu yerlestirilmemis"; exit 1; }
+          echo "ikon yerinde: $IKON"
+          grep -m1 'versionCode' android/app/build.gradle
+
+      - name: Imza anahtarini yerlestir (secret varsa)
+        id: imza
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "imzali=evet" >> "$GITHUB_OUTPUT"
+            echo "imzali derleme"
+          else
+            echo "imzali=hayir" >> "$GITHUB_OUTPUT"
+            echo "imza anahtari yok - imzasiz derleme (Play'e yuklenemez, yalnizca dogrulama)"
+          fi
+
+      - name: AAB uret
+        working-directory: bes/android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        # Imza, build.gradle'i yamalamak yerine Gradle'in kendi
+        # `android.injected.signing.*` ozellikleriyle veriliyor: uretilen
+        # proje her derlemede sifirdan yazildigi icin yama kalici olmazdi.
+        run: |
+          if [ "${{ steps.imza.outputs.imzali }}" = "evet" ]; then
+            ./gradlew bundleRelease --no-daemon --stacktrace \
+              -Pandroid.injected.signing.store.file="$RUNNER_TEMP/release.jks" \
+              -Pandroid.injected.signing.store.password="$KEYSTORE_PASSWORD" \
+              -Pandroid.injected.signing.key.alias="$KEY_ALIAS" \
+              -Pandroid.injected.signing.key.password="$KEY_PASSWORD"
+          else
+            ./gradlew bundleRelease --no-daemon --stacktrace
+          fi
+
+      # Kutuphaneler kendi manifest'lerinde izin bildirir; gercegi ancak
+      # BIRLESMIS manifest gosterir. Kaynak manifest'e bakmak yaniltir:
+      # `blockedPermissions` satiri silmez, `tools:node="remove"` isaretler ve
+      # silme islemi derleme sirasinda olur.
+      - name: Birlesmis manifest izinlerini dogrula
+        working-directory: bes/android
+        run: |
+          M=$(find app/build/intermediates -name AndroidManifest.xml -path '*erged*' -path '*elease*' | head -1)
+          test -n "$M" || { echo "::error::birlesmis manifest bulunamadi"; exit 1; }
+          echo "manifest: $M"
+          grep -oE 'android.permission.[A-Z_]+' "$M" | sort -u
+
+          # Uygulama mikrofon kullanmiyor: kiraat yalnizca CALINIR, hicbir
+          # yerde kayit yok. Play mikrofon iznini gerekce ister.
+          for K in RECORD_AUDIO SYSTEM_ALERT_WINDOW ACCESS_BACKGROUND_LOCATION; do
+            if grep -q "android.permission.$K" "$M"; then
+              echo "::error::kullanilmayan izin pakete girdi: $K"; exit 1
+            fi
+          done
+          echo "mikrofon, ekran ustu ve arka plan konum izni yok (dogrulandi)"
+
+          # Reklam kimligi: uygulamada reklam yok. Play, bu izni bildirip
+          # kullanmayani da, kullanip bildirmeyeni de reddediyor. Gizlilik
+          # formunda "veri toplanmiyor" yaziyor; manifest onu tutmali.
+          if grep -q 'com.google.android.gms.permission.AD_ID' "$M"; then
+            echo "::error::AD_ID izni pakete girdi - reklam yok, gizlilik formu yanlis olur"; exit 1
+          fi
+          echo "reklam kimligi izni yok (dogrulandi)"
+
+          # Bunun tersi de hata: vakit bildirimi urunun ana isi, izin
+          # dusmus olursa Android 13+ cihazlarda hicbir bildirim gorunmez.
+          grep -q 'android.permission.POST_NOTIFICATIONS' "$M" \
+            || { echo "::error::POST_NOTIFICATIONS yok - vakit bildirimleri calismaz"; exit 1; }
+          echo "bildirim izni yerinde"
+
+      - name: Debug APK uret (telefona kurmak icin)
+        working-directory: bes/android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bes-android
+          path: |
+            bes/android/app/build/outputs/bundle/release/*.aab
+            bes/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 30

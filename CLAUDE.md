@@ -6,13 +6,16 @@ ve `assets/` klasörü vardır. Ortak olan yalnızca `docs/` (GitHub Pages) ve
 `.github/workflows/`.
 
 **Hepsi oyun değil.** `slot`, `latch`, `orbita` oyundur; `lull` bir nefes/uyku
-uygulamasıdır. Altyapı aynı, ürün tipi farklı — bir klasörde çalışırken önce
-onun kendi `CLAUDE.md`'sini oku.
+uygulaması, `bes` bir ezan vakti/Kur'an uygulamasıdır. Altyapı aynı, ürün tipi farklı —
+bir klasörde çalışırken önce onun kendi `CLAUDE.md`'sini oku.
 
 ## Değişmez kurallar
 
 1. **Ürün mantığı tek dosyada kalır:** `<ürün>/www/index.html`. Yeni dosya açma;
    kullanıcı yazılımcı değil, tek dosyayı kopyalayarak güncelleme yapabilmeli.
+   **İstisna: `bes/`.** O ürün Expo + TypeScript ile çok dosyalı kurulur;
+   gerekçesi `DECISIONS.md` D3'te yazılı (widget, Live Activity, arka plan ses
+   ve Supabase tek dosyaya sığmaz). Diğer beş üründe kural aynen geçerlidir.
 2. Bir oyunda çalışırken **o oyunun kendi `CLAUDE.md`'sini oku** — denge, adalet
    garantisi ve tuzaklar orada yazılı. Bu dosya yalnızca depo düzenini anlatır.
 3. Her değişiklikten sonra ilgili oyunda `node tools/check.js`. Yeşil değilse commit yok.
@@ -25,6 +28,15 @@ onun kendi `CLAUDE.md`'sini oku.
    Bayat kalırlarsa betik sessizce hiçbir şey değiştirmez — `OLD_URL` bir kez böyle
    bayatladı. Artık `check.js` bunu **hata** olarak yakalıyor.
 6. Token tasarrufu: oyun dosyaları ~1200-1300 satırdır, tamamını okuma; `grep -n` kullan.
+7. **Gördüğün hatayı sorma, düzelt.** Bir hata fark edildiğinde "istersen düzeltirim"
+   denmez; düzeltilir, doğrulanır ve sonra "düzelttim" denir. Kullanıcı yazılımcı
+   değil — hangi hatanın düzeltilmeye değer olduğuna karar vermesi beklenemez.
+   Bu kural hangi üründe çalışılırsa çalışılsın geçerlidir.
+8. **Bir üründe bulunan hata, aynı kodun kopyalandığı her üründe aranır.** Klasörler
+   birbirinden kopyalanarak açıldığı için bir hata neredeyse hiçbir zaman tek yerde
+   değildir. Düzeltmeden önce `grep -rn "<hatalı kalıp>" */tools/` çalıştır ve
+   hepsini birlikte düzelt. (`film.sh` içindeki çıplak `wait` tam olarak böyleydi:
+   bir üründe yakalandı, aynısı `lull`'da duruyordu.)
 
 ## GitHub Pages
 
@@ -59,6 +71,7 @@ https://kusgrupgames.github.io/<oyun>/privacy.html
 | `latch/` | Latch: One Tap Swing | ipi at, salın, 45°'de bırak |
 | `orbita/` | Orbita: One Tap Orbit Jump | yörüngeden teğet boyunca fırla |
 | `lull/` | Lull: Breathe Yourself Down | **oyun değil** — nefesini ölçüp yavaşlatır |
+| `bes/` | BEŞ: Ezan ve Namaz Vakitleri | **oyun değil, tek dosya değil** — Expo + TS; durum `PROJECT_STATE.md` |
 
 Her oyunun kendi `CLAUDE.md`'si var; denge ve tuzaklar orada.
 
@@ -70,6 +83,7 @@ Her oyunun kendi `CLAUDE.md`'si var; denge ve tuzaklar orada.
 | `latch/` | mükemmel | `deaths=0` **ve** `fallback=0` zorunlu → her çengel ulaşılabilir |
 | `orbita/` | sezgisel (ölebilir) | yalnızca oyun döngüsünün çalıştığı ve çökmediği |
 | `lull/` | hızlandırılmış seans | tempo **iniyor** (artmıyor), veriş/alış oranı 1'in altına düşmüyor, seans tam süresinde bitiyor |
+| `bes/` | yok — hesap sınaması + görsel denetim | bilinen kıble/gündüz değerleri tutuyor, altı vakit sıralı; 128 kare (açık/koyu/320 piksel/Arapça) hata, boş ekran ve taşma için taranıyor |
 
 Orbita'nınki daha zayıf bir güvence: ölüm sayısı > 0 olması hata değildir. Orbita'ya
 "adaletsiz bölüm üretilmiyor" güvencesi eklemek istersen önce mükemmel oynayan bir

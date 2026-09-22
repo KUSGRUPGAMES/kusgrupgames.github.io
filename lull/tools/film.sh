@@ -33,11 +33,24 @@ echo "viewport farki: ${DELTA}px  ·  ${FPS} kare/sn  ·  ${DUR} sn"
 
 DIR="$(mktemp -d /tmp/lullfilmXXXX)"
 N=$(( FPS * DUR ))
-SRV_PORT=8877
-( cd "$ROOT/www" && python3 -m http.server $SRV_PORT >/dev/null 2>&1 ) &
+# Port SABIT OLAMAZ. Sabit 8877 kullanilirken baska bir urunun film.sh
+# calismasindan kalan sunucu portu tutuyordu; bu betigin kendi sunucusu
+# sessizce baglanamadi ve Chrome BASKA URUNUN sayfasini cekti. Sonuc: bir
+# urunun tanitim videosu bastan sona baska bir urunu gosteriyordu ve hicbir
+# asamada hata vermedi. Bu yuzden: bos port + sunucunun BIZIM dosyamizi
+# verdiginin dogrulanmasi.
+SRV_PORT=$(python3 -c "import socket;s=socket.socket();s.bind(('127.0.0.1',0));print(s.getsockname()[1]);s.close()")
+( cd "$ROOT/www" && python3 -m http.server $SRV_PORT --bind 127.0.0.1 >/dev/null 2>&1 ) &
 SRV=$!
 trap 'kill $SRV 2>/dev/null || true' EXIT
-sleep 1
+IMZA=$(node -p "require('$ROOT/app.config.json').appName")
+HAZIR=0
+for i in 1 2 3 4 5 6 7 8 9 10; do
+  if curl -fsS "http://127.0.0.1:$SRV_PORT/index.html" 2>/dev/null | grep -q "$IMZA"; then HAZIR=1; break; fi
+  sleep 0.5
+done
+[ "$HAZIR" = 1 ] || { echo "sunucu $SRV_PORT portunda $IMZA sayfasini vermiyor - film uretilmedi"; exit 1; }
+echo "sunucu hazir: port $SRV_PORT, icerik $IMZA"
 
 frame() {
   local i=$1
@@ -52,11 +65,17 @@ frame() {
 }
 
 echo "kareler uretiliyor ($N adet, $JOBS paralel)..."
+# DIKKAT: cipla "wait", arka plandaki http.server'i de bekler ve betik orada
+# sonsuza kadar asili kalir (kareler bitmis olsa bile video uretilmez).
+# Yalnizca kare isleri beklenmeli. Ayni hata baska bir uründe de yasandi.
+PIDS=()
 for i in $(seq 0 $(( N - 1 ))); do
   frame "$i" &
-  while [ "$(jobs -rp | wc -l)" -ge "$JOBS" ]; do wait -n || true; done
+  PIDS+=($!)
+  while [ "$(jobs -rp | wc -l)" -gt "$JOBS" ]; do sleep 0.2; done
 done
-wait || true
+# 2>/dev/null: is kendiliginden toplanmissa "not a child of this shell" uyarisi gelir
+for pid in "${PIDS[@]}"; do wait "$pid" 2>/dev/null || true; done
 
 GOT=$(ls "$DIR"/f-*.png 2>/dev/null | wc -l)
 echo "uretilen kare: $GOT / $N"
