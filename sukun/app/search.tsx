@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { router, Stack } from 'expo-router';
 import {
-  Screen, Field, Card, Column, Row, Text, Badge, EmptyState, Banner, VirtualList,
+  Screen, Field, Card, Column, Row, Text, Badge, EmptyState, VirtualList,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -56,7 +56,9 @@ export default function SearchScreen() {
 
       {sorgu.trim().length >= 2 ? (
         sonuclar.length === 0 ? (
-          <EmptyState icon="search" title={t('quran.noResults')} description={t('search.hint')} />
+          /* Açıklama alanın ipucunu tekrar ediyordu; aynı cümleyi iki kez
+             okumak yerine ne yapılacağını söylüyor. */
+          <EmptyState icon="search" title={t('quran.noResults')} description={t('search.noResultBody')} />
         ) : (
           <View style={{ flex: 1, marginTop: theme.spacing.md }}>
             <VirtualList
@@ -83,7 +85,9 @@ export default function SearchScreen() {
           </View>
         )
       ) : (
-        <Banner tone="info" title={t('search.title')} description={t('search.hint')} />
+        /* Bu kutu ekranın başlığını ve alanın ipucunu aynen tekrar ediyordu:
+           "Ara" üç kez, aynı cümle iki kez görünüyordu. */
+        <EmptyState icon="search" title={t('search.idleTitle')} description={t('search.idleBody')} />
       )}
     </Screen>
   );

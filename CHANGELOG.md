@@ -71,6 +71,11 @@ numarası sütunuyla karışıyor, Arapçada sözcük ortadan bölünüyordu
 tam ad sığıyor. Sınama artık çevrilmiş metnin karakter sayısıyla
 kısaltılmasını yasaklıyor.
 
+**Arama ekranı kendini tekrar ediyordu:** "Ara" üç kez (başlık, alan
+etiketi, kutu başlığı), ipucu cümlesi iki kez görünüyordu. Bekleyen durum
+artık aramanın neyi kapsadığını anlatıyor; sonuç bulunamayınca da ipucu
+tekrar edilmek yerine ne denenebileceği yazıyor.
+
 **Ramazan imsakiyesinin gün sütunu "Bugün" başlığını taşıyordu** — sütun
 otuz günü listeliyor. "Gün" oldu.
 
