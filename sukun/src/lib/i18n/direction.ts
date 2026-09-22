@@ -3,13 +3,18 @@
  * Bu dosya **React Native'e bağlı değildir**; böylece düğüm ortamında sınanır.
  * Platforma dokunan kısım `rtl.ts` içindedir.
  *
- * Arayüz dili Türkçe (LTR) ve İngilizce (LTR) olabilir; Arapça (RTL) arayüz
- * desteklenirse tüm düzen aynalanır (React Native köprüsü: `rtl.ts`). Bağımsız olarak,
+ * Arayüz dili beş dilden biridir; yalnız Arapça RTL'dir ve seçildiğinde tüm
+ * düzen aynalanır (React Native köprüsü: `rtl.ts`). Bağımsız olarak,
  * **Kur'an ve dua metni her zaman RTL akar** — arayüz dili ne olursa olsun.
  * Bu ikisi karıştırılmamalıdır: aşağıdaki iki ayrı işlev tam da bunu ayırır.
+ *
+ * `UiLanguage` bir zamanlar yalnız üç dildi (Almanca ve Fransızca sonra
+ * eklendi) ve çağıran taraf listeyi elle daraltıyordu. Sonuç: Arapçadan
+ * Almancaya geçen kullanıcıda `forceRTL(false)` hiç çağrılmıyor, arayüz
+ * aynalanmış kalıyordu. Tip artık desteklenen bütün dilleri kapsar.
  */
 
-export type UiLanguage = 'tr' | 'en' | 'ar';
+export type UiLanguage = 'tr' | 'en' | 'ar' | 'de' | 'fr';
 export type Direction = 'ltr' | 'rtl';
 
 export const RTL_LANGUAGES: readonly UiLanguage[] = ['ar'];

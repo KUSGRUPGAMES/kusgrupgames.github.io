@@ -39,7 +39,7 @@ export function I18nProvider({ children, initialLanguage, deviceTag, onLanguageC
 
   const value = useMemo<I18nContextValue>(() => ({
     language,
-    direction: uiDirection(language as 'tr' | 'en' | 'ar'),
+    direction: uiDirection(language),
     setLanguage,
     t: (key, params) => translate(language, key, params),
   }), [language, setLanguage]);

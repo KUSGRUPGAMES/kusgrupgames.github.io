@@ -91,7 +91,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     void kv.write(KEYS.language, lang);
     // Arapçaya geçişte düzen aynalanır; React Native bunu ancak yeniden
     // başlatınca uygular, bu yüzden ayar ekranında not gösterilir (§61).
-    if (lang === 'tr' || lang === 'en' || lang === 'ar') applyUiDirection(lang);
+    applyUiDirection(lang);
   }, []);
 
   // Tercihler okunmadan çizmek, temanın açıktan koyuya sıçramasına yol açar.

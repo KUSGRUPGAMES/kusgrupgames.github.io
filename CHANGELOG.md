@@ -71,6 +71,13 @@ numarası sütunuyla karışıyor, Arapçada sözcük ortadan bölünüyordu
 tam ad sığıyor. Sınama artık çevrilmiş metnin karakter sayısıyla
 kısaltılmasını yasaklıyor.
 
+**Arapçadan Almancaya geçen kullanıcıda arayüz aynalanmış kalıyordu.**
+Yön katmanının `UiLanguage` tipi üç dildi (Almanca ile Fransızca sonradan
+eklendi) ve çağıran taraf listeyi elle daraltıyordu; bu yüzden Almanca veya
+Fransızca seçildiğinde `forceRTL(false)` hiç çağrılmıyordu. Tip beş dili
+kapsıyor, daraltma kalktı, ikisi de sınamaya bağlandı (biri mutasyonla
+doğrulandı).
+
 **Arapça arayüzde sure adları Türkçe yazıyordu.** "Fâtiha", "Bakara" — hem
 listede hem okuyucunun başlığında. Veri dosyasında Arapça yazım zaten var
 (`nameAr`, Tanzil); Arapça arayüzde artık o gösteriliyor, Türkçe okunuş
