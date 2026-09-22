@@ -118,7 +118,7 @@ export const de: Partial<Record<StringKey, string>> = {
   'qada.bulkHint': 'Gib an, wie viele Tage an Gebeten offen sind; so viele werden zu jedem Gebet addiert.',
   'qada.bulkDays': 'Anzahl der Tage', 'qada.bulkAdd': 'Hinzufügen',
   'qada.undo': 'Letzte Änderung rückgängig', 'qada.done': 'Eines nachgeholt',
-  'qada.remaining': 'Offen', 'qada.allDone': 'Es ist nichts mehr offen',
+  'qada.remaining': 'Offen', 'qada.allDoneBody': 'Falls du welche nachzuholen hast, trage sie unten einzeln oder als Tagesanzahl ein.', 'qada.allDone': 'Es ist nichts mehr offen',
   'qada.progress': '{done} / {total} erledigt',
   'log.title': 'Gebetstagebuch', 'log.subtitle': 'Was du heute getan hast',
   'log.prayerAlone': 'Allein', 'log.prayerJamaah': 'In Gemeinschaft',

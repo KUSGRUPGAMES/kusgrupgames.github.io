@@ -36,8 +36,11 @@ export default function QadaScreen() {
       <Stack.Screen options={{ headerShown: true, title: t('qada.title') }} />
       <SectionHeader title={t('qada.subtitle')} />
 
+      {/* Boş durum açıklaması, aşağıdaki "Toplu giriş" bölümünün alt
+          başlığının birebir aynısıydı; kullanıcı aynı cümleyi iki kez
+          okuyordu. */}
       {toplam === 0 ? (
-        <EmptyState icon="check" title={t('qada.allDone')} description={t('qada.bulkHint')} />
+        <EmptyState icon="check" title={t('qada.allDone')} description={t('qada.allDoneBody')} />
       ) : (
         <Card accent motif="starLattice">
           <Column gap="sm" align="center">

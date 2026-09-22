@@ -118,7 +118,7 @@ export const fr: Partial<Record<StringKey, string>> = {
   'qada.bulkHint': 'Indiquez combien de jours de prières vous devez ; autant sont ajoutées à chaque prière.',
   'qada.bulkDays': 'Nombre de jours', 'qada.bulkAdd': 'Ajouter',
   'qada.undo': 'Annuler la dernière action', 'qada.done': "J'en ai rattrapé une",
-  'qada.remaining': 'Restant', 'qada.allDone': "Vous n'avez rien en attente",
+  'qada.remaining': 'Restant', 'qada.allDoneBody': 'Si vous en devez, ajoutez-les ci-dessous une par une ou en bloc par nombre de jours.', 'qada.allDone': "Vous n'avez rien en attente",
   'qada.progress': '{done} / {total} faites',
   'log.title': 'Journal d\u2019adoration', 'log.subtitle': "Ce que vous avez fait aujourd'hui",
   'log.prayerAlone': 'Seul', 'log.prayerJamaah': 'En groupe',

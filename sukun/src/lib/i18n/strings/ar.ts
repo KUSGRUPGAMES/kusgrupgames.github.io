@@ -118,7 +118,7 @@ export const ar: Partial<Record<StringKey, string>> = {
   'qada.bulkHint': 'أدخل عدد الأيام الفائتة؛ يُضاف العدد نفسه إلى كل صلاة.',
   'qada.bulkDays': 'عدد الأيام', 'qada.bulkAdd': 'إضافة',
   'qada.undo': 'تراجع عن آخر تغيير', 'qada.done': 'قضيتُ واحدة',
-  'qada.remaining': 'المتبقي', 'qada.allDone': 'لا يوجد ما عليك قضاؤه',
+  'qada.remaining': 'المتبقي', 'qada.allDoneBody': 'إن كان عليك قضاء فأضفه أدناه صلاةً صلاةً أو دفعةً واحدة بعدد الأيام.', 'qada.allDone': 'لا يوجد ما عليك قضاؤه',
   'qada.progress': '{done} / {total} تمّت',
   'log.title': 'سجل العبادة', 'log.subtitle': 'ماذا فعلتَ اليوم',
   'log.prayerAlone': 'منفردًا', 'log.prayerJamaah': 'جماعةً',

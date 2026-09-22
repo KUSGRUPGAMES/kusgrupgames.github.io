@@ -64,6 +64,10 @@ yazımını yan yana görüyordu. Uygulama, doğru olan biçime çekildi:
 düzeltme imiyle yazılır ve anlam ayırt eder), `Kuran` → `Kur'an`,
 `ayet` → `âyet`, `Esmaül Hüsna` → `Esmâü'l-Hüsnâ`.
 
+**Kaza ekranının boş durumu**, hemen altındaki "Toplu giriş" bölümünün alt
+başlığıyla birebir aynı cümleyi yazıyordu; kullanıcı aynı metni iki kez
+okuyordu. Boş duruma kendi açıklaması yazıldı.
+
 **Hicrî tarih çeviricisinin alan etiketi** bölüm başlığının aynısıydı
 ("Tarih çevirici") ve hangi tarihin hangi sırayla beklendiğini söylemiyordu.
 Artık yöne göre "Miladi tarih" / "Hicrî tarih" yazıyor ve altında biçim

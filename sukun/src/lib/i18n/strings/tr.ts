@@ -242,6 +242,7 @@ export const tr = {
   'qada.done': 'Bir kaza kıldım',
   'qada.remaining': 'Kalan',
   'qada.allDone': 'Kaza borcun görünmüyor',
+  'qada.allDoneBody': 'Borcun varsa aşağıdan vakit vakit ya da gün sayısıyla toplu olarak girebilirsin.',
   'qada.progress': '{done} / {total} tamamlandı',
   'log.title': 'İbadet defteri',
   'log.subtitle': 'Bugün neler yaptın',
