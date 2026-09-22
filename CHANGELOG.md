@@ -64,6 +64,12 @@ yazımını yan yana görüyordu. Uygulama, doğru olan biçime çekildi:
 düzeltme imiyle yazılır ve anlam ayırt eder), `Kuran` → `Kur'an`,
 `ayet` → `âyet`, `Esmaül Hüsna` → `Esmâü'l-Hüsnâ`.
 
+**Hatırlatıcı ekranında hafta Pazar'la başlıyordu.** Çipler JavaScript'in
+`getDay()` sırasıyla diziliyordu (0 = Pazar); Türkiye'de takvim Pazartesi'yle
+başlar ve ilk sıradaki "Paz" kısaltması Pazartesi sanılıyordu. Gösterim sırası
+Pazartesi'den başlayacak biçimde düzeltildi — kayıtta duran sayı değişmedi,
+eski hatırlatıcılar olduğu gibi çalışır.
+
 **Kaza ekranının boş durumu**, hemen altındaki "Toplu giriş" bölümünün alt
 başlığıyla birebir aynı cümleyi yazıyordu; kullanıcı aynı metni iki kez
 okuyordu. Boş duruma kendi açıklaması yazıldı.

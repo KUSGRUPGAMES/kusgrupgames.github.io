@@ -13,9 +13,19 @@ import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
 import { describeTrigger, type ReminderTrigger } from '@/features/notifications/reminders';
 import { PRAYER_KEYS, type PrayerKey } from '@/features/prayer/methods';
 
+/** Dizin = JavaScript `getDay()` (0 = Pazar). Kayıtta bu sayı durur. */
 const GUN_ANAHTARI: StringKey[] = [
   'weekday.0', 'weekday.1', 'weekday.2', 'weekday.3', 'weekday.4', 'weekday.5', 'weekday.6',
 ];
+
+/**
+ * Ekranda gösterim sırası: **Pazartesi'den** başlar.
+ *
+ * Çipler `getDay()` sırasıyla diziliyordu, yani hafta Pazar'la başlıyordu —
+ * Türkiye'de takvim Pazartesi'yle başlar ve kısaltmalarda "Paz"ı ilk sırada
+ * görmek Pazartesi sanılıyor. Saklanan değer değişmiyor, yalnız sıra.
+ */
+const GUN_SIRASI = [1, 2, 3, 4, 5, 6, 0] as const;
 
 export default function RemindersScreen() {
   const t = useT();
@@ -62,7 +72,7 @@ export default function RemindersScreen() {
                 <Column flex={1} gap="xxs">
                   <Text variant="bodyStrong">{r.title}</Text>
                   <Text variant="caption" tone="muted">
-                    {`${anlat(r)} · ${r.weekdays.length === 0 ? t('reminder.everyDay') : r.weekdays.map((d) => t(GUN_ANAHTARI[d]!)).join(' ')}`}
+                    {`${anlat(r)} · ${r.weekdays.length === 0 ? t('reminder.everyDay') : GUN_SIRASI.filter((d) => r.weekdays.includes(d)).map((d) => t(GUN_ANAHTARI[d]!)).join(' ')}`}
                   </Text>
                 </Column>
                 <Toggle
@@ -126,10 +136,10 @@ export default function RemindersScreen() {
             selected={gunler.length === 0}
             onPress={() => setGunler([])}
           />
-          {GUN_ANAHTARI.map((anahtar, gun) => (
+          {GUN_SIRASI.map((gun) => (
             <Chip
               key={gun}
-              label={t(anahtar)}
+              label={t(GUN_ANAHTARI[gun]!)}
               selected={gunler.includes(gun)}
               onPress={() => setGunler(
                 gunler.includes(gun) ? gunler.filter((g) => g !== gun) : [...gunler, gun].sort(),
