@@ -24,35 +24,46 @@ let uid = 0;
  */
 export function kemerYolu(w: number, h: number, omuz: number, r = 18): string {
   const orta = w / 2;
-  const tepe = 0;
-  const lob = omuz * 0.46;          // yan lobun tepesi
+  // Sivri kemer üç parçadır: omuzdan çıkan yan lob, lobdan tepeye yükselen
+  // uzun yay, ve tepede iki yayın **teğetleri kesişerek** yaptığı sivri uç.
+  // İlk sürümde tepe denetim noktaları yataydı; kemer tepede yuvarlanıyor,
+  // sivrilik kayboluyordu. Denetim noktaları artık tepenin hemen altında ve
+  // ortaya yakın: iki yay tepede dik açıyla buluşuyor.
+  const lobY = omuz * 0.52;         // yan lobun en üst noktası
+  const lobX = w * 0.19;            // yan lobun yatay yeri
+  const boyunY = omuz * 0.34;       // lobdan sonra daralan boyun
   return `M0,${h - r}`
     + `L0,${omuz}`
-    // sol yan lob
-    + `C0,${lob} ${w * 0.10},${lob} ${w * 0.16},${lob * 0.72}`
-    // sol yükseliş, sivri tepeye
-    + `C${w * 0.24},${lob * 0.30} ${orta - w * 0.16},${tepe + h * 0.012} ${orta},${tepe}`
-    // sağ iniş
-    + `C${orta + w * 0.16},${tepe + h * 0.012} ${w * 0.76},${lob * 0.30} ${w * 0.84},${lob * 0.72}`
-    // sağ yan lob
-    + `C${w * 0.90},${lob} ${w},${lob} ${w},${omuz}`
+    + `C0,${lobY} ${lobX * 0.30},${lobY} ${lobX},${lobY * 0.86}`
+    + `C${lobX * 1.5},${boyunY} ${orta - w * 0.085},${omuz * 0.30} ${orta - w * 0.055},${omuz * 0.16}`
+    + `C${orta - w * 0.030},${omuz * 0.055} ${orta - w * 0.012},0 ${orta},0`
+    + `C${orta + w * 0.012},0 ${orta + w * 0.030},${omuz * 0.055} ${orta + w * 0.055},${omuz * 0.16}`
+    + `C${orta + w * 0.085},${omuz * 0.30} ${w - lobX * 1.5},${boyunY} ${w - lobX},${lobY * 0.86}`
+    + `C${w - lobX * 0.30},${lobY} ${w},${lobY} ${w},${omuz}`
     + `L${w},${h - r}`
     + `Q${w},${h} ${w - r},${h}`
     + `L${r},${h}`
     + `Q0,${h} 0,${h - r}Z`;
 }
 
-/** Kemerin tepesindeki sekiz yapraklı rozet. */
+/**
+ * Sekiz yapraklı rozet — kemerin tepesindeki mühür.
+ *
+ * Yapraklar **dolgun** olmalı. İlk sürümde denetim noktaları merkeze çok
+ * yakındı (0.42r) ve yapraklar iğne gibi çıkıp rozet bir "kıvılcım"a
+ * dönüşüyordu. Denetim noktaları artık yaprak ucunun yanında ve dışarıda:
+ * yaprak damla biçiminde açılıyor.
+ */
 function rozet(cx: number, cy: number, r: number): string {
   const yaprak = (a: number) => {
-    const x = cx + r * Math.cos(a);
-    const y = cy + r * Math.sin(a);
-    const x1 = cx + r * 0.42 * Math.cos(a - 0.42);
-    const y1 = cy + r * 0.42 * Math.sin(a - 0.42);
-    const x2 = cx + r * 0.42 * Math.cos(a + 0.42);
-    const y2 = cy + r * 0.42 * Math.sin(a + 0.42);
-    return `M${cx.toFixed(1)},${cy.toFixed(1)}Q${x1.toFixed(1)},${y1.toFixed(1)} ${x.toFixed(1)},${y.toFixed(1)}`
-      + `Q${x2.toFixed(1)},${y2.toFixed(1)} ${cx.toFixed(1)},${cy.toFixed(1)}Z`;
+    const uc = (m: number, ac: number) => [cx + r * m * Math.cos(ac), cy + r * m * Math.sin(ac)] as const;
+    const [x, y] = uc(1, a);
+    const [x1, y1] = uc(0.78, a - 0.62);
+    const [x2, y2] = uc(0.78, a + 0.62);
+    const [b1, b2] = uc(0.16, a);
+    return `M${b1.toFixed(1)},${b2.toFixed(1)}`
+      + `C${x1.toFixed(1)},${y1.toFixed(1)} ${x.toFixed(1)},${y.toFixed(1)} ${x.toFixed(1)},${y.toFixed(1)}`
+      + `C${x.toFixed(1)},${y.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)} ${b1.toFixed(1)},${b2.toFixed(1)}Z`;
   };
   return Array.from({ length: 8 }, (_, i) => yaprak((Math.PI / 4) * i)).join(' ');
 }
@@ -90,7 +101,12 @@ export function OrnateFrame({ width, height, children, style }: OrnateFrameProps
         <G transform={`translate(${width * 0.014} ${height * 0.012}) scale(${1 - 0.028} ${1 - 0.024})`}>
           <Path d={yol} fill="none" stroke={altin} strokeWidth={1} opacity={0.42} />
         </G>
-        <Path d={rozet(width / 2, omuz * 0.30, Math.max(9, height * 0.032))} fill={altin} opacity={0.92} />
+        <Path d={rozet(width / 2, omuz * 0.34, Math.max(11, height * 0.040))} fill={altin} opacity={0.92} />
+        <Path
+          d={rozet(width / 2, omuz * 0.34, Math.max(5, height * 0.017))}
+          fill={theme.colors.accentGradient[1]}
+          opacity={0.75}
+        />
       </Svg>
       <View style={{ flex: 1, paddingTop: omuz * 0.72 }}>{children}</View>
     </View>
