@@ -82,18 +82,36 @@ const kacis = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g
 const gomulu = (yol) => `data:image/png;base64,${fs.readFileSync(yol).toString('base64')}`;
 
 /**
- * Arka plan deseni — uygulamanın kendi sekiz köşeli yıldız örgüsü, çok düşük
- * opaklıkta. Düz gradyan tek başına ucuz duruyordu; desen kareyi markaya
- * bağlıyor ve telefonun arkasını boş bırakmıyor.
+ * Arka plan deseni — uygulamanın kendi sekiz köşeli yıldız örgüsü (rub'ül
+ * hizb geometrisi: üst üste binmiş iki kare), çok düşük opaklıkta.
+ *
+ * **Bu bir kez yanlış çizildi.** Burada elmas + çapraz çizgilerden oluşan bir
+ * kafes vardı; İslam bezemesiyle ilgisi yoktu, jenerik bir "argyle" desenidir.
+ * Uygulamanın içindeki motifle aynı geometri kullanılır ki mağaza karesi ile
+ * uygulama aynı dili konuşsun (src/ui/motif/patterns.ts).
+ *
+ * Yıldız karonun merkezine **ve dört köşesine** konur: örgü karo sınırında
+ * kesilip komşu karoda devam eder, desen sürekli okunur.
  */
 function desen(k) {
-  const a = Math.round(120 * k);
+  const a = Math.round(150 * k);
+  const r = a * 0.34;
+  const kare = (cx, cy, rot) => {
+    const pts = [];
+    for (let i = 0; i < 4; i += 1) {
+      const t = rot + (Math.PI / 2) * i;
+      pts.push(`${(cx + r * Math.cos(t)).toFixed(1)},${(cy + r * Math.sin(t)).toFixed(1)}`);
+    }
+    return `M${pts.join('L')}Z`;
+  };
+  const merkezler = [[a / 2, a / 2], [0, 0], [a, 0], [0, a], [a, a]];
+  const yollar = merkezler
+    .flatMap(([cx, cy]) => [kare(cx, cy, Math.PI / 4), kare(cx, cy, 0)])
+    .map((d) => `<path d="${d}"/>`)
+    .join('');
   return `<svg class="desen" xmlns="http://www.w3.org/2000/svg"><defs>
     <pattern id="p" width="${a}" height="${a}" patternUnits="userSpaceOnUse">
-      <g fill="none" stroke="${ALTIN}" stroke-width="${Math.max(1, 1.4 * k)}">
-        <path d="M${a / 2} 0 L${a} ${a / 2} L${a / 2} ${a} L0 ${a / 2}Z"/>
-        <path d="M0 0 L${a} ${a}M${a} 0 L0 ${a}" opacity=".45"/>
-      </g>
+      <g fill="none" stroke="${ALTIN}" stroke-width="${Math.max(1, 1.6 * k)}">${yollar}</g>
     </pattern></defs>
     <rect width="100%" height="100%" fill="url(#p)"/></svg>`;
 }
