@@ -2,6 +2,13 @@
 
 App Store Connect → Uygulama Bilgileri ve Sürüm alanları.
 
+> **Kimlik** — konsolda birebir bu değerler girilir:
+> uygulama adı **BEŞ** · yayıncı **KUS GRUP GAMES** ·
+> paket kimliği `com.kusgrup.bes` · destek `kusgrupgames@gmail.com` ·
+> site `https://kusgrupgames.github.io/bes`.
+> Paket kimliği yayından sonra değiştirilemez (DECISIONS D21).
+
+
 > **Neden bu kelimeler:** Türkiye'de en çok aranan iki ifade "ezan vakti" ve
 > "namaz vakti". İkisini de görünür alanlara koyduk: "Ezan Vakti" başlıkta,
 > "Namaz vakti" alt başlıkta. Anahtar kelime alanında **başlıkta ve alt
