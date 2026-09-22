@@ -31,6 +31,42 @@ Kişisel veri cihazdan çıkmıyor. İki mağaza formunda da "veri toplanmıyor"
 - Koyu temada gezinme başlığı bembeyaz kalıyordu.
 - Mağaza ekran görüntüleri ve öne çıkan görsel üretildi (`npm run store:shots`).
 
+### Her şey ürünün kendi adı üzerinden (D21)
+
+Kullanıcıya görünen yüzeyler BEŞ'ti; **altındaki her şey** geçici geliştirme
+adını taşıyordu. Hepsi `bes` oldu:
+
+| Ne | Önce | Sonra |
+|---|---|---|
+| Klasör | `sukun/` | `bes/` |
+| Yasal sayfalar | `docs/sukun/` | `docs/bes/` |
+| Paket kimliği | `com.kusgrup.sukun` | `com.kusgrup.bes` |
+| Pages adresi | `.../sukun` | `.../bes` |
+| Derin bağlantı | `sukun://` | `bes://` |
+| Expo slug / scheme | `sukun` | `bes` |
+| Yerel depolama öneki | `sukun.` | `bes.` |
+| Derleme akışları | `sukun-*.yml` · "Sukun Android derleme" | `bes-*.yml` · "BEŞ Android derleme" |
+| npm paket adı | `sukun` | `bes` |
+
+**Neden tam şimdi:** paket kimliği yayınlandıktan sonra değiştirilemez —
+mağazada uygulamanın kimliğidir. Uygulama henüz hiçbir mağazaya verilmedi,
+yani bugün bedeli sıfır. D15'in "değiştirmeyelim, imzayı ve kaydı kırar"
+gerekçesi bu yüzden geçersiz kaldı: kırılacak bir kayıt yok.
+
+**`seher`'e dokunulmadı:** o üründe geçen "sukun" sözcüğü bizim ürünümüz
+değil, Arapça harekenin adı (tecvid dersi). Toplu değiştirme onu bozardı.
+
+**Yayıncı adı yazıldı:** gizlilik sayfaları "mağaza kaydında adı geçen
+geliştirici" diyordu; artık **KUS GRUP GAMES** yazıyor. Mağaza formu runbook'una
+da kimlik tablosu eklendi (ad, mağaza adı, yayıncı, paket kimliği, e-posta, site).
+
+Ayrıca Türkçe ek hatası: gizlilik sayfası "BEŞ'u kullanırken" diyordu —
+BEŞ'in son ünlüsü ince, doğru ek "-i": **"BEŞ'i kullanırken"**.
+
+Üç yeni sınama bunu yerinde tutuyor (ikisi mutasyonla doğrulandı): paket
+kimliği sabit, kimlik yüzeylerinin hepsi aynı ada bakıyor, ve depoda hiçbir
+kaynak/dokümanda `sukun` kalmıyor.
+
 ### Son gözden geçirmede bulunan ve düzeltilenler
 
 Yayın öncesi 128 denetim karesi tek tek büyütülerek bakıldı; bulunanlar:
@@ -269,7 +305,7 @@ markası geçersiz işaretlendi.
 - `BRAND_GUIDELINES.md`: ad, sembol geometrisi (birim ölçülerle), duyarlı
   kademeler, renk tabloları, desen kuralları, yanlış kullanımlar ve henüz
   native hedefi olmayan yüzeylerin (widget, Live Activity, Watch) tasarımı.
-- **Paket kimliği değişmedi** (`com.kusgrup.sukun`): kimliği değiştirmek imzayı,
+- **Paket kimliği değişmedi** (`com.kusgrup.bes`): kimliği değiştirmek imzayı,
   App Store Connect kaydını ve kurulu uygulamaları kırar, kazancı sıfırdır —
   kullanıcıya hiçbir yerde görünmez.
 
@@ -337,7 +373,7 @@ Kalite kapısı: 524 sınama, `tsc` + `eslint` + Android paketi yeşil.
 ### Yayın sayfaları — kırık bağlantılar
 
 - `brand.json` içindeki `termsUrl` olmayan bir sayfayı gösteriyordu
-  (`docs/sukun/terms.html` yazılmamıştı). App Review hem gizlilik hem
+  (`docs/bes/terms.html` yazılmamıştı). App Review hem gizlilik hem
   koşul adresini açtığı için bu doğrudan ret sebebiydi.
 - İngilizce gizlilik sayfasının menüsü de olmayan `terms.html` ve
   `support.html` sayfalarına bağlanıyordu.
@@ -617,7 +653,7 @@ Kalite kapısı: 524 sınama, `tsc` + `eslint` + Android paketi yeşil.
 - README, ARCHITECTURE ve RELEASE_CHECKLIST yazıldı. Yayın listesi beş
   kullanıcı yolculuğunu adım adım tarif ediyor ve hepsini bir kez de uçak
   modunda tekrarlatıyor.
-- Mağaza sayfaları: `docs/sukun/` altında tanıtım, gizlilik (Türkçe ve
+- Mağaza sayfaları: `docs/bes/` altında tanıtım, gizlilik (Türkçe ve
   İngilizce ayrı yazıldı), kullanım koşulları ve destek sayfası. Gizlilik
   metni "hesap yok, sunucu yok" gerçeğini olduğu gibi anlatıyor ve reklam
   sınırlarını tek tek sayıyor.

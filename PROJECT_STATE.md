@@ -7,8 +7,9 @@
 
 | | |
 |---|---|
-| Marka | **BEŞ** — sembol `5` (D15). `BrandConfig` tek kaynak; paket kimliği `com.kusgrup.sukun` olarak kaldı |
-| Klasör | `sukun/` |
+| Marka | **BEŞ** — sembol `5` (D15). Yayıncı **KUS GRUP GAMES**. `BrandConfig` tek kaynak |
+| Kimlik | Paket `com.kusgrup.bes` (iki platformda aynı), Pages `https://kusgrupgames.github.io/bes`, şema `bes://` — geçici `sukun` adı tamamen kalktı (D21) |
+| Klasör | `bes/` |
 | Sürüm | 1.0.0 (ilk üretim sürümü hedefi: 1.0.0) |
 | Teknoloji | Expo SDK 54 · React Native 0.81.5 · React 19 · TypeScript (strict) · expo-router 6 |
 | Backend | **v1'de yok** — uygulama tamamen cihazda çalışır (D12). Supabase şeması yazılı ama v1 onu kullanmıyor; v2 eşitleme/topluluk için hazır bekliyor (B5) |
@@ -27,7 +28,7 @@ Dynamic Type ölçeği ve RTL aynalama bu kapsayıcıda denenemiyor — E3).
 - [x] Repository audit (5 mevcut ürün, Capacitor tabanlı, tek dosya mimarisi)
 - [x] Mimari kararı verildi ve `DECISIONS.md`'ye yazıldı (D1–D8)
 - [x] Durum dosyaları oluşturuldu
-- [x] `sukun/` Expo + TypeScript iskeleti kuruldu
+- [x] `bes/` Expo + TypeScript iskeleti kuruldu
 - [x] Kalite kapısı yeşil: `npm run gate` (tsc + eslint + jest)
 - [x] `BrandConfig` — marka adı, bundle id, e-posta tek noktada
 - [x] Design token katmanı (renk, tipografi, spacing, radius, opaklık, süre, easing)
@@ -166,7 +167,7 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 | TypeScript | ✅ `tsc --noEmit` temiz |
 | Lint | ✅ `eslint --max-warnings=0` temiz |
 | Test | ✅ 44 suite / 569 test (mantık + bileşen) |
-| Veritabanı | ✅ `bash sukun/tools/verify-db.sh` — migration + RLS + kapsama |
+| Veritabanı | ✅ `bash bes/tools/verify-db.sh` — migration + RLS + kapsama |
 | Paketleme | ✅ `npm run bundle` — Metro paketi üretiliyor |
 | Görsel geçiş | ✅ `npm run preview` — 42 ekran + 85 sn'lik gezinme videosu, hepsi çiziyor |
 | Marka varlıkları | ✅ **bitmiş master PNG** (`assets/brand/png/`, D17); `gen-brand.js` kırpar, ölçekler, alfa ayıklar — çizmez |
@@ -175,11 +176,11 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 | Dil | ✅ arayüzün **tamamı** beş dilde (573 anahtar × 5, sınamaya bağlı); uzun içerik Türkçe (T5) |
 | Mağaza varlıkları | ✅ `store/screenshots/` — iki mağazanın istediği bütün boyutlar (`npm run store:shots`) |
 | Gizlilik | ✅ reklam yok, izleyici yok, analitik yok, hesap yok; iddialar sınamaya bağlı |
-| iOS CI | ✅ `sukun-ios.yml` — kalite kapısı + imzasız simulator derlemesi |
-| iOS yayın | ⚙️ `sukun-release-ios.yml` — elle çalışır, TestFlight'a yükler (secret'lara bağlı) |
-| Android CI | ⚙️ `sukun-android.yml` — kalite kapısı + AAB + debug APK |
+| iOS CI | ✅ `bes-ios.yml` — kalite kapısı + imzasız simulator derlemesi |
+| iOS yayın | ⚙️ `bes-release-ios.yml` — elle çalışır, TestFlight'a yükler (secret'lara bağlı) |
+| Android CI | ⚙️ `bes-android.yml` — kalite kapısı + AAB + debug APK |
 | iOS build | ✅ CI'da imzasız derleniyor; imzalı TestFlight yapısı secret'lara bağlı |
-| Android build | ⚙️ `sukun-android.yml` eklendi, ilk koşu bekliyor |
+| Android build | ⚙️ `bes-android.yml` eklendi, ilk koşu bekliyor |
 
 ## Kritik kararlar (özet — ayrıntı DECISIONS.md)
 

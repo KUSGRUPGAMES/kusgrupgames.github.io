@@ -6,7 +6,7 @@ Kalıcı mimari kararlar. Her karar: **ne**, **neden**, **alternatif neden seçi
 
 ## D1 — Yeni ürün ayrı klasörde kurulur, `seher/` silinmez
 
-**Karar:** Yeni uygulama `sukun/` klasöründe sıfırdan kurulur. Mevcut `seher/`
+**Karar:** Yeni uygulama `bes/` klasöründe sıfırdan kurulur. Mevcut `seher/`
 olduğu gibi kalır ve yayına çıkabilir.
 
 **Neden:** `seher/` çalışıyor, testleri yeşil, CI'da hem Android hem iOS
@@ -121,7 +121,7 @@ aranan kelimeleri taşıyor.
 
 **Karar:** Türkçe/Latin arayüz **sistem yazı tipini** kullanır (iOS: San
 Francisco, Android: Roboto). Arapça metin için **Amiri** ve **Amiri Quran**
-paketle birlikte dağıtılır (`sukun/assets/fonts/`).
+paketle birlikte dağıtılır (`bes/assets/fonts/`).
 
 **Neden:** Sistem yazı tipi Dynamic Type ile tam uyumludur, Türkçe'ye özgü
 harfleri eksiksiz taşır ve paket boyutunu büyütmez. Arapça'da ise sistem yüzü
@@ -158,7 +158,7 @@ görünümünü okur, o görünümde `author_id` sütunu yoktur.
 
 ## D11 — Veritabanı doğrulaması yerelde çalışır
 
-**Karar:** `bash sukun/tools/verify-db.sh` geçici bir PostgreSQL kümesi kurup
+**Karar:** `bash bes/tools/verify-db.sh` geçici bir PostgreSQL kümesi kurup
 tüm migration'ları uygular, RLS davranış sınamalarını çalıştırır, sonra kümeyi
 siler. Kalite kapısının (`npm run gate`) parçası değildir; PostgreSQL her
 ortamda bulunmadığı için ayrı komuttur ve sunucu yoksa hata vermeden atlar.
@@ -288,14 +288,13 @@ geçici "Sükûn" markası geçersizdir.
 marka olarak sahiplenemez. Sembolün çift katmanlı okunması (önce rakam, sonra
 siluet) markayı taklit edilebilir bir klişeden ayırır.
 
-**Paket kimliği neden değişmedi:** `com.kusgrup.sukun` olduğu gibi kaldı.
-Kimliği değiştirmek imzayı, App Store Connect kaydını ve kurulu uygulamaları
-kırar; buna karşılık kazanç sıfırdır, çünkü paket kimliği kullanıcıya hiçbir
-yerde görünmez. Yalnız kullanıcıya görünen alanlar değişti.
+**Paket kimliği o gün değişmedi** — gerekçe imzayı, App Store Connect kaydını
+ve kurulu uygulamaları kırmamaktı. Bu gerekçe **D21 ile geçersiz kaldı**:
+uygulama hiç yayınlanmadığı için kırılacak bir kayıt da kurulum da yoktu.
 
-**Tek kaynak:** `sukun/tools/brand/mark.js` işaretin geometrisini, `tokens.ts`
+**Tek kaynak:** `bes/tools/brand/mark.js` işaretin geometrisini, `tokens.ts`
 paleti tutar. Rasterlar `node tools/gen-brand.js` ile üretilir; hiçbir görsel
-elle çizilip depoya konmaz. Ayrıntı: `sukun/BRAND_GUIDELINES.md`.
+elle çizilip depoya konmaz. Ayrıntı: `bes/BRAND_GUIDELINES.md`.
 
 ---
 
@@ -306,7 +305,7 @@ elle çizilip depoya konmaz. Ayrıntı: `sukun/BRAND_GUIDELINES.md`.
 > yaklaşık rekonstrüksiyonları olduğunu ve marka tasarımını bozduğunu
 > bildirdi. Kayıt olarak duruyor; uygulanan kural D17'dir.
 
-**Karar:** BEŞ logosu, sembolü, deseni ve renkleri `sukun/assets/brand/`
+**Karar:** BEŞ logosu, sembolü, deseni ve renkleri `bes/assets/brand/`
 altındaki **verilen paketten** gelir. Depo bu logoyu çizmez, izlemez, yeniden
 üretmez, bir görüntü üretecine vermez. Paketin kendi kuralları
 `assets/brand/docs/CLAUDE_HANDOFF.md` içindedir ve `BRAND_GUIDELINES.md`'den
@@ -341,8 +340,8 @@ ters yön ister. `accentSurface` eklendi; kontrast sınaması ikisini ayrı ayr�
 **Karar:** BEŞ logosu yalnız iki dosyadan gelir:
 
 ```
-sukun/assets/brand/png/BES_AppIcon_Dark_1024.png
-sukun/assets/brand/png/BES_AppIcon_Light_1024.png
+bes/assets/brand/png/BES_AppIcon_Dark_1024.png
+bes/assets/brand/png/BES_AppIcon_Light_1024.png
 ```
 
 Bu depoda logo **çizilmez**: vektör yolu üretilmez, yazı tipiyle "5" yazılmaz,
@@ -391,7 +390,7 @@ yüzey dokusudur; marka işareti taşımaz ve logo yerine geçmez.
 ## D18 — Uygulamanın renkleri logodan ölçülür
 
 **Karar:** Bütün marka renkleri, paketin "önerilen değerleri" yerine
-`sukun/assets/brand/png/BES_AppIcon_{Dark,Light}_1024.png` masterlarının
+`bes/assets/brand/png/BES_AppIcon_{Dark,Light}_1024.png` masterlarının
 **piksellerinden ölçülerek** alınır. Ekran zemini ve marka kartı düz renk
 değil, logonun kendi inişini taşıyan birer gradyandır.
 
@@ -515,3 +514,34 @@ gradyanın iki durağının hepsine karşı eşiğin üstünde.
 bozulur. Kart kenarını 3:1'e çıkarmak arayüzü kutu kutu bir tabloya
 çevirirdi; denetim sınırını soluk bırakmak erişilebilirlik hatasıdır.
 `contrast.test.ts` artık ikisinin ayrı kaldığını da ölçüyor.
+
+## D21 — Her şey ürünün kendi adı üzerinden: `sukun` → `bes`
+
+Ürünün adı **BEŞ**, yayıncısı **KUS GRUP GAMES**. Ama depoda geçici geliştirme
+adı her yerde duruyordu: klasör `sukun/`, paket kimliği `com.kusgrup.sukun`,
+Pages adresi `/sukun`, derleme akışları `sukun-*.yml`, derin bağlantı şeması
+`sukun://`, yerel depolama öneki `sukun.`, hatta CI'ın GitHub'da görünen adı
+"Sukun Android derleme". Kullanıcıya görünen yüzeyler BEŞ'ti; altındaki her
+şey başka bir ürünün adını taşıyordu.
+
+**Karar:** hepsi `bes` oldu. Kardeş ürünlerin kalıbı korundu —
+`com.kusgrup.bes`, `https://kusgrupgames.github.io/bes` — çünkü slot, latch,
+orbita, lull ve seher de aynı kalıbı kullanıyor.
+
+**Neden şimdi:** paket kimliği yayınlandıktan **sonra değiştirilemez**. App
+Store'da ve Play'de uygulamanın kimliğidir; değiştirmek yeni bir uygulama
+açmak demektir, yorumlar ve kurulumlar taşınmaz. Uygulama henüz hiçbir
+mağazaya verilmediği için bugün bedeli sıfır, yarın imkânsız. D15'in
+"değiştirmeyelim, kırar" gerekçesi tam da bu yüzden artık geçerli değil:
+kırılacak bir şey yok.
+
+**Dokunulmayan tek yer `seher`:** o üründe geçen "sukun" sözcüğü bizim
+ürünümüz değil, Arapça harekenin adı (`docs/seher/index.html`, tecvid dersi).
+Toplu değiştirme onu bozardı; betik `seher/` ve `docs/seher/` yollarını
+dışarıda bıraktı.
+
+**Tarih silinmedi:** `CHANGELOG.md` ve D15 içindeki "Sükûn → BEŞ" kayıtları
+olduğu gibi duruyor. Onlar geçmişi anlatıyor; geçmişi yeniden yazmak
+belgelerin güvenilirliğini bitirir. `brand.test.ts` içindeki "eski marka adı
+kullanıcıya görünen dosyalarda geçemez" kuralı da eski adı arayan bir kural
+olduğu için aynen kaldı.

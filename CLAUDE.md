@@ -13,7 +13,7 @@ bir klasörde çalışırken önce onun kendi `CLAUDE.md`'sini oku.
 
 1. **Ürün mantığı tek dosyada kalır:** `<ürün>/www/index.html`. Yeni dosya açma;
    kullanıcı yazılımcı değil, tek dosyayı kopyalayarak güncelleme yapabilmeli.
-   **İstisna: `sukun/`.** O ürün Expo + TypeScript ile çok dosyalı kurulur;
+   **İstisna: `bes/`.** O ürün Expo + TypeScript ile çok dosyalı kurulur;
    gerekçesi `DECISIONS.md` D3'te yazılı (widget, Live Activity, arka plan ses
    ve Supabase tek dosyaya sığmaz). Diğer beş üründe kural aynen geçerlidir.
 2. Bir oyunda çalışırken **o oyunun kendi `CLAUDE.md`'sini oku** — denge, adalet
@@ -72,7 +72,7 @@ https://kusgrupgames.github.io/<oyun>/privacy.html
 | `orbita/` | Orbita: One Tap Orbit Jump | yörüngeden teğet boyunca fırla |
 | `lull/` | Lull: Breathe Yourself Down | **oyun değil** — nefesini ölçüp yavaşlatır |
 | `seher/` | Seher: Namaz Vakti ve Kıble | **oyun değil** — vakit, kıble, zikirmatik |
-| `sukun/` | Sükûn: Namaz Vakti ve Kur'an | **oyun değil, tek dosya değil** — Expo + TS + Supabase; durum `PROJECT_STATE.md` |
+| `bes/` | BEŞ: Ezan ve Namaz Vakitleri | **oyun değil, tek dosya değil** — Expo + TS; durum `PROJECT_STATE.md` |
 
 Her oyunun kendi `CLAUDE.md`'si var; denge ve tuzaklar orada.
 
