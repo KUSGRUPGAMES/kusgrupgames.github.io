@@ -86,8 +86,11 @@ export default function HijriScreen() {
           onChange={(v) => setYon(v as Yon)}
           accessibilityLabel={t('hijri.converter')}
         />
+        {/* Alan etiketi bölüm başlığının aynısıydı ("Tarih çevirici") ve
+            hangi tarihin, hangi sırayla beklendiğini söylemiyordu. */}
         <Field
-          label={t('hijri.converter')}
+          label={yon === 'toHijri' ? t('hijri.inputGregorian') : t('hijri.inputHijri')}
+          hint={t('hijri.inputHint')}
           value={girdi}
           onChangeText={setGirdi}
           keyboardType="numbers-and-punctuation"

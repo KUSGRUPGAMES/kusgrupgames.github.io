@@ -56,6 +56,19 @@ Yayın öncesi 128 denetim karesi tek tek büyütülerek bakıldı; bulunanlar:
 Hepsi sınamaya bağlandı: `Segmented` başlıksız kalamıyor, seçili satır emir
 kipiyle işaretlenemiyor, denetim sınırı 3:1'in altına düşemiyor.
 
+**Türkçe yazım birliği.** Uygulama "Kuran", "ayet", "Hicri", "Dini günler",
+"Esmaül Hüsna" yazarken mağaza metinleri ve bilgi maddeleri "Kur'an", "âyet",
+"Hicrî", "dinî günler", "Esmâü'l-Hüsnâ" yazıyordu. Kullanıcı aynı şeyin iki
+yazımını yan yana görüyordu. Uygulama, doğru olan biçime çekildi:
+`dini` → `dinî`, `hicri` → `hicrî`, `resmi` → `resmî` (TDK'da bu ekler
+düzeltme imiyle yazılır ve anlam ayırt eder), `Kuran` → `Kur'an`,
+`ayet` → `âyet`, `Esmaül Hüsna` → `Esmâü'l-Hüsnâ`.
+
+**Hicrî tarih çeviricisinin alan etiketi** bölüm başlığının aynısıydı
+("Tarih çevirici") ve hangi tarihin hangi sırayla beklendiğini söylemiyordu.
+Artık yöne göre "Miladi tarih" / "Hicrî tarih" yazıyor ve altında biçim
+örneği duruyor.
+
 ---
 
 ## [Yayınlanmadı] — 0.1.0
