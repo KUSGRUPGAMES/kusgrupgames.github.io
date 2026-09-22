@@ -71,6 +71,14 @@ numarası sütunuyla karışıyor, Arapçada sözcük ortadan bölünüyordu
 tam ad sığıyor. Sınama artık çevrilmiş metnin karakter sayısıyla
 kısaltılmasını yasaklıyor.
 
+**Kesme işareti iki türlüydü.** Sure listesinde dokuz ad düz kesme kullanıyordu
+(`En'âm`, `A'râf`, `Sebe'` …) ama arayüzün geri kalanı tipografik kesmeyi
+(`Kur’an`, `Esmâü’l-Hüsnâ`, `Ümmü’l-Kurâ`). Aynı listede iki farklı işaret
+görünüyordu; dokuz ad tek işarete çekildi. Değişiklik yalnız `nameTr`
+alanlarına dokundu: âyet metni ve diğer alanların birebir aynı kaldığı
+yazılırken karşılaştırılarak doğrulandı. Sure meta bilgisi de "Mekki/Medeni"
+yerine "Mekkî/Medenî" oldu.
+
 **Arama ekranı kendini tekrar ediyordu:** "Ara" üç kez (başlık, alan
 etiketi, kutu başlığı), ipucu cümlesi iki kez görünüyordu. Bekleyen durum
 artık aramanın neyi kapsadığını anlatıyor; sonuç bulunamayınca da ipucu

@@ -128,6 +128,8 @@ describe('yerelleştirme', () => {
       [/\bdini\s+(gün|Gün)/, 'dinî gün'],
       [/\bresmi\s+(ilan|İlan)/, 'resmî ilan'],
       [/Esmaül/, 'Esmâü’l-Hüsnâ'],
+      [/\bMekki\b/, 'Mekkî'],
+      [/\bMedeni\b/, 'Medenî'],
     ];
     const ihlal: string[] = [];
     for (const [anahtar, deger] of Object.entries(tr)) {
