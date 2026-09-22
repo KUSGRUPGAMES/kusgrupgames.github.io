@@ -71,6 +71,14 @@ numarası sütunuyla karışıyor, Arapçada sözcük ortadan bölünüyordu
 tam ad sığıyor. Sınama artık çevrilmiş metnin karakter sayısıyla
 kısaltılmasını yasaklıyor.
 
+**Arapça arayüzde sure adları Türkçe yazıyordu.** "Fâtiha", "Bakara" — hem
+listede hem okuyucunun başlığında. Veri dosyasında Arapça yazım zaten var
+(`nameAr`, Tanzil); Arapça arayüzde artık o gösteriliyor, Türkçe okunuş
+ikincil satıra geçiyor. Diğer dillerde değişiklik yok: İngilizce, Almanca ve
+Fransızca için doğrulanmış bir Latin okunuş listemiz yok ve
+`nameEn` ad değil anlamdır ("The Opening"), başlık yerine geçmez —
+uydurulmuyor (CONTENT_SOURCES kuralı 1).
+
 **Açılış akışının düzeni.** Hoş geldin ekranı kartı üst üçte bire koyup
 altındaki her şeyi boş bırakıyor, "Başla" düğmesi kartın hemen altında
 asılı kalıyordu. `Screen` artık kısa içerikte de ekranı dolduruyor

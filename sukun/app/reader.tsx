@@ -18,6 +18,7 @@ import {
   getSurah, getSurahAyahs, getSource, getSurahTranslations, getTranslationInfo,
   surahFirstGlobalAyah, type QuranAyah,
 } from '@/features/quran/data';
+import { useSurahName } from '@/features/quran/names';
 import { useRecitation } from '@/features/audio/useRecitation';
 import { getReciter, AUDIO_SOURCE } from '@/features/audio/source';
 import { localPath } from '@/features/audio/downloadManager';
@@ -26,6 +27,8 @@ import { useSettingsStore } from '@/store/settings';
 import { useFavoriteStore } from '@/store/favorites';
 
 export default function ReaderScreen() {
+  // Sure adı dile göre: Arapça arayüzde `nameAr` (D: sure adları).
+  const sureAdi = useSurahName();
   const t = useT();
   const theme = useTheme();
   const params = useLocalSearchParams<{ surah?: string; ayah?: string }>();
@@ -78,7 +81,7 @@ export default function ReaderScreen() {
   }, [bookmarkAt]);
 
   const paylas = useCallback(async (a: QuranAyah) => {
-    const ad = getSurah(a.surah)?.nameTr ?? String(a.surah);
+    const ad = sureAdi(getSurah(a.surah), String(a.surah));
     // Paylaşımda kaynak künyesi **her zaman** gider (CONTENT_SOURCES kuralı 3).
     const meal = mealler[a.ayah - 1] ?? '';
     await Share.share({
@@ -102,7 +105,7 @@ export default function ReaderScreen() {
       <Stack.Screen
         options={{
           headerShown: true,
-          title: `${sure.number}. ${sure.nameTr}`,
+          title: `${sure.number}. ${sureAdi(sure)}`,
         }}
       />
 
@@ -117,7 +120,7 @@ export default function ReaderScreen() {
         ListHeaderComponent={
           <Row align="center" justify="space-between" style={{ marginBottom: theme.spacing.md }}>
             <Column gap="xxs">
-              <Text variant="title3">{sure.nameTr}</Text>
+              <Text variant="title3">{sureAdi(sure)}</Text>
               <Text variant="caption" tone="muted">
                 {`${t('quran.ayahCount', { count: sure.ayahCount })} · ${sure.revelation === 'mekki' ? t('quran.mekki') : t('quran.medeni')}`}
               </Text>
@@ -148,7 +151,7 @@ export default function ReaderScreen() {
         renderItem={({ item }) => {
           const imli = bookmarks.some((b) => b.surah === item.surah && b.ayah === item.ayah);
           return (
-            <Card onPress={() => ayetAc(item)} accessibilityLabel={`${sure.nameTr} ${item.ayah}`}>
+            <Card onPress={() => ayetAc(item)} accessibilityLabel={`${sureAdi(sure)} ${item.ayah}`}>
               <Column gap="sm">
                 <Row align="center" gap="sm">
                   <Badge label={String(item.ayah)} tone={imli ? 'highlight' : 'neutral'} />
@@ -213,7 +216,7 @@ export default function ReaderScreen() {
       <Sheet
         visible={secili !== null}
         onClose={() => setSecili(null)}
-        title={secili ? `${sure.nameTr} ${secili.ayah}` : ''}
+        title={secili ? `${sureAdi(sure)} ${secili.ayah}` : ''}
       >
         {secili ? (
           <Column gap="lg">
@@ -258,7 +261,7 @@ export default function ReaderScreen() {
                   router.push(
                     `/share-card?body=${encodeURIComponent(meal)}` +
                     `&arabic=${encodeURIComponent(secili.text)}` +
-                    `&reference=${encodeURIComponent(`${sure.nameTr} ${secili.ayah}`)}` +
+                    `&reference=${encodeURIComponent(`${sureAdi(sure)} ${secili.ayah}`)}` +
                     `&source=${encodeURIComponent(kunye)}`,
                   );
                   setSecili(null);

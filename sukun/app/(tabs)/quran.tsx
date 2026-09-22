@@ -14,6 +14,7 @@ import {
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
 import { getSurahs, getJuzStarts, getSource, type SurahMeta } from '@/features/quran/data';
+import { useSurahName } from '@/features/quran/names';
 import { useReadingStore, type Bookmark } from '@/store/reading';
 
 type Sekme = 'surahs' | 'juz' | 'bookmarks';
@@ -31,19 +32,21 @@ export default function QuranScreen() {
   const cuzler = useMemo(() => getJuzStarts(), []);
   const kaynak = useMemo(() => getSource(), []);
 
+  // Ad dile göre gelir: Arapça arayüzde `nameAr`, diğerlerinde `nameTr`.
+  const adiGoster = useSurahName();
   const sureAdi = useCallback(
-    (n: number) => sureler.find((s) => s.number === n)?.nameTr ?? String(n),
-    [sureler],
+    (n: number) => adiGoster(sureler.find((s) => s.number === n), String(n)),
+    [sureler, adiGoster],
   );
 
   const sureSatiri = useCallback((s: SurahMeta) => (
     <ListItem
-      title={`${s.number}. ${s.nameTr}`}
+      title={`${s.number}. ${adiGoster(s)}`}
       subtitle={`${t('quran.ayahCount', { count: s.ayahCount })} · ${s.revelation === 'mekki' ? t('quran.mekki') : t('quran.medeni')}`}
-      value={s.nameAr}
+      value={s.nameAr === adiGoster(s) ? s.nameTr : s.nameAr}
       onPress={() => router.push(`/reader?surah=${s.number}&ayah=1`)}
     />
-  ), [t]);
+  ), [t, adiGoster]);
 
   const cuzSatiri = useCallback((c: { juz: number; surah: number; ayah: number }) => (
     <ListItem
@@ -51,7 +54,7 @@ export default function QuranScreen() {
       subtitle={`${sureAdi(c.surah)} ${c.ayah}`}
       onPress={() => router.push(`/reader?surah=${c.surah}&ayah=${c.ayah}`)}
     />
-  ), [t, sureAdi]);
+  ), [t, adiGoster]);
 
   const yerImiSatiri = useCallback((b: Bookmark) => (
     <ListItem
