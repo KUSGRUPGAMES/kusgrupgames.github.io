@@ -130,6 +130,25 @@ describe('renk kontrastı', () => {
     }
   });
 
+  it.each(temalar)('%s tema: denetim sınırı 1.4.11 eşiğini geçer', (_ad, tema) => {
+    // WCAG 2.1 SC 1.4.11 "Non-text Contrast": dokunulan bir bileşenin sınırı
+    // komşu zeminden 3:1 ayrılmalı. Girdi kutusu, seçilmemiş çip ve ikincil
+    // düğme `border` kullanıyordu: açık temada 1.30:1, koyu temada 1.43:1.
+    // Koyu temada zekât ekranındaki kutular gerçekten kayboluyordu.
+    for (const [ad, zemin] of zeminler(tema)) {
+      expect({ ad, gecti: contrast(tema.colors.controlBorder, zemin) >= AA_BUYUK })
+        .toEqual({ ad, gecti: true });
+    }
+  });
+
+  it('kart kenarı ile denetim sınırı ayrı token', () => {
+    // Aynı token'a bağlanırsa biri düzeltilirken öbürü bozulur: kart kenarı
+    // bilerek soluk, denetim sınırı bilerek belirgin.
+    for (const [, tema] of temalar) {
+      expect(tema.colors.controlBorder).not.toBe(tema.colors.border);
+    }
+  });
+
   it('ölçüm işlevi bilinen değerleri doğru veriyor', () => {
     expect(contrast('#000000', '#FFFFFF')).toBeCloseTo(21, 1);
     expect(contrast('#FFFFFF', '#FFFFFF')).toBeCloseTo(1, 5);

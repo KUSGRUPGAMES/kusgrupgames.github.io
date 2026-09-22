@@ -88,7 +88,7 @@ export default function RemindersScreen() {
           ]}
           value={tur}
           onChange={(v) => setTur(v as 'time' | 'prayer')}
-          accessibilityLabel={t('reminder.kind')}
+          label={t('reminder.kind')}
         />
 
         {tur === 'time' ? (

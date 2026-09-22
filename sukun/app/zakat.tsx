@@ -74,7 +74,7 @@ export default function ZakatScreen() {
           ]}
           value={basis}
           onChange={(v) => setBasis(v as NisabBasis)}
-          accessibilityLabel={t('zakat.basis')}
+          label={t('zakat.basis')}
         />
       </Column>
 

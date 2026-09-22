@@ -42,21 +42,25 @@ export default function HomeLayoutScreen() {
               title={t(CARD_LABEL[c.id])}
               {...(sabit ? { subtitle: t('home.cardPinned') } : {})}
               chevron={false}
+              /* Sıralama düğmeleri "aşağı ok / sağ ok" idi ve ekran okuyucuya
+                 "İleri" / "Geri" diyordu: yukarı taşıyan düğme sağa bakıyor,
+                 adı da "Geri" diye okunuyordu. Artık yön hem çizimde hem
+                 adda doğru. */
               right={
                 <Row gap="xs" align="center">
                   <IconButton
-                    name="chevronDown"
-                    label={t('common.next')}
-                    size={16}
-                    disabled={i === cards.length - 1}
-                    onPress={() => move(c.id, 1)}
-                  />
-                  <IconButton
-                    name="chevronRight"
-                    label={t('nav.back')}
+                    name="chevronUp"
+                    label={t('home.moveUp')}
                     size={16}
                     disabled={i === 0}
                     onPress={() => move(c.id, -1)}
+                  />
+                  <IconButton
+                    name="chevronDown"
+                    label={t('home.moveDown')}
+                    size={16}
+                    disabled={i === cards.length - 1}
+                    onPress={() => move(c.id, 1)}
                   />
                   <IconButton
                     name={c.visible ? 'check' : 'close'}

@@ -126,7 +126,7 @@ export default function AccountScreen() {
         <ListItem
           title={t('backup.import')}
           subtitle={t('backup.importBody')}
-          icon="refresh"
+          icon="download"
           chevron={false}
           disabled={calisiyor}
           onPress={() => { void dosyaSec(); }}

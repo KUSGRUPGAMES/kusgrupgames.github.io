@@ -65,6 +65,14 @@ export interface ThemeColors {
    * kayboluyordu.
    */
   hairline: string;
+  /**
+   * Dokunulan bir denetimin sınırı: girdi kutusu, seçilmemiş çip, ikincil
+   * düğme. `border` kart kenarı gibi **dekoratif** ayrımlar içindir ve
+   * bilerek soluktur; WCAG 1.4.11 ise arayüz bileşeninin sınırından 3:1
+   * ister. İkisi aynı token olduğunda koyu temada girdi kutuları zeminden
+   * ayırt edilemiyordu (zekât ekranı).
+   */
+  controlBorder: string;
   /** Arka plan motifi rengi (düşük opaklıkla kullanılır). */
   motif: string;
 }
@@ -95,6 +103,7 @@ export const lightTheme: Theme = {
     surfaceRaised: palette.ivory200,
     border: palette.ivory300,
     hairline: palette.ivory300,
+    controlBorder: palette.sage600,
     text: palette.ink900,
     textMuted: palette.ink500,
     textSubtle: palette.ink300,
@@ -124,6 +133,7 @@ export const darkTheme: Theme = {
     surfaceRaised: palette.emerald700,
     border: 'rgba(255,255,255,0.10)',
     hairline: 'rgba(251,246,236,0.34)',
+    controlBorder: palette.sage400,
     text: palette.ivory50,
     textMuted: 'rgba(251,246,236,0.70)',
     // Koyu zeminde 0.44 alfa yükseltilmiş yüzeylerde 3:1'in altına düşüyordu.

@@ -179,7 +179,8 @@ export const en: Partial<Record<StringKey, string>> = {
   'khatm.targetHint': 'You can leave this empty', 'khatm.progress': '{done} / 30 juz',
   'khatm.dailyPace': '{n} juz a day needed', 'khatm.daysLeft': '{days} days left',
   'khatm.overdue': 'The target date has passed', 'khatm.finish': 'Finish the khatm',
-  'khatm.none': 'No khatm in progress', 'khatm.readJuz': 'Read the juz',
+  'khatm.none': 'No khatm in progress',
+  'khatm.noneBody': 'Start one below; mark each juz as you read and watch your progress.', 'khatm.readJuz': 'Read the juz',
   'friday.title': 'Friday', 'friday.greeting': 'A blessed Friday',
   'friday.kahf': 'Read Surah al-Kahf', 'friday.salawat': 'Send salawat',
   'search.title': 'Search',
@@ -269,7 +270,7 @@ export const en: Partial<Record<StringKey, string>> = {
 
   'home.customize': 'Arrange the home screen',
   'home.customizeHint': 'Hide, show and reorder the cards',
-  'home.cardPinned': 'This card cannot be hidden', 'home.reset': 'Back to default',
+  'home.cardPinned': 'This card cannot be hidden', 'home.moveUp': 'Move up', 'home.moveDown': 'Move down', 'home.reset': 'Back to default',
   'home.card.nextPrayer': 'Next prayer', 'home.card.todayTimes': "Today's times",
   'home.card.hijriDate': 'Hijri date', 'home.card.dailyDua': 'Supplication of the day',
   'home.card.dailyKnowledge': 'Fact of the day', 'home.card.dailyName': 'Name of the day',

@@ -52,7 +52,7 @@ export default function KhatmScreen() {
 
       {!etkin ? (
         <>
-          <EmptyState icon="book" title={t('khatm.none')} description={t('khatm.targetHint')} />
+          <EmptyState icon="book" title={t('khatm.none')} description={t('khatm.noneBody')} />
           <Column gap="md">
             <Field label={t('khatm.newTitle')} value={ad} onChangeText={setAd} />
             <Field

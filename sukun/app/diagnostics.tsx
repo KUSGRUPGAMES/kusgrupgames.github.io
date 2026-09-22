@@ -51,7 +51,7 @@ export default function DiagnosticsScreen() {
             />
             <Button
               label={t('diagnostics.clear')}
-              icon="close"
+              icon="trash"
               variant="ghost"
               size="sm"
               onPress={() => { clearCrashRecords(); setKayitlar([]); }}

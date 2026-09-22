@@ -25,7 +25,7 @@ export function Field({ label, hint, error, ...rest }: FieldProps) {
           paddingHorizontal: theme.spacing.lg,
           borderRadius: theme.radius.md,
           borderWidth: 1,
-          borderColor: error ? theme.colors.danger : theme.colors.border,
+          borderColor: error ? theme.colors.danger : theme.colors.controlBorder,
           backgroundColor: theme.colors.surface,
           color: theme.colors.text,
           fontSize: theme.typography.body.size,

@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { Stack } from 'expo-router';
 import {
   Screen, SectionHeader, Card, Column, Row, Text, ListItem, Segmented,
-  Toggle, Button, Banner, Badge, ProgressBar, SourceNote, VirtualList,
+  Toggle, Button, Banner, ProgressBar, SourceNote, VirtualList,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -53,7 +53,10 @@ export default function RecitationScreen() {
             title={r.name}
             subtitle={`${r.style === 'mucevved' ? t('audio.mucevved') : t('audio.murattal')} · ${r.bitrates.join(', ')} kbps`}
             chevron={false}
-            {...(settings.recitation.reciterId === r.id ? { right: <Badge label={t('common.select')} tone="accent" /> } : {})}
+            // Seçili okuyucu "Seç" rozetiyle işaretleniyordu: zaten seçili
+            // olan satır kullanıcıya "seç" diyordu. Uygulamanın geri kalanıyla
+            // aynı onay imi kullanılır, ekran okuyucuya da `selected` gider.
+            selected={settings.recitation.reciterId === r.id}
             onPress={() => update({ recitation: { ...settings.recitation, reciterId: r.id } })}
           />
         ))}
@@ -85,7 +88,7 @@ export default function RecitationScreen() {
       <Row gap="sm">
         <Button
           label={t('audio.deleteDownload')}
-          icon="close"
+          icon="trash"
           variant="secondary"
           size="sm"
           disabled={kullanilan === 0}
@@ -116,7 +119,7 @@ export default function RecitationScreen() {
               right={
                 <Button
                   label={t('audio.download')}
-                  icon="share"
+                  icon="download"
                   variant="ghost"
                   size="sm"
                   disabled={indirme !== null}

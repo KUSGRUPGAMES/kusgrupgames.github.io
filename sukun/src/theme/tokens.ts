@@ -64,6 +64,14 @@ export const palette = {
   ivory200: '#EDE4D3',     // ölçüm: açık zemin %10 — gradyanın dibi
   ivory300: '#DFD4BC',     // türetilmiş: kenarlık ve ayırıcı
 
+  // --- Adaçayı: denetim kenarlığı. WCAG 1.4.11 arayüz bileşeninin sınırından
+  // 3:1 ister; `ivory300` / %10 beyaz kenarlıkla alan sınırı 1.3:1 ve 1.43:1
+  // kalıyordu. Koyu temada zekât ekranında girdi kutuları neredeyse
+  // görünmüyordu — ekran karesinde böyle görüldü. Bu iki ton her iki temada
+  // da zemin, yüzey ve gradyanın her durağına karşı 3:1'in üstünde.
+  sage600: '#5E8375',      // açık tema: en düşük 3.34:1 (ivory200'e karşı)
+  sage400: '#75897F',      // koyu tema: en düşük 3.51:1 (emerald700'e karşı)
+
   // --- Metin: açık masterdaki figürün koyusu.
   ink900: '#011E17',       // ölçüm: açık master figür ortancası
   ink700: '#20302A',

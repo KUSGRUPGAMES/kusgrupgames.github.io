@@ -18,17 +18,27 @@ export interface SegmentedProps<T extends string> {
   options: readonly SegmentedOption<T>[];
   value: T;
   onChange: (value: T) => void;
+  /**
+   * Seçicinin **görünen** başlığı; aynı zamanda erişilebilirlik adı olur.
+   * `accessibilityLabel` yalnız ekran okuyucuya konuşuyordu: gören kullanıcı
+   * "Altın / Gümüş" yazan bir çubuğu neyin seçtiğini bilmeden görüyordu
+   * (zekât ekranında nisap ölçüsü tam olarak böyleydi). Seçeneklerin kendisi
+   * neyi seçtiğini anlatıyorsa (Sureler/Cüzler gibi) başlık verilmez.
+   */
+  label?: string;
   accessibilityLabel?: string;
 }
 
-export function Segmented<T extends string>({ options, value, onChange, accessibilityLabel }: SegmentedProps<T>) {
+export function Segmented<T extends string>({
+  options, value, onChange, label, accessibilityLabel,
+}: SegmentedProps<T>) {
   const theme = useTheme();
   // Dört seçenekte hücre ~70 piksele düşüyor; `callout` taşıyor.
   const variant = options.length >= 4 ? 'caption' : 'callout';
-  return (
+  const cubuk = (
     <View
       accessibilityRole="radiogroup"
-      accessibilityLabel={accessibilityLabel}
+      accessibilityLabel={accessibilityLabel ?? label}
       style={{
         flexDirection: 'row',
         backgroundColor: theme.colors.surfaceRaised,
@@ -68,6 +78,13 @@ export function Segmented<T extends string>({ options, value, onChange, accessib
           </Pressable>
         );
       })}
+    </View>
+  );
+  if (!label) return cubuk;
+  return (
+    <View style={{ gap: theme.spacing.xs }}>
+      <Text variant="caption" tone="muted">{label}</Text>
+      {cubuk}
     </View>
   );
 }

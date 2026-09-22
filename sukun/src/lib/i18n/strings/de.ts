@@ -179,7 +179,8 @@ export const de: Partial<Record<StringKey, string>> = {
   'khatm.targetHint': 'Kann leer bleiben', 'khatm.progress': '{done} / 30 Dschuz',
   'khatm.dailyPace': '{n} Dschuz pro Tag nötig', 'khatm.daysLeft': 'Noch {days} Tage',
   'khatm.overdue': 'Das Zieldatum ist vorbei', 'khatm.finish': 'Chatm abschließen',
-  'khatm.none': 'Kein laufender Chatm', 'khatm.readJuz': 'Dschuz lesen',
+  'khatm.none': 'Kein laufender Chatm',
+  'khatm.noneBody': 'Beginne unten einen; hake jeden Dschuz beim Lesen ab und verfolge deinen Fortschritt.', 'khatm.readJuz': 'Dschuz lesen',
   'friday.title': 'Freitag', 'friday.greeting': 'Einen gesegneten Freitag',
   'friday.kahf': 'Sure al-Kahf lesen', 'friday.salawat': 'Salawat sprechen',
   'search.title': 'Suche',
@@ -269,7 +270,7 @@ export const de: Partial<Record<StringKey, string>> = {
 
   'home.customize': 'Startseite einrichten',
   'home.customizeHint': 'Karten ausblenden, einblenden und sortieren',
-  'home.cardPinned': 'Diese Karte kann nicht ausgeblendet werden', 'home.reset': 'Zurück zum Standard',
+  'home.cardPinned': 'Diese Karte kann nicht ausgeblendet werden', 'home.moveUp': 'Nach oben', 'home.moveDown': 'Nach unten', 'home.reset': 'Zurück zum Standard',
   'home.card.nextPrayer': 'Nächstes Gebet', 'home.card.todayTimes': 'Heutige Zeiten',
   'home.card.hijriDate': 'Hidschri-Datum', 'home.card.dailyDua': 'Bittgebet des Tages',
   'home.card.dailyKnowledge': 'Wissen des Tages', 'home.card.dailyName': 'Name des Tages',

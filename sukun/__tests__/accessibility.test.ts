@@ -74,6 +74,34 @@ describe('dokunma hedefleri ve etiketler', () => {
     expect(eksik).toEqual([]);
   });
 
+  it('Segment seçicinin ne seçtiği yazıyor', () => {
+    // `accessibilityLabel` yalnız ekran okuyucuya konuşur. Zekât ekranında
+    // nisap ölçüsü böyleydi: gören kullanıcı "Altın / Gümüş" yazan bir çubuk
+    // görüyor, neyi seçtiğini bilmiyordu. Seçenekler kendi başına anlaşılıyorsa
+    // (Sureler / Cüzler) `accessibilityLabel` yeter; ikisinden biri şart.
+    const eksik: string[] = [];
+    for (const p of tumTsx) {
+      for (const ozellikler of acilisEtiketleri(kodu(p), 'Segmented')) {
+        if (!/\blabel=|\baccessibilityLabel=/.test(ozellikler)) {
+          eksik.push(`${p}: ${ozellikler.slice(0, 60)}`);
+        }
+      }
+    }
+    expect(eksik).toEqual([]);
+  });
+
+  it('seçili satır emir kipiyle işaretlenmez', () => {
+    // Kıraat ekranında seçili okuyucunun yanında "Seç" rozeti duruyordu:
+    // zaten seçili olan satır kullanıcıya "seç" diyordu. Seçili durum
+    // `ListItem selected` ile, onay imi ve `accessibilityState` olarak verilir.
+    const ihlal: string[] = [];
+    for (const p of tumTsx) {
+      const s = kodu(p);
+      if (/<Badge[^>]*label=\{t\('common\.select'\)\}/.test(s)) ihlal.push(p);
+    }
+    expect(ihlal).toEqual([]);
+  });
+
   it('ham Text/View yerine tasarım sistemi kullanılır (ekranlarda)', () => {
     const ihlal: string[] = [];
     for (const p of dosyalar(join(ROOT, 'app'))) {

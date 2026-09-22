@@ -179,7 +179,8 @@ export const ar: Partial<Record<StringKey, string>> = {
   'khatm.targetHint': 'يمكن تركه فارغًا', 'khatm.progress': '{done} / 30 جزءًا',
   'khatm.dailyPace': 'يلزم {n} جزء يوميًا', 'khatm.daysLeft': 'بقي {days} يومًا',
   'khatm.overdue': 'مضى التاريخ المستهدف', 'khatm.finish': 'إنهاء الختمة',
-  'khatm.none': 'لا توجد ختمة جارية', 'khatm.readJuz': 'اقرأ الجزء',
+  'khatm.none': 'لا توجد ختمة جارية',
+  'khatm.noneBody': 'ابدأ ختمة من الأسفل؛ علّم كل جزء بعد قراءته وتابع تقدمك.', 'khatm.readJuz': 'اقرأ الجزء',
   'friday.title': 'الجمعة', 'friday.greeting': 'جمعة مباركة',
   'friday.kahf': 'اقرأ سورة الكهف', 'friday.salawat': 'صلِّ على النبي',
   'search.title': 'بحث',
@@ -269,7 +270,7 @@ export const ar: Partial<Record<StringKey, string>> = {
 
   'home.customize': 'ترتيب الصفحة الرئيسية',
   'home.customizeHint': 'إخفاء البطاقات وإظهارها وترتيبها',
-  'home.cardPinned': 'لا يمكن إخفاء هذه البطاقة', 'home.reset': 'العودة إلى الافتراضي',
+  'home.cardPinned': 'لا يمكن إخفاء هذه البطاقة', 'home.moveUp': 'تحريك لأعلى', 'home.moveDown': 'تحريك لأسفل', 'home.reset': 'العودة إلى الافتراضي',
   'home.card.nextPrayer': 'الصلاة القادمة', 'home.card.todayTimes': 'مواقيت اليوم',
   'home.card.hijriDate': 'التاريخ الهجري', 'home.card.dailyDua': 'دعاء اليوم',
   'home.card.dailyKnowledge': 'معلومة اليوم', 'home.card.dailyName': 'اسم اليوم',

@@ -13,8 +13,8 @@ const BEAD_ANGLES = [-90, -30, 30, 90, 150, 210] as const;
 
 export type IconName =
   | 'clock' | 'compass' | 'book' | 'beads' | 'heart' | 'settings'
-  | 'chevronRight' | 'chevronLeft' | 'chevronDown' | 'check' | 'close'
-  | 'bell' | 'bellOff' | 'share' | 'lock' | 'plus' | 'minus' | 'search'
+  | 'chevronRight' | 'chevronLeft' | 'chevronDown' | 'chevronUp' | 'check' | 'close'
+  | 'bell' | 'bellOff' | 'share' | 'download' | 'trash' | 'lock' | 'plus' | 'minus' | 'search'
   | 'moon' | 'sun' | 'location' | 'calendar' | 'user' | 'users'
   | 'sparkle' | 'play' | 'pause' | 'bookmark' | 'info' | 'alert' | 'refresh' | 'star' | 'copy'
   | 'crescentStar' | 'coins' | 'kaaba';
@@ -76,6 +76,7 @@ function render(name: IconName, p: P): React.ReactNode {
     case 'chevronRight': return <Polyline points="9,5 16,12 9,19" {...p} />;
     case 'chevronLeft': return <Polyline points="15,5 8,12 15,19" {...p} />;
     case 'chevronDown': return <Polyline points="5,9 12,16 19,9" {...p} />;
+    case 'chevronUp': return <Polyline points="5,15 12,8 19,15" {...p} />;
     case 'check': return <Polyline points="4,12.5 9.5,18 20,6.5" {...p} />;
     case 'close': return <Path d="M6 6l12 12M18 6L6 18" {...p} />;
     case 'bell':
@@ -84,6 +85,12 @@ function render(name: IconName, p: P): React.ReactNode {
       return <><Path d="M6 17V11a6 6 0 0 1 8.5-5.4M18 13v4l1.5 2.5H8" {...p} /><Line x1={4} y1={4} x2={20} y2={20} {...p} /></>;
     case 'share':
       return <><Path d="M12 15V4M12 4 8.5 7.5M12 4l3.5 3.5" {...p} /><Path d="M5 13v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-6" {...p} /></>;
+    case 'download':
+      // `share`in aynası: ok tepsiye **iner**. İndirme düğmelerinde paylaş
+      // ikonu kullanılıyordu; ok yukarı baktığı için yükleme gibi okunuyordu.
+      return <><Path d="M12 4v11M12 15l-3.5-3.5M12 15l3.5-3.5" {...p} /><Path d="M5 13v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-6" {...p} /></>;
+    case 'trash':
+      return <><Path d="M5 7h14" {...p} /><Path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7" {...p} /><Path d="M6.5 7l.8 12.1A1.5 1.5 0 0 0 8.8 20.5h6.4a1.5 1.5 0 0 0 1.5-1.4L17.5 7" {...p} /><Path d="M10.5 11v5.5M13.5 11v5.5" {...p} /></>;
     case 'lock':
       return <><Path d="M6 11h12v9H6z" {...p} /><Path d="M8.5 11V8a3.5 3.5 0 1 1 7 0v3" {...p} /></>;
     case 'plus': return <Path d="M12 5v14M5 12h14" {...p} />;

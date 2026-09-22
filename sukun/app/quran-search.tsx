@@ -57,7 +57,7 @@ export default function QuranSearchScreen() {
         ]}
         value={nerede}
         onChange={(v) => setNerede(v as 'both' | 'arabic' | 'translation')}
-        accessibilityLabel={t('quran.searchIn')}
+        label={t('quran.searchIn')}
       />
 
       {sorgu.trim().length >= 2 ? (

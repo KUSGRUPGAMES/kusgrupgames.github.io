@@ -1,7 +1,7 @@
 /** Profil ve ayarlar — şartname §59, §60. */
 import React from 'react';
 import { router } from 'expo-router';
-import { Screen, SectionHeader, Card, ListItem, Segmented, Column, Text, Icon } from '@/ui';
+import { Screen, SectionHeader, Card, ListItem, Segmented, Icon } from '@/ui';
 import { useI18n, useT, LANGUAGES, LANGUAGE_NAMES } from '@/lib/i18n';
 import { useThemeContext, type ThemeMode } from '@/theme/ThemeProvider';
 import { Brand } from '@/config/brand';
@@ -27,15 +27,12 @@ export default function ProfileScreen() {
       </Card>
 
       <SectionHeader title={t('settings.appearance')} />
-      <Column gap="sm">
-        <Text variant="caption" tone="muted">{t('settings.theme')}</Text>
-        <Segmented
-          options={temaSecenekleri}
-          value={mode}
-          onChange={setMode}
-          accessibilityLabel={t('settings.theme')}
-        />
-      </Column>
+      <Segmented
+        options={temaSecenekleri}
+        value={mode}
+        onChange={setMode}
+        label={t('settings.theme')}
+      />
 
       <SectionHeader title={t('settings.language')} subtitle={t('settings.languageRestart')} />
       <Card padding="sm">

@@ -30,6 +30,31 @@ Kişisel veri cihazdan çıkmıyor. İki mağaza formunda da "veri toplanmıyor"
 - Koyu temada gezinme başlığı bembeyaz kalıyordu.
 - Mağaza ekran görüntüleri ve öne çıkan görsel üretildi (`npm run store:shots`).
 
+### Son gözden geçirmede bulunan ve düzeltilenler
+
+Yayın öncesi 128 denetim karesi tek tek büyütülerek bakıldı; bulunanlar:
+
+- **Girdi kutuları koyu temada kayboluyordu.** Denetim sınırı kart kenarıyla
+  aynı token'ı kullanıyordu: açık temada 1.30:1, koyu temada 1.43:1. WCAG
+  1.4.11 3:1 ister. Ayrı bir `controlBorder` rolü açıldı ve ölçülerek
+  seçilen iki ton bağlandı (D20). Girdi, çip ve ikincil düğme etkilendi.
+- **Seçili okuyucu "Seç" rozetiyle işaretleniyordu** — zaten seçili olan
+  satır kullanıcıya "seç" diyordu. Uygulamanın geri kalanındaki onay imine
+  çevrildi; ekran okuyucuya da `selected` olarak gidiyor.
+- **Ana sayfa düzeninde sıralama okları yanlıştı.** Yukarı taşıyan düğme
+  **sağ** ok çiziyor ve ekran okuyucuya "Geri" diye okunuyordu; aşağı taşıyan
+  "İleri" diyordu. `chevronUp`/`chevronDown` ve kendi adları eklendi.
+- **Zekât ekranında nisap ölçüsü seçicisinin başlığı yoktu**; gören kullanıcı
+  "Altın / Gümüş" yazan bir çubuğun neyi seçtiğini bilmiyordu. `Segmented`
+  artık görünen başlık alabiliyor; beş yerde bağlandı.
+- **Hatim ekranının boş durumu** "Boş bırakabilirsin" diyordu — hedef tarih
+  alanının ipucu metni yanlışlıkla açıklama olarak kullanılmıştı.
+- **İndirme düğmeleri paylaşım ikonu kullanıyordu** (ok yukarı bakıyordu);
+  `download` ve `trash` ikonları eklendi, üç yerde düzeltildi.
+
+Hepsi sınamaya bağlandı: `Segmented` başlıksız kalamıyor, seçili satır emir
+kipiyle işaretlenemiyor, denetim sınırı 3:1'in altına düşemiyor.
+
 ---
 
 ## [Yayınlanmadı] — 0.1.0

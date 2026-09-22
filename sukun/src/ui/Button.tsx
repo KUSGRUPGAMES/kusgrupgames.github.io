@@ -37,7 +37,7 @@ export function Button({
 
   const fills: Record<ButtonVariant, ViewStyle> = {
     primary: { backgroundColor: theme.colors.accentSurface },
-    secondary: { backgroundColor: theme.colors.surfaceRaised, borderWidth: 1, borderColor: theme.colors.border },
+    secondary: { backgroundColor: theme.colors.surfaceRaised, borderWidth: 1, borderColor: theme.colors.controlBorder },
     ghost: { backgroundColor: 'transparent' },
     danger: { backgroundColor: theme.colors.danger },
   };

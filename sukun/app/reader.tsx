@@ -197,7 +197,7 @@ export default function ReaderScreen() {
             ]}
             value={settings.quran.mode}
             onChange={(v) => update({ quran: { ...settings.quran, mode: v as 'arabic' | 'both' | 'translation' } })}
-            accessibilityLabel={t('quran.translation')}
+            label={t('quran.translation')}
           />
           {settings.quran.mode !== 'arabic' ? (
             <Text variant="caption" tone="muted">

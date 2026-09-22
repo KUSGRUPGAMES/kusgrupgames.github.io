@@ -488,3 +488,30 @@ sessiz veri kaybıdır; kullanıcıya "önce uygulamayı güncelle" denir.
 favorilerin ve ilerlemen cihazlar arasında eşitlenir" diyordu. Hesap da
 eşitleme de yok; olmayan bir özelliği vaat etmek hem yanlış hem de mağaza
 incelemesinde ret sebebi. Metin gerçeği söyleyecek biçimde düzeltildi.
+
+## D20 — Denetim sınırı, kart kenarından ayrı bir token
+
+WCAG 2.1 SC 1.4.11 ("Non-text Contrast") dokunulan bir arayüz bileşeninin
+sınırından komşu zemine 3:1 ister. BEŞ'te girdi kutusu, seçilmemiş çip ve
+ikincil düğme kart kenarıyla **aynı** token'ı (`border`) kullanıyordu. O
+token bilerek soluktur — kartı zeminden ayırmak için yeter. Ölçüldüğünde:
+
+| Tema | Sınır rengi | Zemine karşı |
+|---|---|---|
+| açık | `ivory300` | 1.30:1 |
+| koyu | `rgba(255,255,255,0.10)` | 1.43:1 |
+
+Koyu temada sonuç ekranda görüldü: zekât ekranındaki sekiz girdi kutusunun
+kenarı zeminde kayboluyor, kullanıcı nereye dokunacağını kutunun *içindeki*
+boşluktan tahmin ediyordu.
+
+**Karar:** `controlBorder` adında ayrı bir rol açıldı; `border` kart ve
+ayırıcı gibi **dekoratif** ayrımlarda kaldı. Değerler ölçülerek seçildi:
+`sage600 #5E8375` (açık, en düşük 3.34:1) ve `sage400 #75897F` (koyu, en
+düşük 3.51:1) — her iki temada da zemin, yüzey, yükseltilmiş yüzey ve
+gradyanın iki durağının hepsine karşı eşiğin üstünde.
+
+İkisini tek token'da birleştirmek neden yanlış: biri düzeltilirken öbürü
+bozulur. Kart kenarını 3:1'e çıkarmak arayüzü kutu kutu bir tabloya
+çevirirdi; denetim sınırını soluk bırakmak erişilebilirlik hatasıdır.
+`contrast.test.ts` artık ikisinin ayrı kaldığını da ölçüyor.

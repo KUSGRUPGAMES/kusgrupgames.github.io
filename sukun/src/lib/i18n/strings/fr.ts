@@ -179,7 +179,8 @@ export const fr: Partial<Record<StringKey, string>> = {
   'khatm.targetHint': 'Vous pouvez laisser vide', 'khatm.progress': '{done} / 30 juz',
   'khatm.dailyPace': '{n} juz par jour nécessaires', 'khatm.daysLeft': '{days} jours restants',
   'khatm.overdue': 'La date cible est dépassée', 'khatm.finish': 'Terminer le khatm',
-  'khatm.none': 'Aucun khatm en cours', 'khatm.readJuz': 'Lire le juz',
+  'khatm.none': 'Aucun khatm en cours',
+  'khatm.noneBody': 'Commencez-en un ci-dessous ; cochez chaque juz au fil de la lecture et suivez votre progression.', 'khatm.readJuz': 'Lire le juz',
   'friday.title': 'Vendredi', 'friday.greeting': 'Bon vendredi béni',
   'friday.kahf': 'Lire la sourate al-Kahf', 'friday.salawat': 'Réciter la salawat',
   'search.title': 'Recherche',
@@ -269,7 +270,7 @@ export const fr: Partial<Record<StringKey, string>> = {
 
   'home.customize': "Organiser l'accueil",
   'home.customizeHint': 'Masquer, afficher et réordonner les cartes',
-  'home.cardPinned': 'Cette carte ne peut pas être masquée', 'home.reset': 'Revenir par défaut',
+  'home.cardPinned': 'Cette carte ne peut pas être masquée', 'home.moveUp': 'Monter', 'home.moveDown': 'Descendre', 'home.reset': 'Revenir par défaut',
   'home.card.nextPrayer': 'Prochaine prière', 'home.card.todayTimes': "Horaires d'aujourd'hui",
   'home.card.hijriDate': 'Date hégirienne', 'home.card.dailyDua': 'Invocation du jour',
   'home.card.dailyKnowledge': 'Savoir du jour', 'home.card.dailyName': 'Nom du jour',
