@@ -71,6 +71,12 @@ numarası sütunuyla karışıyor, Arapçada sözcük ortadan bölünüyordu
 tam ad sığıyor. Sınama artık çevrilmiş metnin karakter sayısıyla
 kısaltılmasını yasaklıyor.
 
+**Bildirim merkezinin başlığı kendi listesiyle çelişiyordu:** Türkçede
+"Kurulu bildirimler" yazıp altında işletim sisteminden okunan sayıyı
+gösteriyordu ("0 bildirim kurulu"), ama listelediği şey **planlanan**
+bildirimlerdi. İzin verilmemişken sayı sıfır, liste dolu görünüyordu.
+Başlık "Planlanan bildirimler" oldu — öbür dört dil zaten böyle yazıyordu.
+
 **Arapçadan Almancaya geçen kullanıcıda arayüz aynalanmış kalıyordu.**
 Yön katmanının `UiLanguage` tipi üç dildi (Almanca ile Fransızca sonradan
 eklendi) ve çağıran taraf listeyi elle daraltıyordu; bu yüzden Almanca veya

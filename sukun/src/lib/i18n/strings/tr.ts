@@ -417,7 +417,7 @@ export const tr = {
   'weekday.5': 'Cum',
   'weekday.6': 'Cmt',
   'notification.center': 'Bildirim merkezi',
-  'notification.upcoming': 'Kurulu bildirimler',
+  'notification.upcoming': 'Planlanan bildirimler',
   'notification.none': 'Kurulu bildirim yok',
   'notification.refresh': 'Yeniden kur',
   'notification.permissionMissing': 'Bildirim izni kapalı. Ayarlardan açabilirsin.',
