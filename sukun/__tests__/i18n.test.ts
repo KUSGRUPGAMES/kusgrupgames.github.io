@@ -109,6 +109,33 @@ describe('yerelleştirme', () => {
     for (const l of LANGUAGES) expect(LANGUAGE_NAMES[l].length).toBeGreaterThan(1);
   });
 
+  /**
+   * Türkçe yazım birliği.
+   *
+   * Uygulama "Kuran / ayet / Hicri / dini / Esmaül Hüsna" yazarken mağaza
+   * metinleri ve bilgi maddeleri "Kur'an / âyet / Hicrî / dinî /
+   * Esmâü'l-Hüsnâ" yazıyordu; kullanıcı aynı şeyin iki yazımını yan yana
+   * görüyordu. `dinî`, `hicrî`, `resmî` eklerindeki düzeltme imi TDK'da
+   * zorunludur ve anlamı ayırır ("dini günler" = "onun dininin günleri").
+   */
+  it('Türkçe yazım birliği korunuyor', () => {
+    const yanlis: [RegExp, string][] = [
+      [/\bKuran\b/, 'Kur’an'],
+      [/\bayet(i|e|in|ler|leri)?\b/i, 'âyet'],
+      [/\bhicri\b/i, 'hicrî'],
+      [/\bdini\s+(gün|Gün)/, 'dinî gün'],
+      [/\bresmi\s+(ilan|İlan)/, 'resmî ilan'],
+      [/Esmaül/, 'Esmâü’l-Hüsnâ'],
+    ];
+    const ihlal: string[] = [];
+    for (const [anahtar, deger] of Object.entries(tr)) {
+      for (const [kalip, dogru] of yanlis) {
+        if (kalip.test(deger)) ihlal.push(`${anahtar}: "${deger}" → ${dogru}`);
+      }
+    }
+    expect(ihlal).toEqual([]);
+  });
+
   it('her dilde çeviri gerçekten farklıdır — kopyala yapıştır denetimi', () => {
     for (const [lang, table] of Object.entries(TABLES)) {
       const ayni = Object.entries(table).filter(([k, v]) => v === tr[k as keyof typeof tr]);

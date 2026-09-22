@@ -351,7 +351,7 @@ export const tr = {
   'ramadan.imsak': 'İmsağa kalan',
   'ramadan.startsOn': 'Tahmini başlangıç',
   'ramadan.calendar': 'Ramazan takvimi',
-  'ramadan.approxNote': 'Ramazan tarihi hicri hesaba dayanır; resmi ilan farklı olabilir.',
+  'ramadan.approxNote': 'Ramazan tarihi hicrî hesaba dayanır; resmî ilan farklı olabilir.',
   'khatm.title': 'Mukabele ve hatim',
   'khatm.start': 'Hatim başlat',
   'khatm.newTitle': 'Hatim adı',
