@@ -33,7 +33,9 @@ const TOKENS = JSON.parse(oku(join(PAKET, 'brand.tokens.json'))) as {
 
 const BRAND = JSON.parse(oku(join(KOK, 'src/config/brand.json'))) as {
   appName: string; storeName: string; tagline: string;
+  supportEmail: string; website: string; privacyUrl: string; termsUrl: string;
   bundleId: { ios: string; android: string };
+  version: string;
 };
 
 const PALET = oku(join(KOK, 'src/theme/tokens.ts'));
