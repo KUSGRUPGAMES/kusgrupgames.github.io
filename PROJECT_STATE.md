@@ -184,7 +184,7 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 
 ## Kritik kararlar (özet — ayrıntı DECISIONS.md)
 
-- Mevcut `seher/` **silinmedi**; yeni ürün ayrı klasörde kuruluyor.
+- Depoda tek namaz vakti ürünü var: **BEŞ**. `seher/` kaldırıldı (D22).
 - Depo kökündeki "tek dosya" kuralı bu ürün için **belgelenmiş istisna** (D3).
 - Telifli dinî içerik (meal, tefsir, hadis, kıraat) **kaynak lisansı gelmeden
   yayınlanmaz**; altyapı kurulur, veri yuvası boş bırakılır. Ayrıntı:

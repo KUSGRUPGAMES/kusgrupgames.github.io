@@ -1,7 +1,7 @@
 /**
  * Namaz vakti hesabı (§14, §15).
  *
- * Bu motor `seher/` içinde yazıldı, bilinen değerlerle karşılaştırıldı ve üç
+ * Bu motor bilinen değerlerle karşılaştırılarak yazıldı ve üç
  * ayrı cihaz saat diliminde aynı sonucu verdiği doğrulandı; buraya tiplenerek
  * taşındı. Testleri `__tests__/prayer.test.ts` içinde.
  */

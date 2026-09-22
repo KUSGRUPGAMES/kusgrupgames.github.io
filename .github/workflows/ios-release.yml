@@ -22,7 +22,7 @@ on:
         type: choice
         required: true
         default: slot
-        options: [slot, latch, orbita, lull, seher]
+        options: [slot, latch, orbita, lull]
       upload:
         description: 'App Store Connect e yukle (kapali: yalnizca IPA uretir, indirip bakarsin)'
         type: boolean

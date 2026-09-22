@@ -31,6 +31,21 @@ Kişisel veri cihazdan çıkmıyor. İki mağaza formunda da "veri toplanmıyor"
 - Koyu temada gezinme başlığı bembeyaz kalıyordu.
 - Mağaza ekran görüntüleri ve öne çıkan görsel üretildi (`npm run store:shots`).
 
+### Tek ürün: `seher` kaldırıldı (D22)
+
+Depoda iki namaz vakti ürünü vardı — `seher` ve BEŞ. D1 ikisinin bir süre yan
+yana yaşamasına, "yeni ürün olgunlaşınca `seher/` arşivlenebilir" notuyla izin
+vermişti. O an geldi: `seher/` ve `docs/seher/` silindi, derleme akışlarının
+matrisinden, `docs/index.html` listesinden, `docs/_style.css` renk satırından
+ve `CLAUDE.md` ürün tablosundan çıkarıldı. Kod git geçmişinde duruyor.
+
+`docs/index.html` içindeki BEŞ kartı "Everything Seher does, plus…" diye
+başlıyordu; artık kendi başına, olmayan bir ürüne atıf yapmadan anlatıyor.
+
+**Kör değiştirmeden kaçınıldı:** "seher" Türkçe bir sözcük ve Elmalılı
+mealinde üç âyette geçiyor (Âl-i İmrân 17, Zâriyât 18, Kamer 34). Âyet
+metnine dokunulmadı; yalnız kod yorumlarındaki ürün atıfları yeniden yazıldı.
+
 ### Her şey ürünün kendi adı üzerinden (D21)
 
 Kullanıcıya görünen yüzeyler BEŞ'ti; **altındaki her şey** geçici geliştirme
@@ -53,8 +68,8 @@ mağazada uygulamanın kimliğidir. Uygulama henüz hiçbir mağazaya verilmedi,
 yani bugün bedeli sıfır. D15'in "değiştirmeyelim, imzayı ve kaydı kırar"
 gerekçesi bu yüzden geçersiz kaldı: kırılacak bir kayıt yok.
 
-**`seher`'e dokunulmadı:** o üründe geçen "sukun" sözcüğü bizim ürünümüz
-değil, Arapça harekenin adı (tecvid dersi). Toplu değiştirme onu bozardı.
+**`seher`'e o gün dokunulmadı** — orada geçen "sukun" Arapça harekenin adıydı.
+`seher` sonradan tamamen kaldırıldı (D22).
 
 **Yayıncı adı yazıldı:** gizlilik sayfaları "mağaza kaydında adı geçen
 geliştirici" diyordu; artık **KUS GRUP GAMES** yazıyor. Mağaza formu runbook'una

@@ -1,8 +1,8 @@
 /**
  * Esmâü'l-Hüsnâ — şartname §26.
  *
- * İçerik durumu: okunuş ve Türkçe anlam bu ürün için yazıldı (`seher/`
- * içinde yazılmış, doğrulanmış ve buraya taşındı). **Arapça yazım bilerek
+ * İçerik durumu: okunuş ve Türkçe anlam bu ürün için yazıldı ve
+ * doğrulandı. **Arapça yazım bilerek
  * boş bırakıldı**: tek bir harekenin yanlış olması kabul edilemez bir hatadır
  * ve bu satırlar ezberden dizilmez (CONTENT_SOURCES kuralı 1). Doğrulanmış
  * bir kaynaktan içe aktarılınca `nameAr` alanı doldurulacak (KNOWN_ISSUES T4).

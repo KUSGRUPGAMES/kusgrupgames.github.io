@@ -4,7 +4,7 @@ Kalıcı mimari kararlar. Her karar: **ne**, **neden**, **alternatif neden seçi
 
 ---
 
-## D1 — Yeni ürün ayrı klasörde kurulur, `seher/` silinmez
+## D1 — Yeni ürün ayrı klasörde kurulur, `seher/` silinmez ~~(geçerli)~~ **— D22 ile kapandı**
 
 **Karar:** Yeni uygulama `bes/` klasöründe sıfırdan kurulur. Mevcut `seher/`
 olduğu gibi kalır ve yayına çıkabilir.
@@ -16,6 +16,10 @@ atmak olurdu. İki ürün bir süre yan yana yaşar; yeni ürün olgunlaşınca
 
 **Alternatif:** `seher/` üzerine yazmak. Reddedildi: geri dönüşü olmayan kayıp,
 kazancı yok.
+
+> **Sonu:** kararın kendisi "yeni ürün olgunlaşınca `seher/` arşivlenebilir"
+> diyordu. O an geldi — BEŞ yayına hazır ve sahibi tek ürün istedi. `seher/`
+> depodan kaldırıldı (D22).
 
 ---
 
@@ -39,7 +43,7 @@ Capacitor'un tek avantajı kalmıyor.
 ## D3 — Depo kökündeki "tek dosya" kuralına belgelenmiş istisna
 
 **Karar:** Kök `CLAUDE.md` madde 1 ("Ürün mantığı tek dosyada kalır") bu ürün
-için geçerli değildir. Kural, `slot/latch/orbita/lull/seher` için aynen durur.
+için geçerli değildir. Kural, `slot/latch/orbita/lull` için aynen durur.
 
 **Neden:** O kural, kullanıcının yazılımcı olmaması ve tek dosyayı kopyalayarak
 güncelleyebilmesi için konmuştu. Bu şartnamedeki kapsam (Supabase, RLS, admin
@@ -98,7 +102,7 @@ almak demektir.
 astronomik hesap (güneş deklinasyonu + zaman denklemi), yöntem seçilebilir.
 **İkincil**: ağ sağlayıcısı, yalnız kullanıcı isterse ve önbellekli.
 
-**Neden:** `seher/` içinde bu hesap yazıldı, üç ayrı saat diliminde doğrulandı
+**Neden:** Bu hesap yazıldı, üç ayrı saat diliminde doğrulandı
 ve bilinen değerlerle karşılaştırıldı. Çalışan ve sınanmış kod taşınır.
 
 ---
@@ -526,7 +530,7 @@ Pages adresi `/sukun`, derleme akışları `sukun-*.yml`, derin bağlantı şema
 
 **Karar:** hepsi `bes` oldu. Kardeş ürünlerin kalıbı korundu —
 `com.kusgrup.bes`, `https://kusgrupgames.github.io/bes` — çünkü slot, latch,
-orbita, lull ve seher de aynı kalıbı kullanıyor.
+orbita ve lull de aynı kalıbı kullanıyor.
 
 **Neden şimdi:** paket kimliği yayınlandıktan **sonra değiştirilemez**. App
 Store'da ve Play'de uygulamanın kimliğidir; değiştirmek yeni bir uygulama
@@ -535,13 +539,33 @@ mağazaya verilmediği için bugün bedeli sıfır, yarın imkânsız. D15'in
 "değiştirmeyelim, kırar" gerekçesi tam da bu yüzden artık geçerli değil:
 kırılacak bir şey yok.
 
-**Dokunulmayan tek yer `seher`:** o üründe geçen "sukun" sözcüğü bizim
-ürünümüz değil, Arapça harekenin adı (`docs/seher/index.html`, tecvid dersi).
-Toplu değiştirme onu bozardı; betik `seher/` ve `docs/seher/` yollarını
-dışarıda bıraktı.
+**O gün dokunulmayan tek yer `seher` idi:** o üründe geçen "sukun" sözcüğü
+bizim ürünümüz değil, Arapça harekenin adıydı; toplu değiştirme onu bozardı.
+`seher` sonradan tamamen kaldırıldı (D22), ama aynı tuzak BEŞ'in kendi
+içinde duruyor: Elmalılı mealinde üç âyette "seher vakti" geçiyor
+(Âl-i İmrân 17, Zâriyât 18, Kamer 34). Bunlar âyet metnidir, dokunulmaz.
 
 **Tarih silinmedi:** `CHANGELOG.md` ve D15 içindeki "Sükûn → BEŞ" kayıtları
 olduğu gibi duruyor. Onlar geçmişi anlatıyor; geçmişi yeniden yazmak
 belgelerin güvenilirliğini bitirir. `brand.test.ts` içindeki "eski marka adı
 kullanıcıya görünen dosyalarda geçemez" kuralı da eski adı arayan bir kural
 olduğu için aynen kaldı.
+
+## D22 — Tek ürün: `seher` depodan kaldırıldı
+
+**Karar:** `seher/` ve `docs/seher/` silindi. Derleme akışlarının matrisinden,
+`docs/index.html` listesinden, `docs/_style.css` renk satırından ve `CLAUDE.md`
+ürün tablosundan çıkarıldı. Geriye kalan tek namaz vakti ürünü **BEŞ**.
+
+**Neden:** Ürün sahibi tek ürün istiyor. D1 zaten bu kapıyı açık bırakmıştı:
+"yeni ürün olgunlaşınca `seher/` arşivlenebilir". BEŞ yayına hazır, seher ile
+işlev olarak büyük ölçüde örtüşüyor ve ikisini birden yayınlamak iki mağaza
+kaydı, iki gizlilik sayfası, iki destek kutusu ve iki bakım hattı demek.
+
+**Kod kaybolmadı:** git geçmişinde duruyor. Son hâli `HEAD~1` içinde;
+`git checkout <commit> -- seher` ile geri gelir.
+
+**Dikkat edilen tuzak:** "seher" Türkçede bir sözcüktür. Elmalılı mealinde üç
+âyette geçiyor ve BEŞ'in `bes/src/**` yorumlarında ürün adı olarak anılıyordu.
+Âyet metnine dokunulmadı; yalnız yorumlardaki ürün atıfları yeniden yazıldı.
+Kör bir toplu değiştirme dinî metni bozardı.

@@ -5,7 +5,7 @@
  * vermezse ya da GPS yoksa buradan şehir seçer ve vakitler yine hesaplanır.
  *
  * Saat dilimi IANA adıyla tutulur; sabit UTC farkı tutulmaz. (Sabit fark
- * `seher/` içinde bir kez hataya yol açtı: yaz saatinde Avrupa şehirleri bir
+ * Bu bir kez hataya yol açtı: yaz saatinde Avrupa şehirleri bir
  * saat kaydı.)
  */
 import type { Place } from './types';

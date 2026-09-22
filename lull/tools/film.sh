@@ -67,7 +67,7 @@ frame() {
 echo "kareler uretiliyor ($N adet, $JOBS paralel)..."
 # DIKKAT: cipla "wait", arka plandaki http.server'i de bekler ve betik orada
 # sonsuza kadar asili kalir (kareler bitmis olsa bile video uretilmez).
-# Yalnizca kare isleri beklenmeli. Ayni hata Seher'de de yasandi.
+# Yalnizca kare isleri beklenmeli. Ayni hata baska bir uründe de yasandi.
 PIDS=()
 for i in $(seq 0 $(( N - 1 ))); do
   frame "$i" &
