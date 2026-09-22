@@ -73,7 +73,7 @@ YEDEK SİZDE
 Bütün kayıtlarınızı tek bir dosyaya aktarıp yeni telefonunuza taşıyabilirsiniz. Dosya sizde kalır; uygulama onu hiçbir yere göndermez.
 
 SIRADAKİ VAKTE GERİ SAYIM
-Bir sonraki vaktin adı, saati ve kalan süre saniye saniye görünür. Günün altı vakti tek bakışta, ay boyunca vakit takvimi tek ekranda.
+Bir sonraki vaktin adı, saati ve kalan süre saniye saniye görünür. Beş vakit ve güneş doğuşu tek bakışta, ay boyunca vakit takvimi tek ekranda.
 
 YEDİ HESAPLAMA YÖNTEMİ
 Diyanet, Müslüman Dünya Birliği, ISNA, Mısır, Ümmü'l-Kurâ, Karaçi ve Tahran. İkindi için Hanefî ve Şâfiî ölçüsü ayrı. Her vakit için ayrı dakika düzeltmesi girebilirsiniz; mahallenizin takvimiyle birebir tutturabilirsiniz.
@@ -160,5 +160,11 @@ listeye eklenir.
 Metinler **dinî iddia ya da garanti içermez**: "sevap kazandırır", "namazını
 kaçırtmaz" gibi ifadeler hem yanlış hem mağaza reddi sebebidir.
 
-Üretim: `npm run preview` ekranları çeker; mağaza boyutlarına ölçekleme
-yayın öncesi yapılır (RELEASE_CHECKLIST).
+Üretim iki adımdır: `npm run preview` gerçek uygulamadan ham ekranları
+çeker, `npm run store:shots` onları mağaza karesine çerçeveler. Kareler
+yeniden çizilmez — mağazada gördüğünüz ekran uygulamanın kendisidir.
+
+Kare düzeni: üstte altın etiket, başlık, altın çizgi ve alt başlık; altta
+cihaz. **Cihaz karenin alt kenarından taşar** — App Store'un standart kalıbı
+budur, uygulamanın kaydırılabilir olduğunu anlatır ve telefonun içinde
+yarıda kalan bir satır bırakmaz.

@@ -53,16 +53,16 @@ function tarayiciYolu() {
  * mağazada kaydırmadan görünür; en güçlü iki ekran oraya konur.
  */
 const KARELER = [
-  { dosya: 'acik/10-ana-sayfa.png', baslik: 'Vakti hiç kaçırma', alt: 'Geri sayım, altı vakit, aylık takvim' },
-  { dosya: 'acik/20-okuyucu.png', baslik: 'Kur’an-ı Kerim', alt: 'Arapça, Elmalılı meali, 18 okuyucu' },
+  { dosya: 'acik/10-ana-sayfa.png', baslik: 'Vakti hiç kaçırma', alt: 'Beş vakit, saniye saniye geri sayım', etiket: 'NAMAZ VAKİTLERİ' },
+  { dosya: 'acik/20-okuyucu.png', baslik: 'Kur’an-ı Kerim', alt: '6.236 âyet, Elmalılı meali, 18 okuyucu', etiket: 'KUR’AN' },
   // Kıble ekranı bilerek seçilmedi: tarayıcıda pusula olmadığı için kare
   // "Pusula okunamıyor" uyarısıyla çıkıyor ve mağazada kusur gibi duruyor.
   // Özellik açıklamada anlatılıyor; gerçek cihazda kare çekilince eklenir.
-  { dosya: 'acik/40-vakit-takvimi.png', baslik: 'Ay boyu takvim', alt: 'Otuz günün altı vakti tek ekranda' },
-  { dosya: 'acik/31-zikir.png', baslik: 'Zikirmatik', alt: 'Hedef, seri takibi, istatistik' },
-  { dosya: 'koyu/10-ana-sayfa.png', baslik: 'Koyu tema', alt: 'Gece okumak için dinlendirici' },
-  { dosya: 'acik/54-ramazan.png', baslik: 'Ramazan', alt: 'İmsaktan iftara, ay boyu imsakiye' },
-  { dosya: 'acik/51-ibadet-gunlugu.png', baslik: 'İbadet defteri', alt: 'Kaza, oruç, hatim — hepsi telefonunda' },
+  { dosya: 'acik/40-vakit-takvimi.png', baslik: 'Ay boyu takvim', alt: 'Otuz günün vakitleri tek ekranda', etiket: 'TAKVİM' },
+  { dosya: 'acik/31-zikir.png', baslik: 'Zikirmatik', alt: 'Hedef belirle, seriyi sürdür', etiket: 'ZİKİR' },
+  { dosya: 'koyu/10-ana-sayfa.png', baslik: 'Koyu tema', alt: 'Gece okumak için dinlendirici', etiket: 'GÖRÜNÜM' },
+  { dosya: 'acik/54-ramazan.png', baslik: 'Ramazan', alt: 'İmsaktan iftara, ay boyu imsakiye', etiket: 'RAMAZAN' },
+  { dosya: 'acik/51-ibadet-gunlugu.png', baslik: 'İbadet defteri', alt: 'Kaza, oruç ve hatim tek yerde', etiket: 'TAKİP' },
 ];
 
 const HEDEFLER = [
@@ -81,50 +81,126 @@ const kacis = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g
  */
 const gomulu = (yol) => `data:image/png;base64,${fs.readFileSync(yol).toString('base64')}`;
 
-/** Tek bir mağaza karesinin HTML'i. */
-function kareHtml({ w, h, baslik, alt, resim }) {
-  // Ölçüler hedef genişliğe göre oranlanır; 1290 ve 1080 için ayrı sayı
-  // yazmak yerine tek bir oran kullanılır.
-  const k = w / 1290;
-  const yaziAlani = Math.round(560 * k);
-  const cerceve = Math.round(14 * k);
-  const radius = Math.round(64 * k);
-  return `<!doctype html><meta charset="utf-8"><style>
-  @font-face{font-family:sys;src:local('DejaVu Sans')}
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{width:${w}px;height:${h}px;overflow:hidden;
-       background:linear-gradient(180deg,${ZEMIN_UST} 0%,${ZEMIN_ALT} 100%);
-       font-family:system-ui,-apple-system,'DejaVu Sans',sans-serif;
-       display:flex;flex-direction:column;align-items:center}
-  .yazi{height:${yaziAlani}px;display:flex;flex-direction:column;justify-content:center;
-        align-items:center;text-align:center;padding:0 ${Math.round(90 * k)}px}
-  h1{color:${FILDISI};font-size:${Math.round(86 * k)}px;line-height:1.12;font-weight:800;
-     letter-spacing:${Math.round(-1 * k)}px}
-  p{color:${ALTIN};font-size:${Math.round(40 * k)}px;line-height:1.35;margin-top:${Math.round(26 * k)}px;font-weight:500}
-  .telefon{background:${FILDISI};padding:${cerceve}px;border-radius:${radius}px;
-           box-shadow:0 ${Math.round(40 * k)}px ${Math.round(90 * k)}px rgba(0,0,0,.45)}
-  .telefon img{display:block;border-radius:${radius - cerceve}px;
-               height:${h - yaziAlani - Math.round(210 * k)}px;width:auto}
-  </style>
-  <div class="yazi"><h1>${kacis(baslik)}</h1><p>${kacis(alt)}</p></div>
-  <div class="telefon"><img src="${gomulu(resim)}"></div>`;
+/**
+ * Arka plan deseni — uygulamanın kendi sekiz köşeli yıldız örgüsü, çok düşük
+ * opaklıkta. Düz gradyan tek başına ucuz duruyordu; desen kareyi markaya
+ * bağlıyor ve telefonun arkasını boş bırakmıyor.
+ */
+function desen(k) {
+  const a = Math.round(120 * k);
+  return `<svg class="desen" xmlns="http://www.w3.org/2000/svg"><defs>
+    <pattern id="p" width="${a}" height="${a}" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="${ALTIN}" stroke-width="${Math.max(1, 1.4 * k)}">
+        <path d="M${a / 2} 0 L${a} ${a / 2} L${a / 2} ${a} L0 ${a / 2}Z"/>
+        <path d="M0 0 L${a} ${a}M${a} 0 L0 ${a}" opacity=".45"/>
+      </g>
+    </pattern></defs>
+    <rect width="100%" height="100%" fill="url(#p)"/></svg>`;
 }
 
-/** Play listesinin öne çıkan görseli: metin yok, yalnız marka. */
-function ozellikHtml(w, h, logo) {
+/**
+ * Tek bir mağaza karesi.
+ *
+ * Düzen (yukarıdan aşağı): küçük altın etiket, başlık, altın çizgi, alt
+ * başlık, sonra cihaz.
+ *
+ * **Cihaz alttan taşar.** İlk denemede telefon kareye tam sığıyordu ve iki
+ * şey birden bozuluyordu: altta amaçsız bir boşluk kalıyor, ekranın en
+ * altındaki kart (ana sayfada "Hicrî takvim") sekme çubuğunun hemen üstünde
+ * **yazının ortasından** kesiliyordu. Telefonun içinde yarıda kalan bir
+ * satır çizim hatası gibi duruyor. Taşırınca kesme karenin kenarında
+ * oluyor — bu, App Store karelerinin standart kalıbı ve uygulamanın
+ * kaydırılabilir olduğunu anlatıyor.
+ *
+ * Geometri iki hedefte farklı orandan (1290×2796 = 2.17, 1080×1920 = 1.78)
+ * türediği için cihaz **yükseklikten** hesaplanır, tek bir ölçekten değil:
+ * metin alanı karenin %30'u, ekranın %89'u görünür, kalan %11 alttan taşar.
+ * Sabit bir ölçek kullanıldığında App Store karesinde boşluk kalıyor,
+ * Play karesinde ekranın dörtte biri kesiliyordu.
+ *
+ * Cihaz çerçevesi koyu: önceki fildişi çerçeve ekranın etrafında beyaz bir
+ * şerit bırakıyordu; gerçek telefon gibi durmuyordu.
+ */
+const KAYNAK_ORAN = 1688 / 780;        // denetim karelerinin en-boy oranı
+const GORUNEN = 0.89;                   // ekranın görünen kısmı; kalanı taşar
+const METIN_ORANI = 0.30;               // karenin üst %30'u metne ayrılır
+
+function kareHtml({ w, h, baslik, alt, etiket, resim }) {
+  const k = w / 1290;                   // tipografi tek orandan türer
+  const bezel = Math.round(16 * k);
+  const radius = Math.round(76 * k);
+  const yaziAlani = Math.round(METIN_ORANI * h);
+  // Görünen ekran yüksekliği karenin altına kadar uzanır; tam yükseklik
+  // bundan GORUNEN oranıyla geri hesaplanır, genişlik de ondan.
+  const ekranTam = (h - yaziAlani - bezel) / GORUNEN;
+  const cihazGen = Math.round(ekranTam / KAYNAK_ORAN) + 2 * bezel;
   return `<!doctype html><meta charset="utf-8"><style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{width:${w}px;height:${h}px;overflow:hidden;
-       background:linear-gradient(120deg,${ZEMIN_UST} 0%,${ZEMIN_ALT} 100%);
-       font-family:system-ui,-apple-system,'DejaVu Sans',sans-serif;
-       display:flex;align-items:center;justify-content:center;gap:40px}
-  img{height:250px;width:auto}
-  .ad{color:${FILDISI};font-size:96px;font-weight:800;letter-spacing:6px}
-  .slogan{color:${ALTIN};font-size:30px;margin-top:10px;font-weight:500}
+  body{width:${w}px;height:${h}px;overflow:hidden;position:relative;
+       background:
+         radial-gradient(120% 60% at 50% 74%, rgba(211,182,133,.16) 0%, rgba(211,182,133,0) 60%),
+         linear-gradient(180deg,${ZEMIN_UST} 0%, #02180F 55%, ${ZEMIN_ALT} 100%);
+       font-family:system-ui,-apple-system,'DejaVu Sans',sans-serif}
+  .desen{position:absolute;inset:0;width:100%;height:100%;opacity:.055}
+  .yazi{position:relative;height:${yaziAlani}px;display:flex;flex-direction:column;
+        justify-content:center;align-items:center;text-align:center;
+        padding:0 ${Math.round(96 * k)}px}
+  .etiket{color:${ALTIN};font-size:${Math.round(30 * k)}px;font-weight:700;
+          letter-spacing:${Math.round(6 * k)}px;opacity:.92}
+  h1{color:${FILDISI};font-size:${Math.round(92 * k)}px;line-height:1.08;font-weight:800;
+     letter-spacing:${Math.round(-1.5 * k)}px;margin-top:${Math.round(22 * k)}px}
+  .cizgi{width:${Math.round(96 * k)}px;height:${Math.max(2, Math.round(4 * k))}px;
+         background:${ALTIN};border-radius:99px;margin:${Math.round(30 * k)}px 0}
+  p{color:rgba(251,246,236,.78);font-size:${Math.round(40 * k)}px;line-height:1.35;font-weight:500}
+  .cihaz{position:absolute;left:50%;transform:translateX(-50%);
+         top:${yaziAlani}px;width:${cihazGen}px;padding:${bezel}px ${bezel}px 0;
+         background:linear-gradient(160deg,#123A2E 0%,#04150F 60%);
+         border-radius:${radius}px ${radius}px 0 0;
+         box-shadow:0 ${Math.round(46 * k)}px ${Math.round(110 * k)}px rgba(0,0,0,.55),
+                    inset 0 0 0 ${Math.max(1, Math.round(2 * k))}px rgba(211,182,133,.22)}
+  .cihaz img{display:block;width:100%;border-radius:${radius - bezel}px ${radius - bezel}px 0 0}
   </style>
-  <img src="${gomulu(logo)}">
-  <div><div class="ad">${kacis(MARKA.appName)}</div>
-  <div class="slogan">${kacis(MARKA.tagline)}</div></div>`;
+  ${desen(k)}
+  <div class="yazi">
+    <div class="etiket">${kacis(etiket)}</div>
+    <h1>${kacis(baslik)}</h1>
+    <div class="cizgi"></div>
+    <p>${kacis(alt)}</p>
+  </div>
+  <div class="cihaz"><img src="${gomulu(resim)}"></div>`;
+}
+
+/**
+ * Play listesinin öne çıkan görseli: 1024×500, metin az, marka net.
+ * Logo master PNG'den gelir, kodla çizilmez (D17).
+ */
+function ozellikHtml(w, h, logo) {
+  const k = w / 1024;
+  return `<!doctype html><meta charset="utf-8"><style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:${w}px;height:${h}px;overflow:hidden;position:relative;
+       background:
+         radial-gradient(70% 120% at 26% 50%, rgba(211,182,133,.18) 0%, rgba(211,182,133,0) 62%),
+         linear-gradient(120deg,${ZEMIN_UST} 0%, #02180F 58%, ${ZEMIN_ALT} 100%);
+       font-family:system-ui,-apple-system,'DejaVu Sans',sans-serif;
+       display:flex;align-items:center;justify-content:center;gap:${Math.round(56 * k)}px}
+  .desen{position:absolute;inset:0;width:100%;height:100%;opacity:.05}
+  .mark{position:relative;height:${Math.round(272 * k)}px;width:auto}
+  .sag{position:relative}
+  .ad{color:${FILDISI};font-size:${Math.round(104 * k)}px;font-weight:800;
+      letter-spacing:${Math.round(8 * k)}px;line-height:1}
+  .cizgi{width:${Math.round(72 * k)}px;height:${Math.max(2, Math.round(4 * k))}px;
+         background:${ALTIN};border-radius:99px;margin:${Math.round(18 * k)}px 0}
+  .slogan{color:rgba(251,246,236,.82);font-size:${Math.round(30 * k)}px;font-weight:500;
+          letter-spacing:${Math.round(0.5 * k)}px}
+  </style>
+  ${desen(k * 1.6)}
+  <img class="mark" src="${gomulu(logo)}">
+  <div class="sag">
+    <div class="ad">${kacis(MARKA.appName)}</div>
+    <div class="cizgi"></div>
+    <div class="slogan">${kacis(MARKA.tagline)}</div>
+  </div>`;
 }
 
 (async () => {
