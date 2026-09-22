@@ -17,6 +17,7 @@ import { useWorshipStore } from '@/store/worship';
 import { useReadingStore } from '@/store/reading';
 import { useFavoriteStore } from '@/store/favorites';
 import { Brand } from '@/config/brand';
+import { openLegalPage } from '@/lib/legal';
 import { useDateFormat } from '@/lib/i18n/dates';
 import { restore, totalAdded, type Backup, type RestoreMode } from '@/features/backup/backup';
 import { exportBackup, pickBackup, type ImportFailure } from '@/features/backup/file';
@@ -154,9 +155,11 @@ export default function AccountScreen() {
 
       <SectionHeader title={t('settings.about')} />
       <Card padding="sm">
+        <ListItem title={t('settings.publisher')} value={Brand.publisher} chevron={false} />
         <ListItem title={t('settings.version')} value={Brand.version} chevron={false} />
         <ListItem title={t('diagnostics.title')} icon="info" onPress={() => router.push('/diagnostics')} />
-        <ListItem title={t('settings.privacy')} icon="lock" chevron />
+        <ListItem title={t('settings.privacy')} icon="lock" onPress={() => openLegalPage('privacy')} />
+        <ListItem title={t('settings.terms')} icon="book" onPress={() => openLegalPage('terms')} />
       </Card>
     </Screen>
   );

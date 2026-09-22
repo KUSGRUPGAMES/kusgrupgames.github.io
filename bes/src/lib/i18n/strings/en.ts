@@ -155,7 +155,7 @@ export const en: Partial<Record<StringKey, string>> = {
   'settings.languageRestart': 'Restart the app for the writing direction to change.',
   'settings.notifications': 'Notifications', 'settings.sound': 'Sound',
   'settings.vibration': 'Vibration', 'settings.about': 'About', 'settings.privacy': 'Privacy',
-  'settings.terms': 'Terms of use', 'settings.version': 'Version',
+  'settings.terms': 'Terms of use', 'settings.publisher': 'Publisher', 'settings.version': 'Version',
 
   'pro.title': 'Pro', 'pro.unlock': 'Unlocked with Pro', 'pro.monthly': 'Monthly',
   'pro.yearly': 'Yearly', 'pro.restore': 'Restore purchases', 'pro.manage': 'Manage subscription',

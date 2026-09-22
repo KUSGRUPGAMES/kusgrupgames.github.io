@@ -5,6 +5,7 @@ import { Screen, SectionHeader, Card, ListItem, Segmented, Icon } from '@/ui';
 import { useI18n, useT, LANGUAGES, LANGUAGE_NAMES } from '@/lib/i18n';
 import { useThemeContext, type ThemeMode } from '@/theme/ThemeProvider';
 import { Brand } from '@/config/brand';
+import { openLegalPage } from '@/lib/legal';
 
 export default function ProfileScreen() {
   const t = useT();
@@ -56,9 +57,10 @@ export default function ProfileScreen() {
 
       <SectionHeader title={t('settings.about')} />
       <Card padding="sm">
+        <ListItem title={t('settings.publisher')} value={Brand.publisher} chevron={false} />
         <ListItem title={t('settings.version')} value={Brand.version} chevron={false} />
-        <ListItem title={t('settings.privacy')} icon="lock" chevron />
-        <ListItem title={t('settings.terms')} icon="book" chevron />
+        <ListItem title={t('settings.privacy')} icon="lock" onPress={() => openLegalPage('privacy')} />
+        <ListItem title={t('settings.terms')} icon="book" onPress={() => openLegalPage('terms')} />
       </Card>
     </Screen>
   );

@@ -12,7 +12,10 @@ const tromso: ScheduleInput = {
 };
 
 describe('gün çizelgesi', () => {
-  it('altı vakit üretilir ve sıralıdır', () => {
+  // Altı **satır**: beş namaz vakti (imsak, öğle, ikindi, akşam, yatsı) artı
+  // güneş doğuşu. Güneş bir namaz vakti değildir; kullanıcıya gösterilen her
+  // yerde "beş vakit ve güneş doğuşu" diye yazılır, "altı vakit" diye değil.
+  it('beş vakit ve güneş doğuşu üretilir, sıralıdır', () => {
     const g = daySchedule(istanbul, 2026, 2, 15);
     expect(g.entries).toHaveLength(6);
     const saatler = g.entries.map((e) => e.hours).filter((h): h is number => h !== null);

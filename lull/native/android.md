@@ -50,8 +50,8 @@ android:screenOrientation="portrait"
 ```xml
 <string name="app_name">Lull</string>
 <string name="title_activity_main">Lull</string>
-<string name="package_name">com.kusgrup.lull</string>
-<string name="custom_url_scheme">com.kusgrup.lull</string>
+<string name="package_name">com.kusgrupgames.lull</string>
+<string name="custom_url_scheme">com.kusgrupgames.lull</string>
 ```
 > Cihazın ana ekranında görünen ad `app_name`. Play mağaza adı ("Lull: Breathe Yourself Down")
 > ile aynı olmak zorunda değil; ana ekranda kısa ad daha iyi durur.

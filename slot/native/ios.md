@@ -12,7 +12,7 @@ npx cap open ios
 
 ## 2. Xcode → App hedefi → General
 - **Display Name:** `Slot`
-- **Bundle Identifier:** `com.kusgrup.slot`
+- **Bundle Identifier:** `com.kusgrupgames.slot`
 - **Version:** `1.0.0` · **Build:** `1`
 - **Supported Destinations:** yalnız **iPhone** (iPad'i kaldır — yoksa App Store iPad ekran görüntüsü ister)
 - **Device Orientation:** yalnız **Portrait**

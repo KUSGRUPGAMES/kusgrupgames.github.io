@@ -47,7 +47,7 @@
 - [x] Çoklu kayıtlı konum ve aralarında geçiş (§13) — birincil konum kuralı sınandı
 - [x] PrayerTimesProvider abstraction + fallback (§15) — ağ çökerse yerel hesaba düşer; yerel hesap önbellek istemez
 - [x] Hesaplama yöntemleri (§15) — 7 yöntem + Hanefî/Şâfiî ikindi seçimi
-- [x] Altı vakit + sıradaki vakit + canlı geri sayım (§14) — arka planda sayaç durur
+- [x] Beş vakit ve güneş doğuşu + sıradaki vakit + canlı geri sayım (§14) — arka planda sayaç durur
 - [x] Günlük ve aylık takvim ekranı + haftalık aralık işlevi (§14)
 - [x] Vakit bazlı bildirim ayarları, erken uyarı dakikası (§16) — iOS 64 sınırı hesaba katıldı
 - [~] Bildirim sesi: sistem sesi kullanılıyor; **ezan sesi için ayrı lisans gerekir** (§17)

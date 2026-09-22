@@ -53,8 +53,8 @@ android:screenOrientation="portrait"
 ```xml
 <string name="app_name">Latch</string>
 <string name="title_activity_main">Latch</string>
-<string name="package_name">com.kusgrup.latch</string>
-<string name="custom_url_scheme">com.kusgrup.latch</string>
+<string name="package_name">com.kusgrupgames.latch</string>
+<string name="custom_url_scheme">com.kusgrupgames.latch</string>
 ```
 > Cihazın ana ekranında görünen ad `app_name`. Play mağaza adı ("Latch: One Tap Swing")
 > ile aynı olmak zorunda değil; ana ekranda kısa ad daha iyi durur.

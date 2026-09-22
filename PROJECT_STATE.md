@@ -8,7 +8,7 @@
 | | |
 |---|---|
 | Marka | **BEŞ** — sembol `5` (D15). Yayıncı **KUS GRUP GAMES**. `BrandConfig` tek kaynak |
-| Kimlik | Paket `com.kusgrup.bes` (iki platformda aynı), Pages `https://kusgrupgames.github.io/bes`, şema `bes://` — geçici `sukun` adı tamamen kalktı (D21) |
+| Kimlik | Paket `com.kusgrupgames.bes` (iki platformda aynı), Pages `https://kusgrupgames.github.io/bes`, şema `bes://` — geçici `sukun` adı tamamen kalktı (D21) |
 | Klasör | `bes/` |
 | Sürüm | 1.0.0 (ilk üretim sürümü hedefi: 1.0.0) |
 | Teknoloji | Expo SDK 54 · React Native 0.81.5 · React 19 · TypeScript (strict) · expo-router 6 |
@@ -66,7 +66,7 @@ Dynamic Type ölçeği ve RTL aynalama bu kapsayıcıda denenemiyor — E3).
 - [x] Türkçe arama normalizasyonu — İ/ı tuzağı dahil (§78)
 - [x] 7 hesaplama yöntemi + Hanefî/Şâfiî ikindi (§15)
 - [x] PrayerTimesProvider soyutlaması, ağ çökerse yerel hesaba düşer (§15)
-- [x] Altı vakit, canlı geri sayım, aylık takvim ekranı (§14)
+- [x] Beş vakit ve güneş doğuşu, canlı geri sayım, aylık takvim ekranı (§14)
 - [x] Vakit bildirimleri: vakit bazlı açma/kapama, erken uyarı dakikası (§16)
 
 **FAZ 3 tamamlandı:**

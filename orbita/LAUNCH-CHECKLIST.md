@@ -94,7 +94,7 @@ Yazılım tarafı bitti; kalan her şey hesap, imza ve gönderim işi — bunlar
 - [ ] AAB yükle → Kapalı test → sonra Üretim
 
 ### App Store
-- [ ] App Store Connect → Yeni uygulama → bundle id `com.kusgrup.orbita`
+- [ ] App Store Connect → Yeni uygulama → bundle id `com.kusgrupgames.orbita`
 - [ ] Metinler: `store/app-store.md`
 - [ ] Ekran görüntüleri: `assets/screenshots/ios67-*.png` (6.7")
 - [ ] App Privacy: `store/app-privacy.md`

@@ -10,7 +10,7 @@ name: BEŞ iOS yayin
 #   APPSTORE_TEAM_ID     Membership -> Team ID (10 karakter)
 # .p8 dosyasi bir kez indirilir, tekrar indirilemez. Depoya ASLA koyma.
 #
-# ONKOSUL: App Store Connect'te `com.kusgrup.bes` bundle id'siyle bir
+# ONKOSUL: App Store Connect'te `com.kusgrupgames.bes` bundle id'siyle bir
 # uygulama kaydi bulunmali. Imza profilini bu akis kendisi uretir, ama
 # uygulama kaydini uretemez.
 

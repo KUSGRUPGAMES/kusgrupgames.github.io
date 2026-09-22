@@ -12,7 +12,7 @@ npx cap open ios
 
 ## 2. Xcode → App hedefi → General
 - **Display Name:** `Latch`
-- **Bundle Identifier:** `com.kusgrup.latch`
+- **Bundle Identifier:** `com.kusgrupgames.latch`
 - **Version:** `1.0.0` · **Build:** `1`
 - **Supported Destinations:** yalnız **iPhone** (iPad'i kaldır — yoksa App Store iPad ekran görüntüsü ister)
 - **Device Orientation:** yalnız **Portrait**

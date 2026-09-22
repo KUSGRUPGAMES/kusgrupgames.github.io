@@ -4,7 +4,7 @@
   "appName": "Slot",
   "version": "1.0.0",
   "versionCode": 1,
-  "bundleId": "com.kusgrup.slot",
+  "bundleId": "com.kusgrupgames.slot",
   "supportEmail": "kusgrupgames@gmail.com",
   "pagesBaseUrl": "https://kusgrupgames.github.io/slot",
   "iap": {

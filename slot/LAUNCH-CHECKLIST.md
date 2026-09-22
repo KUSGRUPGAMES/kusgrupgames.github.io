@@ -126,7 +126,7 @@ lehine, biri takvimi belirliyor:
 - [ ] AAB yükle → Kapalı test → sonra Üretim
 
 ### App Store
-- [ ] App Store Connect → Yeni uygulama → bundle id `com.kusgrup.slot`
+- [ ] App Store Connect → Yeni uygulama → bundle id `com.kusgrupgames.slot`
 - [ ] Metinler: `store/app-store.md`
 - [ ] Ekran görüntüleri: `assets/screenshots/ios67-*.png` (6.7")
 - [ ] App Privacy: `store/app-privacy.md`

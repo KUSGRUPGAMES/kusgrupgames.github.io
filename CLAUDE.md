@@ -83,7 +83,7 @@ Her oyunun kendi `CLAUDE.md`'si var; denge ve tuzaklar orada.
 | `latch/` | mükemmel | `deaths=0` **ve** `fallback=0` zorunlu → her çengel ulaşılabilir |
 | `orbita/` | sezgisel (ölebilir) | yalnızca oyun döngüsünün çalıştığı ve çökmediği |
 | `lull/` | hızlandırılmış seans | tempo **iniyor** (artmıyor), veriş/alış oranı 1'in altına düşmüyor, seans tam süresinde bitiyor |
-| `bes/` | yok — hesap sınaması + görsel denetim | bilinen kıble/gündüz değerleri tutuyor, altı vakit sıralı; 128 kare (açık/koyu/320 piksel/Arapça) hata, boş ekran ve taşma için taranıyor |
+| `bes/` | yok — hesap sınaması + görsel denetim | bilinen kıble/gündüz değerleri tutuyor, beş vakit ve güneş doğuşu sıralı; 128 kare (açık/koyu/320 piksel/Arapça) hata, boş ekran ve taşma için taranıyor |
 
 Orbita'nınki daha zayıf bir güvence: ölüm sayısı > 0 olması hata değildir. Orbita'ya
 "adaletsiz bölüm üretilmiyor" güvencesi eklemek istersen önce mükemmel oynayan bir
