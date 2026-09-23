@@ -6,12 +6,14 @@
  * ve sonradan ayarlardan değiştirilebilir.
  */
 import React, { useMemo, useState } from 'react';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 import { router, Stack } from 'expo-router';
 import {
   Screen, Card, Column, Row, Text, Button, ListItem, ProgressBar, Banner, Field, Icon,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
+import { palette } from '@/theme/tokens';
+import { BrandPattern } from '@/ui/BrandPattern';
 import { useT } from '@/lib/i18n';
 import { Brand } from '@/config/brand';
 import { searchPlaces } from '@/features/location/search';
@@ -25,53 +27,14 @@ import { markOnboardingDone } from '@/boot/persistence';
 import { useBoot } from '@/boot/AppProviders';
 // Logo dosya olarak gelir, kodla çizilmez (D17).
 import logoSembol from '../assets/splash-icon.png';
-import markaKarosu from '../assets/brand/pattern-tile.png';
 
 const TOPLAM = 5;
-const MOTIF_KARO = 136;
-
-/** Tek bir görüntüyü esnetmek yerine karoları yüzeyin tamamına döşer. */
-function KurulumMotifi() {
-  const theme = useTheme();
-  const [boyut, setBoyut] = useState({ width: 0, height: 0 });
-  const sutun = Math.ceil(boyut.width / MOTIF_KARO);
-  const satir = Math.ceil(boyut.height / MOTIF_KARO);
-
-  return (
-    <View
-      pointerEvents="none"
-      accessibilityElementsHidden
-      importantForAccessibility="no-hide-descendants"
-      style={[StyleSheet.absoluteFill, { opacity: theme.opacity.motifEkran }]}
-      onLayout={({ nativeEvent: { layout } }) => {
-        const width = Math.ceil(layout.width);
-        const height = Math.ceil(layout.height);
-        setBoyut((onceki) => onceki.width === width && onceki.height === height
-          ? onceki : { width, height });
-      }}
-    >
-      {Array.from({ length: sutun * satir }, (_, i) => (
-        <Image
-          key={i}
-          source={markaKarosu}
-          resizeMode="stretch"
-          style={{
-            position: 'absolute',
-            left: (i % sutun) * MOTIF_KARO,
-            top: Math.floor(i / sutun) * MOTIF_KARO,
-            width: MOTIF_KARO,
-            height: MOTIF_KARO,
-          }}
-        />
-      ))}
-    </View>
-  );
-}
 
 export default function OnboardingScreen() {
   const t = useT();
   const yontemAdi = useMethodName();
   const theme = useTheme();
+  const eylemStili = { backgroundColor: palette.emerald500, borderWidth: 1, borderColor: theme.colors.bezemeSolgun };
   const { completeOnboarding } = useBoot();
   const [adim, setAdim] = useState(1);
   const [sorgu, setSorgu] = useState('');
@@ -121,7 +84,7 @@ export default function OnboardingScreen() {
           borderColor: theme.colors.bezemeSolgun,
         }}
       >
-        <KurulumMotifi />
+        <BrandPattern opacity={theme.opacity.motifEkran} />
         <Column gap="sm" style={{ marginBottom: theme.spacing.xl }}>
           <Text variant="micro" tone="onAccent">
             {t('onboarding.step', { current: adim, total: TOPLAM })}
@@ -155,14 +118,15 @@ export default function OnboardingScreen() {
             <Text variant="title2" tone="onAccent">{t('onboarding.locationTitle')}</Text>
             <Text variant="body" tone="onAccent">{t('location.permissionBody')}</Text>
             <Button label={t('location.useGps')} icon="location" onPress={gpsKullan} loading={aliniyor} block
-              style={{ borderWidth: 1, borderColor: theme.colors.onAccentBorder }} />
-            <Card padding="sm">
+              style={eylemStili} />
+            <Card padding="sm" style={{ backgroundColor: theme.colors.kat3, borderColor: theme.colors.onAccentBorder }}>
               <Field
                 label={t('location.search')}
                 hint={t('location.searchHint')}
                 value={sorgu}
                 onChangeText={setSorgu}
                 autoCorrect={false}
+                inputStyle={{ backgroundColor: theme.colors.kat2 }}
               />
             </Card>
             {sorgu.trim() && sonuclar.length === 0 ? <Banner tone="info" title={t('location.noResult')} /> : null}
@@ -188,7 +152,7 @@ export default function OnboardingScreen() {
           <Column gap="md">
             <Text variant="title2" tone="onAccent">{t('onboarding.methodTitle')}</Text>
             <Text variant="body" tone="onAccent">{t('onboarding.methodBody')}</Text>
-            <Card padding="sm">
+            <Card padding="sm" style={{ backgroundColor: theme.colors.kat3, borderColor: theme.colors.onAccentBorder }}>
               {Object.values(METHODS).map((m) => (
                 <ListItem
                   key={m.id}
@@ -214,7 +178,7 @@ export default function OnboardingScreen() {
               icon="bell"
               onPress={() => { void requestPermission(); }}
               block
-              style={{ borderWidth: 1, borderColor: theme.colors.onAccentBorder }}
+              style={eylemStili}
             />
             <Text variant="caption" tone="onAccent">{t('notification.coverageNote')}</Text>
           </Column>
@@ -240,7 +204,7 @@ export default function OnboardingScreen() {
 
         {adim === 1 ? (
           <Button label={t('onboarding.start')} size="lg" block onPress={ilerle}
-            style={{ borderWidth: 1, borderColor: theme.colors.onAccentBorder }} />
+            style={eylemStili} />
         ) : (
           <Row gap="md" align="center">
             <Pressable
@@ -266,7 +230,7 @@ export default function OnboardingScreen() {
             <Button
               label={adim === TOPLAM ? t('onboarding.finish') : t('common.next')}
               onPress={ilerle}
-              style={{ borderWidth: 1, borderColor: theme.colors.onAccentBorder }}
+              style={eylemStili}
             />
           </Row>
         )}
