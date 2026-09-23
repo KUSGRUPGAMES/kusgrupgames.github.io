@@ -18,7 +18,7 @@ import { ErrorBoundary } from '@/ui/ErrorBoundary';
 import { configureLogging } from '@/lib/log';
 import { recordCrash, configureCrashReporter } from '@/lib/crash/reporter';
 import { KEYS } from '@/lib/storage';
-import { hydrateAll } from './persistence';
+import { hydrateAll, markOnboardingDone } from './persistence';
 import { kv } from './storage';
 import { Brand } from '@/config/brand';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
@@ -56,8 +56,8 @@ const languageCodec = {
 };
 
 /** Açılışta okunan, uygulama ömrü boyunca değişmeyen durum. */
-interface BootValue { onboardingDone: boolean }
-const BootContext = createContext<BootValue>({ onboardingDone: true });
+interface BootValue { onboardingDone: boolean; completeOnboarding: () => Promise<void> }
+const BootContext = createContext<BootValue>({ onboardingDone: true, completeOnboarding: async () => {} });
 
 export function useBoot(): BootValue {
   return useContext(BootContext);
@@ -106,6 +106,11 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     return () => { alive = false; };
   }, []);
 
+  const completeOnboarding = useCallback(async () => {
+    await markOnboardingDone();
+    setOnboardingDone(true);
+  }, []);
+
   const saveThemeMode = useCallback((mode: ThemeMode) => { void kv.write(KEYS.themeMode, mode); }, []);
   const saveLanguage = useCallback((lang: Language) => {
     void kv.write(KEYS.language, lang);
@@ -130,7 +135,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
           onLanguageChange={saveLanguage}
         >
           <AppErrorBoundary>
-            <BootContext.Provider value={{ onboardingDone }}>
+            <BootContext.Provider value={{ onboardingDone, completeOnboarding }}>
               <QueryClientProvider client={queryClient}>
                 <BildirimEsitleyici />
                 {children}
