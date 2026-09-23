@@ -28,7 +28,8 @@ export function Card({
     borderRadius: theme.radius[radius],
     padding: theme.spacing[padding],
     borderWidth: 1,
-    borderColor: theme.name === 'dark' ? theme.colors.bezemeSolgun : theme.colors.border,
+    borderColor: accent ? theme.colors.onAccentHighlight
+      : theme.name === 'dark' ? theme.colors.bezemeSolgun : theme.colors.border,
     overflow: 'hidden',
   };
   const inner = (
