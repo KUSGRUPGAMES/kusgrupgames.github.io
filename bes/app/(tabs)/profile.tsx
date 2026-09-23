@@ -25,6 +25,9 @@ export default function ProfileScreen() {
         <ListItem title={t('account.title')} icon="user" onPress={() => router.push('/account')} />
         <ListItem title={t('notification.center')} icon="bell" onPress={() => router.push('/notifications-center')} />
         <ListItem title={t('diagnostics.title')} icon="info" onPress={() => router.push('/diagnostics')} />
+        {__DEV__ ? (
+          <ListItem title={`${t('onboarding.welcomeTitle')} (BEdev)`} icon="star" onPress={() => router.push('/onboarding')} />
+        ) : null}
       </Card>
 
       <SectionHeader title={t('settings.appearance')} />
