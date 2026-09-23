@@ -46,7 +46,7 @@
     "expo-splash-screen": "~31.0.13",
     "expo-sqlite": "~16.0.10",
     "expo-status-bar": "~3.0.9",
-    "expo-system-ui": "^57.0.4",
+    "expo-system-ui": "~6.0.9",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
@@ -72,6 +72,6 @@
     "pngjs": "^3.4.0",
     "test-renderer": "^1.3.0",
     "ts-jest": "^29.2.5",
-    "typescript": "~5.3.3"
+    "typescript": "~5.9.2"
   }
 }

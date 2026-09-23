@@ -64,25 +64,44 @@ export function useBoot(): BootValue {
 }
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
-  const [fontsLoaded] = useFonts(FONT_ASSETS);
+  // `useFonts` hatayı ayrı döndürür (`[loaded, error]`); yalnız `loaded`
+  // alınırsa yükleme başarısız olduğunda `loaded` **sonsuza dek** `false`
+  // kalır ve aşağıdaki geçit uygulamayı temelli kilitler — hiçbir hata
+  // görünmeden. Arapça süsleme fontları dekoratiftir, ibadetin kendisi
+  // değildir; yüklenemezse uygulama yine de açılmalı.
+  const [fontsLoaded, fontsError] = useFonts(FONT_ASSETS);
   const [ready, setReady] = useState(false);
   const [themeMode, setThemeMode] = useState<ThemeMode>('system');
   const [language, setLanguage] = useState<Language | null>(null);
   const [onboardingDone, setOnboardingDone] = useState(true);
 
   useEffect(() => {
+    if (fontsError) recordCrash(fontsError, { phase: 'font-load' });
+  }, [fontsError]);
+
+  useEffect(() => {
     let alive = true;
     (async () => {
-      const [mode, lang, boot] = await Promise.all([
-        kv.read(KEYS.themeMode, themeModeCodec),
-        kv.read(KEYS.language, languageCodec),
-        hydrateAll(),
-      ]);
-      if (!alive) return;
-      setThemeMode(mode);
-      setLanguage(lang);
-      setOnboardingDone(boot.onboardingDone);
-      setReady(true);
+      try {
+        const [mode, lang, boot] = await Promise.all([
+          kv.read(KEYS.themeMode, themeModeCodec),
+          kv.read(KEYS.language, languageCodec),
+          hydrateAll(),
+        ]);
+        if (!alive) return;
+        setThemeMode(mode);
+        setLanguage(lang);
+        setOnboardingDone(boot.onboardingDone);
+      } catch (error) {
+        // Aynı kilitlenme sınıfı: `hydrateAll()` içindeki herhangi bir
+        // mağaza `.hydrate()` çağrısı fırlatırsa `ready` hiç `true`
+        // olmuyordu, uygulama kalıcı olarak açılış ekranında kalıyordu.
+        // Şimdi varsayılanlarla devam ediyor, hatayı cihazda kaydediyor.
+        if (!alive) return;
+        recordCrash(error instanceof Error ? error : new Error(String(error)), { phase: 'boot-hydrate' });
+      } finally {
+        if (alive) setReady(true);
+      }
     })();
     return () => { alive = false; };
   }, []);
@@ -96,7 +115,9 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Tercihler okunmadan çizmek, temanın açıktan koyuya sıçramasına yol açar.
-  if (!ready || !fontsLoaded) return <View style={{ flex: 1 }} />;
+  // Font adımı yalnız `fontsError` set olmadan bekler — hata varsa (yukarıda
+  // kaydedildi) burada sonsuza dek beklemek yerine devam edilir.
+  if (!ready || (!fontsLoaded && !fontsError)) return <View style={{ flex: 1 }} />;
 
   const deviceTag = Localization.getLocales()[0]?.languageTag ?? null;
 
