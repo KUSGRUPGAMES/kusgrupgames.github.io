@@ -19,7 +19,7 @@ import camiSiluet from '../../assets/brand/paket/islami_siluet_03.png';
 // kendi rengidir, kullanılacağı temanın değil.
 import sembolAcikRenk from '../../assets/brand/symbol-micro-light.png';
 import sembolKoyuRenk from '../../assets/brand/symbol-micro-dark.png';
-import { useT } from '@/lib/i18n';
+import { useT, useI18n, localeTag } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useLocationStore } from '@/store/locations';
 import { useSettingsStore } from '@/store/settings';
@@ -37,6 +37,7 @@ import {
 
 export default function HomeScreen() {
   const t = useT();
+  const { language } = useI18n();
   const theme = useTheme();
   const label = usePrayerLabel();
   const konum = useLocationStore((s) => s.active());
@@ -98,7 +99,7 @@ export default function HomeScreen() {
           >
             <Column gap="sm" align="center" style={{ flex: 1, justifyContent: 'center', paddingBottom: theme.spacing.xl }}>
               <Text variant="eyebrow" tone="onAccent" align="center" style={{ color: theme.colors.onAccentHighlight, letterSpacing: 2 }}>
-                {t('prayer.next').toLocaleUpperCase()}
+                {t('prayer.next').toLocaleUpperCase(localeTag(language))}
               </Text>
               {live?.next ? (
                 <Column align="center" gap="sm" style={{ width: '100%' }}>
