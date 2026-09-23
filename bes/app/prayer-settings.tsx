@@ -8,12 +8,11 @@ import { useT } from '@/lib/i18n';
 import { useSettingsStore } from '@/store/settings';
 import { useLocationStore } from '@/store/locations';
 import { useMethodName } from '@/features/hijri/labels';
-import { METHODS, PRAYER_KEYS, type MethodId, type PrayerKey } from '@/features/prayer/methods';
+import { METHODS, PRAYER_KEYS, type PrayerKey } from '@/features/prayer/methods';
 import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
-import { rangeSchedule } from '@/features/prayer/schedule';
-import { planNotifications, coverageDays, type NotificationSettings } from '@/features/notifications/plan';
-import { applyPlan, requestPermission, pendingCount } from '@/features/notifications/service';
-import { zonedNow } from '@/lib/time/zone';
+import { coverageDays, type NotificationSettings } from '@/features/notifications/plan';
+import { requestPermission, cancelOwned } from '@/features/notifications/service';
+import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 
 export default function PrayerSettingsScreen() {
   const t = useT();
@@ -22,7 +21,9 @@ export default function PrayerSettingsScreen() {
   const settings = useSettingsStore((s) => s.settings);
   const update = useSettingsStore((s) => s.update);
   const konum = useLocationStore((s) => s.active());
+  const { esitle } = useNotificationSync();
   const [kurulu, setKurulu] = useState(0);
+  const [izin, setIzin] = useState(true);
 
   const bildirimAyari: NotificationSettings = {
     enabled: settings.notifications.enabled,
@@ -34,33 +35,25 @@ export default function PrayerSettingsScreen() {
   /** Ayar her değiştiğinde bildirimler baştan kurulur (§16). */
   const bildirimleriKur = useCallback(async () => {
     if (!konum) return;
-    if (!settings.notifications.enabled) { setKurulu(await pendingCount()); return; }
-    const izin = await requestPermission();
-    if (!izin) { setKurulu(0); return; }
-    const z = zonedNow(konum.timezone);
-    const gunler = rangeSchedule(
-      {
-        latitude: konum.latitude,
-        longitude: konum.longitude,
-        timezone: konum.timezone,
-        options: {
-          method: settings.method as MethodId,
-          asrShadow: settings.asrShadow,
-          adjustments: settings.adjustments as Partial<Record<PrayerKey, number>>,
-        },
-      },
-      { year: z.year, month: z.month, day: z.day },
-      coverageDays(bildirimAyari) + 1,
-    );
-    const plan = planNotifications(gunler, bildirimAyari);
-    const n = await applyPlan(plan, {
-      title: (key) => label(key),
-      body: (item) => item.beforeMinutes > 0
-        ? t('prayer.remainingTo', { name: label(item.key), time: `${item.beforeMinutes} ${t('notification.beforeUnit')}` })
-        : t('prayer.entered', { name: label(item.key) }),
-    }, { sound: settings.notifications.sound });
-    setKurulu(n);
-  }, [konum, settings, label, t, bildirimAyari]);
+    if (!settings.notifications.enabled) {
+      // Kapatınca **bizim** kayıtlarımız silinir; başka kaynağınkine
+      // dokunulmaz. Eskiden toptan silme çağrılıyordu.
+      setKurulu(0);
+      await cancelOwned();
+      return;
+    }
+    // İzin isteme kullanıcı eylemine bağlı: bu ekran zaten kullanıcının
+    // açtığı ayar ekranı, istem burada meşru.
+    const verildi = await requestPermission();
+    setIzin(verildi);
+    if (!verildi) { setKurulu(0); return; }
+    // Plan **koordinatörden** gelir. Bu ekran eskiden kendi planını kurup
+    // kendi metnini üretiyordu; aynı bildirim merkezde başka metinle
+    // kuruluyor ve hangisinin geçerli olduğu çağrı sırasına bağlı kalıyordu.
+    const sonuc = await esitle();
+    setIzin(sonuc.izin);
+    setKurulu(sonuc.kurulan + sonuc.dokunulmayan);
+  }, [esitle]);
 
   useEffect(() => { void bildirimleriKur(); }, [bildirimleriKur]);
 
@@ -152,11 +145,17 @@ export default function PrayerSettingsScreen() {
       </Card>
 
       <Column gap="sm" style={{ marginTop: 16 }}>
-        <Banner
-          tone="info"
-          title={t('notification.pending', { count: kurulu })}
-          description={t('notification.coverageNote')}
-        />
+        {izin ? (
+          <Banner
+            tone="info"
+            title={t('notification.pending', { count: kurulu })}
+            description={t('notification.coverageNote')}
+          />
+        ) : (
+          // İzin reddi eskiden sessizce yutuluyordu: sayaç 0 kalıyor ama
+          // sebebi görünmüyordu, kullanıcı "bildirim gelmiyor" diyordu.
+          <Banner tone="warning" title={t('notification.permissionMissing')} />
+        )}
         <Text variant="caption" tone="subtle">
           {t('notification.coverage', { days: coverageDays(bildirimAyari) })}
         </Text>

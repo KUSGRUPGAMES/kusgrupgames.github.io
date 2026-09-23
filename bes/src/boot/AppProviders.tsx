@@ -21,6 +21,7 @@ import { KEYS } from '@/lib/storage';
 import { hydrateAll } from './persistence';
 import { kv } from './storage';
 import { Brand } from '@/config/brand';
+import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import Constants from 'expo-constants';
 
 // Üretimde debug/info günlüğe yazılmaz (§83).
@@ -109,13 +110,32 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         >
           <AppErrorBoundary>
             <BootContext.Provider value={{ onboardingDone }}>
-              <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+              <QueryClientProvider client={queryClient}>
+                <BildirimEsitleyici />
+                {children}
+              </QueryClientProvider>
             </BootContext.Provider>
           </AppErrorBoundary>
         </I18nProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );
+}
+
+/**
+ * Bildirim eşitleyicisi — uygulama ağacında **bir kez** durur.
+ *
+ * Görünmez; tek işi açılışta ve girdiler değiştiğinde bildirim planını
+ * cihazla eşitlemek. Eskiden açılışta hiçbir yeniden planlama yoktu: plan
+ * yalnız ayarlar ekranından kuruluyordu, ayarlara girmeyen kullanıcının
+ * bildirimleri ~10-12 günde sessizce kesiliyordu.
+ *
+ * Sağlayıcıların **içinde** durmak zorunda: çeviri, tema ve mağazalara
+ * erişiyor. İzin istemez; izin yoksa sessizce hiçbir şey kurmaz.
+ */
+function BildirimEsitleyici() {
+  useNotificationSync();
+  return null;
 }
 
 /** Hata metinlerini çeviriden alabilmek için I18nProvider'ın içinde durur. */
