@@ -69,7 +69,7 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <Screen scroll motif={adim === 1 ? undefined : 'marka'}>
+    <Screen scroll motif="marka">
       <Stack.Screen options={{ headerShown: false }} />
 
       <Column gap="sm" style={{ marginBottom: theme.spacing.xl }}>
