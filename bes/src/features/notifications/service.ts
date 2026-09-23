@@ -6,7 +6,17 @@
 import * as Notifications from 'expo-notifications';
 import { logger } from '@/lib/log';
 import type { PlannedNotification } from './plan';
-import { bizimMi, farkAl, type KurulacakBildirim, type KuruluKayit } from './coordinator';
+import { bizimMi, farkAl, bildirimImzasi, type KurulacakBildirim, type KuruluKayit } from './coordinator';
+import { siraliKuyrukOlustur } from '@/lib/concurrency/serialize';
+
+/**
+ * Tüm kuyruk-değiştiren çağrılar (`syncNotifications`, `cancelOwned`)
+ * **aynı** sıralı kuyruktan geçer. Ayrı kuyruklar olsaydı ikisi birbirine
+ * göre yine yarışabilirdi; paylaşılan kuyruk, kök eşitleyici ile ayarlar/
+ * merkez ekranlarının eşzamanlı çağrılarının birbirinin işini bozmamasını
+ * garanti eder (bkz. `serialize.ts`).
+ */
+const kuyruk = siraliKuyrukOlustur();
 
 const log = logger('bildirim');
 
@@ -57,8 +67,12 @@ export async function installedRecords(): Promise<KuruluKayit[]> {
     return hepsi
       .filter((n) => bizimMi(n.identifier))
       .map((n) => {
-        const ham = (n.content.data as { at?: unknown } | null | undefined)?.at;
-        return { id: n.identifier, at: typeof ham === 'number' ? ham : null };
+        const veri = n.content.data as { at?: unknown; imza?: unknown } | null | undefined;
+        return {
+          id: n.identifier,
+          at: typeof veri?.at === 'number' ? veri.at : null,
+          imza: typeof veri?.imza === 'string' ? veri.imza : null,
+        };
       });
   } catch (e) {
     log.warn('kurulu bildirimler okunamadı', { error: e });
@@ -84,7 +98,7 @@ export interface EsitlemeSonucu {
  * Koordinatörün sahiplenmediği kimliklere (`prayer-`/`reminder-` dışı)
  * **hiç dokunulmaz**.
  */
-export async function syncNotifications(
+async function gercekSyncNotifications(
   istenen: readonly KurulacakBildirim[],
   options: { sound: boolean } = { sound: true },
 ): Promise<EsitlemeSonucu> {
@@ -93,7 +107,7 @@ export async function syncNotifications(
   }
   try {
     const kurulu = await installedRecords();
-    const { kurulacak, iptalEdilecek, dokunulmayan } = farkAl(istenen, kurulu);
+    const { kurulacak, iptalEdilecek, dokunulmayan } = farkAl(istenen, kurulu, options.sound);
 
     for (const id of iptalEdilecek) {
       await Notifications.cancelScheduledNotificationAsync(id);
@@ -106,9 +120,11 @@ export async function syncNotifications(
           title: n.title,
           body: n.body,
           sound: options.sound,
-          // Fark almak için gereken tek alan. Tetikleyici okunamadığı için
-          // zaman damgası bilerek içeriğe yazılır.
-          data: { at: n.at.getTime(), tur: n.tur },
+          // Fark almak için gereken alanlar. Tetikleyici okunamadığı için
+          // zaman damgası ve içerik imzası bilerek içeriğe yazılır — imza
+          // başlık/gövde/ses değişimini yakalar, yalnız zaman kıyaslamak
+          // dil değişikliğini ya da ses ayarını kaçırıyordu.
+          data: { at: n.at.getTime(), tur: n.tur, imza: bildirimImzasi(n, options.sound) },
         },
         trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: n.at },
       });
@@ -122,11 +138,25 @@ export async function syncNotifications(
 }
 
 /**
- * Yalnız koordinatörün kayıtlarını siler.
+ * İstenen planı cihazla eşitler: **fark alarak**, ve **sıraya girerek**.
  *
- * `cancelAll` toptan siliyor ve başka kaynağın bildirimini de götürüyordu.
+ * Eski `applyPlan` her çağrıda `cancelAllScheduledNotificationsAsync()`
+ * çağırıyordu. Bu üç şeyi bozuyordu: başka akışın (özel hatırlatıcılar)
+ * kurduğu bildirimleri siliyordu, değişmeyen kayıtları gereksiz yere yeniden
+ * kuruyordu, ve iki yeniden planlama çakışırsa arada kuyruk boş kalıyordu.
+ *
+ * Koordinatörün sahiplenmediği kimliklere (`prayer-`/`reminder-` dışı)
+ * **hiç dokunulmaz**. Eşzamanlı çağrılar `kuyruk` üzerinden sıralanır —
+ * ayrıntı `serialize.ts`'te.
  */
-export async function cancelOwned(): Promise<number> {
+export function syncNotifications(
+  istenen: readonly KurulacakBildirim[],
+  options: { sound: boolean } = { sound: true },
+): Promise<EsitlemeSonucu> {
+  return kuyruk.ekle(() => gercekSyncNotifications(istenen, options));
+}
+
+async function gercekCancelOwned(): Promise<number> {
   try {
     const kurulu = await installedRecords();
     for (const k of kurulu) await Notifications.cancelScheduledNotificationAsync(k.id);
@@ -135,6 +165,11 @@ export async function cancelOwned(): Promise<number> {
     log.warn('bildirimler silinemedi', { error: e });
     return 0;
   }
+}
+
+/** Yalnız koordinatörün kayıtlarını siler. Aynı paylaşılan kuyruktan geçer. */
+export function cancelOwned(): Promise<number> {
+  return kuyruk.ekle(() => gercekCancelOwned());
 }
 
 /** @deprecated `syncNotifications` kullan — bu toptan silip baştan kurar. */

@@ -88,6 +88,14 @@ export function birlesikPlan(
 ): KurulacakBildirim[] {
   const { gunler, bildirimAyari, hatirlaticilar, metin } = girdi;
 
+  // **Genel bildirim anahtarı (Ayarlar → Bildirimler) hem vakti hem özel
+  // hatırlatıcıları kapsar.** Eskiden yalnız `planNotifications` bu
+  // anahtara bakıyordu; kullanıcı "Bildirimler"i kapatınca vakit
+  // bildirimleri duruyor ama özel hatırlatıcılar kurulmaya devam ediyordu.
+  // Kullanıcı için tek bir "bildirim" kavramı var — ayrımı arayüzde yok,
+  // koordinatörde de olmamalı.
+  if (!bildirimAyari.enabled) return [];
+
   // Alt planlar kendi içlerinde kesilmemeli; kesme birleşimden sonra olur.
   // Parçalara ayrı sınır verilirse toplam sınırı aşar (eski hata).
   const sinirsiz = Number.MAX_SAFE_INTEGER;
@@ -111,11 +119,29 @@ export function birlesikPlan(
     .slice(0, Math.max(0, limit));
 }
 
+/**
+ * Bir bildirimin içerik imzası — başlık, gövde ve ses birlikte.
+ *
+ * Cihazda kurulu kaydın zamanı değişmemiş olsa bile **içeriği**
+ * değişmiş olabilir: dil değişti (başlık/gövde çeviriden gelir), ses
+ * ayarı kapatıldı. Yalnız zamanı karşılaştırmak eskiden bu değişiklikleri
+ * kaçırıyordu — kayıt "aynı" sayılıp dokunulmuyor, kullanıcı eski dilde ya
+ * da yanlış ses ayarıyla bildirim almaya devam ediyordu.
+ *
+ * `\u001F` (birim ayıracı) sınırlayıcı: başlık ya da gövdenin doğal
+ * metninde neredeyse hiç geçmeyen bir kontrol karakteri, çarpışma riski yok.
+ */
+export function bildirimImzasi(n: { title: string; body: string }, ses: boolean): string {
+  return `${n.title}\u001F${n.body}\u001F${ses ? '1' : '0'}`;
+}
+
 /** Cihazda kurulu bir kayıt — fark almak için gereken en az bilgi. */
 export interface KuruluKayit {
   id: string;
   /** Kurulum anında `content.data.at` içine yazılan zaman damgası. */
   at: number | null;
+  /** Kurulum anında `content.data.imza` içine yazılan içerik imzası. */
+  imza: string | null;
 }
 
 export interface Fark {
@@ -132,12 +158,17 @@ export interface Fark {
  * platforma göre farklı biçimlerde döndürüyor ve iOS/Android arasında
  * güvenilir biçimde karşılaştırılamıyor.
  *
+ * **Zaman aynı olsa bile içerik imzası farklıysa kayıt yeniden kurulur**
+ * (bkz. `bildirimImzasi`). `ses` çağıranın o anki ses ayarıdır; her kayıt
+ * kendi sesini taşımaz, tüm plan tek seferde aynı ses ayarıyla kurulur.
+ *
  * Aynı kimlik farklı zamanla duruyorsa (kullanıcı erken uyarı dakikasını
  * değiştirmiştir) kayıt iptal edilip yeniden kurulur.
  */
 export function farkAl(
   istenen: readonly KurulacakBildirim[],
   kurulu: readonly KuruluKayit[],
+  ses: boolean,
 ): Fark {
   const kuruluHarita = new Map(kurulu.filter((k) => bizimMi(k.id)).map((k) => [k.id, k]));
   const istenenKimlikler = new Set(istenen.map((n) => n.id));
@@ -146,13 +177,14 @@ export function farkAl(
   let dokunulmayan = 0;
   for (const n of istenen) {
     const mevcut = kuruluHarita.get(n.id);
-    if (mevcut && mevcut.at === n.at.getTime()) dokunulmayan += 1;
+    const beklenenImza = bildirimImzasi(n, ses);
+    if (mevcut && mevcut.at === n.at.getTime() && mevcut.imza === beklenenImza) dokunulmayan += 1;
     else kurulacak.push(n);
   }
 
   const iptalEdilecek: string[] = [];
   for (const k of kuruluHarita.values()) {
-    // İstenmeyen ya da zamanı değişmiş kayıt gider.
+    // İstenmeyen ya da zamanı/içeriği değişmiş kayıt gider.
     if (!istenenKimlikler.has(k.id)) iptalEdilecek.push(k.id);
     else if (kurulacak.some((n) => n.id === k.id)) iptalEdilecek.push(k.id);
   }

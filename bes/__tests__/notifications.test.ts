@@ -1,6 +1,6 @@
-import { planNotifications, coverageDays, defaultNotificationSettings, PLATFORM_LIMIT } from '@/features/notifications/plan';
-import { birlesikPlan, farkAl, type KurulacakBildirim } from '@/features/notifications/coordinator';
-import type { Reminder } from '@/features/notifications/reminders';
+import { planNotifications, coverageDays, defaultNotificationSettings, PLATFORM_LIMIT, type NotificationSettings } from '@/features/notifications/plan';
+import { birlesikPlan, farkAl, bildirimImzasi, type KurulacakBildirim } from '@/features/notifications/coordinator';
+import { reminderCoverageDays, type Reminder } from '@/features/notifications/reminders';
 import type { PrayerKey } from '@/features/prayer/methods';
 import { rangeSchedule, type ScheduleInput } from '@/features/prayer/schedule';
 
@@ -134,15 +134,36 @@ describe('koordinatör — birleşik plan', () => {
 
   it('hatırlatıcılar plana gerçekten giriyor', () => {
     // Eskiden `planReminders` yalnız önizleme listesinde çağrılıyordu;
-    // hiçbir hatırlatıcı cihaza kurulmuyordu.
+    // hiçbir hatırlatıcı cihaza kurulmuyordu. Genel anahtar burada AÇIK —
+    // yalnız vakit bildirimleri tek tek kapalı; izolasyon böyle sağlanır
+    // (genel anahtar artık hatırlatıcıları da kapsıyor, bkz. aşağıki grup).
+    const vakitsiz: NotificationSettings = {
+      ...defaultNotificationSettings,
+      perPrayer: { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false },
+      includeSunrise: false,
+    };
     const p = birlesikPlan({
       gunler: gunler(istanbul, 2026, 2, 15, 2),
-      bildirimAyari: { ...defaultNotificationSettings, enabled: false },
+      bildirimAyari: vakitsiz,
       hatirlaticilar: [hatirlatici('a', 21)],
       metin,
     }, now);
     expect(p.length).toBeGreaterThan(0);
     expect(p.every((n) => n.tur === 'reminder')).toBe(true);
+  });
+
+  it('genel anahtar KAPALIYKEN ne vakit ne hatırlatıcı plana girer', () => {
+    // Kullanıcının kendi ayrımı olmayan tek bir "Bildirimler" anahtarı var
+    // (Ayarlar → Bildirimler). Eskiden bu anahtar yalnız vakit bildirimlerini
+    // kapatıyordu; hatırlatıcılar anahtardan bağımsız kurulmaya devam
+    // ediyordu.
+    const p = birlesikPlan({
+      gunler: gun30(),
+      bildirimAyari: { ...defaultNotificationSettings, enabled: false },
+      hatirlaticilar: [hatirlatici('a', 21), hatirlatici('b', 22)],
+      metin,
+    }, now);
+    expect(p).toEqual([]);
   });
 
   it('bütçe dolduğunda en YAKIN anlar korunur', () => {
@@ -172,38 +193,83 @@ describe('koordinatör — birleşik plan', () => {
 });
 
 describe('koordinatör — fark alma', () => {
-  const n = (id: string, ms: number): KurulacakBildirim =>
-    ({ id, tur: 'prayer', at: new Date(ms), title: 't', body: 'b' });
+  const n = (id: string, ms: number, title = 't', body = 'b'): KurulacakBildirim =>
+    ({ id, tur: 'prayer', at: new Date(ms), title, body });
+  const k = (id: string, ms: number | null, imza: string | null) => ({ id, at: ms, imza });
 
   it('değişmeyen kayda dokunulmaz', () => {
-    const f = farkAl([n('prayer-1', 1000)], [{ id: 'prayer-1', at: 1000 }]);
+    const f = farkAl([n('prayer-1', 1000)], [k('prayer-1', 1000, bildirimImzasi({ title: 't', body: 'b' }, true))], true);
     expect(f).toEqual({ kurulacak: [], iptalEdilecek: [], dokunulmayan: 1 });
   });
 
   it('zamanı değişen kayıt iptal edilip yeniden kurulur', () => {
     // Erken uyarı dakikası değişince kimlik aynı kalır, zaman değişir.
-    const f = farkAl([n('prayer-1', 2000)], [{ id: 'prayer-1', at: 1000 }]);
+    const f = farkAl([n('prayer-1', 2000)], [k('prayer-1', 1000, bildirimImzasi({ title: 't', body: 'b' }, true))], true);
     expect(f.iptalEdilecek).toEqual(['prayer-1']);
     expect(f.kurulacak.map((x) => x.id)).toEqual(['prayer-1']);
     expect(f.dokunulmayan).toBe(0);
   });
 
   it('istenmeyen kayıt iptal edilir', () => {
-    const f = farkAl([], [{ id: 'reminder-x-20260315', at: 1000 }]);
+    const f = farkAl([], [k('reminder-x-20260315', 1000, 'x')], true);
     expect(f.iptalEdilecek).toEqual(['reminder-x-20260315']);
     expect(f.kurulacak).toEqual([]);
   });
 
   it('BAŞKA kaynağın bildirimine dokunulmaz', () => {
     // Toptan silme tam olarak bu kuralı çiğniyordu.
-    const f = farkAl([], [{ id: 'baska-uygulama-1', at: 1000 }]);
+    const f = farkAl([], [k('baska-uygulama-1', 1000, 'x')], true);
     expect(f.iptalEdilecek).toEqual([]);
   });
 
   it('zaman damgası okunamayan kayıt yeniden kurulur', () => {
     // Eski sürümden kalan, `data.at` taşımayan kayıtlar.
-    const f = farkAl([n('prayer-1', 1000)], [{ id: 'prayer-1', at: null }]);
+    const f = farkAl([n('prayer-1', 1000)], [k('prayer-1', null, null)], true);
     expect(f.kurulacak.map((x) => x.id)).toEqual(['prayer-1']);
     expect(f.iptalEdilecek).toEqual(['prayer-1']);
+  });
+
+  it('zaman AYNI ama başlık/gövde değişmişse kayıt yeniden kurulur', () => {
+    // Dil değişimi: bildirim metni çeviriden gelir, saat değişmez. Yalnız
+    // zaman karşılaştıran eski sürüm bu değişikliği kaçırıyordu.
+    const eskiImza = bildirimImzasi({ title: 'Old title', body: 'Old body' }, true);
+    const f = farkAl([n('prayer-1', 1000, 'Yeni başlık', 'Yeni gövde')], [k('prayer-1', 1000, eskiImza)], true);
+    expect(f.kurulacak.map((x) => x.id)).toEqual(['prayer-1']);
+    expect(f.iptalEdilecek).toEqual(['prayer-1']);
+    expect(f.dokunulmayan).toBe(0);
+  });
+
+  it('zaman ve metin AYNI ama ses ayarı değişmişse kayıt yeniden kurulur', () => {
+    const sesliImza = bildirimImzasi({ title: 't', body: 'b' }, true);
+    const f = farkAl([n('prayer-1', 1000)], [k('prayer-1', 1000, sesliImza)], false);
+    expect(f.kurulacak.map((x) => x.id)).toEqual(['prayer-1']);
+    expect(f.iptalEdilecek).toEqual(['prayer-1']);
+  });
+});
+
+describe('koordinatör — yalnız hatırlatıcı açıkken gün sayısı', () => {
+  it('vakit bildirimlerinin tamamı kapalıyken hatırlatıcı formülü devreye girer', () => {
+    // coverageDays, tüm vakit bildirimleri kapalıyken 0 döner. Gün aralığı
+    // yalnız ona dayansaydı (+1 ile tek gün) hatırlatıcılara neredeyse hiç
+    // gelecek gün bırakmıyordu.
+    const vakitsiz: NotificationSettings = {
+      ...defaultNotificationSettings,
+      perPrayer: { fajr: false, dhuhr: false, asr: false, maghrib: false, isha: false },
+      includeSunrise: false,
+    };
+    expect(coverageDays(vakitsiz)).toBe(0);
+    expect(reminderCoverageDays([{ enabled: true }])).toBeGreaterThan(1);
+  });
+
+  it('hatırlatıcı yokken formül 0 döner — gereksiz gün üretmez', () => {
+    expect(reminderCoverageDays([])).toBe(0);
+    expect(reminderCoverageDays([{ enabled: false }])).toBe(0);
+  });
+
+  it('daha çok etkin hatırlatıcı daha az gün üretir (bütçe sabit)', () => {
+    const bir = reminderCoverageDays([{ enabled: true }]);
+    const dort = reminderCoverageDays([{ enabled: true }, { enabled: true }, { enabled: true }, { enabled: true }]);
+    expect(dort).toBeLessThan(bir);
+    expect(dort).toBeGreaterThan(0);
   });
 });

@@ -33,6 +33,7 @@
  * eşitleme kendini tetikleyip duruyordu.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AppState } from 'react-native';
 import { useT } from '@/lib/i18n';
 import { useI18n } from '@/lib/i18n';
 import { useSettingsStore } from '@/store/settings';
@@ -42,9 +43,56 @@ import { rangeSchedule } from '@/features/prayer/schedule';
 import { zonedNow } from '@/lib/time/zone';
 import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
 import { coverageDays, type NotificationSettings } from './plan';
+import { reminderCoverageDays } from './reminders';
 import { birlesikPlan, type KurulacakBildirim } from './coordinator';
 import { syncNotifications, type EsitlemeSonucu } from './service';
 import type { MethodId, PrayerKey } from '@/features/prayer/methods';
+
+/**
+ * Gün değişimi ve arka plandan dönüş algılayıcı.
+ *
+ * `gunler` (ve dolayısıyla plan) eskiden yalnız konum/ayar/hatırlatıcı
+ * değiştiğinde yeniden hesaplanıyordu — **zaman ilerledikçe değil**.
+ * Uygulama günlerce arka planda kaldığında gün aralığı bayatlıyor, üretilen
+ * planın tamamı geçmişte kalıp bildirimler sessizce kesiliyordu.
+ *
+ * İki tetikleyici: (1) uygulama arka plandan öne gelince — anında yakalanır;
+ * (2) uygulama açık kalırken gün değişirse (gece yarısını geçen bir oturum)
+ * — düşük sıklıklı bir denetimle yakalanır. `useTicker`deki
+ * (`prayer/useSchedule.ts`) `AppState` kalıbıyla aynı üsluptadır.
+ */
+function useGunYenileyici(timezone: string | null): number {
+  const [tetik, setTetik] = useState(0);
+  const sonGun = useRef<string | null>(null);
+
+  const gunAnahtari = useCallback((): string | null => {
+    if (!timezone) return null;
+    const z = zonedNow(timezone);
+    return `${z.year}-${z.month}-${z.day}`;
+  }, [timezone]);
+
+  const kontrolEt = useCallback(() => {
+    const simdi = gunAnahtari();
+    if (simdi !== null && simdi !== sonGun.current) {
+      sonGun.current = simdi;
+      setTetik((n) => n + 1);
+    }
+  }, [gunAnahtari]);
+
+  useEffect(() => {
+    sonGun.current = gunAnahtari();
+  }, [gunAnahtari]);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (s) => { if (s === 'active') kontrolEt(); });
+    // Ön planda açık kalırken gün değişimini de yakalamak için düşük
+    // sıklıklı bir denetim — pil dostu, 30 dakikada bir.
+    const zamanlayici = setInterval(kontrolEt, 30 * 60 * 1000);
+    return () => { sub.remove(); clearInterval(zamanlayici); };
+  }, [kontrolEt]);
+
+  return tetik;
+}
 
 export interface NotificationSyncDurumu {
   /** Cihazla eşitlenmiş istenen plan — bildirim merkezi bunu gösterir. */
@@ -70,9 +118,17 @@ export function useNotificationSync(): NotificationSyncDurumu {
     includeSunrise: false,
   }), [settings.notifications]);
 
+  const gunTetik = useGunYenileyici(konum?.timezone ?? null);
+
   const gunler = useMemo(() => {
     if (!konum) return [];
     const z = zonedNow(konum.timezone);
+    // **İki gün sayısının büyüğü** alınır. `coverageDays` yalnız vakit
+    // bildirimi ayarlarına bakar; genel anahtar açık ama tüm vakit
+    // bildirimleri kapalıyken 0 döner. O durumda gün aralığı yalnız ona
+    // dayansaydı (+1 ile tek gün) özel hatırlatıcılara neredeyse hiç
+    // gelecek gün bırakmıyordu — bkz. `reminderCoverageDays`.
+    const gunSayisi = Math.max(coverageDays(bildirimAyari), reminderCoverageDays(reminders)) + 1;
     return rangeSchedule(
       {
         latitude: konum.latitude,
@@ -85,9 +141,11 @@ export function useNotificationSync(): NotificationSyncDurumu {
         },
       },
       { year: z.year, month: z.month, day: z.day },
-      coverageDays(bildirimAyari) + 1,
+      gunSayisi,
     );
-  }, [konum, settings, bildirimAyari]);
+    // `gunTetik` yalnız zamanın ilerlediğini fark etmek için bağımlılıkta:
+    // kendi değeri gövdede kullanılmaz, yalnız değişimi `zonedNow()`u tazeler.
+  }, [konum, settings, bildirimAyari, reminders, gunTetik]);
 
   const plan = useMemo(() => birlesikPlan({
     gunler,

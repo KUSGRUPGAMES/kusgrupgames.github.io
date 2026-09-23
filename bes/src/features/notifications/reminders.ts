@@ -46,6 +46,29 @@ export function describeTrigger(trigger: ReminderTrigger): string {
 }
 
 /**
+ * Yalnız özel hatırlatıcılar açıkken gereken gün sayısı.
+ *
+ * `coverageDays` (plan.ts) yalnız vakit bildirimi ayarlarına bakar. Genel
+ * anahtar açık ama vakit bildirimlerinin tamamı kapalıyken (`gunluk === 0`)
+ * o fonksiyon 0 döner; gün aralığı yalnız ona dayansaydı üretilen aralık
+ * neredeyse sıfıra inip (çağıran tarafta `+1` ile tek gün) hatırlatıcılara
+ * neredeyse hiç gelecek gün bırakmıyordu.
+ *
+ * Hesap aynı üsluptadır: bütçe / günlük en kötü durum yükü. Her etkin
+ * hatırlatıcının **her gün** tetiklenebileceği varsayılır — haftanın günü
+ * kısıtı gerçek yükü azaltır, artırmaz — bu yüzden formül bir üst sınırdır,
+ * asla gereğinden az gün üretmez.
+ */
+export function reminderCoverageDays(
+  reminders: readonly Pick<Reminder, 'enabled'>[],
+  limit = 64,
+): number {
+  const gunluk = reminders.filter((r) => r.enabled).length;
+  if (gunluk === 0) return 0;
+  return Math.floor(limit / gunluk);
+}
+
+/**
  * Hatırlatıcıları verilen günler için planlar.
  * Geçmiş anlar atlanır; kapalı hatırlatıcılar hiç işlenmez.
  */
