@@ -5,7 +5,7 @@
  * patlarsa bile kullanıcı anlamlı bir ekran görsün.
  */
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Image, View, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
@@ -23,6 +23,11 @@ import { kv } from './storage';
 import { Brand } from '@/config/brand';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import Constants from 'expo-constants';
+import { palette, opacity } from '@/theme/tokens';
+import { BrandPattern } from '@/ui/BrandPattern';
+import { Gradient } from '@/ui/Gradient';
+import splashLogo from '../../assets/splash-icon.png';
+import splashLogoLight from '../../assets/brand/splash-icon-light.png';
 
 // Üretimde debug/info günlüğe yazılmaz (§83).
 configureLogging({ minLevel: __DEV__ ? 'debug' : 'warn' });
@@ -128,7 +133,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   // Tercihler okunmadan çizmek, temanın açıktan koyuya sıçramasına yol açar.
   // Font adımı yalnız `fontsError` set olmadan bekler — hata varsa (yukarıda
   // kaydedildi) burada sonsuza dek beklemek yerine devam edilir.
-  if (!ready || (!fontsLoaded && !fontsError)) return <View style={{ flex: 1 }} />;
+  if (!ready || (!fontsLoaded && !fontsError)) return <StartupScreen />;
 
   const deviceTag = Localization.getLocales()[0]?.languageTag ?? null;
 
@@ -151,6 +156,23 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         </I18nProvider>
       </ThemeProvider>
     </SafeAreaProvider>
+  );
+}
+
+/** JS hazırlandıktan sonraki kısa bekleme de kurulum kartının marka dilini taşır. */
+function StartupScreen() {
+  const dark = useColorScheme() === 'dark';
+  return (
+    <View style={{ flex: 1, backgroundColor: dark ? palette.emerald900 : palette.ivory100,
+      justifyContent: 'center', alignItems: 'center' }}>
+      {dark ? (
+        <>
+          <Gradient colors={[palette.emerald600, palette.emerald900]} />
+          <BrandPattern opacity={opacity.motifEkran} />
+        </>
+      ) : <Gradient colors={[palette.ivory50, palette.ivory200]} />}
+      <Image source={dark ? splashLogo : splashLogoLight} resizeMode="contain" style={{ width: 200, height: 200 }} />
+    </View>
   );
 }
 
