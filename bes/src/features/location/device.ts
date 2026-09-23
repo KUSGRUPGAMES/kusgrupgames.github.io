@@ -7,8 +7,8 @@
  */
 import * as Location from 'expo-location';
 import { logger } from '@/lib/log';
-import { nearestPlace } from './search';
-import type { Coordinates, Place } from './types';
+import { nearestPlace, gpsPlace } from './search';
+import type { Place } from './types';
 
 const log = logger('location');
 
@@ -18,31 +18,6 @@ export type LocationOutcome =
   | { kind: 'unavailable' }
   /** Konum alındı ama listemizde yeterince yakın şehir yok. */
   | { kind: 'noMatch'; latitude: number; longitude: number };
-
-/**
- * GPS hesabında il merkezi yerine cihazın gerçek koordinatını kullan.
- * En yakın kayıt yalnız saat dilimi/ülke için referanstır; adını GPS
- * konumunun adıymış gibi göstermek Gebze'yi Yalova yapıyordu.
- */
-export function gpsPlace(point: Coordinates, reference: Place, address?: {
-  subregion?: string | null;
-  city?: string | null;
-  region?: string | null;
-  country?: string | null;
-  isoCountryCode?: string | null;
-} | null): Place {
-  const name = address?.subregion?.trim() || address?.city?.trim()
-    || address?.region?.trim() || 'GPS';
-  return {
-    id: 'gps-current',
-    name,
-    country: address?.country?.trim() || reference.country,
-    countryCode: address?.isoCountryCode || reference.countryCode,
-    timezone: reference.timezone,
-    latitude: point.latitude,
-    longitude: point.longitude,
-  };
-}
 
 export async function requestDeviceLocation(): Promise<LocationOutcome> {
   try {
