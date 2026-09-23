@@ -26,12 +26,16 @@ import { View, Image, StyleSheet, type StyleProp, type ViewStyle } from 'react-n
 import { useTheme } from '@/theme/ThemeProvider';
 import { Gradient } from './Gradient';
 
-import alinlik from '../../assets/brand/paket/ui_varliklari_01.png';
-import koseSol from '../../assets/brand/paket/ui_varliklari_05.png';
-import koseSag from '../../assets/brand/paket/ui_varliklari_06.png';
+// **Temizlenmiş sürümler** kullanılır (`tools/clean-asset.js`). Ham
+// `ui_varliklari_01` kaynak sayfadan komşu parça artığı taşıyor: altında
+// duran üç dairenin tepeleri kesime dahil olmuş ve kartın ortasında üç
+// serbest yay parçası olarak görünüyordu.
+import alinlik from '../../assets/brand/temiz/alinlik.png';
+import koseSol from '../../assets/brand/temiz/kose-sol.png';
+import koseSag from '../../assets/brand/temiz/kose-sag.png';
 
 /** Alınlık görselinin kendi en/boy oranı; esnetmemek için sabit. */
-const ALINLIK_ORAN = 1287 / 518;
+const ALINLIK_ORAN = 1271 / 502;
 /** Köşe bezemesinin oranı. */
 const KOSE_ORAN = 310 / 333;
 
