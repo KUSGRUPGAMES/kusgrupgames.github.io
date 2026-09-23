@@ -1,6 +1,6 @@
 import { normalizeSearch, matchScore } from '@/features/location/normalize';
 import { searchPlaces, nearestPlace, distanceKm } from '@/features/location/search';
-import { TURKEY_PROVINCES, WORLD_CITIES, ALL_PLACES, findPlace } from '@/features/location/places';
+import { TURKEY_PROVINCES, TURKEY_DISTRICTS, WORLD_CITIES, ALL_PLACES, findPlace } from '@/features/location/places';
 import { isValidCoordinates } from '@/features/location/types';
 
 describe('Türkçe arama normalizasyonu', () => {
@@ -68,6 +68,13 @@ describe('yer listesi', () => {
   it('dünya şehirleri kimlikleri tekildir', () => {
     expect(new Set(WORLD_CITIES.map((p) => p.id)).size).toBe(WORLD_CITIES.length);
   });
+
+  it('büyük ilçe listesi kimlikleri tekildir ve il listesiyle çakışmaz', () => {
+    const ilceKimlikleri = new Set(TURKEY_DISTRICTS.map((p) => p.id));
+    expect(ilceKimlikleri.size).toBe(TURKEY_DISTRICTS.length);
+    const ilKimlikleri = new Set(TURKEY_PROVINCES.map((p) => p.id));
+    for (const id of ilceKimlikleri) expect(ilKimlikleri.has(id)).toBe(false);
+  });
 });
 
 describe('arama ve en yakın şehir', () => {
@@ -107,5 +114,15 @@ describe('arama ve en yakın şehir', () => {
   it('listeye çok uzak bir noktada null döner — yanlış şehir uydurulmaz', () => {
     // Güney Pasifik, en yakın kayıtlı şehre binlerce km.
     expect(nearestPlace({ latitude: -40, longitude: -120 })).toBeNull();
+  });
+
+  it('Gebze GPS noktası Kocaeli değil Gebze döner', () => {
+    // Gerçek hata: yalnız 81 il merkezi varken Gebze (Kocaeli'nin en büyük
+    // ilçesi, il merkezinden bile kalabalık) kuş uçuşu körfezin karşı
+    // kıyısındaki Yalova'ya daha yakın çıkıyor, kullanıcı "konumumu kullan"
+    // dediğinde yanlışlıkla Yalova'ya düşüyordu.
+    const gebze = nearestPlace({ latitude: 40.8025, longitude: 29.4306 });
+    expect(gebze?.name).toBe('Gebze');
+    expect(gebze?.name).not.toBe('Yalova');
   });
 });

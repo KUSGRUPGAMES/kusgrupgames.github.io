@@ -55,9 +55,18 @@ const languageCodec = {
   fallback: null as Language | null,
 };
 
-/** Açılışta okunan, uygulama ömrü boyunca değişmeyen durum. */
-interface BootValue { onboardingDone: boolean }
-const BootContext = createContext<BootValue>({ onboardingDone: true });
+interface BootValue {
+  onboardingDone: boolean;
+  /**
+   * Onboarding bitince çağrılır. Yalnız diske yazmak (`markOnboardingDone`)
+   * yetmiyordu: `(tabs)/_layout.tsx`'teki kapı bu context'teki değere
+   * bakıyor, o da açılışta bir kez okunup hiç güncellenmiyordu — kullanıcı
+   * "Bitir"e bastığında diskteki değer `true` olsa bile kapı hâlâ eski
+   * `false`'u görüp onboarding'e geri atıyordu.
+   */
+  completeOnboarding: () => void;
+}
+const BootContext = createContext<BootValue>({ onboardingDone: true, completeOnboarding: () => {} });
 
 export function useBoot(): BootValue {
   return useContext(BootContext);
@@ -106,6 +115,8 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     return () => { alive = false; };
   }, []);
 
+  const completeOnboarding = useCallback(() => setOnboardingDone(true), []);
+
   const saveThemeMode = useCallback((mode: ThemeMode) => { void kv.write(KEYS.themeMode, mode); }, []);
   const saveLanguage = useCallback((lang: Language) => {
     void kv.write(KEYS.language, lang);
@@ -130,7 +141,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
           onLanguageChange={saveLanguage}
         >
           <AppErrorBoundary>
-            <BootContext.Provider value={{ onboardingDone }}>
+            <BootContext.Provider value={{ onboardingDone, completeOnboarding }}>
               <QueryClientProvider client={queryClient}>
                 <BildirimEsitleyici />
                 {children}

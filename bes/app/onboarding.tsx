@@ -22,6 +22,7 @@ import { useSettingsStore } from '@/store/settings';
 import { useMethodName } from '@/features/hijri/labels';
 import { METHODS } from '@/features/prayer/methods';
 import { markOnboardingDone } from '@/boot/persistence';
+import { useBoot } from '@/boot/AppProviders';
 // Logo dosya olarak gelir, kodla çizilmez (D17).
 import logoSembol from '../assets/splash-icon.png';
 
@@ -31,6 +32,7 @@ export default function OnboardingScreen() {
   const t = useT();
   const yontemAdi = useMethodName();
   const theme = useTheme();
+  const { completeOnboarding } = useBoot();
   const [adim, setAdim] = useState(1);
   const [sorgu, setSorgu] = useState('');
   const [uyari, setUyari] = useState<string | null>(null);
@@ -57,7 +59,13 @@ export default function OnboardingScreen() {
     if (adim === 2 && konumlar.length === 0) { setUyari(t('onboarding.locationNeeded')); return; }
     setUyari(null);
     if (adim < TOPLAM) { setAdim(adim + 1); return; }
-    void markOnboardingDone().then(() => router.replace('/'));
+    void markOnboardingDone().then(() => {
+      // Sıra önemli: kapı (`(tabs)/_layout.tsx`) `completeOnboarding()`
+      // sonrası güncellenen context değerine bakıyor. Önce çağrılmazsa
+      // yönlendirme, hâlâ `false` gören kapıya çarpıp onboarding'e geri döner.
+      completeOnboarding();
+      router.replace('/');
+    });
   };
 
   return (

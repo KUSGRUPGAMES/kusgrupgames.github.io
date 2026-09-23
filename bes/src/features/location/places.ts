@@ -63,6 +63,34 @@ export const TURKEY_PROVINCES: readonly Place[] = [
   longitude: lng as number,
 }));
 
+/**
+ * İl merkezi olmayan ama nüfusça büyük ilçeler.
+ *
+ * `nearestPlace()` yalnız 81 il merkezine bakınca büyük bir ilçedeki kullanıcı
+ * en yakın il merkezine eşleniyor — bu bazen coğrafi olarak "en yakın" doğru
+ * olsa da (kuş uçuşu), il sınırını atlayıp yanlış hissettiriyor. Gerçek örnek:
+ * Gebze (Kocaeli, ~900 bin nüfus, Kocaeli merkezinden büyük) kuş uçuşu
+ * Kocaeli'den çok Yalova'ya yakın (körfezin karşı kıyısı) — kullanıcı
+ * "konumumu kullan" dediğinde Yalova çıkıyor, oysa Kocaeli'de yaşıyor.
+ *
+ * Bu liste **tüketici değil**: yalnız somut olarak bildirilen/doğrulanmış
+ * büyük ilçeleri içerir. Türkiye'nin ~973 ilçesinin tamamını buraya elle,
+ * doğrulanmamış koordinatlarla eklemek bir namaz vakti uygulaması için daha
+ * riskli — yanlış koordinat, yanlış vakit demek. Yeni bir ilçe eklerken
+ * koordinatı doğrulanmış bir kaynaktan alın.
+ */
+export const TURKEY_DISTRICTS: readonly Place[] = [
+  ['gebze', 'Gebze', 40.8025, 29.4306],
+].map(([id, name, lat, lng]) => ({
+  id: `tr-${id as string}`,
+  name: name as string,
+  country: 'Türkiye',
+  countryCode: 'TR',
+  timezone: 'Europe/Istanbul',
+  latitude: lat as number,
+  longitude: lng as number,
+}));
+
 /** Sık kullanılan dünya şehirleri — gurbetteki kullanıcı ve kutsal şehirler. */
 export const WORLD_CITIES: readonly Place[] = [
   ['mekke', 'Mekke', 'Suudi Arabistan', 'SA', 'Asia/Riyadh', 21.4225, 39.8262],
@@ -111,7 +139,7 @@ export const WORLD_CITIES: readonly Place[] = [
   longitude: lng as number,
 }));
 
-export const ALL_PLACES: readonly Place[] = [...TURKEY_PROVINCES, ...WORLD_CITIES];
+export const ALL_PLACES: readonly Place[] = [...TURKEY_PROVINCES, ...TURKEY_DISTRICTS, ...WORLD_CITIES];
 
 export function findPlace(id: string): Place | undefined {
   return ALL_PLACES.find((p) => p.id === id);
