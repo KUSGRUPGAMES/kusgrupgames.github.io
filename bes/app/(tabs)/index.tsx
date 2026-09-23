@@ -93,10 +93,10 @@ export default function HomeScreen() {
           <OrnateFrame
             key={id}
             width={kartGen}
-            height={Math.round(kartGen * 0.90)}
+            height={Math.round(kartGen * 0.80)}
             siluet={camiSiluet}
           >
-            <Column gap="md" align="center" style={{ flex: 1, justifyContent: 'center' }}>
+            <Column gap="sm" align="center" style={{ flex: 1, justifyContent: 'center' }}>
               <Text variant="callout" tone="onAccent">{t('prayer.next')}</Text>
               {live?.next ? (
                 <CountdownRing
@@ -106,7 +106,7 @@ export default function HomeScreen() {
                   // 2.25:1'e düşüyor ve halka kayboluyordu (D18).
                   color={theme.colors.onAccentHighlight}
                   trackColor={theme.colors.onAccentTrack}
-                  size={Math.round(kartGen * 0.38)}
+                  size={Math.round(kartGen * 0.42)}
                   accessibilityLabel={t('prayer.remainingTo', {
                     name: label(live.next.key),
                     time: formatCountdown(live.secondsToNext),
@@ -114,7 +114,17 @@ export default function HomeScreen() {
                 >
                   <Column align="center" gap="xxs">
                     <Text variant="title2" tone="onAccent">{label(live.next.key)}</Text>
-                    <Text variant="display" tone="onAccent">{formatCountdown(live.secondsToNext)}</Text>
+                    <Text
+                      variant="numericSmall"
+                      tone="onAccent"
+                      align="center"
+                      lines={1}
+                      adjustsFontSizeToFit
+                      minimumFontScale={0.8}
+                      style={{ width: Math.round(kartGen * 0.42) - 28, fontVariant: ['tabular-nums'] }}
+                    >
+                      {formatCountdown(live.secondsToNext)}
+                    </Text>
                   </Column>
                 </CountdownRing>
               ) : (
