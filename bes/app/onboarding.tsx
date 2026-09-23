@@ -42,7 +42,7 @@ function HosGeldinMotifi() {
       pointerEvents="none"
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={[StyleSheet.absoluteFill, { opacity: theme.opacity.motifVurgu }]}
+      style={[StyleSheet.absoluteFill, { opacity: theme.opacity.motifEkran }]}
       onLayout={({ nativeEvent: { layout } }) => {
         const width = Math.ceil(layout.width);
         const height = Math.ceil(layout.height);
