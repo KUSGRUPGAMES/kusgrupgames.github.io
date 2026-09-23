@@ -69,7 +69,7 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <Screen scroll motif="marka">
+    <Screen scroll motif={adim === 1 ? undefined : 'marka'}>
       <Stack.Screen options={{ headerShown: false }} />
 
       <Column gap="sm" style={{ marginBottom: theme.spacing.xl }}>
@@ -79,24 +79,42 @@ export default function OnboardingScreen() {
         <ProgressBar value={adim / TOPLAM} accessibilityLabel={t('onboarding.step', { current: adim, total: TOPLAM })} />
       </Column>
 
-      {/* Hoş geldin kartı dikeyde ortalanır: üstte ve altta eşit esnek boşluk. */}
-      {adim === 1 ? <View style={{ flex: 1 }} /> : null}
-
       {adim === 1 ? (
-        <Card accent motif="starLattice" padding="xxl">
-          <Column gap="md" align="center">
-            {/* Altın sembol zümrüt kartın üstünde durduğu için saydam varyant. */}
-            <Image
-              source={logoSembol}
-              style={{ width: 96, height: 96 }}
-              resizeMode="contain"
-              accessibilityElementsHidden
-              importantForAccessibility="no"
+        <View style={{ flexGrow: 1, justifyContent: 'center', paddingVertical: theme.spacing.xxl }}>
+          <Card
+            accent
+            padding="xxl"
+            style={{
+              minHeight: 388,
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: theme.colors.bezemeSolgun,
+            }}
+          >
+            {/* Desen yalnız kartın üstündedir; logo ve yazının arkasına yayılmaz. */}
+            <Motif
+              name="marka"
+              opacity={theme.opacity.motifVurgu}
+              style={{ bottom: undefined, height: 148 }}
             />
-            <Text variant="display" tone="onAccent">{Brand.appName}</Text>
-            <Text variant="body" tone="onAccent" align="center">{t('onboarding.welcomeBody')}</Text>
-          </Column>
-        </Card>
+            <Column gap="lg" align="center">
+              <Image
+                source={logoSembol}
+                style={{ width: 136, height: 136 }}
+                resizeMode="contain"
+                accessibilityElementsHidden
+                importantForAccessibility="no"
+              />
+              <Text variant="display" tone="onAccent" align="center">{Brand.appName}</Text>
+              <Row gap="md" align="center" style={{ marginVertical: theme.spacing.xs }}>
+                <View style={{ width: 40, height: 1, backgroundColor: theme.colors.bezemeSolgun }} />
+                <View style={{ width: 8, height: 8, transform: [{ rotate: '45deg' }], backgroundColor: theme.colors.onAccentHighlight }} />
+                <View style={{ width: 40, height: 1, backgroundColor: theme.colors.bezemeSolgun }} />
+              </Row>
+              <Text variant="body" tone="onAccent" align="center">{t('onboarding.welcomeBody')}</Text>
+            </Column>
+          </Card>
+        </View>
       ) : null}
 
       {adim === 2 ? (
@@ -182,11 +200,11 @@ export default function OnboardingScreen() {
         </View>
       ) : null}
 
-      {/* Hoş geldin adımı ekranın üçte birini kullanıp altını boş bırakıyordu;
-          esnek boşluk gezinme satırını alta indirir. */}
-      <View style={{ flex: 1, minHeight: theme.spacing.xxl }} />
+      {adim !== 1 ? <View style={{ flex: 1, minHeight: theme.spacing.xxl }} /> : null}
 
-      <Row gap="md" align="center">
+      {adim === 1 ? (
+        <Button label={t('onboarding.start')} size="lg" block onPress={ilerle} />
+      ) : <Row gap="md" align="center">
         {adim > 1 ? (
           <Button label={t('nav.back')} variant="ghost" onPress={() => { setUyari(null); setAdim(adim - 1); }} />
         ) : null}
@@ -201,7 +219,7 @@ export default function OnboardingScreen() {
           label={adim === 1 ? t('onboarding.start') : adim === TOPLAM ? t('onboarding.finish') : t('common.next')}
           onPress={ilerle}
         />
-      </Row>
+      </Row>}
     </Screen>
   );
 }
