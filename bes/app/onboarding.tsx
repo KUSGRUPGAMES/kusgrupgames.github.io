@@ -25,7 +25,6 @@ import { markOnboardingDone } from '@/boot/persistence';
 import { useBoot } from '@/boot/AppProviders';
 // Logo dosya olarak gelir, kodla çizilmez (D17).
 import logoSembol from '../assets/splash-icon.png';
-import logoYedek from '../assets/brand/png/BES_AppIcon_Dark_256.png';
 
 const TOPLAM = 5;
 
@@ -38,8 +37,6 @@ export default function OnboardingScreen() {
   const [sorgu, setSorgu] = useState('');
   const [uyari, setUyari] = useState<string | null>(null);
   const [aliniyor, setAliniyor] = useState(false);
-  const [logoYuklenemedi, setLogoYuklenemedi] = useState(false);
-  const [logoDurumu, setLogoDurumu] = useState('bekliyor');
 
   const konumlar = useLocationStore((s) => s.locations);
   const ekle = useLocationStore((s) => s.add);
@@ -102,16 +99,9 @@ export default function OnboardingScreen() {
             />
             <Column gap="lg" align="center">
               <Image
-                source={logoYuklenemedi ? logoYedek : logoSembol}
-                style={{ width: 136, height: 136, borderRadius: logoYuklenemedi ? 18 : 0 }}
+                source={logoSembol}
+                style={{ width: 136, height: 136 }}
                 resizeMode="contain"
-                onLoadStart={() => setLogoDurumu('yükleniyor')}
-                onLoad={() => setLogoDurumu('yüklendi')}
-                onError={(event) => {
-                  console.warn('Onboarding logo image could not load:', event.nativeEvent.error);
-                  setLogoDurumu('hata');
-                  setLogoYuklenemedi(true);
-                }}
                 accessibilityElementsHidden
                 importantForAccessibility="no"
               />
@@ -124,11 +114,6 @@ export default function OnboardingScreen() {
               <Text variant="body" tone="onAccent" align="center">{t('onboarding.welcomeBody')}</Text>
             </Column>
           </Card>
-          {__DEV__ ? (
-            <Text variant="micro" tone="subtle" align="center">
-              {`BEdev • logo ${logoDurumu} • ${logoYuklenemedi ? 'yedek' : 'asıl'}`}
-            </Text>
-          ) : null}
         </View>
       ) : null}
 
