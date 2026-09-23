@@ -8,7 +8,7 @@
 import * as Location from 'expo-location';
 import { logger } from '@/lib/log';
 import { nearestPlace } from './search';
-import type { Place } from './types';
+import type { Coordinates, Place } from './types';
 
 const log = logger('location');
 
@@ -19,21 +19,52 @@ export type LocationOutcome =
   /** Konum alındı ama listemizde yeterince yakın şehir yok. */
   | { kind: 'noMatch'; latitude: number; longitude: number };
 
+/**
+ * GPS hesabında il merkezi yerine cihazın gerçek koordinatını kullan.
+ * En yakın kayıt yalnız saat dilimi/ülke için referanstır; adını GPS
+ * konumunun adıymış gibi göstermek Gebze'yi Yalova yapıyordu.
+ */
+export function gpsPlace(point: Coordinates, reference: Place, address?: {
+  subregion?: string | null;
+  city?: string | null;
+  region?: string | null;
+  country?: string | null;
+  isoCountryCode?: string | null;
+} | null): Place {
+  const name = address?.subregion?.trim() || address?.city?.trim()
+    || address?.region?.trim() || 'GPS';
+  return {
+    id: 'gps-current',
+    name,
+    country: address?.country?.trim() || reference.country,
+    countryCode: address?.isoCountryCode || reference.countryCode,
+    timezone: reference.timezone,
+    latitude: point.latitude,
+    longitude: point.longitude,
+  };
+}
+
 export async function requestDeviceLocation(): Promise<LocationOutcome> {
   try {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') return { kind: 'denied' };
 
     const position = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.Balanced,
+      accuracy: Location.Accuracy.High,
     });
     const { latitude, longitude } = position.coords;
-    const place = nearestPlace({ latitude, longitude });
-    if (!place) return { kind: 'noMatch', latitude, longitude };
+    const reference = nearestPlace({ latitude, longitude });
+    if (!reference) return { kind: 'noMatch', latitude, longitude };
+
+    // Ters adres çözümlemesi bağlantı/servis olmadığında başarısız olabilir;
+    // koordinatı koruyup nötr bir GPS adıyla devam et.
+    const address = await Location.reverseGeocodeAsync({ latitude, longitude })
+      .then((items) => items[0] ?? null)
+      .catch(() => null);
 
     return {
       kind: 'ok',
-      place,
+      place: gpsPlace({ latitude, longitude }, reference, address),
       accuracyKm: (position.coords.accuracy ?? 0) / 1000,
     };
   } catch (e) {
