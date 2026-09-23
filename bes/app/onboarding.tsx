@@ -6,7 +6,7 @@
  * ve sonradan ayarlardan değiştirilebilir.
  */
 import React, { useMemo, useState } from 'react';
-import { Image, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { router, Stack } from 'expo-router';
 import {
   Screen, Card, Column, Row, Text, Button, ListItem, ProgressBar, Banner, Field, EmptyState, Motif,
@@ -25,8 +25,48 @@ import { markOnboardingDone } from '@/boot/persistence';
 import { useBoot } from '@/boot/AppProviders';
 // Logo dosya olarak gelir, kodla çizilmez (D17).
 import logoSembol from '../assets/splash-icon.png';
+import markaKarosu from '../assets/brand/pattern-tile.png';
 
 const TOPLAM = 5;
+const MOTIF_KARO = 136;
+
+/** Tek bir görüntüyü esnetmek yerine karoları yüzeyin tamamına döşer. */
+function HosGeldinMotifi() {
+  const theme = useTheme();
+  const [boyut, setBoyut] = useState({ width: 0, height: 0 });
+  const sutun = Math.ceil(boyut.width / MOTIF_KARO);
+  const satir = Math.ceil(boyut.height / MOTIF_KARO);
+
+  return (
+    <View
+      pointerEvents="none"
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={[StyleSheet.absoluteFill, { opacity: theme.opacity.motifVurgu }]}
+      onLayout={({ nativeEvent: { layout } }) => {
+        const width = Math.ceil(layout.width);
+        const height = Math.ceil(layout.height);
+        setBoyut((onceki) => onceki.width === width && onceki.height === height
+          ? onceki : { width, height });
+      }}
+    >
+      {Array.from({ length: sutun * satir }, (_, i) => (
+        <Image
+          key={i}
+          source={markaKarosu}
+          resizeMode="stretch"
+          style={{
+            position: 'absolute',
+            left: (i % sutun) * MOTIF_KARO,
+            top: Math.floor(i / sutun) * MOTIF_KARO,
+            width: MOTIF_KARO,
+            height: MOTIF_KARO,
+          }}
+        />
+      ))}
+    </View>
+  );
+}
 
 export default function OnboardingScreen() {
   const t = useT();
@@ -69,34 +109,28 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <Screen scroll motif="marka">
+    <Screen scroll motif={adim === 1 ? undefined : 'marka'}>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <Column gap="sm" style={{ marginBottom: theme.spacing.xl }}>
-        <Text variant="micro" tone="subtle">
-          {t('onboarding.step', { current: adim, total: TOPLAM })}
-        </Text>
-        <ProgressBar value={adim / TOPLAM} accessibilityLabel={t('onboarding.step', { current: adim, total: TOPLAM })} />
-      </Column>
-
       {adim === 1 ? (
-        <View style={{ flexGrow: 1, justifyContent: 'center', paddingVertical: theme.spacing.xxl }}>
-          <Card
-            accent
-            padding="xxl"
-            style={{
-              minHeight: 388,
-              justifyContent: 'center',
-              borderWidth: 1,
-              borderColor: theme.colors.bezemeSolgun,
-            }}
-          >
-            {/* Desen yalnız kartın üstündedir; logo ve yazının arkasına yayılmaz. */}
-            <Motif
-              name="marka"
-              opacity={theme.opacity.motifVurgu}
-              style={{ bottom: undefined, height: 148 }}
-            />
+        <Card
+          accent
+          padding="xxl"
+          style={{
+            flexGrow: 1,
+            minHeight: 560,
+            borderWidth: 1,
+            borderColor: theme.colors.bezemeSolgun,
+          }}
+        >
+          <HosGeldinMotifi />
+          <Column gap="sm">
+            <Text variant="micro" tone="onAccent">
+              {t('onboarding.step', { current: adim, total: TOPLAM })}
+            </Text>
+            <ProgressBar value={adim / TOPLAM} accessibilityLabel={t('onboarding.step', { current: adim, total: TOPLAM })} />
+          </Column>
+          <View style={{ flexGrow: 1, justifyContent: 'center', minHeight: 352, paddingVertical: theme.spacing.xxl }}>
             <Column gap="lg" align="center">
               <Image
                 source={logoSembol}
@@ -113,9 +147,24 @@ export default function OnboardingScreen() {
               </Row>
               <Text variant="body" tone="onAccent" align="center">{t('onboarding.welcomeBody')}</Text>
             </Column>
-          </Card>
-        </View>
+          </View>
+          <Button
+            label={t('onboarding.start')}
+            size="lg"
+            block
+            onPress={ilerle}
+            style={{ borderWidth: 1, borderColor: theme.colors.onAccentBorder }}
+          />
+        </Card>
       ) : null}
+
+      {adim !== 1 ? <>
+      <Column gap="sm" style={{ marginBottom: theme.spacing.xl }}>
+        <Text variant="micro" tone="subtle">
+          {t('onboarding.step', { current: adim, total: TOPLAM })}
+        </Text>
+        <ProgressBar value={adim / TOPLAM} accessibilityLabel={t('onboarding.step', { current: adim, total: TOPLAM })} />
+      </Column>
 
       {adim === 2 ? (
         <Column gap="md">
@@ -202,9 +251,7 @@ export default function OnboardingScreen() {
 
       {adim !== 1 ? <View style={{ flex: 1, minHeight: theme.spacing.xxl }} /> : null}
 
-      {adim === 1 ? (
-        <Button label={t('onboarding.start')} size="lg" block onPress={ilerle} />
-      ) : <Row gap="md" align="center">
+      <Row gap="md" align="center">
         {adim > 1 ? (
           <Button label={t('nav.back')} variant="ghost" onPress={() => { setUyari(null); setAdim(adim - 1); }} />
         ) : null}
@@ -219,7 +266,8 @@ export default function OnboardingScreen() {
           label={adim === 1 ? t('onboarding.start') : adim === TOPLAM ? t('onboarding.finish') : t('common.next')}
           onPress={ilerle}
         />
-      </Row>}
+      </Row>
+      </> : null}
     </Screen>
   );
 }
