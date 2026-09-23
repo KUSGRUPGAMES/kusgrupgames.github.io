@@ -1,5 +1,5 @@
 import { normalizeSearch, matchScore } from '@/features/location/normalize';
-import { searchPlaces, nearestPlace, distanceKm } from '@/features/location/search';
+import { searchPlaces, nearestPlace, distanceKm, gpsPlace } from '@/features/location/search';
 import { TURKEY_PROVINCES, WORLD_CITIES, ALL_PLACES, findPlace } from '@/features/location/places';
 import { isValidCoordinates } from '@/features/location/types';
 
@@ -102,6 +102,21 @@ describe('arama ve en yakın şehir', () => {
     expect(nearestPlace({ latitude: 41.02, longitude: 28.95 })?.name).toBe('İstanbul');
     expect(nearestPlace({ latitude: 39.93, longitude: 32.86 })?.name).toBe('Ankara');
     expect(nearestPlace({ latitude: 21.43, longitude: 39.83 })?.name).toBe('Mekke');
+  });
+
+  it('Gebze GPS koordinatını Yalova il merkezine taşımaz', () => {
+    const point = { latitude: 40.8027, longitude: 29.4307 };
+    const nearest = nearestPlace(point);
+    expect(nearest?.name).toBe('Yalova');
+    const place = gpsPlace(point, nearest!, {
+      subregion: 'Gebze', region: 'Kocaeli',
+      country: 'Türkiye', isoCountryCode: 'TR',
+    });
+    expect(place.name).toBe('Gebze');
+    expect(place.latitude).toBe(point.latitude);
+    expect(place.longitude).toBe(point.longitude);
+    expect(place.timezone).toBe('Europe/Istanbul');
+    expect(gpsPlace(point, nearest!).name).toBe('GPS');
   });
 
   it('listeye çok uzak bir noktada null döner — yanlış şehir uydurulmaz', () => {
