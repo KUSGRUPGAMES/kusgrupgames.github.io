@@ -3,7 +3,7 @@ import React from 'react';
 import { ScrollView, View, type ViewStyle, RefreshControl } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme/ThemeProvider';
-import { Motif } from './motif/Motif';
+import { BrandPattern } from './BrandPattern';
 import { Gradient } from './Gradient';
 import type { MotifAdi } from './motif/Motif';
 import type { Spacing } from '@/theme/tokens';
@@ -21,7 +21,7 @@ export interface ScreenProps {
 }
 
 export function Screen({
-  children, scroll = false, motif, padding = 'lg', topInset = true, onRefresh, refreshing = false, style,
+  children, scroll = false, padding = 'lg', topInset = true, onRefresh, refreshing = false, style,
 }: ScreenProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -37,9 +37,9 @@ export function Screen({
   };
   return (
     <View style={[{ flex: 1, backgroundColor: theme.colors.background }, style]}>
-      {/* Zemin logonun kendi inişini taşır; düz renk yavan duruyordu (D18). */}
+      {/* Aynı zümrüt/fildişi zemin ve gerçek döşenmiş marka motifi her ekranda. */}
       <Gradient colors={theme.colors.backgroundGradient} />
-      {motif ? <Motif name={motif} /> : null}
+      <BrandPattern opacity={theme.opacity.motifEkran} />
       {scroll ? (
         <ScrollView
           contentContainerStyle={content}
