@@ -112,6 +112,15 @@ const config: ExpoConfig = {
       // ve aynı sembol varyantını kullanır.
       dark: { image: './assets/splash-icon.png', backgroundColor: ZEMIN },
     }],
+    // Bazı üçüncü taraf paketler (RNCAsyncStorage, RNSVG) kendi Pod
+    // tanımlarında çok eski bir iOS hedefi bildiriyor (13.4, 12.4);
+    // React Native'in kendi Podfile yardımcısı bunu normalde en düşük
+    // desteklenen sürüme (15.1) çekiyor, ama daha yeni bir Xcode bu eski
+    // hedefi doğrudan reddedip derlemeyi durdurabiliyor. Bu eklenti tüm
+    // Pod'ları ana hedefle aynı, zaten çalışan sürüme sabitliyor.
+    ['expo-build-properties', {
+      ios: { deploymentTarget: '15.1' },
+    }],
     'expo-localization',
     'expo-system-ui',
     // Android bildirim küçük ikonu **tek renk siluet** olmalı: sistem onu
