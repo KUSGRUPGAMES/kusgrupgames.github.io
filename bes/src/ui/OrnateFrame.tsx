@@ -60,7 +60,10 @@ export function OrnateFrame({ width, height, children, siluet, style }: OrnateFr
   // eğrisiyle çakışıyordu. Alınlık taç gibi panonun üstüne oturunca ikisi de
   // kalktı — yalnız dipteki ince şerit bindiriliyor ki araya dikiş girmesin.
   const govdeUst = alinlikYuk * 0.88;
-  const icerikUst = alinlikYuk - govdeUst;
+  // Kemerin altındaki açık alan da panonun parçası: içerik oradan başlar.
+  // Yalnız gövde içinde ortalamak, üstte büyük boşluk bırakıp vakit listesini
+  // ekranın altına itiyordu.
+  const icerikUst = alinlikYuk * 0.62;
   const koseGen = width * 0.14;
 
   return (
@@ -106,7 +109,6 @@ export function OrnateFrame({ width, height, children, siluet, style }: OrnateFr
             transform: [{ scaleY: -1 }],
           }}
         />
-        <View style={[StyleSheet.absoluteFill, { paddingTop: icerikUst }]}>{children}</View>
       </View>
 
       <Image
@@ -115,6 +117,10 @@ export function OrnateFrame({ width, height, children, siluet, style }: OrnateFr
         accessible={false}
         style={{ position: 'absolute', left: 0, top: 0, width, height: alinlikYuk }}
       />
+      <View style={[StyleSheet.absoluteFill, {
+        top: icerikUst,
+        paddingHorizontal: theme.spacing.lg,
+      }]}>{children}</View>
     </View>
   );
 }
