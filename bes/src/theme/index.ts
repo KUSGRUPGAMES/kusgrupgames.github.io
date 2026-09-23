@@ -2,7 +2,7 @@
  * Tema katmanı — açık ve koyu şema. Şartname §8.
  * Bileşenler yalnız `ThemeColors` rollerini kullanır; ham palet adı geçmez.
  */
-import { palette, spacing, radius, opacity, typography, duration, easing } from './tokens';
+import { palette, spacing, radius, opacity, typography, duration, easing, stroke, elevation } from './tokens';
 
 export interface ThemeColors {
   /** Ekranın en alt katmanı (gradyan çizilemeyen yerlerde düz karşılığı). */
@@ -84,6 +84,18 @@ export interface ThemeColors {
   onAccentTrack: string;
   /** Arka plan motifi rengi (düşük opaklıkla kullanılır). */
   motif: string;
+  /**
+   * Kat basamakları. Koyu temada derinlik gölgeyle değil **yüzey tonuyla**
+   * verilir; gölge koyu zeminde görünmüyor ve bütün kartlar birbirine
+   * yapışık duruyordu.
+   */
+  kat1: string;
+  kat2: string;
+  kat3: string;
+  /** Bezeme hattı (kemer, madalyon, ayraç) — altın ailesinden. */
+  bezeme: string;
+  /** Bezemenin soluk hâli: ikincil hatlar, iç çizgiler. */
+  bezemeSolgun: string;
 }
 
 export interface Theme {
@@ -93,12 +105,14 @@ export interface Theme {
   radius: typeof radius;
   opacity: typeof opacity;
   typography: typeof typography;
+  stroke: typeof stroke;
+  elevation: typeof elevation;
   /** Süreler ms. Reduced-motion açıkken tema katmanı hepsini 0'a çeker. */
   duration: Record<keyof typeof duration, number>;
   easing: typeof easing;
 }
 
-const shared = { spacing, radius, opacity, typography, duration, easing };
+const shared = { spacing, radius, opacity, typography, duration, easing, stroke, elevation };
 
 export const lightTheme: Theme = {
   name: 'light',
@@ -126,6 +140,11 @@ export const lightTheme: Theme = {
     onAccentBorder: 'rgba(251,246,236,0.20)',
     onAccentTrack: 'rgba(211,182,133,0.26)',
     highlight: palette.gold600,
+    kat1: palette.ivory25,
+    kat2: palette.ivory50,
+    kat3: palette.ivory200,
+    bezeme: palette.gold600,
+    bezemeSolgun: 'rgba(138,106,42,0.34)',
     danger: palette.danger,
     warning: palette.warning,
     success: palette.emerald500,
@@ -137,10 +156,10 @@ export const lightTheme: Theme = {
 export const darkTheme: Theme = {
   name: 'dark',
   colors: {
-    background: palette.emerald900,
-    backgroundGradient: [palette.emerald800, palette.emerald950],
-    surface: palette.emerald850,
-    surfaceRaised: palette.emerald700,
+    background: palette.night950,
+    backgroundGradient: [palette.night900, palette.night950],
+    surface: palette.night850,
+    surfaceRaised: palette.night800,
     border: 'rgba(255,255,255,0.10)',
     hairline: 'rgba(251,246,236,0.34)',
     controlBorder: palette.sage400,
@@ -156,6 +175,11 @@ export const darkTheme: Theme = {
     onAccentBorder: 'rgba(251,246,236,0.18)',
     onAccentTrack: 'rgba(211,182,133,0.24)',
     highlight: palette.gold400,
+    kat1: palette.night850,
+    kat2: palette.night800,
+    kat3: palette.night700,
+    bezeme: palette.gold400,
+    bezemeSolgun: 'rgba(211,182,133,0.34)',
     danger: '#E0715A',
     warning: '#E0A052',
     success: palette.emerald300,

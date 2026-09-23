@@ -50,6 +50,26 @@ export const palette = {
   emerald400: '#2E9B80',
   emerald300: '#63BFA6',   // koyu temada ön plan vurgusu
 
+  // --- Gece rampası: koyu temanın yüzey basamakları.
+  //
+  // Ürün sahibi koyu temada "lacivert / antrasit / gece" istedi. Saf lacivert
+  // denendiğinde marka bezemeleriyle çakışıyor: paketten gelen bütün
+  // çerçeveler, alınlıklar ve köşe işlemeleri **yeşil + altın**; mavi bir
+  // zeminde yeşil dolgular kirli duruyor.
+  //
+  // Çözüm ikisinin ortası: ölçülen zümrütlerin üstüne çok az mavi katılarak
+  // türetilen, doygunluğu düşük bir gece rampası. Gözle "gece/antrasit"
+  // okunuyor, bezemelerle aynı aileden kalıyor.
+  //
+  // Basamaklar birbirinden **görülebilir** ölçüde ayrı: kat farkı olmadan
+  // kart zeminden ayrılmıyor ve ekran düz bir leke gibi duruyordu.
+  night950: '#050B0A',     // en dip — ekran zemini
+  night900: '#081311',     // zemin gradyanının tepesi
+  night850: '#0B1A17',     // birinci kat: kart
+  night800: '#10231F',     // ikinci kat: yükseltilmiş kart, girdi
+  night700: '#16302A',     // üçüncü kat: basılı hâl, seçili satır
+  night600: '#1D3D35',     // kenarlık zemini
+
   // --- Altın: koyu masterdaki "5"in rampası.
   gold600: '#8A6A2A',      // türetilmiş: açık zeminde okunabilir koyu altın
   gold500: '#A88652',      // ölçüm: altın %5 — rampanın koyu ucu
@@ -91,13 +111,53 @@ export const palette = {
   success: '#2E9B80',
 } as const;
 
+/**
+ * Boşluk ölçeği — 4 piksellik ızgara.
+ *
+ * Ara değer yok: bir yere 14 ya da 18 yazmak gerekiyorsa ölçek yanlış
+ * seçilmiş demektir. Dağınıklığın en büyük sebebi rastgele boşluktur.
+ */
 export const spacing = {
   none: 0, xxs: 2, xs: 4, sm: 8, md: 12, lg: 16, xl: 20,
   xxl: 24, xxxl: 32, huge: 40, giant: 56,
+  /** Ekranın yatay kenar boşluğu — her ekranda aynı olmalı. */
+  gutter: 20,
+  /** Bölümler arası nefes payı. */
+  section: 28,
 } as const;
 
 export const radius = {
   none: 0, sm: 8, md: 12, lg: 16, xl: 20, xxl: 28, pill: 999,
+} as const;
+
+/**
+ * Çizgi kalınlıkları.
+ *
+ * Premium his ince ve **tutarlı** çizgiden gelir. Aynı ekranda 1, 1.5 ve 2
+ * piksellik kenarlıkların karışması işi amatör gösteriyordu.
+ */
+export const stroke = {
+  /** Ayırıcı ve kart kenarı. */
+  hair: 1,
+  /** Vurgulu kenar: seçili satır, odaklı girdi. */
+  bold: 1.5,
+  /** Bezeme hattı: kemer, madalyon. */
+  ornament: 2,
+} as const;
+
+/**
+ * Yükseklik (gölge) basamakları.
+ *
+ * Koyu temada gölge **görünmez**; derinlik yüzey renginin açılmasıyla
+ * verilir. O yüzden her basamak hem gölgeyi hem hangi yüzey tonuna
+ * karşılık geldiğini taşır. Sadece gölgeye güvenmek koyu temada bütün
+ * kartları düz ve birbirine yapışık gösteriyordu.
+ */
+export const elevation = {
+  flat: { shadowOpacity: 0, shadowRadius: 0, shadowOffset: { width: 0, height: 0 }, elevation: 0 },
+  kart: { shadowOpacity: 0.10, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 2 },
+  yukseltilmis: { shadowOpacity: 0.16, shadowRadius: 24, shadowOffset: { width: 0, height: 10 }, elevation: 6 },
+  kaplama: { shadowOpacity: 0.28, shadowRadius: 40, shadowOffset: { width: 0, height: 18 }, elevation: 12 },
 } as const;
 
 export const opacity = {
@@ -105,6 +165,13 @@ export const opacity = {
   muted: 0.62,
   /** Arka plan motifleri — şartname §9: düşük opaklık, gösterişsiz. */
   motif: 0.06,
+  /**
+   * Motif opaklığı yüzeye göre değişir. Tek bir değer her yerde yanlıştı:
+   * ekran zemininde görünmeyen desen, kartın içinde bağırıyordu.
+   */
+  motifEkran: 0.05,
+  motifKart: 0.035,
+  motifVurgu: 0.09,
   overlay: 0.72,
   full: 1,
 } as const;
@@ -120,6 +187,17 @@ export const typography = {
   callout: { size: 15, lineHeight: 21, weight: '500' },
   caption: { size: 13, lineHeight: 18, weight: '500' },
   micro: { size: 11, lineHeight: 15, weight: '600' },
+  /**
+   * Bölüm üstü küçük etiket — harf aralığı açık, hep büyük harf.
+   * Hiyerarşinin en üst katmanını başlıktan ayırır.
+   */
+  eyebrow: { size: 12, lineHeight: 16, weight: '700' },
+  /**
+   * Geri sayım ve sayaç rakamları. Tablo rakamı gerekir: değişen saniye
+   * rakamların genişliğini değiştirince sayı zıplıyordu.
+   */
+  numeric: { size: 44, lineHeight: 50, weight: '700' },
+  numericSmall: { size: 24, lineHeight: 28, weight: '700' },
   /** Kur'an metni — diacritics için geniş satır aralığı (§10). */
   arabic: { size: 30, lineHeight: 58, weight: '400' },
   arabicSmall: { size: 22, lineHeight: 44, weight: '400' },
@@ -136,5 +214,7 @@ export const easing = {
 } as const;
 
 export type Spacing = keyof typeof spacing;
+export type Stroke = keyof typeof stroke;
+export type Elevation = keyof typeof elevation;
 export type Radius = keyof typeof radius;
 export type TypographyToken = keyof typeof typography;
