@@ -165,12 +165,10 @@ function StartupScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: dark ? palette.emerald900 : palette.ivory100,
       justifyContent: 'center', alignItems: 'center' }}>
-      {dark ? (
-        <>
-          <Gradient colors={[palette.emerald600, palette.emerald900]} />
-          <BrandPattern opacity={opacity.motifEkran} />
-        </>
-      ) : <Gradient colors={[palette.ivory50, palette.ivory200]} />}
+      <Gradient colors={dark
+        ? [palette.emerald800, palette.emerald950]
+        : [palette.ivory50, palette.ivory200]} />
+      <BrandPattern opacity={opacity.motifEkran} />
       <Image source={dark ? splashLogo : splashLogoLight} resizeMode="contain" style={{ width: 200, height: 200 }} />
     </View>
   );
