@@ -61,7 +61,7 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <Screen scroll motif="rubElHizb">
+    <Screen scroll motif="marka">
       <Stack.Screen options={{ headerShown: false }} />
 
       <Column gap="sm" style={{ marginBottom: theme.spacing.xl }}>

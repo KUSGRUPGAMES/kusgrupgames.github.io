@@ -185,7 +185,7 @@ export function DailyAyahCard({ ctx }: { ctx: DailyContext }) {
 
   return (
     <Card
-      motif="rubElHizb"
+      motif="marka"
       onPress={() => router.push(`/reader?surah=${ayet.surah}&ayah=${ayet.ayah}`)}
       accessibilityLabel={t('explore.dailyAyah')}
     >

@@ -4,7 +4,7 @@ import { View, Pressable, type ViewStyle, type StyleProp } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Motif } from './motif/Motif';
 import { Gradient } from './Gradient';
-import type { MotifName } from './motif/patterns';
+import type { MotifAdi } from './motif/Motif';
 import type { Spacing, Radius } from '@/theme/tokens';
 
 export interface CardProps {
@@ -13,7 +13,7 @@ export interface CardProps {
   radius?: Radius;
   /** Vurgulu kart — marka renginde dolgu (bir sonraki vakit kartı gibi). */
   accent?: boolean;
-  motif?: MotifName;
+  motif?: MotifAdi;
   onPress?: () => void;
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;

@@ -29,4 +29,5 @@ export { VirtualList, type VirtualListProps } from './VirtualList';
 export { Gradient, type GradientProps } from './Gradient';
 export { Motif, type MotifProps } from './motif/Motif';
 export { motifTile, MOTIF_NAMES, type MotifName, type MotifTile } from './motif/patterns';
-export { OrnateFrame, kemerYolu, type OrnateFrameProps } from './OrnateFrame';
+export { OrnateFrame, type OrnateFrameProps } from './OrnateFrame';
+export type { MotifAdi } from './motif/Motif';

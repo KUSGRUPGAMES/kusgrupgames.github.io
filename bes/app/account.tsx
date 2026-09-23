@@ -86,7 +86,7 @@ export default function AccountScreen() {
   );
 
   return (
-    <Screen scroll motif="rubElHizb">
+    <Screen scroll motif="marka">
       <Stack.Screen options={{ headerShown: true, title: t('account.title') }} />
 
       <Card accent motif="starLattice">

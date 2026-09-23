@@ -5,13 +5,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Motif } from './motif/Motif';
 import { Gradient } from './Gradient';
-import type { MotifName } from './motif/patterns';
+import type { MotifAdi } from './motif/Motif';
 import type { Spacing } from '@/theme/tokens';
 
 export interface ScreenProps {
   children: React.ReactNode;
   scroll?: boolean;
-  motif?: MotifName;
+  motif?: MotifAdi;
   padding?: Spacing;
   /** Üst güvenli alan boşluğu uygulansın mı (kendi başlığı olan ekranlarda kapatılır). */
   topInset?: boolean;

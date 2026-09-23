@@ -64,7 +64,7 @@ export default function DhikrStatsScreen() {
   );
 
   return (
-    <Screen scroll motif="rubElHizb">
+    <Screen scroll motif="marka">
       <Stack.Screen options={{ headerShown: true, title: t('dhikr.stats') }} />
 
       <Card accent motif="starLattice">

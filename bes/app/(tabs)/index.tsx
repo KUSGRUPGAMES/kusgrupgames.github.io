@@ -13,7 +13,7 @@ import {
 import { Brand } from '@/config/brand';
 // Görseller `import` ile alınır: `require()` lint kuralıyla yasak ve
 // `types/assets.d.ts` zaten `*.png` modülünü bildiriyor.
-import camiSiluet from '../../assets/brand/mosque-skyline.png';
+import camiSiluet from '../../assets/brand/paket/islami_siluet_03.png';
 // İki sembol var ve **temaya göre seçilir**. Açık temada açık renkli sembol
 // fildişi zeminde tamamen kayboluyordu; dosya adındaki "light/dark" sembolün
 // kendi rengidir, kullanılacağı temanın değil.
@@ -62,7 +62,7 @@ export default function HomeScreen() {
   // Kemerli kart ekran genişliğine göre ölçeklenir; sabit yükseklik dar
   // telefonlarda kemeri eziyordu.
   const { width: ekranGen } = useWindowDimensions();
-  const kartGen = Math.max(260, Math.min(420, ekranGen - theme.spacing.lg * 2));
+  const kartGen = Math.max(240, ekranGen - theme.spacing.lg * 2);
 
   const ctx = useMemo<DailyContext | null>(() => {
     if (!konum) return null;
@@ -74,7 +74,7 @@ export default function HomeScreen() {
 
   if (!konum || !ctx) {
     return (
-      <Screen motif="rubElHizb">
+      <Screen motif="marka">
         <EmptyState
           icon="location"
           title={t('location.empty')}
@@ -90,8 +90,13 @@ export default function HomeScreen() {
     switch (id) {
       case 'nextPrayer':
         return (
-          <OrnateFrame key={id} width={kartGen} height={Math.round(kartGen * 1.06)}>
-            <Column gap="md" align="center" style={{ flex: 1 }}>
+          <OrnateFrame
+            key={id}
+            width={kartGen}
+            height={Math.round(kartGen * 0.92)}
+            siluet={camiSiluet}
+          >
+            <Column gap="md" align="center" style={{ flex: 1, justifyContent: 'center' }}>
               <Text variant="callout" tone="onAccent">{t('prayer.next')}</Text>
               {live?.next ? (
                 <CountdownRing
@@ -101,7 +106,7 @@ export default function HomeScreen() {
                   // 2.25:1'e düşüyor ve halka kayboluyordu (D18).
                   color={theme.colors.onAccentHighlight}
                   trackColor={theme.colors.onAccentTrack}
-                  size={Math.round(kartGen * 0.46)}
+                  size={Math.round(kartGen * 0.44)}
                   accessibilityLabel={t('prayer.remainingTo', {
                     name: label(live.next.key),
                     time: formatCountdown(live.secondsToNext),
@@ -116,17 +121,6 @@ export default function HomeScreen() {
                 <Text variant="body" tone="onAccent" align="center">{t('prayer.polarNote')}</Text>
               )}
             </Column>
-            {/* Cami silüeti kartın tabanına oturur. Marka paketinden gelen
-                çizimdir, kodla çizilmez (D17'nin aynı gerekçesi). */}
-            <Image
-              source={camiSiluet}
-              resizeMode="contain"
-              accessible={false}
-              style={{
-                position: 'absolute', left: 0, right: 0, bottom: 0,
-                width: kartGen, height: Math.round(kartGen * 0.30), opacity: 0.30,
-              }}
-            />
           </OrnateFrame>
         );
       case 'todayTimes':
@@ -154,7 +148,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <Screen scroll motif="rubElHizb">
+    <Screen scroll motif="marka">
       {/* Üst çubuk: solda bildirimler, ortada marka, sağda vakit ayarları.
           Onaylanan taslaktaki düzen budur; daire içindeki düğmeler markanın
           altın hattını taşır. */}
