@@ -47,12 +47,15 @@ export interface OrnateFrameProps {
 export function OrnateFrame({ width, height, children, siluet, style }: OrnateFrameProps) {
   const theme = useTheme();
   const alinlikYuk = width / ALINLIK_ORAN;
-  // Alınlık gövdenin üstüne biner: bir kısmı gövdenin içinde kalır, gerisi
-  // yukarı taşar. Tam üstte dursa kart ikiye bölünmüş gibi görünüyor.
-  const govdeUst = alinlikYuk * 0.52;
-  // **İçerik alınlığın bittiği yerden başlar.** İlk denemede içerik gövdenin
-  // tepesinden başlıyordu ve alınlığın yan kemerleri yazının üstüne biniyordu;
-  // "Sıradaki vakit" satırı kemerin içinde kayboluyordu.
+  // **Alınlık panonun üstünde durur, içine girmez.**
+  //
+  // İki deneme gerekti. Önce yarı yarıya bindirildi: alınlığın yan kemerleri
+  // yazının üstüne biniyordu. Sonra içerik aşağı itildi ama bu sefer
+  // alınlığın alt lobları panonun *içinde* bitiyor ve kartın ortasında üç
+  // serbest yay parçası bırakıyordu; panonun düz üst kenarı da kemerin
+  // eğrisiyle çakışıyordu. Alınlık taç gibi panonun üstüne oturunca ikisi de
+  // kalktı — yalnız dipteki ince şerit bindiriliyor ki araya dikiş girmesin.
+  const govdeUst = alinlikYuk * 0.88;
   const icerikUst = alinlikYuk - govdeUst;
   const koseGen = width * 0.14;
 

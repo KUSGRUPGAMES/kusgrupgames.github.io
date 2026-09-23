@@ -93,7 +93,7 @@ export default function HomeScreen() {
           <OrnateFrame
             key={id}
             width={kartGen}
-            height={Math.round(kartGen * 1.02)}
+            height={Math.round(kartGen * 0.90)}
             siluet={camiSiluet}
           >
             <Column gap="md" align="center" style={{ flex: 1, justifyContent: 'center' }}>
@@ -106,7 +106,7 @@ export default function HomeScreen() {
                   // 2.25:1'e düşüyor ve halka kayboluyordu (D18).
                   color={theme.colors.onAccentHighlight}
                   trackColor={theme.colors.onAccentTrack}
-                  size={Math.round(kartGen * 0.34)}
+                  size={Math.round(kartGen * 0.38)}
                   accessibilityLabel={t('prayer.remainingTo', {
                     name: label(live.next.key),
                     time: formatCountdown(live.secondsToNext),
