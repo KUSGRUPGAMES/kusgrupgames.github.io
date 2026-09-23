@@ -25,6 +25,7 @@ import { markOnboardingDone } from '@/boot/persistence';
 import { useBoot } from '@/boot/AppProviders';
 // Logo dosya olarak gelir, kodla çizilmez (D17).
 import logoSembol from '../assets/splash-icon.png';
+import logoYedek from '../assets/brand/png/BES_AppIcon_Dark_256.png';
 
 const TOPLAM = 5;
 
@@ -37,6 +38,7 @@ export default function OnboardingScreen() {
   const [sorgu, setSorgu] = useState('');
   const [uyari, setUyari] = useState<string | null>(null);
   const [aliniyor, setAliniyor] = useState(false);
+  const [logoYuklenemedi, setLogoYuklenemedi] = useState(false);
 
   const konumlar = useLocationStore((s) => s.locations);
   const ekle = useLocationStore((s) => s.add);
@@ -99,9 +101,13 @@ export default function OnboardingScreen() {
             />
             <Column gap="lg" align="center">
               <Image
-                source={logoSembol}
-                style={{ width: 136, height: 136 }}
+                source={logoYuklenemedi ? logoYedek : logoSembol}
+                style={{ width: 136, height: 136, borderRadius: logoYuklenemedi ? 18 : 0 }}
                 resizeMode="contain"
+                onError={(event) => {
+                  console.warn('Onboarding logo image could not load:', event.nativeEvent.error);
+                  setLogoYuklenemedi(true);
+                }}
                 accessibilityElementsHidden
                 importantForAccessibility="no"
               />
