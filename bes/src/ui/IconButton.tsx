@@ -32,6 +32,8 @@ export function IconButton({ name, label, onPress, size = 22, color, disabled = 
           width: box, height: box, alignItems: 'center', justifyContent: 'center',
           borderRadius: theme.radius.pill,
           backgroundColor: filled ? theme.colors.surfaceRaised : 'transparent',
+          borderWidth: filled ? 1 : 0,
+          borderColor: theme.colors.bezemeSolgun,
           opacity: disabled ? theme.opacity.disabled : pressed ? 0.7 : 1,
         },
         style,
