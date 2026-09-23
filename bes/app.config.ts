@@ -127,6 +127,11 @@ const config: ExpoConfig = {
     // oluşturduğu hedeflere (RNSVG-RNSVGFilters, RNCAsyncStorage_resources
     // gibi) dokunmuyor. Bu ek eklenti tüm hedefleri zorla düzeltiyor.
     './plugins/withPodDeploymentTargetFix',
+    // Yeni Xcode/iOS SDK'lar "scene-based life cycle" benimsemeyen
+    // uygulamaları artık başlatmayı reddediyor (Expo'nun varsayılan
+    // AppDelegate.swift şablonu hâlâ eski, sahnesiz UIWindow kurulumunu
+    // kullanıyor). Bu eklenti pencere kurulumunu bir SceneDelegate'e taşır.
+    './plugins/withSceneBasedLifecycle',
     'expo-localization',
     'expo-system-ui',
     // Android bildirim küçük ikonu **tek renk siluet** olmalı: sistem onu
