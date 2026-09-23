@@ -1,5 +1,5 @@
 import { planNotifications, coverageDays, defaultNotificationSettings, PLATFORM_LIMIT, type NotificationSettings } from '@/features/notifications/plan';
-import { birlesikPlan, farkAl, bildirimImzasi, type KurulacakBildirim } from '@/features/notifications/coordinator';
+import { birlesikPlan, farkAl, bildirimImzasi, planImzasi, type KurulacakBildirim } from '@/features/notifications/coordinator';
 import { reminderCoverageDays, type Reminder } from '@/features/notifications/reminders';
 import type { PrayerKey } from '@/features/prayer/methods';
 import { rangeSchedule, type ScheduleInput } from '@/features/prayer/schedule';
@@ -244,6 +244,33 @@ describe('koordinatör — fark alma', () => {
     const f = farkAl([n('prayer-1', 1000)], [k('prayer-1', 1000, sesliImza)], false);
     expect(f.kurulacak.map((x) => x.id)).toEqual(['prayer-1']);
     expect(f.iptalEdilecek).toEqual(['prayer-1']);
+  });
+});
+
+describe('koordinatör — kanca tetikleyici imzası (planImzasi)', () => {
+  const n = (id: string, ms: number, title = 't', body = 'b'): KurulacakBildirim =>
+    ({ id, tur: 'prayer', at: new Date(ms), title, body });
+
+  it('kimlik ve zaman AYNI ama başlık/gövde değişince imza değişir', () => {
+    // Bu, useNotificationSync'in kendi eşitleme tetikleyicisi. `id@zaman`
+    // yeterli olsaydı, bir hatırlatıcının metni güncellenince (zamanı
+    // değişmeden) kanca farkı hiç fark etmez, `esitle()` hiç çağrılmaz,
+    // farkAl'ın içerik karşılaştırması devreye bile girmezdi.
+    const eski = planImzasi([n('reminder-x', 1000, 'Eski başlık', 'Eski gövde')], true);
+    const yeni = planImzasi([n('reminder-x', 1000, 'Yeni başlık', 'Yeni gövde')], true);
+    expect(eski).not.toBe(yeni);
+  });
+
+  it('kimlik ve zaman AYNI ama ses ayarı değişince imza değişir', () => {
+    const sessiz = planImzasi([n('prayer-1', 1000)], false);
+    const sesli = planImzasi([n('prayer-1', 1000)], true);
+    expect(sessiz).not.toBe(sesli);
+  });
+
+  it('hiçbir şey değişmezse imza aynı kalır', () => {
+    const a = planImzasi([n('prayer-1', 1000, 'x', 'y')], true);
+    const b = planImzasi([n('prayer-1', 1000, 'x', 'y')], true);
+    expect(a).toBe(b);
   });
 });
 

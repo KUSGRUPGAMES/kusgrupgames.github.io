@@ -135,6 +135,21 @@ export function bildirimImzasi(n: { title: string; body: string }, ses: boolean)
   return `${n.title}\u001F${n.body}\u001F${ses ? '1' : '0'}`;
 }
 
+/**
+ * Bütün planın kararlı özeti — eşitleme kancasının tetikleyici imzası bu.
+ *
+ * Yalnız kimlik ve zamanı özetlemek yetmez: aynı kimlik/zamanla duran bir
+ * kaydın başlığı ya da gövdesi değişmiş olabilir (dil değişimi, erken uyarı
+ * metni). `farkAl()` bu değişikliği zaten `bildirimImzasi` ile yakalıyor —
+ * ama yakalayabilmesi için önce eşitlemenin **çağrılması** gerekiyor. Kanca
+ * tarafındaki eski imza yalnız `id@zaman` taşıyordu; içerik aynı kalırken
+ * yalnız metin değişince kanca bunu fark etmiyor, `esitle()` hiç
+ * çağrılmıyor, `farkAl` hiç çalışmıyordu.
+ */
+export function planImzasi(plan: readonly KurulacakBildirim[], ses: boolean): string {
+  return plan.map((n) => `${n.id}@${n.at.getTime()}:${bildirimImzasi(n, ses)}`).join(',');
+}
+
 /** Cihazda kurulu bir kayıt — fark almak için gereken en az bilgi. */
 export interface KuruluKayit {
   id: string;

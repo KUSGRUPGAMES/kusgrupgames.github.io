@@ -35,7 +35,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import { useT } from '@/lib/i18n';
-import { useI18n } from '@/lib/i18n';
 import { useSettingsStore } from '@/store/settings';
 import { useLocationStore } from '@/store/locations';
 import { useWorshipStore } from '@/store/worship';
@@ -44,7 +43,7 @@ import { zonedNow } from '@/lib/time/zone';
 import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
 import { coverageDays, type NotificationSettings } from './plan';
 import { reminderCoverageDays } from './reminders';
-import { birlesikPlan, type KurulacakBildirim } from './coordinator';
+import { birlesikPlan, planImzasi, type KurulacakBildirim } from './coordinator';
 import { syncNotifications, type EsitlemeSonucu } from './service';
 import type { MethodId, PrayerKey } from '@/features/prayer/methods';
 
@@ -104,7 +103,6 @@ export interface NotificationSyncDurumu {
 
 export function useNotificationSync(): NotificationSyncDurumu {
   const t = useT();
-  const { language } = useI18n();
   const label = usePrayerLabel();
   const settings = useSettingsStore((s) => s.settings);
   const konum = useLocationStore((s) => s.active());
@@ -171,11 +169,17 @@ export function useNotificationSync(): NotificationSyncDurumu {
   /**
    * Planın kararlı imzası. Nesne kimliği her render değişiyor; eşitlemeyi ona
    * bağlamak sonsuz döngü üretiyordu.
+   *
+   * `planImzasi` her kaydın kimlik/zaman'ının yanında başlık, gövde ve ses
+   * ayarını da taşır. Yalnız `id@zaman` yeterli değildi: dil değişince ya da
+   * bir hatırlatıcının metni güncellenince kimlik ve zaman aynı kalıyor,
+   * eski imza değişmiyor, bu `useEffect` hiç tetiklenmiyor — `esitle()` hiç
+   * çağrılmadığı için `farkAl()`in içerik imzası karşılaştırması da devreye
+   * girmiyordu. Dil zaten `plan`ı (dolayısıyla `planImzasi`yi) değiştiriyor:
+   * `t`/`label` dil değişince yeniden oluşuyor, plan öğelerinin başlığı ve
+   * gövdesi yeni dille yeniden hesaplanıyor.
    */
-  const imza = useMemo(
-    () => `${ses ? 1 : 0}|${language}|${plan.map((n) => `${n.id}@${n.at.getTime()}`).join(',')}`,
-    [plan, ses, language],
-  );
+  const imza = useMemo(() => planImzasi(plan, ses), [plan, ses]);
 
   const esitle = useCallback(async () => {
     const sonuc = await syncNotifications(plan, { sound: ses });
