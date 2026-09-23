@@ -131,7 +131,7 @@ export default function OnboardingScreen() {
             </Card>
             {sorgu.trim() && sonuclar.length === 0 ? <Banner tone="info" title={t('location.noResult')} /> : null}
             {sonuclar.length > 0 ? (
-              <Card padding="sm">
+              <Card padding="sm" style={{ backgroundColor: theme.colors.kat3, borderColor: theme.colors.onAccentBorder }}>
                 {sonuclar.map((p) => (
                   <ListItem
                     key={p.id}
@@ -143,7 +143,12 @@ export default function OnboardingScreen() {
               </Card>
             ) : null}
             {aktif ? (
-              <Banner tone="success" title={aktif.label} description={`${aktif.country} · ${aktif.timezone}`} />
+              <Banner
+                tone="success"
+                title={aktif.label}
+                description={`${aktif.country} · ${aktif.timezone}`}
+                style={{ backgroundColor: theme.colors.kat3, borderWidth: 1, borderColor: theme.colors.onAccentBorder }}
+              />
             ) : null}
           </Column>
         ) : null}
