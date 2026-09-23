@@ -121,6 +121,12 @@ const config: ExpoConfig = {
     ['expo-build-properties', {
       ios: { deploymentTarget: '15.1' },
     }],
+    // expo-build-properties yukarıdaki ile aynı temel mekanizmayı
+    // (react_native_post_install) kullanıyor, o da yalnız ana Pod
+    // hedeflerini düzeltiyor — CocoaPods'un resource bundle için ayrı
+    // oluşturduğu hedeflere (RNSVG-RNSVGFilters, RNCAsyncStorage_resources
+    // gibi) dokunmuyor. Bu ek eklenti tüm hedefleri zorla düzeltiyor.
+    './plugins/withPodDeploymentTargetFix',
     'expo-localization',
     'expo-system-ui',
     // Android bildirim küçük ikonu **tek renk siluet** olmalı: sistem onu
