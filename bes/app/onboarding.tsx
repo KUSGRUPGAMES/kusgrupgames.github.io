@@ -9,7 +9,7 @@ import React, { useMemo, useState } from 'react';
 import { Image, View } from 'react-native';
 import { router, Stack } from 'expo-router';
 import {
-  Screen, Card, Column, Row, Text, Button, ListItem, ProgressBar, Banner, Field, EmptyState, Motif,
+  Screen, Card, Column, Row, Text, Button, ListItem, ProgressBar, Banner, Field, EmptyState,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -21,7 +21,7 @@ import { useLocationStore } from '@/store/locations';
 import { useSettingsStore } from '@/store/settings';
 import { useMethodName } from '@/features/hijri/labels';
 import { METHODS } from '@/features/prayer/methods';
-import { markOnboardingDone } from '@/boot/persistence';
+import { useBoot } from '@/boot/AppProviders';
 // Logo dosya olarak gelir, kodla çizilmez (D17).
 import logoSembol from '../assets/splash-icon.png';
 
@@ -35,6 +35,8 @@ export default function OnboardingScreen() {
   const [sorgu, setSorgu] = useState('');
   const [uyari, setUyari] = useState<string | null>(null);
   const [aliniyor, setAliniyor] = useState(false);
+  const [bitiriliyor, setBitiriliyor] = useState(false);
+  const { completeOnboarding } = useBoot();
 
   const konumlar = useLocationStore((s) => s.locations);
   const ekle = useLocationStore((s) => s.add);
@@ -57,11 +59,15 @@ export default function OnboardingScreen() {
     if (adim === 2 && konumlar.length === 0) { setUyari(t('onboarding.locationNeeded')); return; }
     setUyari(null);
     if (adim < TOPLAM) { setAdim(adim + 1); return; }
-    void markOnboardingDone().then(() => router.replace('/'));
+    if (bitiriliyor) return;
+    setBitiriliyor(true);
+    void completeOnboarding()
+      .then(() => router.replace('/'))
+      .catch(() => { setUyari(t('error.crashBody')); setBitiriliyor(false); });
   };
 
   return (
-    <Screen scroll motif="marka">
+    <Screen scroll>
       <Stack.Screen options={{ headerShown: false }} />
 
       <Column gap="sm" style={{ marginBottom: theme.spacing.xl }}>
@@ -75,7 +81,7 @@ export default function OnboardingScreen() {
       {adim === 1 ? <View style={{ flex: 1 }} /> : null}
 
       {adim === 1 ? (
-        <Card accent motif="starLattice" padding="xxl">
+        <Card accent motif="marka" padding="xxl">
           <Column gap="md" align="center">
             {/* Altın sembol zümrüt kartın üstünde durduğu için saydam varyant. */}
             <Image
@@ -92,7 +98,8 @@ export default function OnboardingScreen() {
       ) : null}
 
       {adim === 2 ? (
-        <Column gap="md">
+        <Card motif="marka" padding="xl">
+          <Column gap="md">
           <Text variant="title2">{t('onboarding.locationTitle')}</Text>
           <Text variant="body" tone="muted">{t('location.permissionBody')}</Text>
           <Button label={t('location.useGps')} icon="location" onPress={gpsKullan} loading={aliniyor} block />
@@ -119,7 +126,8 @@ export default function OnboardingScreen() {
           {aktif ? (
             <Banner tone="success" title={aktif.label} description={`${aktif.country} · ${aktif.timezone}`} />
           ) : null}
-        </Column>
+          </Column>
+        </Card>
       ) : null}
 
       {adim === 3 ? (
@@ -144,7 +152,8 @@ export default function OnboardingScreen() {
       ) : null}
 
       {adim === 4 ? (
-        <Column gap="md">
+        <Card motif="marka" padding="xl">
+          <Column gap="md">
           <Text variant="title2">{t('onboarding.notificationTitle')}</Text>
           <Text variant="body" tone="muted">{t('onboarding.notificationBody')}</Text>
           <Button
@@ -154,18 +163,18 @@ export default function OnboardingScreen() {
             block
           />
           <Text variant="caption" tone="subtle">{t('notification.coverageNote')}</Text>
-        </Column>
+          </Column>
+        </Card>
       ) : null}
 
       {adim === 5 ? (
-        <View>
-          <Motif name="girih" />
+        <Card motif="marka" padding="xxl">
           <EmptyState
             icon="check"
             title={t('onboarding.readyTitle')}
             description={t('onboarding.readyBody')}
           />
-        </View>
+        </Card>
       ) : null}
 
       {uyari ? (
@@ -192,6 +201,7 @@ export default function OnboardingScreen() {
         <Button
           label={adim === 1 ? t('onboarding.start') : adim === TOPLAM ? t('onboarding.finish') : t('common.next')}
           onPress={ilerle}
+          loading={bitiriliyor}
         />
       </Row>
     </Screen>
