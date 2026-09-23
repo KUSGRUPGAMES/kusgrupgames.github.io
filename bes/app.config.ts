@@ -132,6 +132,10 @@ const config: ExpoConfig = {
     // AppDelegate.swift şablonu hâlâ eski, sahnesiz UIWindow kurulumunu
     // kullanıyor). Bu eklenti pencere kurulumunu bir SceneDelegate'e taşır.
     './plugins/withSceneBasedLifecycle',
+    // expo prebuild --clean ios/ klasörünü sıfırdan üretiyor; Xcode'da elle
+    // seçilen Development Team ayarı da bu sıfırlamada kayboluyor. Bu
+    // eklenti Team ID'yi build ayarlarına kalıcı olarak yazıyor.
+    './plugins/withDevelopmentTeam',
     'expo-localization',
     'expo-system-ui',
     // Android bildirim küçük ikonu **tek renk siluet** olmalı: sistem onu
