@@ -58,3 +58,29 @@ export function nearestPlace(point: Coordinates, maxKm = 400): Place | null {
   }
   return bestKm <= maxKm ? best : null;
 }
+
+/**
+ * GPS hesabında il merkezi yerine cihazın gerçek koordinatını kullan.
+ * En yakın kayıt yalnız saat dilimi/ülke için referanstır; adını GPS
+ * konumunun adıymış gibi göstermek Gebze'yi Yalova yapıyordu.
+ */
+export function gpsPlace(point: Coordinates, reference: Place, address?: {
+  subregion?: string | null;
+  city?: string | null;
+  region?: string | null;
+  country?: string | null;
+  isoCountryCode?: string | null;
+} | null): Place {
+  const name = address?.subregion?.trim() || address?.city?.trim()
+    || address?.region?.trim() || 'GPS';
+  return {
+    id: 'gps-current',
+    name,
+    country: address?.country?.trim() || reference.country,
+    countryCode: address?.isoCountryCode || reference.countryCode,
+    timezone: reference.timezone,
+    latitude: point.latitude,
+    longitude: point.longitude,
+  };
+}
+
