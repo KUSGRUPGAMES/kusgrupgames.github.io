@@ -7,7 +7,7 @@ import React, { useMemo } from 'react';
 import { View, Image, Pressable, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import {
-  Screen, Card, Text, Column, CountdownRing, Button, EmptyState, Banner, Row,
+  Screen, Card, Text, Column, Button, EmptyState, Banner, Row,
   Icon, IconButton, OrnateFrame,
 } from '@/ui';
 import { Brand } from '@/config/brand';
@@ -93,40 +93,34 @@ export default function HomeScreen() {
           <OrnateFrame
             key={id}
             width={kartGen}
-            height={Math.round(kartGen * 0.80)}
+            height={Math.round(kartGen * 0.88)}
             siluet={camiSiluet}
           >
-            <Column gap="sm" align="center" style={{ flex: 1, justifyContent: 'center' }}>
-              <Text variant="callout" tone="onAccent">{t('prayer.next')}</Text>
+            <Column gap="sm" align="center" style={{ flex: 1, justifyContent: 'center', paddingBottom: theme.spacing.xl }}>
+              <Text variant="eyebrow" tone="onAccent" align="center" style={{ color: theme.colors.onAccentHighlight, letterSpacing: 2 }}>
+                {t('prayer.next').toLocaleUpperCase()}
+              </Text>
               {live?.next ? (
-                <CountdownRing
-                  progress={live.progress}
-                  // Halka marka kartının üstünde: altın ve yatak zümrüde göre
-                  // seçilir. Açık temanın koyulaştırılmış altını burada
-                  // 2.25:1'e düşüyor ve halka kayboluyordu (D18).
-                  color={theme.colors.onAccentHighlight}
-                  trackColor={theme.colors.onAccentTrack}
-                  size={Math.round(kartGen * 0.42)}
-                  accessibilityLabel={t('prayer.remainingTo', {
-                    name: label(live.next.key),
-                    time: formatCountdown(live.secondsToNext),
-                  })}
-                >
-                  <Column align="center" gap="xxs">
-                    <Text variant="title2" tone="onAccent">{label(live.next.key)}</Text>
-                    <Text
-                      variant="numericSmall"
-                      tone="onAccent"
-                      align="center"
-                      lines={1}
-                      adjustsFontSizeToFit
-                      minimumFontScale={0.8}
-                      style={{ width: Math.round(kartGen * 0.42) - 28, fontVariant: ['tabular-nums'] }}
-                    >
-                      {formatCountdown(live.secondsToNext)}
-                    </Text>
-                  </Column>
-                </CountdownRing>
+                <Column align="center" gap="sm" style={{ width: '100%' }}>
+                  <Text variant="display" tone="onAccent" align="center">{label(live.next.key)}</Text>
+                  <Text
+                    variant="numeric"
+                    tone="onAccent"
+                    align="center"
+                    lines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.7}
+                    accessibilityLabel={t('prayer.remainingTo', {
+                      name: label(live.next.key), time: formatCountdown(live.secondsToNext),
+                    })}
+                    style={{ width: '100%', fontVariant: ['tabular-nums'], color: theme.colors.onAccentHighlight }}
+                  >
+                    {formatCountdown(live.secondsToNext)}
+                  </Text>
+                  <View style={{ width: 92, height: 2, backgroundColor: theme.colors.onAccentTrack, marginTop: theme.spacing.xs }}>
+                    <View style={{ width: `${Math.min(100, Math.max(0, live.progress * 100))}%`, height: 2, backgroundColor: theme.colors.onAccentHighlight }} />
+                  </View>
+                </Column>
               ) : (
                 <Text variant="body" tone="onAccent" align="center">{t('prayer.polarNote')}</Text>
               )}
@@ -135,13 +129,15 @@ export default function HomeScreen() {
         );
       case 'todayTimes':
         return live ? (
-          <Card key={id}>
+          <Card key={id} accent>
             <Column gap="sm">
               <Row align="center" gap="sm">
-                <Icon name="mosque" size={20} color={theme.colors.highlight} />
-                <Text variant="caption" tone="muted">{t('prayer.todayTimes')}</Text>
+                <Icon name="mosque" size={20} color={theme.colors.onAccentHighlight} />
+                <Text variant="caption" tone="onAccent" style={{ color: theme.colors.onAccentHighlight }}>
+                  {t('prayer.todayTimes')}
+                </Text>
               </Row>
-              <PrayerList day={live.today} highlight={live.current} />
+              <PrayerList day={live.today} highlight={live.current} branded />
             </Column>
           </Card>
         ) : <Banner key={id} tone="info" title={t('common.loading')} />;
@@ -196,7 +192,7 @@ export default function HomeScreen() {
           flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm,
           paddingVertical: theme.spacing.sm, paddingHorizontal: theme.spacing.md,
           borderRadius: theme.radius.lg, borderWidth: 1,
-          borderColor: theme.colors.border, backgroundColor: theme.colors.surface,
+          borderColor: theme.colors.bezemeSolgun, backgroundColor: theme.colors.surface,
           marginBottom: theme.spacing.md,
         }}
       >
