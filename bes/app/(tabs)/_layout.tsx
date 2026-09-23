@@ -46,11 +46,11 @@ export default function TabsLayout() {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: theme.colors.accent,
-          tabBarInactiveTintColor: theme.colors.textSubtle,
+          tabBarActiveTintColor: theme.colors.onAccentHighlight,
+          tabBarInactiveTintColor: theme.name === 'dark' ? theme.colors.textMuted : theme.colors.onAccent,
           tabBarStyle: {
-            backgroundColor: theme.colors.surface,
-            borderTopColor: theme.colors.border,
+            backgroundColor: theme.colors.accentGradient[1],
+            borderTopColor: theme.colors.bezemeSolgun,
           },
         }}
       >
