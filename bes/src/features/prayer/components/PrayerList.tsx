@@ -51,7 +51,7 @@ export function usePrayerShortLabel(): (key: PrayerKey) => string {
   return (key) => t(SHORT_KEY[key]);
 }
 
-export function PrayerList({ day, highlight }: { day: DaySchedule; highlight?: PrayerKey | null }) {
+export function PrayerList({ day, highlight, branded = false }: { day: DaySchedule; highlight?: PrayerKey | null; branded?: boolean }) {
   const theme = useTheme();
   const label = usePrayerLabel();
   return (
@@ -61,7 +61,9 @@ export function PrayerList({ day, highlight }: { day: DaySchedule; highlight?: P
         const aktif = highlight === key;
         return (
           <View key={key}>
-            {i > 0 && !aktif ? <Divider /> : null}
+            {i > 0 && !aktif ? branded
+              ? <View style={{ height: 1, backgroundColor: theme.colors.bezemeSolgun }} />
+              : <Divider /> : null}
             <Row
               align="center"
               justify="space-between"
@@ -70,7 +72,7 @@ export function PrayerList({ day, highlight }: { day: DaySchedule; highlight?: P
                 paddingHorizontal: aktif ? theme.spacing.sm : 0,
                 borderRadius: aktif ? theme.radius.md : 0,
                 borderWidth: aktif ? 1 : 0,
-                borderColor: aktif ? theme.colors.highlight : 'transparent',
+                borderColor: aktif ? (branded ? theme.colors.onAccentHighlight : theme.colors.highlight) : 'transparent',
                 backgroundColor: aktif ? theme.colors.onAccentBorder : 'transparent',
               }}
               accessible
@@ -80,20 +82,22 @@ export function PrayerList({ day, highlight }: { day: DaySchedule; highlight?: P
                 <Icon
                   name={ICON[key]}
                   size={20}
-                  color={aktif ? theme.colors.highlight : theme.colors.textMuted}
+                  color={branded ? theme.colors.onAccentHighlight : aktif ? theme.colors.highlight : theme.colors.textMuted}
                 />
-                <Text variant={aktif ? 'bodyStrong' : 'body'} tone={aktif ? 'accent' : 'default'}>
+                <Text variant={aktif ? 'bodyStrong' : 'body'} tone={branded ? 'onAccent' : aktif ? 'accent' : 'default'}
+                  style={branded && aktif ? { color: theme.colors.onAccentHighlight } : undefined}>
                   {label(key)}
                 </Text>
               </Row>
               <Row align="center" gap="xs">
-                <Text variant={aktif ? 'bodyStrong' : 'body'} tone={aktif ? 'accent' : 'muted'}>
+                <Text variant={aktif ? 'bodyStrong' : 'body'} tone={branded ? 'onAccent' : aktif ? 'accent' : 'muted'}
+                  style={branded && aktif ? { color: theme.colors.onAccentHighlight } : undefined}>
                   {formatHM(entry?.hours ?? null)}
                 </Text>
                 <Icon
                   name="chevronRight"
                   size={16}
-                  color={aktif ? theme.colors.highlight : theme.colors.textSubtle}
+                  color={branded ? theme.colors.onAccentHighlight : aktif ? theme.colors.highlight : theme.colors.textSubtle}
                 />
               </Row>
             </Row>
