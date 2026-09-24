@@ -24,6 +24,28 @@ npm run gate           # tsc + eslint + test — commit öncesi zorunlu
 npm run bundle         # paketlemenin çalıştığını doğrular
 ```
 
+### Mac üzerinden fiziksel iPhone'da inceleme
+
+iPhone'u kabloyla bağla, kilidini aç ve cihaz listesinden fiziksel iPhone'u seç.
+`bes/` klasöründe, bağımlılıklar kuruluysa:
+
+```bash
+node tools/ios-device.cjs
+```
+
+İlk kurulumda önce `npm install --legacy-peer-deps --no-audit --no-fund`
+çalıştır. Başlatıcı varsayılan olarak `APP_VARIANT=development` kullanır.
+Expo SDK 54'ün eski Simulator denetimi Xcode 27'de başarısız olursa aktif
+Xcode içindeki Device Hub kimliğini ve `simctl` aracını doğrular. Uyarlama
+yalnız bu başlatma işleminde geçerlidir; kurulu paketleri değiştirmez.
+Kod imzalama ve diğer Xcode denetimleri Expo tarafından yürütülür.
+
+Başlatıcının hata ve uyumluluk senaryoları:
+
+```bash
+node --test tools/ios-device.test.cjs
+```
+
 ### Kalite kapısı
 
 `npm run gate` yeşil değilse commit yok. Kapı üç adımdan oluşur ve **sırası
