@@ -105,6 +105,20 @@ export const de: Partial<Record<StringKey, string>> = {
   'quran.noBookmarks': 'Noch keine Lesezeichen',
   'quran.readerSettingsHint': 'Schriftgröße und Zeilenabstand einstellen',
 
+  // --- Koran lesen lernen (arabisches Alphabet)
+  'learn.title': 'Koran lesen lernen',
+  'learn.subtitle': 'Beginne mit dem Alphabet, arbeite dich zu kurzen Suren vor',
+  'learn.letters': 'Buchstaben',
+  'learn.letterProgress': '{done} / {total} Buchstaben gelernt',
+  'learn.harakat': 'Vokalzeichen',
+  'learn.harakatProgress': '{done} / {total} Zeichen gelernt',
+  'learn.practice': 'Übung: kurze Suren',
+  'learn.practiceBody': 'Festige das Gelernte, indem du echte Koranrezitation hörst.',
+  'learn.example': 'Beispielwort',
+  'learn.markLearned': 'Als gelernt markieren',
+  'learn.markNotLearned': 'Markierung aufheben',
+  'learn.disclaimer': 'Dieser Abschnitt ist nur ein einfacher Einstieg; die richtige Aussprache und Tadschwīd lernt man am besten bei einem Lehrer.',
+
   'worship.title': 'Gottesdienst', 'worship.dhikr': 'Dhikr-Zähler', 'dhikr.pick': 'Dhikr wählen',
   'worship.duas': 'Bittgebete', 'worship.names': 'Die Namen Allahs',
   'worship.qada': 'Versäumte Gebete', 'worship.guide': 'Gebetsanleitung',

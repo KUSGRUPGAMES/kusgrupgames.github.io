@@ -105,6 +105,20 @@ export const en: Partial<Record<StringKey, string>> = {
   'quran.noBookmarks': 'No bookmarks yet',
   'quran.readerSettingsHint': 'Adjust text size and line spacing',
 
+  // --- Learn to read the Qur’an (Arabic alphabet)
+  'learn.title': 'Learn to read the Qur’an',
+  'learn.subtitle': 'Start with the alphabet, build up to short surahs',
+  'learn.letters': 'Letters',
+  'learn.letterProgress': '{done} / {total} letters learned',
+  'learn.harakat': 'Vowel marks',
+  'learn.harakatProgress': '{done} / {total} marks learned',
+  'learn.practice': 'Practice: short surahs',
+  'learn.practiceBody': 'Reinforce what you learned by listening to real Qur’an recitation.',
+  'learn.example': 'Example word',
+  'learn.markLearned': 'Mark as learned',
+  'learn.markNotLearned': 'Mark as not learned',
+  'learn.disclaimer': 'This section is a simple starting point; correct pronunciation and tajwīd are best learned from a teacher.',
+
   'worship.title': 'Worship', 'worship.dhikr': 'Dhikr counter', 'dhikr.pick': 'Choose a dhikr',
   'worship.duas': 'Supplications', 'worship.names': 'Names of Allah',
   'worship.qada': 'Missed prayers', 'worship.guide': 'Prayer guide',

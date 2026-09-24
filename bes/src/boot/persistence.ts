@@ -11,6 +11,7 @@ import { useFavoriteStore, type Favorite } from '@/store/favorites';
 import { useHomeLayoutStore } from '@/store/homeLayout';
 import { useReadingStore, type Bookmark, type ReadingPosition } from '@/store/reading';
 import { useWorshipStore, type WorshipSnapshot } from '@/store/worship';
+import { useLearningStore, type LearningMark } from '@/store/learning';
 import { configureCrashReporter, type CrashRecord } from '@/lib/crash/reporter';
 import type { SavedLocation } from '@/features/location/types';
 import type { BackupPayload } from '@/features/backup/backup';
@@ -129,6 +130,15 @@ const worshipCodec = {
   fallback: {},
 };
 
+const learningCodec = {
+  parse: (raw: unknown) => z.array(z.object({
+    kind: z.enum(['letter', 'harake']),
+    recordId: z.string(),
+    learnedAt: z.number(),
+  })).parse(raw) as LearningMark[],
+  fallback: [] as LearningMark[],
+};
+
 const crashCodec = {
   parse: (raw: unknown) => z.array(z.object({
     at: z.string(),
@@ -151,7 +161,7 @@ export interface BootState {
 
 /** Açılışta tüm kalıcı durumu yükler ve yazıcıları bağlar. */
 export async function hydrateAll(): Promise<BootState> {
-  const [ayar, konum, onboarding, favoriler, duzen, okuma, ibadet, cokmeler] = await Promise.all([
+  const [ayar, konum, onboarding, favoriler, duzen, okuma, ibadet, cokmeler, ogrenme] = await Promise.all([
     kv.read(KEYS.settings, settingsCodec),
     kv.read(KEYS.locations, locationsCodec),
     kv.read(KEYS.onboardingDone, onboardingCodec),
@@ -160,6 +170,7 @@ export async function hydrateAll(): Promise<BootState> {
     kv.read(KEYS.reading, readingCodec),
     kv.read(KEYS.worship, worshipCodec),
     kv.read(KEYS.crashes, crashCodec),
+    kv.read(KEYS.learning, learningCodec),
   ]);
 
   useSettingsStore.getState().hydrate(ayar);
@@ -169,6 +180,7 @@ export async function hydrateAll(): Promise<BootState> {
   useReadingStore.getState().hydrate(okuma.position, okuma.bookmarks as Bookmark[]);
   // Zod çıktısı şemayla birebir; tip daraltması için tek noktada dönüştürülür.
   useWorshipStore.getState().hydrate(ibadet as WorshipSnapshot);
+  useLearningStore.getState().hydrate(ogrenme);
   configureCrashReporter({
     initial: cokmeler,
     persist: (kayitlar) => { void kv.write(KEYS.crashes, kayitlar); },
@@ -190,6 +202,7 @@ export async function hydrateAll(): Promise<BootState> {
       qadaHistory: s.qadaHistory, days: s.days, fasts: s.fasts,
     });
   });
+  useLearningStore.subscribe((s) => { void kv.write(KEYS.learning, s.items); });
 
   return { onboardingDone: onboarding };
 }

@@ -401,6 +401,12 @@ describe('marka adı', () => {
     // Klasör, paket kimliği, adresler, akış dosyaları, depolama öneki ve
     // derin bağlantı şeması hep birlikte `bes` oldu (D21). Tek bir yerde
     // `sukun` kalırsa bağlantı kırılır ya da iki ad yan yana görünür.
+    //
+    // İstisna: `src/content/harekat.ts` "sükun" kelimesini eski marka adı
+    // olarak değil, Arapça harekelerden birinin gerçek dilbilgisi terimi
+    // olarak içerir (harfin harekesiz okunduğunu gösteren işaret). Rastlantı
+    // eski isimle aynı yazılışta olsa da bu bir marka sızıntısı değildir.
+    const ISTISNA = join(KOK, 'src', 'content', 'harekat.ts');
     const suclular: string[] = [];
     for (const f of [
       ...dosyalar(join(KOK, 'src'), ['.ts', '.tsx']),
@@ -412,6 +418,7 @@ describe('marka adı', () => {
       join(KOK, 'package.json'),
       join(KOK, 'src', 'config', 'brand.json'),
     ]) {
+      if (f === ISTISNA) continue;
       if (/sukun/i.test(oku(f))) suclular.push(f.slice(KOK.length + 1));
     }
     expect(suclular).toEqual([]);

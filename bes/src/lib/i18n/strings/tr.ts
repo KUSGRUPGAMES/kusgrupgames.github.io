@@ -207,6 +207,20 @@ export const tr = {
   'quran.noBookmarks': 'Henüz yer imi eklemedin',
   'quran.readerSettingsHint': 'Yazı boyutunu ve satır aralığını ayarla',
 
+  // --- Kur’an okuma eğitimi (elifbâ)
+  'learn.title': 'Kur’an okumayı öğren',
+  'learn.subtitle': 'Elif-bâdan başla, kısa surelerle pekiştir',
+  'learn.letters': 'Harfler',
+  'learn.letterProgress': '{done} / {total} harf öğrenildi',
+  'learn.harakat': 'Harekeler',
+  'learn.harakatProgress': '{done} / {total} hareke öğrenildi',
+  'learn.practice': 'Pratik: kısa sureler',
+  'learn.practiceBody': 'Öğrendiklerini gerçek Kur’an sesiyle dinleyerek pekiştir.',
+  'learn.example': 'Örnek kelime',
+  'learn.markLearned': 'Öğrendim',
+  'learn.markNotLearned': 'Öğrenilmedi say',
+  'learn.disclaimer': 'Bu bölüm basit bir başlangıçtır; doğru mahreç ve tecvid bir hocadan öğrenilir.',
+
   // --- ibadet (§37–§49)
   'worship.title': 'İbadet',
   'worship.dhikr': 'Zikirmatik',

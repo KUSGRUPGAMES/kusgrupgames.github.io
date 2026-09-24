@@ -84,7 +84,7 @@ export default function QuranScreen() {
         </Card>
       ) : null}
 
-      <Row gap="sm">
+      <Row gap="sm" wrap>
         <Button
           label={t('common.search')}
           icon="search"
@@ -98,6 +98,13 @@ export default function QuranScreen() {
           variant="secondary"
           size="sm"
           onPress={() => router.push('/recitation')}
+        />
+        <Button
+          label={t('learn.title')}
+          icon="book"
+          variant="secondary"
+          size="sm"
+          onPress={() => router.push('/quran-learn')}
         />
       </Row>
 

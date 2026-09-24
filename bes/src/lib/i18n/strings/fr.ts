@@ -105,6 +105,20 @@ export const fr: Partial<Record<StringKey, string>> = {
   'quran.noBookmarks': 'Aucun signet pour le moment',
   'quran.readerSettingsHint': 'Réglez la taille du texte et l\u2019interligne',
 
+  // --- Apprendre à lire le Coran (alphabet arabe)
+  'learn.title': 'Apprendre à lire le Coran',
+  'learn.subtitle': 'Commence par l\u2019alphabet, progresse vers de courtes sourates',
+  'learn.letters': 'Lettres',
+  'learn.letterProgress': '{done} / {total} lettres apprises',
+  'learn.harakat': 'Voyelles courtes',
+  'learn.harakatProgress': '{done} / {total} signes appris',
+  'learn.practice': 'Pratique : courtes sourates',
+  'learn.practiceBody': 'Consolide ce que tu as appris en écoutant une vraie récitation du Coran.',
+  'learn.example': 'Mot d\u2019exemple',
+  'learn.markLearned': 'Marquer comme appris',
+  'learn.markNotLearned': 'Retirer la marque',
+  'learn.disclaimer': 'Cette section n\u2019est qu\u2019un simple point de départ ; la prononciation correcte et le tajwīd s\u2019apprennent auprès d\u2019un professeur.',
+
   'worship.title': 'Adoration', 'worship.dhikr': 'Compteur de dhikr', 'dhikr.pick': 'Choisir un dhikr',
   'worship.duas': 'Invocations', 'worship.names': "Les noms d'Allah",
   'worship.qada': 'Prières manquées', 'worship.guide': 'Guide de la prière',

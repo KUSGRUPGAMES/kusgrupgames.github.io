@@ -105,6 +105,20 @@ export const ar: Partial<Record<StringKey, string>> = {
   'quran.noBookmarks': 'لا توجد علامات بعد',
   'quran.readerSettingsHint': 'اضبط حجم الخط وتباعد الأسطر',
 
+  // --- تعلّم قراءة القرآن (الحروف الهجائية)
+  'learn.title': 'تعلّم قراءة القرآن',
+  'learn.subtitle': 'ابدأ بالحروف الهجائية وارتقِ إلى سور قصيرة',
+  'learn.letters': 'الحروف',
+  'learn.letterProgress': 'تعلّمت {done} / {total} حرفًا',
+  'learn.harakat': 'الحركات',
+  'learn.harakatProgress': 'تعلّمت {done} / {total} حركات',
+  'learn.practice': 'تدريب: سور قصيرة',
+  'learn.practiceBody': 'رسّخ ما تعلّمته بالاستماع إلى تلاوة قرآنية حقيقية.',
+  'learn.example': 'كلمة مثال',
+  'learn.markLearned': 'وضع علامة "تعلّمت"',
+  'learn.markNotLearned': 'إلغاء علامة "تعلّمت"',
+  'learn.disclaimer': 'هذا القسم بداية بسيطة فقط؛ المخارج الصحيحة وأحكام التجويد تُتعلّم من معلّم.',
+
   'worship.title': 'العبادة', 'worship.dhikr': 'المسبحة', 'dhikr.pick': 'اختر ذكرًا',
   'worship.duas': 'الأدعية', 'worship.names': 'أسماء الله الحسنى',
   'worship.qada': 'الصلوات الفائتة', 'worship.guide': 'دليل الصلاة',
