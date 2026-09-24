@@ -3,23 +3,23 @@
  * Kart düzeni kullanıcı tarafından değiştirilebilir; sıradaki vakit kartı
  * sabittir (kapatılamaz), çünkü uygulamanın çekirdeği odur.
  */
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Image, Pressable, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import {
-  Screen, Card, Text, Column, CountdownRing, Button, EmptyState, Banner, Row,
-  Icon, IconButton, OrnateFrame,
+  Screen, Card, Text, Column, Button, EmptyState, Banner, Row,
+  Icon, IconButton, OrnateFrame, SectionHeader,
 } from '@/ui';
 import { Brand } from '@/config/brand';
 // Görseller `import` ile alınır: `require()` lint kuralıyla yasak ve
 // `types/assets.d.ts` zaten `*.png` modülünü bildiriyor.
-import camiSiluet from '../../assets/brand/paket/islami_siluet_03.png';
+import camiSiluet from '../../assets/brand/hero-mosque-sunset.png';
 // İki sembol var ve **temaya göre seçilir**. Açık temada açık renkli sembol
 // fildişi zeminde tamamen kayboluyordu; dosya adındaki "light/dark" sembolün
 // kendi rengidir, kullanılacağı temanın değil.
 import sembolAcikRenk from '../../assets/brand/symbol-micro-light.png';
 import sembolKoyuRenk from '../../assets/brand/symbol-micro-dark.png';
-import { useT } from '@/lib/i18n';
+import { useT, useI18n, localeTag } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useLocationStore } from '@/store/locations';
 import { useSettingsStore } from '@/store/settings';
@@ -37,11 +37,15 @@ import {
 
 export default function HomeScreen() {
   const t = useT();
+  const { language } = useI18n();
   const theme = useTheme();
   const label = usePrayerLabel();
   const konum = useLocationStore((s) => s.active());
   const settings = useSettingsStore((s) => s.settings);
   const kartlar = useHomeLayoutStore((s) => s.cards);
+  const [digerKartlarAcik, setDigerKartlarAcik] = useState(false);
+  const digerKartlar = kartlar.filter((c) => c.visible && c.id !== 'nextPrayer' && c.id !== 'todayTimes');
+  const vakitlerAcik = kartlar.find((c) => c.id === 'todayTimes')?.visible !== false;
 
   const input = useMemo<ScheduleInput | null>(() => {
     if (!konum) return null;
@@ -93,30 +97,31 @@ export default function HomeScreen() {
           <OrnateFrame
             key={id}
             width={kartGen}
-            height={Math.round(kartGen * 0.90)}
+            height={Math.round(kartGen * 0.79)}
             siluet={camiSiluet}
           >
-            <Column gap="md" align="center" style={{ flex: 1, justifyContent: 'center' }}>
-              <Text variant="callout" tone="onAccent">{t('prayer.next')}</Text>
+            <Column gap="xs" align="center" style={{ flex: 1, justifyContent: 'center' }}>
+              <Text variant="eyebrow" tone="onAccent" align="center" style={{ color: theme.colors.onAccentHighlight, letterSpacing: 2 }}>
+                {t('prayer.next').toLocaleUpperCase(localeTag(language))}
+              </Text>
               {live?.next ? (
-                <CountdownRing
-                  progress={live.progress}
-                  // Halka marka kartının üstünde: altın ve yatak zümrüde göre
-                  // seçilir. Açık temanın koyulaştırılmış altını burada
-                  // 2.25:1'e düşüyor ve halka kayboluyordu (D18).
-                  color={theme.colors.onAccentHighlight}
-                  trackColor={theme.colors.onAccentTrack}
-                  size={Math.round(kartGen * 0.38)}
-                  accessibilityLabel={t('prayer.remainingTo', {
-                    name: label(live.next.key),
-                    time: formatCountdown(live.secondsToNext),
-                  })}
-                >
-                  <Column align="center" gap="xxs">
-                    <Text variant="title2" tone="onAccent">{label(live.next.key)}</Text>
-                    <Text variant="display" tone="onAccent">{formatCountdown(live.secondsToNext)}</Text>
-                  </Column>
-                </CountdownRing>
+                <Column align="center" gap="xs" style={{ width: '100%' }}>
+                  <Text variant="display" tone="onAccent" align="center">{label(live.next.key)}</Text>
+                  <Text
+                    variant="numeric"
+                    tone="onAccent"
+                    align="center"
+                    lines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.7}
+                    accessibilityLabel={t('prayer.remainingTo', {
+                      name: label(live.next.key), time: formatCountdown(live.secondsToNext),
+                    })}
+                    style={{ width: '100%', fontVariant: ['tabular-nums'], color: theme.colors.onAccentHighlight }}
+                  >
+                    {formatCountdown(live.secondsToNext)}
+                  </Text>
+                </Column>
               ) : (
                 <Text variant="body" tone="onAccent" align="center">{t('prayer.polarNote')}</Text>
               )}
@@ -125,13 +130,16 @@ export default function HomeScreen() {
         );
       case 'todayTimes':
         return live ? (
-          <Card key={id}>
-            <Column gap="sm">
+          <Card key={id} accent padding="md">
+            <Column gap="xs">
               <Row align="center" gap="sm">
-                <Icon name="mosque" size={20} color={theme.colors.highlight} />
-                <Text variant="caption" tone="muted">{t('prayer.todayTimes')}</Text>
+                <Icon name="mosque" size={20} color={theme.colors.onAccentHighlight} />
+                <Text variant="bodyStrong" tone="onAccent" style={{ color: theme.colors.onAccentHighlight }}>
+                  {t('prayer.todayTimes')}
+                </Text>
               </Row>
-              <PrayerList day={live.today} highlight={live.current} />
+              <PrayerList day={live.today} highlight={live.current} branded compact
+                onPrayerPress={() => router.push('/prayer-calendar')} />
             </Column>
           </Card>
         ) : <Banner key={id} tone="info" title={t('common.loading')} />;
@@ -148,11 +156,9 @@ export default function HomeScreen() {
   };
 
   return (
-    <Screen scroll motif="marka">
-      {/* Üst çubuk: solda bildirimler, ortada marka, sağda vakit ayarları.
-          Onaylanan taslaktaki düzen budur; daire içindeki düğmeler markanın
-          altın hattını taşır. */}
-      <Row align="center" justify="space-between" style={{ marginBottom: theme.spacing.md }}>
+    <Screen scroll motif="marka" padding="none">
+      <View style={{ paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.sm }}>
+      <Row align="center" justify="space-between" style={{ marginBottom: theme.spacing.sm }}>
         <IconButton
           name="bell"
           label={t('reminder.title')}
@@ -165,7 +171,7 @@ export default function HomeScreen() {
             resizeMode="contain"
             accessible
             accessibilityLabel={Brand.appName}
-            style={{ width: 40, height: 40 }}
+          style={{ width: 52, height: 52 }}
           />
           <Text variant="caption" tone="muted">{Brand.tagline}</Text>
         </Column>
@@ -177,30 +183,59 @@ export default function HomeScreen() {
         />
       </Row>
 
-      {/* Konum hapı: iğne, şehir, ülke ve ok — taslaktaki satırın aynısı. */}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`${konum.label}, ${konum.country}`}
         onPress={() => router.push('/location')}
         style={{
           flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm,
-          paddingVertical: theme.spacing.sm, paddingHorizontal: theme.spacing.md,
-          borderRadius: theme.radius.lg, borderWidth: 1,
-          borderColor: theme.colors.border, backgroundColor: theme.colors.surface,
-          marginBottom: theme.spacing.md,
+          minHeight: 48, paddingVertical: theme.spacing.xs, paddingHorizontal: theme.spacing.md,
+          borderRadius: theme.radius.pill, borderWidth: 1,
+          borderColor: theme.colors.bezemeSolgun, backgroundColor: theme.colors.surface,
+          marginBottom: theme.spacing.sm,
         }}
       >
         <Icon name="location" size={20} color={theme.colors.highlight} />
-        <Column gap="xxs" style={{ flex: 1 }}>
-          <Text variant="bodyStrong">{konum.label}</Text>
-          <Text variant="caption" tone="muted">{konum.country}</Text>
-        </Column>
+        <Text variant="bodyStrong" lines={1} style={{ flex: 1 }}>{`${konum.label}, ${konum.country}`}</Text>
         <Icon name="chevronDown" size={18} color={theme.colors.textSubtle} />
       </Pressable>
 
-      <Column gap="md">
-        {kartlar.filter((c) => c.visible).map((c) => kart(c.id))}
-      </Column>
+      <View style={{ alignItems: 'center', marginBottom: theme.spacing.sm }}>{kart('nextPrayer')}</View>
+      {vakitlerAcik ? <View style={{ marginBottom: theme.spacing.sm }}>{kart('todayTimes')}</View> : null}
+
+      <Row gap="sm">
+        <Card padding="sm" onPress={() => router.push('/(tabs)/quran')}
+          accessibilityLabel={t('nav.quran')} style={{ flex: 1 }}>
+          <Row gap="sm" align="center" style={{ minHeight: 40 }}>
+            <Icon name="book" size={24} color={theme.colors.highlight} />
+            <Text variant="bodyStrong" lines={1} style={{ flex: 1 }}>{t('nav.quran')}</Text>
+            <Icon name="chevronRight" size={16} color={theme.colors.highlight} />
+          </Row>
+        </Card>
+        <Card padding="sm" onPress={() => router.push('/qibla')}
+          accessibilityLabel={t('qibla.title')} style={{ flex: 1 }}>
+          <Row gap="sm" align="center" style={{ minHeight: 40 }}>
+            <Icon name="compass" size={24} color={theme.colors.highlight} />
+            <Text variant="bodyStrong" lines={1} style={{ flex: 1 }}>{t('qibla.title')}</Text>
+            <Icon name="chevronRight" size={16} color={theme.colors.highlight} />
+          </Row>
+        </Card>
+      </Row>
+
+      {digerKartlar.length > 0 ? (
+        <>
+          {digerKartlarAcik ? (
+            <>
+              <SectionHeader title={t('common.today')} />
+              <Column gap="md">{digerKartlar.map((c) => kart(c.id))}</Column>
+            </>
+          ) : null}
+          <Button label={digerKartlarAcik ? t('nav.close') : t('common.more')}
+            icon={digerKartlarAcik ? 'chevronUp' : 'chevronDown'}
+            variant="secondary" block style={{ marginTop: theme.spacing.md }}
+            onPress={() => setDigerKartlarAcik((open) => !open)} />
+        </>
+      ) : null}
 
       <Row gap="sm" style={{ marginTop: theme.spacing.xl }}>
         <Button
@@ -219,6 +254,7 @@ export default function HomeScreen() {
           onPress={() => router.push('/home-layout')}
         />
       </Row>
+      </View>
     </Screen>
   );
 }

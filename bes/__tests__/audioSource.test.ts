@@ -1,6 +1,6 @@
 import {
   RECITERS, AUDIO_SOURCE, DEFAULT_RECITER, getReciter, resolveBitrate,
-  ayahAudioUrl, surahAudioUrls, estimateBytes,
+  ayahAudioUrl, surahAudioUrls, estimateBytes, playbackAudioUrl,
 } from '@/features/audio/source';
 
 describe('kıraat kaynağı', () => {
@@ -49,6 +49,18 @@ describe('kıraat kaynağı', () => {
   it('sınır âyetleri geçerlidir', () => {
     expect(ayahAudioUrl('ar.alafasy', 1)).toContain('/1.mp3');
     expect(ayahAudioUrl('ar.alafasy', 6236)).toContain('/6236.mp3');
+  });
+
+  it('indirilmemiş âyet için var olmayan yerel yol yerine oynatılabilir CDN adresini kullanır', async () => {
+    const exists = jest.fn().mockResolvedValue(false);
+    expect(await playbackAudioUrl('ar.alafasy', 1, 128, 'file:///olmayan/1.mp3', exists))
+      .toBe('https://cdn.islamic.network/quran/audio/128/ar.alafasy/1.mp3');
+    expect(exists).toHaveBeenCalledWith('file:///olmayan/1.mp3');
+  });
+
+  it('indirilmiş âyet çevrimdışıyken yerel dosyadan açılır', async () => {
+    expect(await playbackAudioUrl('ar.alafasy', 262, 128, 'file:///indirilen/262.mp3',
+      async () => true)).toBe('file:///indirilen/262.mp3');
   });
 
   it('sure adresleri âyet sayısı kadar ve sıralıdır', () => {

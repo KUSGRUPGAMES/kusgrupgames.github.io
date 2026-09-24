@@ -51,8 +51,10 @@ describe('uzun listeler sanallaştırılmış', () => {
   it('okuyucu ekranı âyetleri sanal listeyle çiziyor', () => {
     const s = oku(join(ROOT, 'app', 'reader.tsx'));
     expect(s).toContain('FlatList');
-    // 286 âyetlik Bakara için ölçüm atlanabilsin diye satır yüksekliği veriliyor.
-    expect(s).toContain('getItemLayout');
+    // Âyet kartları font ölçeği ve meal nedeniyle farklı yükseklikte olabilir.
+    // Yer imine giderken ölçülmemiş satır için yaklaşık kaydırma yapılır.
+    expect(s).toContain('onScrollToIndexFailed');
+    expect(s).toContain('scrollToOffset');
   });
 });
 

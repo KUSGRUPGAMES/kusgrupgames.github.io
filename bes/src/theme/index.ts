@@ -156,10 +156,10 @@ export const lightTheme: Theme = {
 export const darkTheme: Theme = {
   name: 'dark',
   colors: {
-    background: palette.night950,
-    backgroundGradient: [palette.night900, palette.night950],
-    surface: palette.night850,
-    surfaceRaised: palette.night800,
+    background: palette.emerald950,
+    backgroundGradient: [palette.emerald800, palette.emerald950],
+    surface: palette.emerald850,
+    surfaceRaised: palette.emerald700,
     border: 'rgba(255,255,255,0.10)',
     hairline: 'rgba(251,246,236,0.34)',
     controlBorder: palette.sage400,

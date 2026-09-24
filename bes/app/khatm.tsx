@@ -47,7 +47,7 @@ export default function KhatmScreen() {
   const cuzBaslari = useMemo(() => getJuzStarts(), []);
 
   return (
-    <Screen scroll motif="girih">
+    <Screen topInset={false} scroll motif="girih">
       <Stack.Screen options={{ headerShown: true, title: t('khatm.title') }} />
 
       {!etkin ? (

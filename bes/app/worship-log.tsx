@@ -107,7 +107,7 @@ export default function WorshipLogScreen() {
   ];
 
   return (
-    <Screen scroll motif="girih">
+    <Screen topInset={false} scroll motif="girih">
       <Stack.Screen options={{ headerShown: true, title: t('log.title') }} />
 
       <Row align="center" justify="space-between">

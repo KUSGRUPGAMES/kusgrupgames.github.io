@@ -58,7 +58,7 @@ export default function NotificationsCenterScreen() {
   const bicim = useDateFormat({ dateStyle: 'short', timeStyle: 'short' });
 
   return (
-    <Screen motif="octagonGrid" padding="lg">
+    <Screen topInset={false} motif="octagonGrid" padding="lg">
       <Stack.Screen options={{ headerShown: true, title: t('notification.center') }} />
       <View style={{ flex: 1 }}>
         <VirtualList

@@ -48,7 +48,7 @@ export default function HijriScreen() {
   }, [girdi, yon]);
 
   return (
-    <Screen scroll motif="girih">
+    <Screen topInset={false} scroll motif="girih">
       <Stack.Screen options={{ headerShown: true, title: t('hijri.title') }} />
 
       <Card accent>

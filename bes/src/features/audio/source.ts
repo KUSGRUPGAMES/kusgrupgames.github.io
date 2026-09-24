@@ -57,6 +57,22 @@ export function ayahAudioUrl(reciterId: string, globalAyah: number, preferredBit
   return `${catalog.cdn}/${bit}/${reciter.id}/${globalAyah}.mp3`;
 }
 
+/** İndirilmiş dosya gerçekten varsa onu kullan; aksi halde çevrimiçi akışa geç. */
+export async function playbackAudioUrl(
+  reciterId: string,
+  globalAyah: number,
+  bitrate: number,
+  localUri: string | null,
+  exists: (uri: string) => Promise<boolean>,
+): Promise<string | null> {
+  if (localUri) {
+    try {
+      if (await exists(localUri)) return localUri;
+    } catch { /* Depolama okunamadıysa ağ kaynağı denenir. */ }
+  }
+  return ayahAudioUrl(reciterId, globalAyah, bitrate);
+}
+
 /** Bir surenin bütün âyetlerinin adresleri — indirme için. */
 export function surahAudioUrls(
   reciterId: string,

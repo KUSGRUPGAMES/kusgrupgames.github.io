@@ -43,7 +43,7 @@ export default function QiblaScreen() {
 
   if (!konum) {
     return (
-      <Screen>
+      <Screen topInset={false}>
         <Stack.Screen options={{ headerShown: true, title: t('qibla.title') }} />
         <EmptyState
           icon="compass"
@@ -62,7 +62,7 @@ export default function QiblaScreen() {
       : t('qibla.accuracyLow');
 
   return (
-    <Screen scroll motif="octagonGrid">
+    <Screen topInset={false} scroll motif="octagonGrid">
       <Stack.Screen options={{ headerShown: true, title: t('qibla.title') }} />
 
       <SectionHeader title={konum.label} subtitle={konum.country} />

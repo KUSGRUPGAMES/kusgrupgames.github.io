@@ -19,7 +19,7 @@ export default function DuasScreen() {
   );
 
   return (
-    <Screen scroll motif="arch">
+    <Screen topInset={false} scroll motif="arch">
       <Stack.Screen options={{ headerShown: true, title: t('dua.title') }} />
       <SectionHeader title={t('dua.categories')} />
 

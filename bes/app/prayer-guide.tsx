@@ -14,7 +14,7 @@ export default function PrayerGuideScreen() {
   const bolum = PRAYER_GUIDE.find((s) => s.id === acik) ?? PRAYER_GUIDE[0]!;
 
   return (
-    <Screen scroll motif="arch">
+    <Screen topInset={false} scroll motif="arch">
       <Stack.Screen options={{ headerShown: true, title: t('guide.title') }} />
 
       <Banner tone="info" title={t('guide.disclaimer')} description={GUIDE_NOTE} />

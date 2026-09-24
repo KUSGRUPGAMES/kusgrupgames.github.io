@@ -23,7 +23,7 @@ export default function KnowledgeScreen() {
   }, [konu, sorgu]);
 
   return (
-    <Screen scroll motif="octagonGrid">
+    <Screen topInset={false} scroll motif="octagonGrid">
       <Stack.Screen options={{ headerShown: true, title: t('knowledge.title') }} />
       <SectionHeader title={t('knowledge.topics')} />
 

@@ -43,7 +43,7 @@ export default function LocationScreen() {
   };
 
   return (
-    <Screen scroll>
+    <Screen topInset={false} scroll>
       <Stack.Screen options={{ headerShown: true, title: t('location.title') }} />
 
       <Row gap="sm" align="center">

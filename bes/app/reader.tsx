@@ -20,7 +20,7 @@ import {
 } from '@/features/quran/data';
 import { useSurahName } from '@/features/quran/names';
 import { useRecitation } from '@/features/audio/useRecitation';
-import { getReciter, AUDIO_SOURCE } from '@/features/audio/source';
+import { getReciter, resolveBitrate, AUDIO_SOURCE } from '@/features/audio/source';
 import { localPath } from '@/features/audio/downloadManager';
 import { useReadingStore, BOOKMARK_COLORS, type BookmarkColor } from '@/store/reading';
 import { useSettingsStore } from '@/store/settings';
@@ -57,7 +57,8 @@ export default function ReaderScreen() {
   const kiraat = useRecitation({
     reciterId: settings.recitation.reciterId,
     bitrate: settings.recitation.bitrate,
-    localUri: (global) => localPath(settings.recitation.reciterId, settings.recitation.bitrate, global),
+    localUri: (global) => localPath(settings.recitation.reciterId,
+      okuyucu ? resolveBitrate(okuyucu, settings.recitation.bitrate) : settings.recitation.bitrate, global),
   });
 
   /** Verilen âyetten başlayarak surenin sonuna kadar çalar. */
@@ -69,11 +70,25 @@ export default function ReaderScreen() {
   const [secili, setSecili] = useState<QuranAyah | null>(null);
   const [not, setNot] = useState('');
   const liste = useRef<FlatList<QuranAyah>>(null);
+  const kaydirildi = useRef(false);
+  const kaydirmaDenemesi = useRef(0);
 
   // Açılışta hedef âyete konumlan ve "son okunan"ı güncelle.
   useEffect(() => {
     setPosition(sureNo, hedefAyet);
+    kaydirildi.current = false;
+    kaydirmaDenemesi.current = 0;
   }, [sureNo, hedefAyet, setPosition]);
+
+  // Ayet kartları farklı yüksekliktedir; sabit ölçü kullanmak yer imlerini
+  // yanlış ayete kaydırıyordu. Önce yaklaşık konuma git, ölçülünce düzelt.
+  const hedefeKaydir = useCallback(() => {
+    if (hedefAyet <= 1 || kaydirildi.current || ayetler.length === 0) return;
+    kaydirildi.current = true;
+    requestAnimationFrame(() => liste.current?.scrollToIndex({
+      index: Math.min(hedefAyet - 1, ayetler.length - 1), animated: false,
+    }));
+  }, [hedefAyet, ayetler.length]);
 
   const ayetAc = useCallback((a: QuranAyah) => {
     setSecili(a);
@@ -91,7 +106,7 @@ export default function ReaderScreen() {
 
   if (!sure) {
     return (
-      <Screen>
+      <Screen topInset={false}>
         <Stack.Screen options={{ headerShown: true, title: t('quran.title') }} />
         <Banner tone="warning" title={t('error.notFound')} />
       </Screen>
@@ -101,7 +116,7 @@ export default function ReaderScreen() {
   const yerImi = secili ? bookmarkAt(secili.surah, secili.ayah) : undefined;
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <Screen padding="none" topInset={false}>
       <Stack.Screen
         options={{
           headerShown: true,
@@ -113,12 +128,17 @@ export default function ReaderScreen() {
         ref={liste}
         data={[...ayetler]}
         keyExtractor={(a) => `${a.surah}:${a.ayah}`}
-        initialScrollIndex={Math.max(0, hedefAyet - 1)}
-        getItemLayout={(_d, i) => ({ length: 140, offset: 140 * i, index: i })}
-        onScrollToIndexFailed={() => { /* liste henüz ölçülmedi; kullanıcı kaydırabilir */ }}
+        onLayout={hedefeKaydir}
+        onScrollToIndexFailed={({ index, averageItemLength }) => {
+          if (kaydirmaDenemesi.current++ >= 3) return;
+          liste.current?.scrollToOffset({ offset: Math.max(0, index * averageItemLength), animated: false });
+          setTimeout(() => liste.current?.scrollToIndex({ index, animated: false }), 250);
+        }}
         contentContainerStyle={{ padding: theme.spacing.lg, gap: theme.spacing.md }}
         ListHeaderComponent={
-          <Row align="center" justify="space-between" style={{ marginBottom: theme.spacing.md }}>
+          <Column gap="sm" style={{ marginBottom: theme.spacing.md }}>
+          {kiraat.error ? <Banner tone="warning" title={t('audio.needsNetwork')} /> : null}
+          <Row align="center" justify="space-between">
             <Column gap="xxs">
               <Text variant="title3">{sureAdi(sure)}</Text>
               <Text variant="caption" tone="muted">
@@ -129,11 +149,13 @@ export default function ReaderScreen() {
               <IconButton
                 name={kiraat.playing ? 'pause' : 'play'}
                 label={kiraat.playing ? t('audio.pause') : t('audio.playSurah')}
+                filled
                 onPress={() => (kiraat.playing ? kiraat.toggle() : dinle(1))}
               />
               <IconButton name="settings" label={t('quran.readerSettings')} onPress={() => setAyarlarAcik(true)} />
             </Row>
           </Row>
+          </Column>
         }
         ListFooterComponent={
           <Column gap="sm" style={{ marginTop: theme.spacing.xl }}>
@@ -161,6 +183,7 @@ export default function ReaderScreen() {
                     name={kiraat.playing && kiraat.current?.ayah === item.ayah ? 'pause' : 'play'}
                     label={t('audio.play')}
                     size={16}
+                    filled
                     onPress={() => (kiraat.playing && kiraat.current?.ayah === item.ayah
                       ? kiraat.toggle()
                       : dinle(item.ayah))}
@@ -309,6 +332,6 @@ export default function ReaderScreen() {
           </Column>
         ) : null}
       </Sheet>
-    </View>
+    </Screen>
   );
 }

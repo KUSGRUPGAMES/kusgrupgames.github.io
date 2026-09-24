@@ -29,7 +29,7 @@ export default function HomeLayoutScreen() {
   const reset = useHomeLayoutStore((s) => s.reset);
 
   return (
-    <Screen scroll>
+    <Screen topInset={false} scroll>
       <Stack.Screen options={{ headerShown: true, title: t('home.customize') }} />
       <Text variant="caption" tone="muted">{t('home.customizeHint')}</Text>
 

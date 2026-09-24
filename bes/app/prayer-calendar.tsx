@@ -45,7 +45,7 @@ export default function PrayerCalendarScreen() {
 
   if (!konum) {
     return (
-      <Screen>
+      <Screen topInset={false}>
         <Stack.Screen options={{ headerShown: true, title: t('prayer.calendar') }} />
         <EmptyState icon="location" title={t('location.empty')} description={t('location.searchHint')} />
       </Screen>
@@ -60,7 +60,7 @@ export default function PrayerCalendarScreen() {
   };
 
   return (
-    <Screen scroll>
+    <Screen topInset={false} scroll>
       <Stack.Screen options={{ headerShown: true, title: t('prayer.calendar') }} />
 
       <Row align="center" justify="space-between">

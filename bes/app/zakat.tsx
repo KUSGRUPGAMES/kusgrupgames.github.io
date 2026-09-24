@@ -60,7 +60,7 @@ export default function ZakatScreen() {
   );
 
   return (
-    <Screen scroll motif="octagonGrid">
+    <Screen topInset={false} scroll motif="octagonGrid">
       <Stack.Screen options={{ headerShown: true, title: t('zakat.title') }} />
 
       <SectionHeader title={t('zakat.prices')} subtitle={t('zakat.priceHint')} />

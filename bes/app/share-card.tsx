@@ -48,7 +48,7 @@ export default function ShareCardScreen() {
   const gecerli = icerik.body.trim().length > 0;
 
   return (
-    <Screen scroll>
+    <Screen topInset={false} scroll>
       <Stack.Screen options={{ headerShown: true, title: t('share.title') }} />
 
       {!gecerli ? (

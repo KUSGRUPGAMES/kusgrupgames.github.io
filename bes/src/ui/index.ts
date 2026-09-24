@@ -17,6 +17,8 @@ export { Stepper, type StepperProps } from './Stepper';
 export { ProgressBar, type ProgressBarProps } from './ProgressBar';
 export { CountdownRing, type CountdownRingProps } from './CountdownRing';
 export { SectionHeader, type SectionHeaderProps } from './SectionHeader';
+export { PageHeader } from './PageHeader';
+export { FeatureTile } from './FeatureTile';
 export { EmptyState, type EmptyStateProps } from './EmptyState';
 export { ErrorState, type ErrorStateProps } from './ErrorState';
 export { Skeleton, type SkeletonProps } from './Skeleton';

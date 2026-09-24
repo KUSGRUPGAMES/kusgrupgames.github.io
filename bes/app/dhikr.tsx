@@ -59,7 +59,7 @@ export default function DhikrScreen() {
   };
 
   return (
-    <Screen scroll motif="starLattice">
+    <Screen topInset={false} scroll motif="starLattice">
       <Stack.Screen options={{ headerShown: true, title: t('dhikr.title') }} />
 
       <Card accent padding="xxl">
