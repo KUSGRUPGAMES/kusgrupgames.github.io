@@ -20,6 +20,7 @@ export default function WorshipScreen() {
       <Card padding="sm">
         <ListItem title={t('worship.qada')} icon="check" onPress={() => router.push('/qada')} />
         <ListItem title={t('log.title')} icon="calendar" onPress={() => router.push('/worship-log')} />
+        <ListItem title={t('log.stats')} icon="chart" onPress={() => router.push('/worship-stats')} />
         <ListItem title={t('worship.guide')} icon="book" onPress={() => router.push('/prayer-guide')} />
       </Card>
 

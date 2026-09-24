@@ -63,6 +63,7 @@ export default function ShareCardScreen() {
                 content={icerik}
                 palette={koyu ? KOYU : ACIK}
                 motif={motif}
+                dark={koyu}
                 previewWidth={260}
               />
             </Column>
@@ -111,6 +112,7 @@ export default function ShareCardScreen() {
               content={icerik}
               palette={koyu ? KOYU : ACIK}
               motif={motif}
+              dark={koyu}
             />
           </View>
         </>

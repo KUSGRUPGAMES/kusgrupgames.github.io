@@ -1,14 +1,14 @@
 /** İbadet defteri ve oruç takibi — şartname §42, §49. */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { Stack } from 'expo-router';
 import {
   Screen, SectionHeader, Card, Column, Row, Text, Segmented, Stepper,
-  Field, Banner, IconButton, Divider, Chip,
+  Field, Banner, IconButton, Button, Divider, Chip,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT, useDateFormat } from '@/lib/i18n';
-import { useWorshipStore, type QadaSlot, type FastKind } from '@/store/worship';
+import { useWorshipStore, type QadaSlot, type FastKind, type WorshipDay, type FastDay } from '@/store/worship';
 import { useLocationStore } from '@/store/locations';
 import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
 import { dateKey } from '@/features/dhikr/stats';
@@ -16,6 +16,29 @@ import { zonedNow } from '@/lib/time/zone';
 
 type NamazSlot = Exclude<QadaSlot, 'witr'>;
 const NAMAZLAR: NamazSlot[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+
+/**
+ * Ekrandaki her değişiklik doğrudan depoya yazılıyordu: sayfalar arası
+ * gezinirken yanlışlıkla dokunulan bir alan hemen kaydediliyordu, "Kaydet"
+ * demeden önceki kaydı bozabiliyordu. Artık değişiklikler yalnız bu yerel
+ * taslakta tutulur; "Kaydet"e basılmadan depoya yazılmaz, tarihten
+ * uzaklaşınca da sessizce bırakılır — önceki kayıt her durumda korunur.
+ */
+interface Taslak {
+  prayers: Partial<Record<NamazSlot, 'alone' | 'jamaah' | 'qada'>>;
+  quranMinutes: number;
+  note: string;
+  fastKind: FastKind | 'none';
+}
+
+function taslakOlustur(gun: WorshipDay | undefined, oruc: FastDay | undefined): Taslak {
+  return {
+    prayers: { ...(gun?.prayers ?? {}) },
+    quranMinutes: gun?.quranMinutes ?? 0,
+    note: gun?.note ?? '',
+    fastKind: oruc?.kind ?? 'none',
+  };
+}
 
 export default function WorshipLogScreen() {
   const tamTarih = useDateFormat({ dateStyle: 'full', timeZone: 'UTC' });
@@ -43,6 +66,36 @@ export default function WorshipLogScreen() {
   const setDayNote = useWorshipStore((s) => s.setDayNote);
   const setFast = useWorshipStore((s) => s.setFast);
   const clearFast = useWorshipStore((s) => s.clearFast);
+
+  const [taslak, setTaslak] = useState<Taslak>(() => taslakOlustur(gun, oruc));
+  const [kaydedildi, setKaydedildi] = useState(false);
+
+  // Tarih değişince taslak o günün kayıtlı hâline sıfırlanır — önceki
+  // tarihte kaydedilmemiş bir değişiklik varsa sessizce bırakılır, depoya
+  // hiç yazılmadığı için zaten bir kaydı bozmuyordu.
+  useEffect(() => {
+    setTaslak(taslakOlustur(gun, oruc));
+    setKaydedildi(false);
+  }, [tarih]);
+
+  const setTaslakPrayer = (slot: NamazSlot, value: 'alone' | 'jamaah' | 'qada' | null) => {
+    setTaslak((onceki) => {
+      const prayers = { ...onceki.prayers };
+      if (value === null) delete prayers[slot];
+      else prayers[slot] = value;
+      return { ...onceki, prayers };
+    });
+    setKaydedildi(false);
+  };
+
+  const kaydet = () => {
+    for (const slot of NAMAZLAR) setPrayer(tarih, slot, taslak.prayers[slot] ?? null);
+    setQuranMinutes(tarih, taslak.quranMinutes);
+    setDayNote(tarih, taslak.note);
+    if (taslak.fastKind === 'none') clearFast(tarih);
+    else setFast(tarih, taslak.fastKind, true);
+    setKaydedildi(true);
+  };
 
   const gosterim = tamTarih.format(new Date(`${tarih}T12:00:00Z`));
 
@@ -74,7 +127,7 @@ export default function WorshipLogScreen() {
       <SectionHeader title={t('log.subtitle')} />
       <Card padding="sm">
         {NAMAZLAR.map((slot, i) => {
-          const deger = gun?.prayers[slot] ?? null;
+          const deger = taslak.prayers[slot] ?? null;
           return (
             <View key={slot}>
               {i > 0 ? <Divider /> : null}
@@ -90,7 +143,7 @@ export default function WorshipLogScreen() {
                     { value: 'qada', label: t('log.prayerQada'), short: t('log.prayerQadaShort') },
                   ]}
                   value={deger ?? 'none'}
-                  onChange={(v) => setPrayer(tarih, slot, v === 'none' ? null : (v as 'alone' | 'jamaah' | 'qada'))}
+                  onChange={(v) => setTaslakPrayer(slot, v === 'none' ? null : (v as 'alone' | 'jamaah' | 'qada'))}
                   accessibilityLabel={label(slot)}
                 />
               </Column>
@@ -103,12 +156,12 @@ export default function WorshipLogScreen() {
       <Card padding="sm">
         <Stepper
           title={t('log.quranMinutes')}
-          value={gun?.quranMinutes ?? 0}
+          value={taslak.quranMinutes}
           min={0}
           max={600}
           step={5}
           unit={t('notification.beforeUnit')}
-          onChange={(v) => setQuranMinutes(tarih, v)}
+          onChange={(v) => { setTaslak((onceki) => ({ ...onceki, quranMinutes: v })); setKaydedildi(false); }}
         />
       </Card>
 
@@ -118,8 +171,8 @@ export default function WorshipLogScreen() {
           <Chip
             key={o.id}
             label={o.label}
-            selected={(oruc?.kind ?? 'none') === o.id}
-            onPress={() => (o.id === 'none' ? clearFast(tarih) : setFast(tarih, o.id, true))}
+            selected={taslak.fastKind === o.id}
+            onPress={() => { setTaslak((onceki) => ({ ...onceki, fastKind: o.id })); setKaydedildi(false); }}
           />
         ))}
       </Row>
@@ -128,10 +181,15 @@ export default function WorshipLogScreen() {
       <Field
         label={t('log.note')}
         hint={t('log.noteHint')}
-        value={gun?.note ?? ''}
-        onChangeText={(v) => setDayNote(tarih, v)}
+        value={taslak.note}
+        onChangeText={(v) => { setTaslak((onceki) => ({ ...onceki, note: v })); setKaydedildi(false); }}
         multiline
       />
+
+      <Row style={{ marginTop: theme.spacing.lg }}>
+        <Button label={t('log.save')} icon="check" onPress={kaydet} />
+      </Row>
+      {kaydedildi ? <Banner tone="success" title={t('log.saved')} /> : null}
 
       <Banner tone="info" title={t('settings.privacy')} description={t('log.privateNote')} />
     </Screen>

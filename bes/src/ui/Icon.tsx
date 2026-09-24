@@ -18,7 +18,7 @@ export type IconName =
   | 'moon' | 'sun' | 'location' | 'calendar' | 'user' | 'users'
   | 'sparkle' | 'play' | 'pause' | 'bookmark' | 'info' | 'alert' | 'refresh' | 'star' | 'copy'
   | 'crescentStar' | 'coins' | 'kaaba'
-  | 'sunrise' | 'sunHigh' | 'sunLow' | 'sunset' | 'crescent' | 'mosque';
+  | 'sunrise' | 'sunHigh' | 'sunLow' | 'sunset' | 'crescent' | 'mosque' | 'chart';
 
 export interface IconProps {
   name: IconName;
@@ -127,6 +127,8 @@ function render(name: IconName, p: P): React.ReactNode {
       return <><Path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z" {...p} /><Circle cx={12} cy={10} r={2.6} {...p} /></>;
     case 'calendar':
       return <><Path d="M4 6.5h16v14H4z" {...p} /><Path d="M4 11h16M8.5 3.5v4M15.5 3.5v4" {...p} /></>;
+    case 'chart':
+      return <><Line x1={5} y1={19} x2={5} y2={13} {...p} /><Line x1={12} y1={19} x2={12} y2={7} {...p} /><Line x1={19} y1={19} x2={19} y2={11} {...p} /><Line x1={3} y1={19} x2={21} y2={19} {...p} /></>;
     case 'user':
       return <><Circle cx={12} cy={8.5} r={3.8} {...p} /><Path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" {...p} /></>;
     case 'users':
