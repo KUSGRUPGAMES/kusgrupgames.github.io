@@ -51,7 +51,7 @@ export default function HijriScreen() {
     <Screen scroll motif="girih">
       <Stack.Screen options={{ headerShown: true, title: t('hijri.title') }} />
 
-      <Card accent motif="starLattice">
+      <Card accent>
         <Column gap="xs" align="center">
           <Text variant="callout" tone="onAccent">{t('hijri.today')}</Text>
           <Text variant="title1" tone="onAccent">

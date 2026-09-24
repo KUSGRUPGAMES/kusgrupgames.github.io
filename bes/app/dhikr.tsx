@@ -62,7 +62,7 @@ export default function DhikrScreen() {
     <Screen scroll motif="starLattice">
       <Stack.Screen options={{ headerShown: true, title: t('dhikr.title') }} />
 
-      <Card accent motif="marka" padding="xxl">
+      <Card accent padding="xxl">
         <Column gap="lg" align="center">
           <Text variant="callout" tone="onAccent">{ozelBaslik.trim() || baslik}</Text>
           <Pressable

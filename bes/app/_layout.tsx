@@ -35,6 +35,11 @@ function RootStack() {
           headerTintColor: theme.colors.text,
           headerTitleStyle: { color: theme.colors.text },
           headerShadowVisible: false,
+          // Geri düğmesi varsayılan olarak bir önceki ekranın rota adını
+          // metin olarak gösteriyor; kök yığındaki önceki ekran "(tabs)"
+          // Stack.Screen'i olduğu ve hiç `title` almadığı için düğmede ham
+          // rota adı "(tabs)" görünüyordu. Yalnız ok gösterilir.
+          headerBackButtonDisplayMode: 'minimal',
         }}
       >
         <Stack.Screen name="(tabs)" />

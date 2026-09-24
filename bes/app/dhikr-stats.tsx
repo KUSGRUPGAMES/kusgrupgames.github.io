@@ -67,7 +67,7 @@ export default function DhikrStatsScreen() {
     <Screen scroll motif="marka">
       <Stack.Screen options={{ headerShown: true, title: t('dhikr.stats') }} />
 
-      <Card accent motif="starLattice">
+      <Card accent>
         <Column gap="xs" align="center">
           <Text variant="callout" tone="onAccent">{t('dhikr.streak')}</Text>
           <Text variant="display" tone="onAccent">{t('dhikr.streakDays', { days: seri })}</Text>

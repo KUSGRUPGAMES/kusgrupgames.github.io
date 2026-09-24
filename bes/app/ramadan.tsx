@@ -73,7 +73,7 @@ export default function RamadanScreen() {
     <Screen scroll motif="arch">
       <Stack.Screen options={{ headerShown: true, title: t('ramadan.title') }} />
 
-      <Card accent motif="starLattice">
+      <Card accent>
         <Column gap="lg" align="center">
           <Text variant="callout" tone="onAccent">
             {durum.active

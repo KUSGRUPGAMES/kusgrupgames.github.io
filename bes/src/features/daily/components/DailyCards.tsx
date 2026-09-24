@@ -37,7 +37,7 @@ export function DailyDuaCard({ ctx }: { ctx: DailyContext }) {
   if (!dua) return null;
   const secili = fav.has('dua', dua.id);
   return (
-    <Card motif="arch" onPress={() => router.push('/duas')} accessibilityLabel={t('dua.ofDay')}>
+    <Card onPress={() => router.push('/duas')} accessibilityLabel={t('dua.ofDay')}>
       <Column gap="sm">
         <Row align="center" justify="space-between">
           <Text variant="caption" tone="muted">{t('dua.ofDay')}</Text>
@@ -61,7 +61,7 @@ export function DailyKnowledgeCard({ ctx }: { ctx: DailyContext }) {
   const item = pickDaily(KNOWLEDGE, { ...ctx, salt: 101 });
   if (!item) return null;
   return (
-    <Card motif="octagonGrid" onPress={() => router.push('/knowledge')} accessibilityLabel={t('knowledge.ofDay')}>
+    <Card onPress={() => router.push('/knowledge')} accessibilityLabel={t('knowledge.ofDay')}>
       <Column gap="sm">
         <Text variant="caption" tone="muted">{t('knowledge.ofDay')}</Text>
         <Text variant="title3">{item.title}</Text>
@@ -78,7 +78,7 @@ export function DailyNameCard({ ctx }: { ctx: DailyContext }) {
   if (!isim) return null;
   const secili = fav.has('name', String(isim.ordinal));
   return (
-    <Card motif="starLattice" onPress={() => router.push('/names')} accessibilityLabel={t('names.ofDay')}>
+    <Card onPress={() => router.push('/names')} accessibilityLabel={t('names.ofDay')}>
       <Column gap="sm">
         <Row align="center" justify="space-between">
           <Text variant="caption" tone="muted">{t('names.ofDay')}</Text>
@@ -185,7 +185,6 @@ export function DailyAyahCard({ ctx }: { ctx: DailyContext }) {
 
   return (
     <Card
-      motif="marka"
       onPress={() => router.push(`/reader?surah=${ayet.surah}&ayah=${ayet.ayah}`)}
       accessibilityLabel={t('explore.dailyAyah')}
     >
@@ -218,7 +217,7 @@ export function FridayCard({ ctx }: { ctx: DailyContext }) {
   const t = useT();
   if (!isFriday(ctx.year, ctx.month, ctx.day)) return null;
   return (
-    <Card accent motif="arch" onPress={() => router.push(`/reader?surah=${KAHF_SURAH}&ayah=1`)}>
+    <Card accent onPress={() => router.push(`/reader?surah=${KAHF_SURAH}&ayah=1`)}>
       <Column gap="xs">
         <Text variant="caption" tone="onAccent">{t('friday.title')}</Text>
         <Text variant="title3" tone="onAccent">{t('friday.greeting')}</Text>
@@ -234,7 +233,7 @@ export function RamadanCard({ ctx }: { ctx: DailyContext }) {
   const durum = ramadanState(ctx.now, ctx.hijriOffset);
   if (!durum.active) return null;
   return (
-    <Card motif="girih" onPress={() => router.push('/ramadan')} accessibilityLabel={t('ramadan.title')}>
+    <Card onPress={() => router.push('/ramadan')} accessibilityLabel={t('ramadan.title')}>
       <Column gap="xs">
         <Text variant="caption" tone="muted">{t('ramadan.title')}</Text>
         <Text variant="title3" tone="accent">{t('ramadan.day', { day: durum.day })}</Text>

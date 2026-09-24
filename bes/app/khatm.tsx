@@ -78,7 +78,7 @@ export default function KhatmScreen() {
         </>
       ) : (
         <>
-          <Card accent motif="starLattice">
+          <Card accent>
             <Column gap="md">
               <Text variant="callout" tone="onAccent">{etkin.title}</Text>
               <Text variant="title1" tone="onAccent">

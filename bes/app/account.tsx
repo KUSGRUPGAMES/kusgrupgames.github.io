@@ -89,7 +89,7 @@ export default function AccountScreen() {
     <Screen scroll motif="marka">
       <Stack.Screen options={{ headerShown: true, title: t('account.title') }} />
 
-      <Card accent motif="starLattice">
+      <Card accent>
         <Column gap="sm">
           <Text variant="title3" tone="onAccent">{t('account.guestOnly', { app: Brand.appName })}</Text>
           <Text variant="body" tone="onAccent">{t('account.guestBody')}</Text>

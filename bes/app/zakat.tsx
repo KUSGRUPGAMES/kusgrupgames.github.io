@@ -95,7 +95,7 @@ export default function ZakatScreen() {
         {alan('essentialNeeds', t('zakat.essential'))}
       </Column>
 
-      <Card accent motif="starLattice" style={{ marginTop: theme.spacing.xl }}>
+      <Card accent style={{ marginTop: theme.spacing.xl }}>
         <Column gap="sm">
           <Row justify="space-between">
             <Text tone="onAccent">{t('zakat.nisab')}</Text>

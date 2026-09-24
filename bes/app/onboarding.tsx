@@ -83,7 +83,7 @@ export default function OnboardingScreen() {
       {adim === 1 ? <View style={{ flex: 1 }} /> : null}
 
       {adim === 1 ? (
-        <Card accent motif="starLattice" padding="xxl">
+        <Card accent padding="xxl">
           <Column gap="md" align="center">
             {/* Altın sembol zümrüt kartın üstünde durduğu için saydam varyant. */}
             <Image

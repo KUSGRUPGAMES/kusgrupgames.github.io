@@ -73,7 +73,6 @@ export default function QuranScreen() {
       {position ? (
         <Card
           accent
-          motif="starLattice"
           onPress={() => router.push(`/reader?surah=${position.surah}&ayah=${position.ayah}`)}
         >
           <Column gap="xs">

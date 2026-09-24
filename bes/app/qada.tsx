@@ -42,7 +42,7 @@ export default function QadaScreen() {
       {toplam === 0 ? (
         <EmptyState icon="check" title={t('qada.allDone')} description={t('qada.allDoneBody')} />
       ) : (
-        <Card accent motif="starLattice">
+        <Card accent>
           <Column gap="sm" align="center">
             <Text variant="callout" tone="onAccent">{t('qada.remaining')}</Text>
             <Text variant="display" tone="onAccent">{toplam.toLocaleString('tr-TR')}</Text>
