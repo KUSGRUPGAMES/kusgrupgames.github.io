@@ -669,3 +669,22 @@ odaklı ekranlar olduğunu gösterdi. Türkçe elif-bâ uygulamalarında öne
 dinleyerek öğrenmek istedi. Tek harf için lisanslı bir insan kaydı
 bulunamadı; uydurmak yerine cihaz sesi kullanıldı, insan sesi ise
 gerçekten var olduğu yerde (kelime ve âyet) kullanıldı.
+
+## D27 — Kendi geri düğmemiz, kıble izni, defter ve uyarı düzeni
+
+- **Geri düğmesi:** react-native-screens 4.16'da iOS 26'da, başlığı gizli
+  sekmelerden gelinen yığında yerleşik geri düğmesi birkaç gidiş-dönüşten
+  sonra dokunmaya yanıt vermiyor (software-mansion/react-native-screens#3294,
+  düzeltme 4.18+; Expo SDK 54 4.16'ya sabit). Kök yığında `headerLeft` ile
+  kendi düğmemiz çiziliyor. SDK yükseltmesinde bu kaldırılabilir.
+- **Kıble:** expo-location pusulayı iOS'ta konum izni olmadan başlatmıyor;
+  izin artık kıble ekranında isteniyor. Doğruluk değeri derece değil 0–3
+  düzeyi; eskiden ters okunuyordu.
+- **İbadet defteri:** oruç tek soruya bağlandı; Ramazan'da tutulamayan gün
+  borç, kaza orucu borçtan düşüm. Eksik namaz yalnız kaydı olan günlerden
+  sayılır. "Günün notu" arayüzden kalktı (eski veri korunur).
+- **Vakit uyarıları:** ana sayfadaki zil → `alarms.tsx`. Önceden uyarı açıkken
+  vaktin kendisi de ayrı bildirim olarak kurulur (`alsoAtTime`, varsayılan
+  açık); 64 bildirim sınırı yüzünden kapsama günü yarıya iner.
+- **Dinamik Ada / Live Activity:** yerel bildirim kilit ekranında görünür;
+  canlı geri sayım yerel bir widget eklentisi ister (D3), bu sürümde yok.

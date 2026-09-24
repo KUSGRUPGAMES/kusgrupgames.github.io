@@ -114,6 +114,7 @@ export function useNotificationSync(): NotificationSyncDurumu {
     perPrayer: settings.notifications.perPrayer as Partial<Record<PrayerKey, boolean>>,
     beforeMinutes: settings.notifications.beforeMinutes,
     includeSunrise: false,
+    alsoAtTime: settings.notifications.alsoAtTime,
   }), [settings.notifications]);
 
   const gunTetik = useGunYenileyici(konum?.timezone ?? null);

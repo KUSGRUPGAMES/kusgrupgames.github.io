@@ -42,8 +42,8 @@ export default function SettingsScreen() {
         />
         <ListItem title={t('prayer.settings')} icon="clock" onPress={() => router.push('/prayer-settings')} />
         <ListItem title={t('prayer.calendar')} icon="calendar" onPress={() => router.push('/prayer-calendar')} />
-        <ListItem title={t('reminder.title')} icon="bell" onPress={() => router.push('/reminders')} />
-        <ListItem title={t('notification.center')} icon="bellOff" onPress={() => router.push('/notifications-center')} />
+        <ListItem title={t('alarm.title')} subtitle={t('alarm.subtitle')} icon="bell" onPress={() => router.push('/alarms')} />
+        <ListItem title={t('alarm.custom')} icon="plus" onPress={() => router.push('/reminders')} />
       </Card>
 
       <SectionHeader title={t('nav.quran')} />

@@ -27,7 +27,7 @@ export default function AlphabetScreen() {
   ];
 
   return (
-    <Screen scroll>
+    <Screen scroll topInset={false}>
       <Stack.Screen options={{ headerShown: true, title: t('learn.alphabet') }} />
       <Text variant="callout" tone="muted" style={{ marginBottom: theme.spacing.md }}>{t('learn.alphabetHint')}</Text>
 

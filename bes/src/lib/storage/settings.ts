@@ -22,6 +22,8 @@ export const settingsSchema = z.object({
     enabled: z.boolean().default(true),
     perPrayer: z.record(z.enum(PRAYER_KEYS as unknown as [string, ...string[]]), z.boolean()).default({}),
     beforeMinutes: z.number().int().min(0).max(120).default(0),
+    /** Önceden uyarı açıkken vakit girince de bildir (plan.ts `alsoAtTime`). */
+    alsoAtTime: z.boolean().default(true),
     sound: z.boolean().default(true),
     vibration: z.boolean().default(true),
   }).default({}),

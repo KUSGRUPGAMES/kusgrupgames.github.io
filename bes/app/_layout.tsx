@@ -1,9 +1,12 @@
 /** Kök düzen — şartname §11. Tüm sağlayıcılar burada kurulur. */
 import React from 'react';
+import { I18nManager, Pressable } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { AppProviders } from '@/boot/AppProviders';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/lib/i18n';
+import { Icon } from '@/ui';
 
 export default function RootLayout() {
   return (
@@ -15,6 +18,7 @@ export default function RootLayout() {
 
 function RootStack() {
   const theme = useTheme();
+  const t = useT();
   // Buradan **asla** erken dönülmez. Kök düzen bir gezinme kabı çizmezse
   // yönlendirme asılacak bağlam bulamaz ve ekran bomboş kalır; ilk açılış
   // beyaz ekranla başlıyordu, sebebi buydu. Onboarding kapısı artık
@@ -23,7 +27,7 @@ function RootStack() {
     <>
       <StatusBar style={theme.name === 'dark' ? 'light' : 'dark'} />
       <Stack
-        screenOptions={{
+        screenOptions={({ navigation }) => ({
           headerShown: false,
           contentStyle: { backgroundColor: theme.colors.background },
           // Yirmi beş ekran kendi başlığını açıyor (`headerShown: true`).
@@ -40,7 +44,26 @@ function RootStack() {
           // Stack.Screen'i olduğu ve hiç `title` almadığı için düğmede ham
           // rota adı "(tabs)" görünüyordu. Yalnız ok gösterilir.
           headerBackButtonDisplayMode: 'minimal',
-        }}
+          // Geri düğmesi **bizim**: react-native-screens 4.16'da iOS 26'da
+          // yerleşik geri düğmesi, başlığı gizli bir ekrandan (burada
+          // sekmeler) gelinen yığında birkaç gidiş-dönüşten sonra dokunmaya
+          // yanıt vermez hâle geliyor; kaydırarak geri dönmek çalışmaya devam
+          // ediyor (software-mansion/react-native-screens#3294, düzeltme
+          // 4.18'de; Expo SDK 54 4.16'ya sabit). Kendi düğmemiz bu yoldan
+          // geçmediği için her zaman çalışır.
+          headerLeft: ({ canGoBack, tintColor }) => (canGoBack ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('nav.back')}
+              hitSlop={12}
+              onPress={() => navigation.goBack()}
+              style={{ paddingVertical: 6, paddingEnd: 8 }}
+            >
+              <Icon name={I18nManager.isRTL ? 'chevronRight' : 'chevronLeft'} size={26}
+                color={tintColor ?? theme.colors.text} />
+            </Pressable>
+          ) : null),
+        })}
       >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
@@ -69,6 +92,7 @@ function RootStack() {
         <Stack.Screen name="hajj" />
         <Stack.Screen name="search" />
         <Stack.Screen name="reminders" />
+        <Stack.Screen name="alarms" />
         <Stack.Screen name="recitation" />
         <Stack.Screen name="share-card" />
         <Stack.Screen name="notifications-center" />

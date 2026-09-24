@@ -69,7 +69,7 @@ export default function LessonScreen() {
 
   if (!meta || !adim) {
     return (
-      <Screen>
+      <Screen topInset={false}>
         <Stack.Screen options={{ headerShown: true, title: t('learn.title') }} />
         <Banner tone="warning" title={t('learn.audioFailed')} />
       </Screen>
@@ -83,7 +83,7 @@ export default function LessonScreen() {
     const buradan = LESSONS.findIndex((l) => l.id === id);
     const sonraki = LESSONS.slice(buradan + 1).find((l) => !biten.has(l.id)) ?? nextLesson(biten);
     return (
-      <Screen scroll>
+      <Screen scroll topInset={false}>
         <Stack.Screen options={{ headerShown: true, title: baslik }} />
         <Card accent padding="lg">
           <Column align="center" gap="md">
@@ -114,7 +114,7 @@ export default function LessonScreen() {
   }
 
   return (
-    <Screen scroll>
+    <Screen scroll topInset={false}>
       <Stack.Screen options={{ headerShown: true, title: baslik }} />
       <ProgressBar value={(sira + 1) / adimlar.length} height={6}
         accessibilityLabel={`${sira + 1} / ${adimlar.length}`} />

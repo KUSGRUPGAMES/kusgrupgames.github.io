@@ -75,7 +75,7 @@ const EKRANLAR = [
   ['30-kible', '/qibla'], ['31-zikir', '/dhikr'], ['32-zikir-istatistik', '/dhikr-stats'],
   ['33-esma', '/names'], ['34-dualar', '/duas'],
   ['40-vakit-takvimi', '/prayer-calendar'], ['41-vakit-ayarlari', '/prayer-settings'],
-  ['42-konum', '/location'], ['43-hatirlatici', '/reminders'],
+  ['42-konum', '/location'], ['43-hatirlatici', '/reminders'], ['45-vakit-uyarilari', '/alarms'],
   ['44-bildirim-merkezi', '/notifications-center'],
   ['50-namaz-rehberi', '/prayer-guide'], ['51-ibadet-gunlugu', '/worship-log'],
   ['52-kaza', '/qada'], ['53-hatim', '/khatm'], ['54-ramazan', '/ramadan'],

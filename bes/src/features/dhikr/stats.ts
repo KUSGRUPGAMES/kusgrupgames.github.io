@@ -112,3 +112,55 @@ export function dailyTotals(sessions: readonly DhikrSession[], today: string, da
   }
   return out;
 }
+
+// ------------------------------------------------------ dönem ve dağılım
+
+/** İstatistik ekranının dönemleri. `thisMonth` takvim ayıdır (1'inden bugüne). */
+export type DhikrPeriod = 'today' | 'week' | 'last30' | 'thisMonth' | 'all';
+
+export function sessionsInPeriod(
+  sessions: readonly DhikrSession[], today: string, period: DhikrPeriod,
+): DhikrSession[] {
+  switch (period) {
+    case 'today': return withinDays(sessions, today, 1);
+    case 'week': return withinDays(sessions, today, 7);
+    case 'last30': return withinDays(sessions, today, 30);
+    case 'thisMonth': {
+      const ay = today.slice(0, 7);
+      return sessions.filter((s) => s.onDate.slice(0, 7) === ay && s.onDate <= today);
+    }
+    case 'all': return [...sessions];
+  }
+}
+
+export interface DhikrBreakdownRow {
+  title: string;
+  total: number;
+  /** Kaç kez kaydedildi. */
+  sessions: number;
+  /** Kaç ayrı günde çekildi. */
+  days: number;
+}
+
+/**
+ * Zikir zikir dağılım. `always` içindeki başlıklar hiç çekilmemiş olsa bile
+ * sıfırla listelenir — kullanıcı neyi eksik bıraktığını görsün diye.
+ * Sıra: çok çekilenden aza; eşitlikte `always` sırası.
+ */
+export function breakdown(
+  sessions: readonly DhikrSession[], always: readonly string[] = [],
+): DhikrBreakdownRow[] {
+  const satirlar = new Map<string, { total: number; sessions: number; days: Set<string> }>();
+  for (const ad of always) satirlar.set(ad, { total: 0, sessions: 0, days: new Set() });
+  for (const s of sessions) {
+    const r = satirlar.get(s.title) ?? { total: 0, sessions: 0, days: new Set<string>() };
+    r.total += Math.max(0, s.count);
+    r.sessions += 1;
+    r.days.add(s.onDate);
+    satirlar.set(s.title, r);
+  }
+  const sira = (ad: string) => { const i = always.indexOf(ad); return i < 0 ? always.length : i; };
+  return [...satirlar.entries()]
+    .map(([title, r]) => ({ title, total: r.total, sessions: r.sessions, days: r.days.size }))
+    .sort((a, b) => b.total - a.total || sira(a.title) - sira(b.title));
+}

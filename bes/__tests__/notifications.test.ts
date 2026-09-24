@@ -60,12 +60,33 @@ describe('bildirim planı', () => {
   it('erken uyarı vaktin tam N dakika öncesine kurulur', () => {
     const p = planNotifications(
       gunler(istanbul, 2026, 2, 15),
-      { ...defaultNotificationSettings, beforeMinutes: 15 },
+      { ...defaultNotificationSettings, beforeMinutes: 15, alsoAtTime: false },
       now,
     );
     for (const n of p) {
       expect(n.prayerAt.getTime() - n.at.getTime()).toBe(15 * 60000);
     }
+  });
+
+  it('erken uyarı açıkken vakit girişi de ayrı kimlikle bildirilir', () => {
+    const p = planNotifications(
+      gunler(istanbul, 2026, 2, 15),
+      { ...defaultNotificationSettings, beforeMinutes: 15 },
+      now,
+    );
+    const erken = p.filter((n) => n.beforeMinutes === 15);
+    const vakit = p.filter((n) => n.beforeMinutes === 0);
+    expect(erken.length).toBeGreaterThan(0);
+    expect(vakit.length).toBe(erken.length);
+    for (const n of vakit) expect(n.at.getTime()).toBe(n.prayerAt.getTime());
+    expect(new Set(p.map((n) => n.id)).size).toBe(p.length);
+  });
+
+  it('çift bildirimde kapsama günü yarıya iner (64 sınırı)', () => {
+    const tek = coverageDays({ ...defaultNotificationSettings, beforeMinutes: 15, alsoAtTime: false });
+    const cift = coverageDays({ ...defaultNotificationSettings, beforeMinutes: 15 });
+    expect(cift).toBe(Math.floor(64 / 10));
+    expect(tek).toBe(Math.floor(64 / 5));
   });
 
   it('gece yarısını aşan yatsı doğru güne kurulur', () => {

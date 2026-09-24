@@ -1,6 +1,6 @@
 import {
   dateKey, parseDateKey, daysBetween, withinDays, summarize,
-  currentStreak, dailyTotals, type DhikrSession,
+  currentStreak, dailyTotals, sessionsInPeriod, breakdown, type DhikrSession,
 } from '@/features/dhikr/stats';
 import { useWorshipStore, QADA_SLOTS } from '@/store/worship';
 import { DHIKR_PRESETS, DHIKR_TARGETS } from '@/content/dhikr';
@@ -175,5 +175,30 @@ describe('ibadet deposu', () => {
     for (const slot of QADA_SLOTS) {
       expect(useWorshipStore.getState().qada[slot]).toBe(0);
     }
+  });
+});
+
+describe('zikir dönemi ve dağılımı', () => {
+  const kayitlar = [
+    oturum('2026-09-24', 33), oturum('2026-09-24', 100, 'Estağfirullah'),
+    oturum('2026-09-20', 33), oturum('2026-09-01', 33, 'Salavât'),
+    oturum('2026-08-30', 99, 'Salavât'),
+  ];
+
+  it('dönemler doğru günleri kapsar; bu ay takvim ayıdır', () => {
+    expect(sessionsInPeriod(kayitlar, '2026-09-24', 'today')).toHaveLength(2);
+    expect(sessionsInPeriod(kayitlar, '2026-09-24', 'week')).toHaveLength(3);
+    expect(sessionsInPeriod(kayitlar, '2026-09-24', 'thisMonth')).toHaveLength(4);
+    expect(sessionsInPeriod(kayitlar, '2026-09-24', 'last30')).toHaveLength(5);
+    expect(sessionsInPeriod(kayitlar, '2026-09-24', 'all')).toHaveLength(5);
+  });
+
+  it('zikir zikir toplar, çekilmeyeni sıfırla gösterir', () => {
+    const d = breakdown(sessionsInPeriod(kayitlar, '2026-09-24', 'week'), ['Sübhânallah', 'Salavât', 'Estağfirullah']);
+    expect(d).toEqual([
+      { title: 'Estağfirullah', total: 100, sessions: 1, days: 1 },
+      { title: 'Sübhânallah', total: 66, sessions: 2, days: 2 },
+      { title: 'Salavât', total: 0, sessions: 0, days: 0 },
+    ]);
   });
 });

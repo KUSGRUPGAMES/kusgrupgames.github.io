@@ -27,6 +27,19 @@ const GUN_ANAHTARI: StringKey[] = [
  */
 const GUN_SIRASI = [1, 2, 3, 4, 5, 6, 0] as const;
 
+/**
+ * Tek dokunuşla doldurulan hazır hatırlatıcılar. Kullanıcı ad, saat ve
+ * vakti sonradan değiştirebilir; şablon yalnız formu doldurur.
+ */
+const SABLONLAR: { ad: StringKey; tetik: ReminderTrigger; gunler?: number[] }[] = [
+  { ad: 'reminder.tplQuran', tetik: { kind: 'time', hour: 21, minute: 0 } },
+  { ad: 'reminder.tplMorning', tetik: { kind: 'prayer', slot: 'fajr', offsetMinutes: 30 } },
+  { ad: 'reminder.tplEvening', tetik: { kind: 'prayer', slot: 'maghrib', offsetMinutes: 15 } },
+  { ad: 'reminder.tplDuha', tetik: { kind: 'prayer', slot: 'sunrise', offsetMinutes: 45 } },
+  { ad: 'reminder.tplTahajjud', tetik: { kind: 'prayer', slot: 'fajr', offsetMinutes: -60 } },
+  { ad: 'reminder.tplKahf', tetik: { kind: 'time', hour: 10, minute: 0 }, gunler: [5] },
+];
+
 export default function RemindersScreen() {
   const t = useT();
   const theme = useTheme();
@@ -43,6 +56,16 @@ export default function RemindersScreen() {
   const [slot, setSlot] = useState<PrayerKey>('maghrib');
   const [offset, setOffset] = useState(-30);
   const [gunler, setGunler] = useState<number[]>([]);
+  const [eklendi, setEklendi] = useState(false);
+
+  const sablonUygula = (s: (typeof SABLONLAR)[number]) => {
+    setAd(t(s.ad));
+    setTur(s.tetik.kind);
+    if (s.tetik.kind === 'time') { setSaat(s.tetik.hour); setDakika(s.tetik.minute); }
+    else { setSlot(s.tetik.slot); setOffset(s.tetik.offsetMinutes); }
+    setGunler(s.gunler ?? []);
+    setEklendi(false);
+  };
 
   const tetik: ReminderTrigger = useMemo(
     () => (tur === 'time'
@@ -87,7 +110,12 @@ export default function RemindersScreen() {
         </Card>
       )}
 
-      <SectionHeader title={t('reminder.add')} />
+      <SectionHeader title={t('reminder.add')} subtitle={t('reminder.templatesHint')} />
+      <Row gap="sm" wrap style={{ marginBottom: theme.spacing.md }}>
+        {SABLONLAR.map((s) => (
+          <Chip key={s.ad} label={t(s.ad)} selected={ad === t(s.ad)} onPress={() => sablonUygula(s)} />
+        ))}
+      </Row>
       <Column gap="md">
         <Field label={t('reminder.name')} value={ad} onChangeText={setAd} />
 
@@ -157,9 +185,11 @@ export default function RemindersScreen() {
               add({ title: ad.trim(), trigger: tetik, weekdays: gunler, enabled: true });
               setAd('');
               setGunler([]);
+              setEklendi(true);
             }}
           />
         </Row>
+        {eklendi ? <Banner tone="success" title={t('reminder.added')} /> : null}
       </Column>
 
       <Banner tone="info" title={t('notification.title')} description={t('notification.coverageNote')} />

@@ -67,7 +67,7 @@ describe('yönlendirme bütünlüğü', () => {
     for (const p of [...uygulamaDosyalari, ...kaynakDosyalari]) {
       // Doğrudan çağrılar ve tablo halinde tutulan hedefler (`href:`,
       // `pathname:`) — İbadet ve Ana Sayfa kısayolları tablodan gezinir.
-      const kalip = /(?:router\.(?:push|replace)\(\s*|href:\s*|pathname:\s*)[`'"]\/(?:\(tabs\)\/)?([a-z-]+)/g;
+      const kalip = /(?:router\.(?:push|replace|dismissTo)\(\s*|href:\s*|pathname:\s*)[`'"]\/(?:\(tabs\)\/)?([a-z-]+)/g;
       for (const m of oku(p).matchAll(kalip)) {
         hedefler.add(m[1]!);
       }
@@ -76,6 +76,24 @@ describe('yönlendirme bütünlüğü', () => {
       (h) => h !== '' && !existsSync(join(ROOT, 'app', `${h}.tsx`)) && !existsSync(join(ROOT, 'app', '(tabs)', `${h}.tsx`)),
     );
     expect(olmayan).toEqual([]);
+  });
+
+  it('geri düğmesi bizim: iOS 26 yerleşik düğmesine bırakılmıyor', () => {
+    // react-native-screens 4.16 + iOS 26: başlığı gizli sekmelerden gelinen
+    // yığında yerleşik geri düğmesi birkaç gidiş-dönüşten sonra ölüyordu
+    // (software-mansion/react-native-screens#3294).
+    expect(kokDuzen).toContain('headerLeft:');
+    expect(kokDuzen).toContain('navigation.goBack()');
+  });
+
+  it('başlığı olan ekran üst güvenli alanı ikinci kez eklemiyor', () => {
+    // Başlık çubuğu güvenli alanı zaten kaplıyor; `topInset` açık kalırsa
+    // başlığın altında çentik yüksekliğinde boşluk açılıyor.
+    const hatali = uygulamaDosyalari
+      .filter((p) => !p.includes('(tabs)') && oku(p).includes('headerShown: true'))
+      .filter((p) => /<Screen(?![^>]*topInset=\{false\})[^>]*>/.test(oku(p)))
+      .map((p) => p.slice(ROOT.length + 1));
+    expect(hatali).toEqual([]);
   });
 
   it('sekme ekranları eksiksiz', () => {

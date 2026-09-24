@@ -5,7 +5,7 @@ import { Stack, router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import {
   Screen, SectionHeader, Card, Column, Row, Text, Chip, Button, Field,
-  CountdownRing, Toggle, Banner, IconButton,
+  CountdownRing, Toggle, Banner, ListItem,
 } from '@/ui';
 import { useTheme, useThemeContext } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -36,6 +36,10 @@ export default function DhikrScreen() {
     const z = zonedNow(konum?.timezone ?? null);
     return dateKey(z.year, z.month, z.day);
   }, [konum]);
+
+  const bugunToplam = useWorshipStore((s) => s.sessions
+    .filter((o) => o.onDate === bugun)
+    .reduce((top, o) => top + Math.max(0, o.count), 0));
 
   const tamamlandi = sayac >= hedef;
 
@@ -93,10 +97,9 @@ export default function DhikrScreen() {
       </Card>
 
       <Row gap="sm" style={{ marginTop: theme.spacing.lg }}>
-        <Button label={t('dhikr.save')} icon="check" onPress={kaydet} disabled={sayac === 0} />
+        <Button label={t('common.save')} icon="check" onPress={kaydet} disabled={sayac === 0}
+          style={{ flex: 1 }} />
         <Button label={t('dhikr.reset')} icon="refresh" variant="ghost" onPress={() => setSayac(0)} />
-        <View style={{ flex: 1 }} />
-        <IconButton name="star" label={t('dhikr.stats')} onPress={() => router.push('/dhikr-stats')} />
       </Row>
 
       {kaydedildi ? (
@@ -104,6 +107,17 @@ export default function DhikrScreen() {
           <Banner tone="success" title={t('dhikr.sessionSaved')} />
         </View>
       ) : null}
+
+      {/* İstatistik: kayıttan hemen sonra bakılacak yer, sayaçla aynı ekranda.
+          Eskiden anlamsız bir yıldız simgesiydi. */}
+      <Card padding="sm" style={{ marginTop: theme.spacing.md }}>
+        <ListItem
+          title={t('dhikr.stats')}
+          subtitle={t('dhikr.todaySummary', { count: bugunToplam.toLocaleString('tr-TR') })}
+          icon="chart"
+          onPress={() => router.push('/dhikr-stats')}
+        />
+      </Card>
 
       <SectionHeader title={t('dhikr.pick')} />
       <Row gap="sm" wrap>

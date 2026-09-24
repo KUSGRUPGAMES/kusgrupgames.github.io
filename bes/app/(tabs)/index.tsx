@@ -8,7 +8,7 @@ import { View, Image, Pressable, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import {
   Screen, Card, Text, Column, Button, EmptyState, Banner, Row,
-  Icon, IconButton, OrnateFrame, SectionHeader, type IconName,
+  Icon, IconButton, OrnateFrame, SectionHeader, ListItem, type IconName,
 } from '@/ui';
 import { Brand } from '@/config/brand';
 // Görseller `import` ile alınır: `require()` lint kuralıyla yasak ve
@@ -30,6 +30,8 @@ import { formatCountdown } from '@/features/prayer/calc';
 import type { ScheduleInput } from '@/features/prayer/schedule';
 import type { MethodId, PrayerKey } from '@/features/prayer/methods';
 import { zonedNow } from '@/lib/time/zone';
+import { useWorshipStore } from '@/store/worship';
+import { dateKey } from '@/features/dhikr/stats';
 import {
   DailyAyahCard, DailyDuaCard, DailyKnowledgeCard, DailyNameCard, HijriDateCard,
   ReligiousDayCard, MoonCard, FridayCard, RamadanCard, type DailyContext,
@@ -69,6 +71,12 @@ export default function HomeScreen() {
   }, [konum, settings]);
 
   const live = useLiveView(input);
+  const bugunAnahtar = useMemo(() => {
+    const z = zonedNow(konum?.timezone ?? null);
+    return dateKey(z.year, z.month, z.day);
+    // Gün değişince canlı görünümün günü de değişir.
+  }, [konum, live?.today.day]);
+  const bugunIsaretli = useWorshipStore((s) => Object.keys(s.days[bugunAnahtar]?.prayers ?? {}).length);
   // Kemerli kart ekran genişliğine göre ölçeklenir; sabit yükseklik dar
   // telefonlarda kemeri eziyordu.
   const { width: ekranGen } = useWindowDimensions();
@@ -167,9 +175,9 @@ export default function HomeScreen() {
       <Row align="center" justify="space-between" style={{ marginBottom: theme.spacing.sm }}>
         <IconButton
           name="bell"
-          label={t('reminder.title')}
+          label={t('alarm.title')}
           filled
-          onPress={() => router.push('/notifications-center')}
+          onPress={() => router.push('/alarms')}
         />
         <Column align="center" gap="xxs">
           <Image
@@ -223,6 +231,16 @@ export default function HomeScreen() {
           </Card>
         ))}
       </Row>
+
+      {/* Bugünün defteri: kaç vakit işaretlendi, tek dokunuşla deftere. */}
+      <Card padding="sm" style={{ marginTop: theme.spacing.sm }}>
+        <ListItem
+          title={t('log.title')}
+          subtitle={t('home.logToday', { n: bugunIsaretli })}
+          icon="check"
+          onPress={() => router.push('/worship-log')}
+        />
+      </Card>
 
       {digerKartlar.length > 0 ? (
         <>

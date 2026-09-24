@@ -1,10 +1,10 @@
 /** İbadet defteri ve oruç takibi — şartname §42, §49. */
 import React, { useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import {
   Screen, SectionHeader, Card, Column, Row, Text, Segmented, Stepper,
-  Field, Banner, IconButton, Button, Divider, Chip,
+  Banner, IconButton, Button, Divider, ListItem, Icon,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT, useDateFormat } from '@/lib/i18n';
@@ -24,11 +24,25 @@ const NAMAZLAR: NamazSlot[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
  * taslakta tutulur; "Kaydet"e basılmadan depoya yazılmaz, tarihten
  * uzaklaşınca da sessizce bırakılır — önceki kayıt her durumda korunur.
  */
+/**
+ * Oruç tek bir sorunun cevabı olarak seçilir. Eskiden "Tutmadım / Ramazan /
+ * Kaza / Nafile" diye dört kısa etiket vardı ve Ramazan'da tutulamayan günü
+ * (kazaya kalan borç) girmenin yolu yoktu.
+ */
+type OrucSecimi = 'none' | 'ramadan' | 'ramadanMissed' | 'qada' | 'nafile' | 'kaffara';
+
 interface Taslak {
   prayers: Partial<Record<NamazSlot, 'alone' | 'jamaah' | 'qada'>>;
   quranMinutes: number;
+  /** Arayüzden kaldırıldı; eski kayıtlarda varsa korunur. */
   note: string;
-  fastKind: FastKind | 'none';
+  fast: OrucSecimi;
+}
+
+function orucSecimi(oruc: FastDay | undefined): OrucSecimi {
+  if (!oruc) return 'none';
+  if (oruc.kind === 'ramadan') return oruc.completed ? 'ramadan' : 'ramadanMissed';
+  return oruc.kind;
 }
 
 function taslakOlustur(gun: WorshipDay | undefined, oruc: FastDay | undefined): Taslak {
@@ -36,7 +50,7 @@ function taslakOlustur(gun: WorshipDay | undefined, oruc: FastDay | undefined): 
     prayers: { ...(gun?.prayers ?? {}) },
     quranMinutes: gun?.quranMinutes ?? 0,
     note: gun?.note ?? '',
-    fastKind: oruc?.kind ?? 'none',
+    fast: orucSecimi(oruc),
   };
 }
 
@@ -91,19 +105,29 @@ export default function WorshipLogScreen() {
   const kaydet = () => {
     for (const slot of NAMAZLAR) setPrayer(tarih, slot, taslak.prayers[slot] ?? null);
     setQuranMinutes(tarih, taslak.quranMinutes);
-    setDayNote(tarih, taslak.note);
-    if (taslak.fastKind === 'none') clearFast(tarih);
-    else setFast(tarih, taslak.fastKind, true);
+    if (taslak.note) setDayNote(tarih, taslak.note);
+    if (taslak.fast === 'none') clearFast(tarih);
+    else if (taslak.fast === 'ramadanMissed') setFast(tarih, 'ramadan', false);
+    else setFast(tarih, taslak.fast as FastKind, true);
     setKaydedildi(true);
+  };
+
+  const hepsiKilindi = () => {
+    setTaslak((onceki) => ({
+      ...onceki,
+      prayers: Object.fromEntries(NAMAZLAR.map((s) => [s, onceki.prayers[s] ?? 'alone'])),
+    }));
+    setKaydedildi(false);
   };
 
   const gosterim = tamTarih.format(new Date(`${tarih}T12:00:00Z`));
 
-  const orucSecenekleri: { id: FastKind | 'none'; label: string }[] = [
-    { id: 'none', label: t('log.fastNone') },
-    { id: 'ramadan', label: t('log.fastRamadan') },
-    { id: 'qada', label: t('log.fastQada') },
-    { id: 'nafile', label: t('log.fastNafile') },
+  const orucSecenekleri: { id: OrucSecimi; label: string; hint?: string }[] = [
+    { id: 'none', label: t('log.fastOptNone') },
+    { id: 'ramadan', label: t('log.fastOptRamadan') },
+    { id: 'ramadanMissed', label: t('log.fastOptRamadanMissed'), hint: t('log.fastOptRamadanMissedHint') },
+    { id: 'qada', label: t('log.fastOptQada'), hint: t('log.fastOptQadaHint') },
+    { id: 'nafile', label: t('log.fastOptNafile') },
   ];
 
   return (
@@ -124,7 +148,12 @@ export default function WorshipLogScreen() {
         />
       </Row>
 
-      <SectionHeader title={t('log.subtitle')} />
+      <Card padding="sm" style={{ marginTop: theme.spacing.md }}>
+        <ListItem title={t('log.stats')} subtitle={t('log.statsHint')} icon="chart"
+          onPress={() => router.push('/worship-stats')} />
+      </Card>
+
+      <SectionHeader title={t('log.subtitle')} actionLabel={t('log.allPrayed')} onAction={hepsiKilindi} />
       <Card padding="sm">
         {NAMAZLAR.map((slot, i) => {
           const deger = taslak.prayers[slot] ?? null;
@@ -165,31 +194,26 @@ export default function WorshipLogScreen() {
         />
       </Card>
 
-      <SectionHeader title={t('log.fasting')} />
-      <Row gap="sm" wrap>
+      <SectionHeader title={t('log.fasting')} subtitle={t('log.fastQuestion')} />
+      <Card padding="sm">
         {orucSecenekleri.map((o) => (
-          <Chip
+          <ListItem
             key={o.id}
-            label={o.label}
-            selected={taslak.fastKind === o.id}
-            onPress={() => { setTaslak((onceki) => ({ ...onceki, fastKind: o.id })); setKaydedildi(false); }}
+            title={o.label}
+            {...(o.hint ? { subtitle: o.hint } : {})}
+            chevron={false}
+            selected={taslak.fast === o.id}
+            {...(taslak.fast === o.id ? { right: <Icon name="check" size={18} color={theme.colors.accent} /> } : {})}
+            onPress={() => { setTaslak((onceki) => ({ ...onceki, fast: o.id })); setKaydedildi(false); }}
           />
         ))}
-      </Row>
+      </Card>
 
-      <SectionHeader title={t('log.note')} />
-      <Field
-        label={t('log.note')}
-        hint={t('log.noteHint')}
-        value={taslak.note}
-        onChangeText={(v) => { setTaslak((onceki) => ({ ...onceki, note: v })); setKaydedildi(false); }}
-        multiline
-      />
-
-      <Row style={{ marginTop: theme.spacing.lg }}>
-        <Button label={t('log.save')} icon="check" onPress={kaydet} />
-      </Row>
-      {kaydedildi ? <Banner tone="success" title={t('log.saved')} /> : null}
+      <Button label={t('log.save')} icon="check" block onPress={kaydet} style={{ marginTop: theme.spacing.lg }} />
+      {kaydedildi ? (
+        <Banner tone="success" title={t('log.saved')} style={{ marginTop: theme.spacing.md }}
+          actionLabel={t('log.stats')} onAction={() => router.push('/worship-stats')} />
+      ) : null}
 
       <Banner tone="info" title={t('settings.privacy')} description={t('log.privateNote')} />
     </Screen>
