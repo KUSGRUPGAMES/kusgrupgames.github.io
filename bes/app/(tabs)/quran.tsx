@@ -9,7 +9,7 @@ import { View } from 'react-native';
 import { router } from 'expo-router';
 import {
   Screen, SectionHeader, Card, ListItem, Segmented, Row, Column, Text,
-  Badge, Button, EmptyState, SourceNote, VirtualList,
+  Badge, Button, EmptyState, SourceNote, VirtualList, PageHeader, Icon,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -18,8 +18,6 @@ import { useSurahName } from '@/features/quran/names';
 import { useReadingStore, type Bookmark } from '@/store/reading';
 
 type Sekme = 'surahs' | 'juz' | 'bookmarks';
-
-const SATIR_YUKSEKLIGI = 68;
 
 export default function QuranScreen() {
   const t = useT();
@@ -40,35 +38,52 @@ export default function QuranScreen() {
   );
 
   const sureSatiri = useCallback((s: SurahMeta) => (
-    <ListItem
-      title={`${s.number}. ${adiGoster(s)}`}
-      subtitle={`${t('quran.ayahCount', { count: s.ayahCount })} · ${s.revelation === 'mekki' ? t('quran.mekki') : t('quran.medeni')}`}
-      value={s.nameAr === adiGoster(s) ? s.nameTr : s.nameAr}
-      onPress={() => router.push(`/reader?surah=${s.number}&ayah=1`)}
-    />
-  ), [t, adiGoster]);
+    <Card padding="md" onPress={() => router.push(`/reader?surah=${s.number}&ayah=1`)}
+      accessibilityLabel={`${s.number}. ${adiGoster(s)}`}
+      style={{ marginBottom: theme.spacing.sm }}>
+      <Row align="center" gap="md" style={{ minHeight: 60 }}>
+        <View style={{ width: 42, height: 42, borderWidth: 1,
+          borderColor: theme.colors.bezemeSolgun, borderRadius: theme.radius.md,
+          backgroundColor: theme.colors.surfaceRaised,
+          alignItems: 'center', justifyContent: 'center' }}>
+          <Text variant="bodyStrong" tone="highlight">{s.number}</Text>
+        </View>
+        <Column flex={1} gap="xxs">
+          <Text variant="bodyStrong" lines={1}>{adiGoster(s)}</Text>
+          <Text variant="caption" tone="muted" lines={1}>
+            {`${t('quran.ayahCount', { count: s.ayahCount })} · ${s.revelation === 'mekki' ? t('quran.mekki') : t('quran.medeni')}`}
+          </Text>
+        </Column>
+        <Text variant="callout" tone="muted" lines={1}
+          style={{ maxWidth: '27%', textAlign: 'right' }}>
+          {s.nameAr === adiGoster(s) ? s.nameTr : s.nameAr}
+        </Text>
+        <Icon name="chevronRight" size={16} color={theme.colors.highlight} />
+      </Row>
+    </Card>
+  ), [t, adiGoster, theme]);
 
   const cuzSatiri = useCallback((c: { juz: number; surah: number; ayah: number }) => (
-    <ListItem
-      title={t('quran.juzNo', { n: c.juz })}
-      subtitle={`${sureAdi(c.surah)} ${c.ayah}`}
-      onPress={() => router.push(`/reader?surah=${c.surah}&ayah=${c.ayah}`)}
-    />
-  ), [t, adiGoster]);
+    <Card padding="sm" style={{ marginBottom: theme.spacing.sm }}>
+      <ListItem title={t('quran.juzNo', { n: c.juz })} icon="book"
+        subtitle={`${sureAdi(c.surah)} ${c.ayah}`}
+        onPress={() => router.push(`/reader?surah=${c.surah}&ayah=${c.ayah}`)} />
+    </Card>
+  ), [t, sureAdi, theme]);
 
   const yerImiSatiri = useCallback((b: Bookmark) => (
-    <ListItem
+    <Card padding="sm" style={{ marginBottom: theme.spacing.sm }}><ListItem
       title={`${sureAdi(b.surah)} ${b.ayah}`}
       {...(b.note ? { subtitle: b.note } : {})}
       right={<Badge label={b.color} tone="neutral" />}
       onPress={() => router.push(`/reader?surah=${b.surah}&ayah=${b.ayah}`)}
-    />
-  ), [sureAdi]);
+    /></Card>
+  ), [sureAdi, theme]);
 
   /** Liste üstünde duran, kaydırmayla birlikte hareket eden bölüm. */
   const baslik = (
     <Column gap="md" style={{ paddingBottom: theme.spacing.md }}>
-      <SectionHeader title={t('quran.title')} />
+      <PageHeader title={t('quran.title')} icon="book" />
 
       {position ? (
         <Card
@@ -77,7 +92,9 @@ export default function QuranScreen() {
           onPress={() => router.push(`/reader?surah=${position.surah}&ayah=${position.ayah}`)}
         >
           <Column gap="xs">
-            <Text variant="caption" tone="onAccent">{t('quran.continue')}</Text>
+            <Text variant="caption" tone="onAccent" style={{ color: theme.colors.onAccentHighlight }}>
+              {t('quran.continue')}
+            </Text>
             <Text variant="title3" tone="onAccent">
               {t('quran.continueAt', { surah: sureAdi(position.surah), ayah: position.ayah })}
             </Text>
@@ -112,6 +129,8 @@ export default function QuranScreen() {
         onChange={(v) => setSekme(v as Sekme)}
         accessibilityLabel={t('quran.title')}
       />
+      <SectionHeader title={sekme === 'surahs' ? t('quran.surahs')
+        : sekme === 'juz' ? t('quran.juz') : t('quran.bookmarks')} />
     </Column>
   );
 
@@ -130,7 +149,7 @@ export default function QuranScreen() {
             data={sureler}
             keyExtractor={(s) => String(s.number)}
             renderItem={sureSatiri}
-            itemHeight={SATIR_YUKSEKLIGI}
+            separators={false}
             header={baslik}
             footer={kunye}
           />
@@ -141,7 +160,7 @@ export default function QuranScreen() {
             data={cuzler}
             keyExtractor={(c) => String(c.juz)}
             renderItem={cuzSatiri}
-            itemHeight={SATIR_YUKSEKLIGI}
+            separators={false}
             header={baslik}
             footer={kunye}
           />
@@ -152,7 +171,7 @@ export default function QuranScreen() {
             data={bookmarks}
             keyExtractor={(b) => b.id}
             renderItem={yerImiSatiri}
-            itemHeight={SATIR_YUKSEKLIGI}
+            separators={false}
             header={baslik}
             footer={kunye}
             empty={
