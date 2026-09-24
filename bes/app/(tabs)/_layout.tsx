@@ -1,6 +1,6 @@
 /**
  * Sekme düzeni — şartname §11.
- * Beş sekme: Ana Sayfa · Kuran · İbadet · Keşfet · Profil.
+ * Beş sekme: Vakitler · Kur'an · Öğren · İbadet · Ayarlar (DECISIONS D25).
  * Sekme adları çeviriden gelir; ikonlar kendi SVG setimizden.
  */
 import React from 'react';
@@ -32,7 +32,10 @@ export default function TabsLayout() {
    */
   const etiket = (anahtar: Parameters<typeof t>[0]) =>
     function TabLabel({ color }: { color: string }) {
-      return <Text variant="micro" lines={1} align="center" style={{ color }}>{t(anahtar)}</Text>;
+      // `lines` verilmez: tek satır sınırı metin kutusunu kırpıyor ve
+      // "Öğren"in noktalarıyla "Ayarlar"ın y kuyruğu kesiliyordu. Etiketler
+      // zaten tek kelime.
+      return <Text variant="micro" align="center" style={{ color }}>{t(anahtar)}</Text>;
     };
 
   // İlk açılışta onboarding'e yönlendirilir; sonraki açılışlarda görünmez (§12).
@@ -63,16 +66,16 @@ export default function TabsLayout() {
           options={{ title: t('nav.quran'), tabBarIcon: ikon('book'), tabBarLabel: etiket('nav.quran') }}
         />
         <Tabs.Screen
+          name="learn"
+          options={{ title: t('nav.learn'), tabBarIcon: ikon('sparkle'), tabBarLabel: etiket('nav.learn') }}
+        />
+        <Tabs.Screen
           name="worship"
           options={{ title: t('nav.worship'), tabBarIcon: ikon('beads'), tabBarLabel: etiket('nav.worship') }}
         />
         <Tabs.Screen
-          name="explore"
-          options={{ title: t('nav.explore'), tabBarIcon: ikon('sparkle'), tabBarLabel: etiket('nav.explore') }}
-        />
-        <Tabs.Screen
           name="profile"
-          options={{ title: t('nav.profile'), tabBarIcon: ikon('user'), tabBarLabel: etiket('nav.profile') }}
+          options={{ title: t('nav.profile'), tabBarIcon: ikon('settings'), tabBarLabel: etiket('nav.profile') }}
         />
       </Tabs>
     </>

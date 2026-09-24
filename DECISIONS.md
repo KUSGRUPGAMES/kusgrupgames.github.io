@@ -623,3 +623,49 @@ hâliyle App Review'dan dönerdi.
 **Sınama:** `brand.test.ts` iki şeyi birden denetliyor — bu iki satırın
 `openLegalPage` çağırdığını, ve genel kural olarak `chevron` taşıyan hiçbir
 `ListItem`'ın `onPress`siz kalmadığını (`chevron={false}` muaf).
+
+## D25 — Bilgi mimarisi: Vakitler · Kur'an · Öğren · İbadet · Ayarlar
+
+**Karar:** Beş sekme, her biri tek bir işe ayrılır. "Keşfet" sekmesi
+kaldırıldı; içeriği ait olduğu yere taşındı. Her özelliğe **en fazla iki
+dokunuşla** (sekme + kutucuk) ulaşılır ve hiçbir özellik iki sekmede
+birden durmaz — ana sayfadaki hızlı erişim düğmeleri hariç.
+
+| Sekme | İçerik |
+|---|---|
+| Vakitler | Sıradaki vakit, günün vakitleri, hızlı erişim (Kıble · Zikirmatik · Kur'an'a devam · Öğren), günün içeriği |
+| Kur'an | Kaldığın yer, sure/cüz/yer imi, arama, kıraat, hatim |
+| Öğren | Kur'an okumayı öğren (elif-bâ kursu), namaz rehberi, dinî bilgiler |
+| İbadet | Zikirmatik, dualar, esmâ, kıble; defter, istatistik, kaza; zekât, Ramazan, hac, hicrî takvim |
+| Ayarlar | Vakit/bildirim/kıraat ayarları, görünüm, dil, yedek, hakkında |
+
+**Neden:** Kullanıcı yapıyı "karmaşık, iç içe, bir yere ulaşmak için
+birkaç yerden geçmek gerekiyor" diye reddetti. Kodda doğrulandı: dualar
+ve esmâ hem İbadet hem Keşfet'te, vakit ayarlarına üç ayrı yerden
+gidiliyordu, Kur'an eğitimi Kur'an sekmesinde üçüncü düğmeye gömülüydü.
+Rakip incelemesi (2026 karşılaştırmaları: Muslim Pro, Athan, Pillars,
+Quran Majeed, Tarteel; Türkçe elif-bâ uygulamaları) en sık şikâyetin
+özellik kalabalığı ve reklam olduğunu, en çok övülenin sade, tek işe
+odaklı ekranlar olduğunu gösterdi. Türkçe elif-bâ uygulamalarında öne
+çıkan: ders ders ilerleme, dokununca ses, alıştırma ve ilerleme takibi.
+
+## D26 — Kur'an eğitimi ses kaynakları
+
+**Karar:** Üç ayrı, doğrulanmış kaynak; hiçbiri uydurma değildir.
+
+1. **Harf adları ve heceler** (elif, bâ; بَ بِ بُ): cihazın kendi Arapça
+   ses motoru (`expo-speech`, iOS/Android yerleşik). Lisans gerektirmez,
+   çevrimdışı çalışır.
+2. **Gerçek Kur'an kelimeleri:** Quran Foundation'ın kelime kelime insan
+   kıraati, `https://audio.qurancdn.com/wbw/SSS_AAA_KKK.mp3`. Resmî
+   belgede "public CDN assets" olarak tanımlı; geliştirici şartları
+   abonelikli uygulamada kullanıma izin veriyor, kaynak gösterimi
+   istiyor ve bir haftadan uzun saklamayı yasaklıyor — bu yüzden
+   yalnız **akış** yapılır, indirilmez. Kelime konumları API'den
+   doğrulanarak seçildi; Arapça metin yine kendi Tanzil verimizden gelir.
+3. **Âyet dinleme:** mevcut Islamic Network kıraati (D-kıraat).
+
+**Neden:** Kullanıcı harf ve kelimeleri "surelerdeki ses gibi"
+dinleyerek öğrenmek istedi. Tek harf için lisanslı bir insan kaydı
+bulunamadı; uydurmak yerine cihaz sesi kullanıldı, insan sesi ise
+gerçekten var olduğu yerde (kelime ve âyet) kullanıldı.

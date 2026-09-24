@@ -10,10 +10,11 @@ kişisel veri cihazdan çıkmaz.
 | Vakitler | 7 hesap yöntemi, Hanefî/Şâfiî ikindi, dakika düzeltmesi, canlı geri sayım, aylık takvim, vakit bildirimleri |
 | Kıble | Büyük daire hesabı, geometrik pusula kadranı, kalibrasyon ve girişim uyarısı, hizalanınca titreşim |
 | Kur'an | 6236 âyet (Tanzil, Uthmani) + Elmalılı Hamdi Yazır meali, okuyucu, yer imleri, notlar, Arapça ve meal araması |
-| Kıraat | 18 okuyucu, akış ve sure sure indirme, arka planda çalma |
-| İbadet | Zikirmatik + istatistik, kaza sayacı, ibadet defteri, oruç takibi, namaz rehberi |
+| Kıraat | 18 okuyucu, akış ve sure sure indirme, arka planda çalma, kilit ekranı kontrolleri |
+| Öğren | Elifbâdan kısa surelere 31 derslik sesli kurs: harf kartları, hece tabloları, dinleme alıştırmaları, kelime kelime hafız sesi, yıldızlı ilerleme |
+| İbadet | Zikirmatik + istatistik, kaza sayacı, ibadet defteri ve istatistiği, oruç takibi, namaz rehberi |
 | Araçlar | Zekât ve fitre hesabı, hicrî takvim ve çevirici, dinî günler, ay durumu, Ramazan modu, mukabele, hac rehberi |
-| Keşfet | Günün âyeti, duası, bilgisi ve esması; 99 esmâ, 34 dua, 43 bilgi maddesi |
+| Günlük | Ana sayfada günün âyeti, duası, bilgisi ve esması; 99 esmâ, 34 dua, 43 bilgi maddesi |
 
 ## Geliştirme
 

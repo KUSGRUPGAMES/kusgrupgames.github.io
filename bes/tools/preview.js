@@ -67,7 +67,9 @@ const ISTANBUL = {
 
 const EKRANLAR = [
   ['10-ana-sayfa', '/'], ['11-kuran', '/quran'], ['12-ibadet', '/worship'],
-  ['13-kesfet', '/explore'], ['14-profil', '/profile'],
+  ['13-ogren', '/learn'], ['14-ayarlar', '/profile'],
+  ['15-ders-harf', '/lesson?id=harf-1'], ['16-ders-hece', '/lesson?id=ustun'], ['17-ders-sure', '/lesson?id=sure-112'],
+  ['18-elifba', '/alphabet'],
   ['20-okuyucu', '/reader?surah=1'], ['21-kuran-arama', '/quran-search'],
   ['22-kiraat', '/recitation'], ['23-arama', '/search'],
   ['30-kible', '/qibla'], ['31-zikir', '/dhikr'], ['32-zikir-istatistik', '/dhikr-stats'],
@@ -270,8 +272,9 @@ async function film(port) {
   await git('/prayer-guide', 1600);
   await kaydir(page, 700); await bekle(page, 1000);
 
-  // 5. Keşfet
-  await git('/explore', 1600);
+  // 5. Öğren
+  await git('/learn', 1600);
+  await git('/lesson?id=harf-1', 1600);
   await git('/names', 1600);
   await kaydir(page, 900); await bekle(page, 1000);
   await git('/zakat', 1800);

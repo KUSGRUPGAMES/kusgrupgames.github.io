@@ -1,42 +1,41 @@
 /**
- * Kur'an okuma eğitimi ilerlemesi — harf ve harekelerden "öğrendim"
- * işaretlenenler. `favorites.ts` ile aynı basit desen.
+ * Kur'an okuma kursu ilerlemesi — her ders için en iyi yıldız ve tarih.
+ * Cihazda kalıcıdır (persistence.ts) ve yedeğe girer.
  */
 import { create } from 'zustand';
 
-export type LearningKind = 'letter' | 'harake';
-
-export interface LearningMark {
-  kind: LearningKind;
-  recordId: string;
-  learnedAt: number;
+export interface LessonResult {
+  lessonId: string;
+  /** En iyi sonuç (1–3). */
+  stars: number;
+  completedAt: number;
 }
 
 interface LearningState {
-  items: LearningMark[];
+  results: LessonResult[];
   hydrated: boolean;
-  hydrate: (items: LearningMark[]) => void;
-  toggle: (kind: LearningKind, recordId: string) => boolean;
-  has: (kind: LearningKind, recordId: string) => boolean;
-  countByKind: (kind: LearningKind) => number;
+  hydrate: (results: LessonResult[]) => void;
+  /** Sonucu kaydeder; daha düşük yıldız eskisini ezmez. */
+  complete: (lessonId: string, stars: number) => void;
+  reset: () => void;
 }
 
 export const useLearningStore = create<LearningState>((set, get) => ({
-  items: [],
+  results: [],
   hydrated: false,
 
-  hydrate: (items) => set({ items, hydrated: true }),
+  hydrate: (results) => set({ results, hydrated: true }),
 
-  toggle: (kind, recordId) => {
-    const varMi = get().items.some((i) => i.kind === kind && i.recordId === recordId);
-    set({
-      items: varMi
-        ? get().items.filter((i) => !(i.kind === kind && i.recordId === recordId))
-        : [{ kind, recordId, learnedAt: Date.now() }, ...get().items],
-    });
-    return !varMi;
+  complete: (lessonId, stars) => {
+    const yildiz = Math.max(1, Math.min(3, Math.round(stars)));
+    const mevcut = get().results.find((r) => r.lessonId === lessonId);
+    const kayit: LessonResult = {
+      lessonId,
+      stars: Math.max(yildiz, mevcut?.stars ?? 0),
+      completedAt: Date.now(),
+    };
+    set({ results: [kayit, ...get().results.filter((r) => r.lessonId !== lessonId)] });
   },
 
-  has: (kind, recordId) => get().items.some((i) => i.kind === kind && i.recordId === recordId),
-  countByKind: (kind) => get().items.filter((i) => i.kind === kind).length,
+  reset: () => set({ results: [] }),
 }));

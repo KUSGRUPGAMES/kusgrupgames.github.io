@@ -15,7 +15,9 @@ export function BrandPattern({ opacity }: { opacity: number }) {
       pointerEvents="none"
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={[StyleSheet.absoluteFill, { opacity }]}
+      // Son sütun ve satır karosu kenardan taşar; kırpılmazsa web'de her alt
+      // sayfada yatay kaydırma çıkıyordu (320 pikselde 88 px).
+      style={[StyleSheet.absoluteFill, { opacity, overflow: 'hidden' }]}
       onLayout={({ nativeEvent: { layout } }) => {
         const width = Math.ceil(layout.width);
         const height = Math.ceil(layout.height);

@@ -65,8 +65,11 @@ describe('yönlendirme bütünlüğü', () => {
   it('kodda geçen her yönlendirme hedefi gerçekten var', () => {
     const hedefler = new Set<string>();
     for (const p of [...uygulamaDosyalari, ...kaynakDosyalari]) {
-      for (const m of oku(p).matchAll(/router\.(push|replace)\(\s*[`'"]\/([a-z-]+)/g)) {
-        hedefler.add(m[2]!);
+      // Doğrudan çağrılar ve tablo halinde tutulan hedefler (`href:`,
+      // `pathname:`) — İbadet ve Ana Sayfa kısayolları tablodan gezinir.
+      const kalip = /(?:router\.(?:push|replace)\(\s*|href:\s*|pathname:\s*)[`'"]\/(?:\(tabs\)\/)?([a-z-]+)/g;
+      for (const m of oku(p).matchAll(kalip)) {
+        hedefler.add(m[1]!);
       }
     }
     const olmayan = [...hedefler].filter(
@@ -76,7 +79,7 @@ describe('yönlendirme bütünlüğü', () => {
   });
 
   it('sekme ekranları eksiksiz', () => {
-    for (const ad of ['index', 'quran', 'worship', 'explore', 'profile']) {
+    for (const ad of ['index', 'quran', 'learn', 'worship', 'profile']) {
       expect({ ad, var: existsSync(join(ROOT, 'app', '(tabs)', `${ad}.tsx`)) })
         .toEqual({ ad, var: true });
     }

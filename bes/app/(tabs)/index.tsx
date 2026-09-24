@@ -3,12 +3,12 @@
  * Kart düzeni kullanıcı tarafından değiştirilebilir; sıradaki vakit kartı
  * sabittir (kapatılamaz), çünkü uygulamanın çekirdeği odur.
  */
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { View, Image, Pressable, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import {
   Screen, Card, Text, Column, Button, EmptyState, Banner, Row,
-  Icon, IconButton, OrnateFrame, SectionHeader,
+  Icon, IconButton, OrnateFrame, SectionHeader, type IconName,
 } from '@/ui';
 import { Brand } from '@/config/brand';
 // Görseller `import` ile alınır: `require()` lint kuralıyla yasak ve
@@ -19,7 +19,7 @@ import camiSiluet from '../../assets/brand/hero-mosque-sunset.png';
 // kendi rengidir, kullanılacağı temanın değil.
 import sembolAcikRenk from '../../assets/brand/symbol-micro-light.png';
 import sembolKoyuRenk from '../../assets/brand/symbol-micro-dark.png';
-import { useT, useI18n, localeTag } from '@/lib/i18n';
+import { useT, useI18n, localeTag, type StringKey } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useLocationStore } from '@/store/locations';
 import { useSettingsStore } from '@/store/settings';
@@ -35,6 +35,13 @@ import {
   ReligiousDayCard, MoonCard, FridayCard, RamadanCard, type DailyContext,
 } from '@/features/daily/components/DailyCards';
 
+const HIZLI = [
+  { href: '/qibla', icon: 'compass', label: 'qibla.title' },
+  { href: '/dhikr', icon: 'beads', label: 'worship.dhikr' },
+  { href: '/(tabs)/quran', icon: 'book', label: 'nav.quran' },
+  { href: '/(tabs)/learn', icon: 'sparkle', label: 'nav.learn' },
+] as const satisfies readonly { href: string; icon: IconName; label: StringKey }[];
+
 export default function HomeScreen() {
   const t = useT();
   const { language } = useI18n();
@@ -43,7 +50,6 @@ export default function HomeScreen() {
   const konum = useLocationStore((s) => s.active());
   const settings = useSettingsStore((s) => s.settings);
   const kartlar = useHomeLayoutStore((s) => s.cards);
-  const [digerKartlarAcik, setDigerKartlarAcik] = useState(false);
   const digerKartlar = kartlar.filter((c) => c.visible && c.id !== 'nextPrayer' && c.id !== 'todayTimes');
   const vakitlerAcik = kartlar.find((c) => c.id === 'todayTimes')?.visible !== false;
 
@@ -176,10 +182,10 @@ export default function HomeScreen() {
           <Text variant="caption" tone="muted">{Brand.tagline}</Text>
         </Column>
         <IconButton
-          name="settings"
-          label={t('prayer.settings')}
+          name="search"
+          label={t('search.title')}
           filled
-          onPress={() => router.push('/prayer-settings')}
+          onPress={() => router.push('/search')}
         />
       </Row>
 
@@ -203,37 +209,25 @@ export default function HomeScreen() {
       <View style={{ alignItems: 'center', marginBottom: theme.spacing.sm }}>{kart('nextPrayer')}</View>
       {vakitlerAcik ? <View style={{ marginBottom: theme.spacing.sm }}>{kart('todayTimes')}</View> : null}
 
+      {/* Hızlı erişim: en sık açılan dört yer tek dokunuşta (D25). */}
       <Row gap="sm">
-        <Card padding="sm" onPress={() => router.push('/(tabs)/quran')}
-          accessibilityLabel={t('nav.quran')} style={{ flex: 1 }}>
-          <Row gap="sm" align="center" style={{ minHeight: 40 }}>
-            <Icon name="book" size={24} color={theme.colors.highlight} />
-            <Text variant="bodyStrong" lines={1} style={{ flex: 1 }}>{t('nav.quran')}</Text>
-            <Icon name="chevronRight" size={16} color={theme.colors.highlight} />
-          </Row>
-        </Card>
-        <Card padding="sm" onPress={() => router.push('/qibla')}
-          accessibilityLabel={t('qibla.title')} style={{ flex: 1 }}>
-          <Row gap="sm" align="center" style={{ minHeight: 40 }}>
-            <Icon name="compass" size={24} color={theme.colors.highlight} />
-            <Text variant="bodyStrong" lines={1} style={{ flex: 1 }}>{t('qibla.title')}</Text>
-            <Icon name="chevronRight" size={16} color={theme.colors.highlight} />
-          </Row>
-        </Card>
+        {HIZLI.map((h) => (
+          <Card key={h.href} padding="sm" onPress={() => router.push(h.href)}
+            accessibilityLabel={t(h.label)} style={{ flex: 1 }}>
+            <Column align="center" gap="xs" style={{ paddingVertical: theme.spacing.xs }}>
+              <Icon name={h.icon} size={26} color={theme.colors.highlight} />
+              <Text variant="caption" align="center" lines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
+                {t(h.label)}
+              </Text>
+            </Column>
+          </Card>
+        ))}
       </Row>
 
       {digerKartlar.length > 0 ? (
         <>
-          {digerKartlarAcik ? (
-            <>
-              <SectionHeader title={t('common.today')} />
-              <Column gap="md">{digerKartlar.map((c) => kart(c.id))}</Column>
-            </>
-          ) : null}
-          <Button label={digerKartlarAcik ? t('nav.close') : t('common.more')}
-            icon={digerKartlarAcik ? 'chevronUp' : 'chevronDown'}
-            variant="secondary" block style={{ marginTop: theme.spacing.md }}
-            onPress={() => setDigerKartlarAcik((open) => !open)} />
+          <SectionHeader title={t('common.today')} />
+          <Column gap="md">{digerKartlar.map((c) => kart(c.id))}</Column>
         </>
       ) : null}
 

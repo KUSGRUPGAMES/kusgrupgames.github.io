@@ -11,7 +11,7 @@ import { useFavoriteStore, type Favorite } from '@/store/favorites';
 import { useHomeLayoutStore } from '@/store/homeLayout';
 import { useReadingStore, type Bookmark, type ReadingPosition } from '@/store/reading';
 import { useWorshipStore, type WorshipSnapshot } from '@/store/worship';
-import { useLearningStore, type LearningMark } from '@/store/learning';
+import { useLearningStore, type LessonResult } from '@/store/learning';
 import { configureCrashReporter, type CrashRecord } from '@/lib/crash/reporter';
 import type { SavedLocation } from '@/features/location/types';
 import type { BackupPayload } from '@/features/backup/backup';
@@ -132,11 +132,11 @@ const worshipCodec = {
 
 const learningCodec = {
   parse: (raw: unknown) => z.array(z.object({
-    kind: z.enum(['letter', 'harake']),
-    recordId: z.string(),
-    learnedAt: z.number(),
-  })).parse(raw) as LearningMark[],
-  fallback: [] as LearningMark[],
+    lessonId: z.string(),
+    stars: z.number().int().min(1).max(3),
+    completedAt: z.number(),
+  })).catch([]).parse(raw) as LessonResult[],
+  fallback: [] as LessonResult[],
 };
 
 const crashCodec = {
@@ -202,7 +202,7 @@ export async function hydrateAll(): Promise<BootState> {
       qadaHistory: s.qadaHistory, days: s.days, fasts: s.fasts,
     });
   });
-  useLearningStore.subscribe((s) => { void kv.write(KEYS.learning, s.items); });
+  useLearningStore.subscribe((s) => { void kv.write(KEYS.learning, s.results); });
 
   return { onboardingDone: onboarding };
 }
@@ -233,6 +233,7 @@ export function snapshotAll(): BackupPayload {
       qada: ibadet.qada, qadaHistory: ibadet.qadaHistory,
       days: ibadet.days, fasts: ibadet.fasts,
     },
+    learning: useLearningStore.getState().results,
   };
 }
 
@@ -248,4 +249,5 @@ export function applySnapshot(payload: BackupPayload): void {
   useHomeLayoutStore.getState().hydrate(payload.homeLayout);
   useReadingStore.getState().hydrate(payload.reading.position, payload.reading.bookmarks);
   useWorshipStore.getState().hydrate(payload.worship);
+  useLearningStore.getState().hydrate(payload.learning ?? []);
 }

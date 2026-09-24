@@ -117,11 +117,11 @@ export default function QuranScreen() {
           onPress={() => router.push('/recitation')}
         />
         <Button
-          label={t('learn.title')}
-          icon="book"
+          label={t('worship.khatm')}
+          icon="check"
           variant="secondary"
           size="sm"
-          onPress={() => router.push('/quran-learn')}
+          onPress={() => router.push('/khatm')}
         />
       </Row>
 
