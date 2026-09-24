@@ -58,7 +58,7 @@ export default function PrayerSettingsScreen() {
   useEffect(() => { void bildirimleriKur(); }, [bildirimleriKur]);
 
   return (
-    <Screen scroll>
+    <Screen topInset={false} scroll>
       <Stack.Screen options={{ headerShown: true, title: t('prayer.settings') }} />
 
       <SectionHeader title={t('prayer.method')} />

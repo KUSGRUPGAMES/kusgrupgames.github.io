@@ -32,7 +32,7 @@ export default function QadaScreen() {
   const slotAdi = (slot: QadaSlot) => (slot === 'witr' ? t('qada.witr') : label(slot));
 
   return (
-    <Screen scroll motif="octagonGrid">
+    <Screen topInset={false} scroll motif="octagonGrid">
       <Stack.Screen options={{ headerShown: true, title: t('qada.title') }} />
       <SectionHeader title={t('qada.subtitle')} />
 

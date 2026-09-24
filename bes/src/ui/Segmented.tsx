@@ -43,6 +43,8 @@ export function Segmented<T extends string>({
         flexDirection: 'row',
         backgroundColor: theme.colors.surfaceRaised,
         borderRadius: theme.radius.pill,
+        borderWidth: 1,
+        borderColor: theme.colors.bezemeSolgun,
         padding: theme.spacing.xxs,
       }}
     >
@@ -69,10 +71,12 @@ export function Segmented<T extends string>({
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: theme.radius.pill,
-              backgroundColor: active ? theme.colors.surface : 'transparent',
+              backgroundColor: active ? theme.colors.accentSurface : 'transparent',
+              borderWidth: active ? 1 : 0,
+              borderColor: theme.colors.onAccentHighlight,
             }}
           >
-            <Text variant={variant} tone={active ? 'accent' : 'muted'} align="center" lines={1}>
+            <Text variant={variant} tone={active ? 'onAccent' : 'muted'} align="center" lines={1}>
               {o.short ?? o.label}
             </Text>
           </Pressable>

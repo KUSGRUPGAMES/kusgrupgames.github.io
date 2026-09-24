@@ -54,7 +54,7 @@ export default function NamesScreen() {
   );
 
   return (
-    <Screen motif="starLattice" padding="lg">
+    <Screen topInset={false} motif="starLattice" padding="lg">
       <Stack.Screen options={{ headerShown: true, title: t('names.title') }} />
       <View style={{ flex: 1 }}>
         <VirtualList

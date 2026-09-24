@@ -57,7 +57,7 @@ export default function RemindersScreen() {
       : `${label(r.trigger.slot)} ${r.trigger.offsetMinutes > 0 ? '+' : ''}${r.trigger.offsetMinutes}`;
 
   return (
-    <Screen scroll motif="octagonGrid">
+    <Screen topInset={false} scroll motif="octagonGrid">
       <Stack.Screen options={{ headerShown: true, title: t('reminder.title') }} />
 
 

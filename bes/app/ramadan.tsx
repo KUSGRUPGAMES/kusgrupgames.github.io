@@ -54,7 +54,7 @@ export default function RamadanScreen() {
 
   if (!konum || !input) {
     return (
-      <Screen>
+      <Screen topInset={false}>
         <Stack.Screen options={{ headerShown: true, title: t('ramadan.title') }} />
         <EmptyState icon="location" title={t('location.empty')} description={t('location.searchHint')} />
       </Screen>
@@ -70,7 +70,7 @@ export default function RamadanScreen() {
   const iftarGecti = iftaraKalan === 0;
 
   return (
-    <Screen scroll motif="arch">
+    <Screen topInset={false} scroll motif="arch">
       <Stack.Screen options={{ headerShown: true, title: t('ramadan.title') }} />
 
       <Card accent motif="starLattice">

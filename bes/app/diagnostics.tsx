@@ -17,7 +17,7 @@ export default function DiagnosticsScreen() {
   const [kopyalandi, setKopyalandi] = useState(false);
 
   return (
-    <Screen scroll>
+    <Screen topInset={false} scroll>
       <Stack.Screen options={{ headerShown: true, title: t('diagnostics.title') }} />
       <Text variant="caption" tone="muted">{`${Brand.appName} ${Brand.version}`}</Text>
 
