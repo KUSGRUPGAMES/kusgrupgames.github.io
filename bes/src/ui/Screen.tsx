@@ -55,6 +55,14 @@ export function Screen({
       ) : (
         <View style={[{ flex: 1 }, content]}>{children}</View>
       )}
+      {/* Durum çubuğu zemini: başlıksız ekranlarda (sekmeler) kaydırılan
+          içerik saatin ve pilin altına giriyor, açık temada yazılar birbirine
+          karışıyordu. Zemin rengiyle örtülür; başlıklı ekranlarda başlık
+          çubuğu bu işi zaten yapar. */}
+      {topInset && insets.top > 0 ? (
+        <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: insets.top,
+          backgroundColor: theme.colors.backgroundGradient[0], opacity: 0.96 }} />
+      ) : null}
     </View>
   );
 }

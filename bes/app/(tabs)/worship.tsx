@@ -18,6 +18,7 @@ const GUNLUK: Oge[] = [
   { href: '/qibla', icon: 'compass', label: 'qibla.title' },
   { href: '/duas', icon: 'heart', label: 'worship.duas' },
   { href: '/names', icon: 'star', label: 'worship.names' },
+  { href: '/share-card', icon: 'share', label: 'share.templates' },
 ];
 const TAKIP: Oge[] = [
   { href: '/worship-log', icon: 'calendar', label: 'log.title' },

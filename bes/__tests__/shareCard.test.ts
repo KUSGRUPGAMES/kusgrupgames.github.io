@@ -1,148 +1,70 @@
 import {
-  buildCardSvg, escapeXml, wrapText, truncateBody, bodyFontSize,
-  CARD_SIZES, MAX_BODY_CHARS, type CardPalette, type CardContent, type CardFormat,
+  CARD_SIZES, truncateBody, decodeEntities, assertSource, cardTypography, MAX_BODY_CHARS,
 } from '@/features/share/card';
+import { resolveTemplate } from '@/features/share/templates';
+import { CARD_TEMPLATES, TEMPLATE_CATEGORIES } from '@/content/cardTemplates';
+import { getAyah, getTranslation } from '@/features/quran/data';
 
-const palet: CardPalette = {
-  background: '#04211B', surface: '#06342A', text: '#FBF8F1',
-  muted: '#8FA29B', accent: '#C9A756', motif: '#C9A756',
-};
+const etiket = { greetingSource: 'Tebrik mesajı', translationSource: (n: string) => `${n} meali`, brand: 'BEŞ' };
 
-const icerik: CardContent = {
-  body: 'Ey iman edenler! Sabır ve namazla yardım isteyin.',
-  reference: 'Bakara 153',
-  source: 'Elmalılı Hamdi Yazır meali · kamu malı',
-  brand: 'BEŞ',
-};
-
-describe('XML kaçırma', () => {
-  it('kartı bozabilecek karakterler kaçırılır', () => {
-    expect(escapeXml('a & b')).toBe('a &amp; b');
-    expect(escapeXml('<script>')).toBe('&lt;script&gt;');
-    expect(escapeXml('"tırnak"')).toBe('&quot;tırnak&quot;');
+describe('paylaşım kartı — yerleşim kuralları', () => {
+  it('üç boyut doğru oranda', () => {
+    expect(CARD_SIZES.story).toEqual({ width: 1080, height: 1920 });
+    expect(CARD_SIZES.square).toEqual({ width: 1080, height: 1080 });
+    expect(CARD_SIZES.portrait).toEqual({ width: 1080, height: 1350 });
   });
 
-  it('Türkçe ve Arapça harfler bozulmaz', () => {
-    expect(escapeXml('ığüşöçİĞÜŞÖÇ')).toBe('ığüşöçİĞÜŞÖÇ');
-    expect(escapeXml('بسم')).toBe('بسم');
-  });
-});
-
-describe('metin sarma', () => {
-  it('uzun metin satırlara bölünür', () => {
-    const s = wrapText('bir iki üç dört beş altı yedi sekiz', 10);
-    expect(s.length).toBeGreaterThan(1);
-    for (const satir of s) expect(satir.length).toBeLessThanOrEqual(12);
-  });
-
-  it('boş metin boş dizi verir', () => {
-    expect(wrapText('', 20)).toEqual([]);
-    expect(wrapText('   ', 20)).toEqual([]);
-  });
-
-  it('tek uzun kelime kendi satırında kalır, kaybolmaz', () => {
-    const s = wrapText('cokcokcokuzunbirkelime', 8);
-    expect(s).toEqual(['cokcokcokuzunbirkelime']);
-  });
-
-  it('hiçbir kelime kaybolmaz', () => {
-    const metin = 'bir iki üç dört beş altı yedi sekiz dokuz on';
-    expect(wrapText(metin, 12).join(' ').split(/\s+/)).toEqual(metin.split(' '));
-  });
-});
-
-describe('metin kısaltma', () => {
-  it('sınırın altındaki metin dokunulmaz kalır', () => {
-    expect(truncateBody('kısa metin')).toBe('kısa metin');
-  });
-
-  it('uzun metin kırpılır ve üç nokta eklenir', () => {
+  it('uzun metin kelime ortasından kesilmeden kısaltılır', () => {
     const uzun = 'kelime '.repeat(200);
     const k = truncateBody(uzun);
     expect(k.length).toBeLessThanOrEqual(MAX_BODY_CHARS + 1);
     expect(k.endsWith('…')).toBe(true);
+    expect(k.slice(0, -1).trim().split(' ').every((w) => w === 'kelime')).toBe(true);
   });
 
-  it('kelime ortadan kesilmez', () => {
-    const uzun = `${'a'.repeat(10)} `.repeat(100);
-    const k = truncateBody(uzun, 50);
-    expect(k.replace('…', '').trimEnd().endsWith('a')).toBe(true);
-  });
-});
-
-describe('yazı boyutu', () => {
-  it('uzun metinde küçülür ama okunaklı kalır', () => {
-    expect(bodyFontSize(3, 'story')).toBeGreaterThan(bodyFontSize(14, 'story'));
-    expect(bodyFontSize(20, 'square')).toBeGreaterThanOrEqual(24);
-  });
-});
-
-describe('kart üretimi', () => {
-  const bicimler: CardFormat[] = ['story', 'square', 'portrait'];
-
-  it('üç boyut da doğru ölçülerde üretilir', () => {
-    for (const f of bicimler) {
-      const svg = buildCardSvg({ format: f, content: icerik, palette: palet });
-      expect(svg).toContain(`width="${CARD_SIZES[f].width}"`);
-      expect(svg).toContain(`height="${CARD_SIZES[f].height}"`);
-      expect(svg.startsWith('<svg')).toBe(true);
-      expect(svg.endsWith('</svg>')).toBe(true);
-    }
-  });
-
-  it('kaynak künyesi karttan silinemez', () => {
-    const svg = buildCardSvg({ format: 'square', content: icerik, palette: palet });
-    expect(svg).toContain('Elmalılı');
-    expect(svg).toContain('BEŞ');
+  it('HTML kaçış dizileri kartta çözülür (eskiden "&apos;" yazıyordu)', () => {
+    expect(decodeEntities('Allah&apos;a &quot;hamd&quot; &amp; şükür')).toBe('Allah’a "hamd" & şükür');
   });
 
   it('kaynaksız kart üretilmez', () => {
-    expect(() => buildCardSvg({
-      format: 'square', palette: palet,
-      content: { ...icerik, source: '' },
-    })).toThrow();
-    expect(() => buildCardSvg({
-      format: 'square', palette: palet,
-      content: { ...icerik, source: '   ' },
-    })).toThrow();
+    expect(() => assertSource({ source: '  ' })).toThrow();
+    expect(() => assertSource({ source: 'Elmalılı meali' })).not.toThrow();
   });
 
-  it('Arapça metin sağdan sola çizilir', () => {
-    const svg = buildCardSvg({
-      format: 'portrait', palette: palet,
-      content: { ...icerik, arabic: 'بسم الله' },
-    });
-    expect(svg).toContain('direction="rtl"');
-    expect(svg).toContain('Amiri');
+  it('uzun metinde punto küçülür, okunaklı sınırın altına inmez', () => {
+    const kisa = cardTypography('portrait', 40, 0);
+    const uzun = cardTypography('portrait', 420, 250);
+    expect(uzun.body).toBeLessThan(kisa.body);
+    expect(uzun.body).toBeGreaterThanOrEqual(10);
+    expect(cardTypography('story', 100, 0).body).toBeGreaterThanOrEqual(cardTypography('square', 100, 0).body);
+  });
+});
+
+describe('hazır kartlar', () => {
+  it('her kategori dolu, kimlikler tekil', () => {
+    for (const k of TEMPLATE_CATEGORIES) expect(CARD_TEMPLATES.some((s) => s.category === k)).toBe(true);
+    expect(new Set(CARD_TEMPLATES.map((s) => s.id)).size).toBe(CARD_TEMPLATES.length);
   });
 
-  it('metindeki XML karakterleri kartı bozmaz', () => {
-    const svg = buildCardSvg({
-      format: 'square', palette: palet,
-      content: { ...icerik, body: 'a < b & c > d' },
-    });
-    expect(svg).not.toContain('a < b');
-    expect(svg).toContain('&amp;');
-    // Etiket sayısı dengeli olmalı: kaçırma başarısızsa açılış/kapanış şaşar.
-    expect((svg.match(/<text/g) ?? []).length).toBe((svg.match(/<\/text>/g) ?? []).length);
+  it('âyet kartlarının hepsi pakette var; metin paketten gelir, elle yazılmaz', () => {
+    for (const s of CARD_TEMPLATES) {
+      const c = resolveTemplate(s, etiket);
+      expect({ id: s.id, var: c !== null }).toEqual({ id: s.id, var: true });
+      if (s.kind === 'verse') {
+        expect(c!.arabic).toBe(getAyah(s.surah, s.ayah)!.text);
+        expect(c!.body).toBe(getTranslation(s.surah, s.ayah));
+        expect(c!.source).toContain('meali');
+        expect(c!.reference).toMatch(new RegExp(`${s.ayah}$`));
+      } else {
+        expect(c!.source).toBe('Tebrik mesajı');
+      }
+    }
   });
 
-  it('motif kapatılabilir', () => {
-    const acik = buildCardSvg({ format: 'square', content: icerik, palette: palet });
-    const kapali = buildCardSvg({ format: 'square', content: icerik, palette: palet, motif: false });
-    expect(acik).toContain('pattern');
-    expect(kapali).not.toContain('pattern');
-  });
-
-  it('çok uzun metinde bile kart sınırları içinde kalır', () => {
-    const svg = buildCardSvg({
-      format: 'square', palette: palet,
-      content: { ...icerik, body: 'kelime '.repeat(300) },
-    });
-    const yler = [...svg.matchAll(/ y="(\d+)"/g)].map((m) => Number(m[1]));
-    for (const y of yler) {
-      expect(y).toBeGreaterThan(0);
-      expect(y).toBeLessThanOrEqual(CARD_SIZES.square.height);
+  it('âyet kartları kısaltılmadan sığacak uzunlukta', () => {
+    for (const s of CARD_TEMPLATES) {
+      if (s.kind !== 'verse') continue;
+      expect({ id: s.id, uzun: (getTranslation(s.surah, s.ayah) ?? '').length > MAX_BODY_CHARS }).toEqual({ id: s.id, uzun: false });
     }
   });
 });

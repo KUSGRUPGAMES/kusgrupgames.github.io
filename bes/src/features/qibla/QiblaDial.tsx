@@ -5,8 +5,9 @@
  */
 import React from 'react';
 import { View } from 'react-native';
-import Svg, { Circle, G, Line, Path, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { useTheme } from '@/theme/ThemeProvider';
+import { palette } from '@/theme/tokens';
 
 export interface QiblaDialProps {
   /** Kıblenin kuzeyden derecesi. */
@@ -90,6 +91,15 @@ export function QiblaDial({ qibla, heading, aligned, size = 280, labels }: Qibla
             strokeWidth={1}
             strokeLinejoin="round"
           />
+          {/* Kâbe işareti: kıble yönünde, halkanın üstünde. Geometrik küp —
+              fotoğraf ya da figüratif öge değil (§9). Küp dik kalsın diye
+              iğnenin dönüşü içeride geri alınır. */}
+          <G transform={`rotate(${-okAci} ${c} ${c - r})`}>
+            <Circle cx={c} cy={c - r} r={17} fill={theme.colors.surfaceRaised}
+              stroke={aligned ? theme.colors.success : theme.colors.highlight} strokeWidth={2} />
+            <Rect x={c - 8} y={c - r - 8} width={16} height={16} rx={1.5} fill={palette.ink900} />
+            <Rect x={c - 8} y={c - r - 4} width={16} height={3} fill={theme.colors.highlight} />
+          </G>
         </G>
         <Circle cx={c} cy={c} r={6} fill={theme.colors.accent} />
       </Svg>

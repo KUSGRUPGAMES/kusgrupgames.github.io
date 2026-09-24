@@ -749,6 +749,17 @@ export const tr = {
   'reminder.tplKahf': 'Cuma: Kehf sûresi',
   'reminder.added': 'Hatırlatıcı kuruldu; uygulama kapalıyken de bildirim gelecek.',
   'home.logToday': 'Bugün {n}/5 vakit işaretlendi',
+  'share.catFriday': 'Cuma',
+  'share.catEid': 'Bayram',
+  'share.catKandil': 'Kandil',
+  'share.catRamadan': 'Ramazan',
+  'share.catVerse': 'Âyet',
+  'share.catDaily': 'Günlük',
+  'share.thisContent': 'Seçtiğin metin',
+  'share.templates': 'Hazır kartlar',
+  'share.templatesHint': 'Birini seç, kartta hemen görünür',
+  'share.scene': 'Cami silueti',
+  'share.greetingSource': 'Tebrik mesajı',
 } as const;
 
 export type StringKey = keyof typeof tr;
