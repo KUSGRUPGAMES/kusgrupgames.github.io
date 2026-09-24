@@ -3,12 +3,12 @@
  * Kart düzeni kullanıcı tarafından değiştirilebilir; sıradaki vakit kartı
  * sabittir (kapatılamaz), çünkü uygulamanın çekirdeği odur.
  */
-import React, { useMemo } from 'react';
-import { View, Image, Pressable, useWindowDimensions } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, Image, Pressable, ScrollView, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import {
   Screen, Card, Text, Column, Button, EmptyState, Banner, Row,
-  Icon, IconButton, OrnateFrame,
+  Icon, IconButton, OrnateFrame, SectionHeader,
 } from '@/ui';
 import { Brand } from '@/config/brand';
 // Görseller `import` ile alınır: `require()` lint kuralıyla yasak ve
@@ -43,6 +43,8 @@ export default function HomeScreen() {
   const konum = useLocationStore((s) => s.active());
   const settings = useSettingsStore((s) => s.settings);
   const kartlar = useHomeLayoutStore((s) => s.cards);
+  const [digerKartlarAcik, setDigerKartlarAcik] = useState(false);
+  const gorunenKartlar = kartlar.filter((c) => c.visible);
 
   const input = useMemo<ScheduleInput | null>(() => {
     if (!konum) return null;
@@ -205,9 +207,35 @@ export default function HomeScreen() {
         <Icon name="chevronDown" size={18} color={theme.colors.textSubtle} />
       </Pressable>
 
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}
+        style={{ marginBottom: theme.spacing.lg }}
+        contentContainerStyle={{ gap: theme.spacing.sm }}>
+        <Button label={t('nav.quran')} icon="book" variant="secondary" size="sm"
+          onPress={() => router.push('/(tabs)/quran')} />
+        <Button label={t('qibla.title')} icon="compass" variant="secondary" size="sm"
+          onPress={() => router.push('/qibla')} />
+        <Button label={t('worship.dhikr')} icon="beads" variant="secondary" size="sm"
+          onPress={() => router.push('/dhikr')} />
+        <Button label={t('prayer.calendar')} icon="calendar" variant="secondary" size="sm"
+          onPress={() => router.push('/prayer-calendar')} />
+      </ScrollView>
+
       <Column gap="md">
-        {kartlar.filter((c) => c.visible).map((c) => kart(c.id))}
+        {gorunenKartlar.slice(0, 3).map((c) => kart(c.id))}
       </Column>
+
+      {gorunenKartlar.length > 3 ? (
+        <>
+          <SectionHeader title={t('common.today')} />
+          {digerKartlarAcik ? (
+            <Column gap="md">{gorunenKartlar.slice(3).map((c) => kart(c.id))}</Column>
+          ) : null}
+          <Button label={digerKartlarAcik ? t('nav.close') : t('common.more')}
+            icon={digerKartlarAcik ? 'chevronUp' : 'chevronDown'}
+            variant="secondary" block
+            onPress={() => setDigerKartlarAcik((open) => !open)} />
+        </>
+      ) : null}
 
       <Row gap="sm" style={{ marginTop: theme.spacing.xl }}>
         <Button
