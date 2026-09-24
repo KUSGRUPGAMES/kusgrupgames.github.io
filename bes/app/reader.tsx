@@ -8,6 +8,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, View, Share } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Screen, Card, Row, Column, Text, ArabicText, IconButton, Sheet, Banner,
   SectionHeader, Stepper, Segmented, Field, Button, Badge, SourceNote, Divider,
@@ -31,6 +32,7 @@ export default function ReaderScreen() {
   const sureAdi = useSurahName();
   const t = useT();
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ surah?: string; ayah?: string }>();
   const sureNo = Math.min(114, Math.max(1, Number(params.surah ?? 1) || 1));
   const hedefAyet = Math.max(1, Number(params.ayah ?? 1) || 1);
@@ -59,7 +61,18 @@ export default function ReaderScreen() {
     bitrate: settings.recitation.bitrate,
     localUri: (global) => localPath(settings.recitation.reciterId,
       okuyucu ? resolveBitrate(okuyucu, settings.recitation.bitrate) : settings.recitation.bitrate, global),
+    describe: (ref) => ({
+      title: t('quran.continueAt', { surah: sureAdi(getSurah(ref.surah), String(ref.surah)), ayah: ref.ayah }),
+      ...(okuyucu ? { artist: okuyucu.name } : {}),
+    }),
   });
+  const calanAyet = kiraat.current?.surah === sureNo ? kiraat.current.ayah : null;
+
+  /** Başlıktaki düğme: çalıyorsa duraklatır, duraklatılmışsa sürdürür. */
+  const anaDugme = useCallback(() => {
+    if (kiraat.playing || kiraat.paused) kiraat.toggle();
+    else dinleRef.current(1);
+  }, [kiraat]);
 
   /** Verilen âyetten başlayarak surenin sonuna kadar çalar. */
   const dinle = useCallback((ayahNo: number) => {
@@ -67,6 +80,14 @@ export default function ReaderScreen() {
     const numaralar = ayetler.map((_a, i) => ilkGlobal + i);
     kiraat.start(kuyruk, numaralar, { surah: sureNo, ayah: ayahNo });
   }, [ayetler, ilkGlobal, kiraat, sureNo]);
+  const dinleRef = useRef(dinle);
+  dinleRef.current = dinle;
+
+  // Çalan âyet ekranda kalsın: her âyet geçişinde listeyi ona kaydır.
+  useEffect(() => {
+    if (calanAyet === null || !kiraat.playing) return;
+    liste.current?.scrollToIndex({ index: calanAyet - 1, animated: true, viewPosition: 0.2 });
+  }, [calanAyet, kiraat.playing]);
   const [secili, setSecili] = useState<QuranAyah | null>(null);
   const [not, setNot] = useState('');
   const liste = useRef<FlatList<QuranAyah>>(null);
@@ -148,9 +169,9 @@ export default function ReaderScreen() {
             <Row gap="xs" align="center">
               <IconButton
                 name={kiraat.playing ? 'pause' : 'play'}
-                label={kiraat.playing ? t('audio.pause') : t('audio.playSurah')}
+                label={kiraat.playing ? t('audio.pause') : kiraat.paused ? t('audio.play') : t('audio.playSurah')}
                 filled
-                onPress={() => (kiraat.playing ? kiraat.toggle() : dinle(1))}
+                onPress={anaDugme}
               />
               <IconButton name="settings" label={t('quran.readerSettings')} onPress={() => setAyarlarAcik(true)} />
             </Row>
@@ -172,21 +193,24 @@ export default function ReaderScreen() {
         }
         renderItem={({ item }) => {
           const imli = bookmarks.some((b) => b.surah === item.surah && b.ayah === item.ayah);
+          const calan = calanAyet === item.ayah;
           return (
-            <Card onPress={() => ayetAc(item)} accessibilityLabel={`${sureAdi(sure)} ${item.ayah}`}>
+            <Card
+              onPress={() => ayetAc(item)}
+              accessibilityLabel={`${sureAdi(sure)} ${item.ayah}`}
+              style={calan ? { borderColor: theme.colors.accent, borderWidth: 2 } : undefined}
+            >
               <Column gap="sm">
                 <Row align="center" gap="sm">
                   <Badge label={String(item.ayah)} tone={imli ? 'highlight' : 'neutral'} />
                   {item.sajda ? <Badge label={t('quran.sajdaAyah')} tone="accent" /> : null}
                   <View style={{ flex: 1 }} />
                   <IconButton
-                    name={kiraat.playing && kiraat.current?.ayah === item.ayah ? 'pause' : 'play'}
-                    label={t('audio.play')}
+                    name={calan && kiraat.playing ? 'pause' : 'play'}
+                    label={calan && kiraat.playing ? t('audio.pause') : t('audio.play')}
                     size={16}
                     filled
-                    onPress={() => (kiraat.playing && kiraat.current?.ayah === item.ayah
-                      ? kiraat.toggle()
-                      : dinle(item.ayah))}
+                    onPress={() => (calan ? kiraat.toggle() : dinle(item.ayah))}
                   />
                   <Text variant="micro" tone="subtle">{t('quran.pageNo', { n: item.page })}</Text>
                 </Row>
@@ -203,6 +227,42 @@ export default function ReaderScreen() {
           );
         }}
       />
+
+      {kiraat.state.index >= 0 && (kiraat.playing || kiraat.paused) ? (
+        <View
+          style={{
+            flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm,
+            paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.sm,
+            paddingBottom: theme.spacing.sm + insets.bottom,
+            backgroundColor: theme.colors.surfaceRaised,
+            borderTopWidth: 1, borderTopColor: theme.colors.border,
+          }}
+        >
+          <Column flex={1} gap="xxs">
+            <Text variant="bodyStrong" lines={1}>
+              {kiraat.current ? t('quran.continueAt', { surah: sureAdi(getSurah(kiraat.current.surah), ''), ayah: kiraat.current.ayah }) : ''}
+            </Text>
+            <Text variant="micro" tone="muted" lines={1}>
+              {kiraat.loading ? t('common.loading') : (okuyucu?.name ?? '')}
+            </Text>
+          </Column>
+          <IconButton name="chevronLeft" label={t('audio.previous')} onPress={kiraat.skipPrevious} />
+          <IconButton
+            name={kiraat.playing ? 'pause' : 'play'}
+            label={kiraat.playing ? t('audio.pause') : t('audio.play')}
+            filled
+            onPress={kiraat.toggle}
+          />
+          <IconButton name="chevronRight" label={t('audio.next')} onPress={kiraat.skipNext} />
+          <IconButton
+            name="refresh"
+            label={`${t('audio.repeat')}: ${kiraat.state.repeat === 'ayah' ? t('audio.repeatAyah') : t('audio.repeatOff')}`}
+            {...(kiraat.state.repeat === 'ayah' ? { filled: true } : {})}
+            onPress={() => kiraat.setRepeat(kiraat.state.repeat === 'ayah' ? 'off' : 'ayah')}
+          />
+          <IconButton name="close" label={t('audio.stop')} onPress={kiraat.stop} />
+        </View>
+      ) : null}
 
       <Sheet visible={ayarlarAcik} onClose={() => setAyarlarAcik(false)} title={t('quran.readerSettings')}>
         <Column gap="lg">
