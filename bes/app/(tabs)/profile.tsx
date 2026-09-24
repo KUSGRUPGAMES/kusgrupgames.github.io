@@ -1,7 +1,7 @@
 /** Profil ve ayarlar — şartname §59, §60. */
 import React from 'react';
 import { router } from 'expo-router';
-import { Screen, SectionHeader, Card, ListItem, Segmented, Icon } from '@/ui';
+import { Screen, SectionHeader, Card, ListItem, Segmented, Icon, PageHeader } from '@/ui';
 import { useI18n, useT, LANGUAGES, LANGUAGE_NAMES } from '@/lib/i18n';
 import { useThemeContext, type ThemeMode } from '@/theme/ThemeProvider';
 import { Brand } from '@/config/brand';
@@ -20,8 +20,8 @@ export default function ProfileScreen() {
 
   return (
     <Screen scroll>
-      <SectionHeader title={t('profile.title')} subtitle={t('profile.guest')} />
-      <Card padding="sm">
+      <PageHeader title={t('profile.title')} icon="user" subtitle={t('profile.guest')} />
+      <Card padding="md">
         <ListItem title={t('account.title')} icon="user" onPress={() => router.push('/account')} />
         <ListItem title={t('notification.center')} icon="bell" onPress={() => router.push('/notifications-center')} />
         <ListItem title={t('diagnostics.title')} icon="info" onPress={() => router.push('/diagnostics')} />
@@ -39,7 +39,7 @@ export default function ProfileScreen() {
       />
 
       <SectionHeader title={t('settings.language')} subtitle={t('settings.languageRestart')} />
-      <Card padding="sm">
+      <Card padding="md">
         {LANGUAGES.map((l) => (
           <ListItem
             key={l}
@@ -52,14 +52,14 @@ export default function ProfileScreen() {
       </Card>
 
       <SectionHeader title={t('settings.notifications')} />
-      <Card padding="sm">
+      <Card padding="md">
         <ListItem title={t('reminder.title')} icon="bell" onPress={() => router.push('/reminders')} />
         <ListItem title={t('prayer.settings')} icon="clock" onPress={() => router.push('/prayer-settings')} />
         <ListItem title={t('audio.title')} icon="play" onPress={() => router.push('/recitation')} />
       </Card>
 
       <SectionHeader title={t('settings.about')} />
-      <Card padding="sm">
+      <Card padding="md">
         <ListItem title={t('settings.publisher')} value={Brand.publisher} chevron={false} />
         <ListItem title={t('settings.version')} value={Brand.version} chevron={false} />
         <ListItem title={t('settings.privacy')} icon="lock" onPress={() => openLegalPage('privacy')} />
