@@ -23,6 +23,7 @@ import { kv } from './storage';
 import { Brand } from '@/config/brand';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import Constants from 'expo-constants';
+import { reloadAppAsync } from 'expo';
 import { palette, opacity } from '@/theme/tokens';
 import { BrandPattern } from '@/ui/BrandPattern';
 import { Gradient } from '@/ui/Gradient';
@@ -53,6 +54,11 @@ const themeModeCodec = {
     throw new Error('geçersiz tema');
   },
   fallback: 'system' as ThemeMode,
+};
+
+const sayiCodec = {
+  parse: (raw: unknown): number => (typeof raw === 'number' && Number.isFinite(raw) ? raw : 0),
+  fallback: 0,
 };
 
 const languageCodec = {
@@ -103,6 +109,18 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
           hydrateAll(),
         ]);
         if (!alive) return;
+        // Yön uzlaştırması: kalıcı ayar dilden bağımsız kalmışsa (bkz.
+        // rtl.ts) burada düzeltilir ve uygulama bir kez yeniden yüklenir.
+        const etkinDil = lang ?? resolveLanguage(Localization.getLocales()[0]?.languageTag ?? null);
+        if (applyUiDirection(etkinDil)) {
+          const son = await kv.read(KEYS.directionReloadAt, sayiCodec);
+          // Döngü koruması: bir dakika içinde ikinci kez yeniden yüklenmez.
+          if (Date.now() - son > 60_000) {
+            await kv.write(KEYS.directionReloadAt, Date.now());
+            await reloadAppAsync('ui-direction');
+            return;
+          }
+        }
         setThemeMode(mode);
         setLanguage(lang);
         setOnboardingDone(boot.onboardingDone);
@@ -124,10 +142,15 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 
   const saveThemeMode = useCallback((mode: ThemeMode) => { void kv.write(KEYS.themeMode, mode); }, []);
   const saveLanguage = useCallback((lang: Language) => {
-    void kv.write(KEYS.language, lang);
-    // Arapçaya geçişte düzen aynalanır; React Native bunu ancak yeniden
-    // başlatınca uygular, bu yüzden ayar ekranında not gösterilir (§61).
-    applyUiDirection(lang);
+    // Arapçaya (ya da Arapçadan) geçişte düzen aynalanır; React Native bunu
+    // ancak yeniden yüklemeyle uygular. Kullanıcıdan uygulamayı kapatıp
+    // açması beklenmez: dil kaydedilir, uygulama kendini yeniden yükler.
+    const yeniden = applyUiDirection(lang);
+    void kv.write(KEYS.language, lang).then(async () => {
+      if (!yeniden) return;
+      await kv.write(KEYS.directionReloadAt, Date.now());
+      await reloadAppAsync('ui-direction');
+    });
   }, []);
 
   // Tercihler okunmadan çizmek, temanın açıktan koyuya sıçramasına yol açar.

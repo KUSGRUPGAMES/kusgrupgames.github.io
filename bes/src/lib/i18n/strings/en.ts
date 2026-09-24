@@ -177,7 +177,7 @@ export const en: Partial<Record<StringKey, string>> = {
   'settings.title': 'Settings', 'settings.appearance': 'Appearance', 'settings.theme': 'Theme',
   'settings.themeSystem': 'System', 'settings.themeLight': 'Light', 'settings.themeDark': 'Dark',
   'settings.language': 'Language',
-  'settings.languageRestart': 'Restart the app for the writing direction to change.',
+  'settings.languageRestart': 'If the writing direction changes, the app reloads itself once.',
   'settings.notifications': 'Notifications', 'settings.sound': 'Sound',
   'settings.vibration': 'Vibration', 'settings.about': 'About', 'settings.privacy': 'Privacy',
   'settings.terms': 'Terms of use', 'settings.publisher': 'Publisher', 'settings.version': 'Version',

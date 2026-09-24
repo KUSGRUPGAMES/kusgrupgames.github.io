@@ -177,7 +177,7 @@ export const ar: Partial<Record<StringKey, string>> = {
   'settings.title': 'الإعدادات', 'settings.appearance': 'المظهر', 'settings.theme': 'السمة',
   'settings.themeSystem': 'النظام', 'settings.themeLight': 'فاتح', 'settings.themeDark': 'داكن',
   'settings.language': 'اللغة',
-  'settings.languageRestart': 'أعد تشغيل التطبيق ليتغيّر اتجاه الكتابة.',
+  'settings.languageRestart': 'إذا تغيّر اتجاه الكتابة، يعيد التطبيق تحميل نفسه مرة واحدة.',
   'settings.notifications': 'الإشعارات', 'settings.sound': 'الصوت',
   'settings.vibration': 'الاهتزاز', 'settings.about': 'حول', 'settings.privacy': 'الخصوصية',
   'settings.terms': 'شروط الاستخدام', 'settings.publisher': 'الناشر', 'settings.version': 'الإصدار',

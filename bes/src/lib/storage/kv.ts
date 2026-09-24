@@ -78,6 +78,7 @@ export const KEYS = {
   worship: 'worship',
   crashes: 'crashes',
   learning: 'learning',
+  directionReloadAt: 'directionReloadAt',
 } as const;
 
 export type StorageKey = (typeof KEYS)[keyof typeof KEYS];

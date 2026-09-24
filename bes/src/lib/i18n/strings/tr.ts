@@ -333,7 +333,7 @@ export const tr = {
   'settings.themeLight': 'Açık',
   'settings.themeDark': 'Koyu',
   'settings.language': 'Dil',
-  'settings.languageRestart': 'Yazı yönü değişikliği için uygulamayı yeniden başlat.',
+  'settings.languageRestart': 'Yazı yönü değişirse uygulama kendini bir kez yeniden yükler.',
   'settings.notifications': 'Bildirimler',
   'settings.sound': 'Ses',
   'settings.vibration': 'Titreşim',
