@@ -4,7 +4,7 @@
  * sabittir (kapatılamaz), çünkü uygulamanın çekirdeği odur.
  */
 import React, { useMemo, useState } from 'react';
-import { View, Image, Pressable, ScrollView, useWindowDimensions } from 'react-native';
+import { View, Image, Pressable, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import {
   Screen, Card, Text, Column, Button, EmptyState, Banner, Row,
@@ -13,7 +13,7 @@ import {
 import { Brand } from '@/config/brand';
 // Görseller `import` ile alınır: `require()` lint kuralıyla yasak ve
 // `types/assets.d.ts` zaten `*.png` modülünü bildiriyor.
-import camiSiluet from '../../assets/brand/paket/islami_siluet_03.png';
+import camiSiluet from '../../assets/brand/hero-mosque-sunset.png';
 // İki sembol var ve **temaya göre seçilir**. Açık temada açık renkli sembol
 // fildişi zeminde tamamen kayboluyordu; dosya adındaki "light/dark" sembolün
 // kendi rengidir, kullanılacağı temanın değil.
@@ -44,7 +44,8 @@ export default function HomeScreen() {
   const settings = useSettingsStore((s) => s.settings);
   const kartlar = useHomeLayoutStore((s) => s.cards);
   const [digerKartlarAcik, setDigerKartlarAcik] = useState(false);
-  const gorunenKartlar = kartlar.filter((c) => c.visible);
+  const digerKartlar = kartlar.filter((c) => c.visible && c.id !== 'nextPrayer' && c.id !== 'todayTimes');
+  const vakitlerAcik = kartlar.find((c) => c.id === 'todayTimes')?.visible !== false;
 
   const input = useMemo<ScheduleInput | null>(() => {
     if (!konum) return null;
@@ -96,15 +97,15 @@ export default function HomeScreen() {
           <OrnateFrame
             key={id}
             width={kartGen}
-            height={Math.round(kartGen * 0.88)}
+            height={Math.round(kartGen * 0.79)}
             siluet={camiSiluet}
           >
-            <Column gap="sm" align="center" style={{ flex: 1, justifyContent: 'center', paddingBottom: theme.spacing.xl }}>
+            <Column gap="xs" align="center" style={{ flex: 1, justifyContent: 'center' }}>
               <Text variant="eyebrow" tone="onAccent" align="center" style={{ color: theme.colors.onAccentHighlight, letterSpacing: 2 }}>
                 {t('prayer.next').toLocaleUpperCase(localeTag(language))}
               </Text>
               {live?.next ? (
-                <Column align="center" gap="sm" style={{ width: '100%' }}>
+                <Column align="center" gap="xs" style={{ width: '100%' }}>
                   <Text variant="display" tone="onAccent" align="center">{label(live.next.key)}</Text>
                   <Text
                     variant="numeric"
@@ -120,9 +121,6 @@ export default function HomeScreen() {
                   >
                     {formatCountdown(live.secondsToNext)}
                   </Text>
-                  <View style={{ width: 92, height: 2, backgroundColor: theme.colors.onAccentTrack, marginTop: theme.spacing.xs }}>
-                    <View style={{ width: `${Math.min(100, Math.max(0, live.progress * 100))}%`, height: 2, backgroundColor: theme.colors.onAccentHighlight }} />
-                  </View>
                 </Column>
               ) : (
                 <Text variant="body" tone="onAccent" align="center">{t('prayer.polarNote')}</Text>
@@ -132,15 +130,16 @@ export default function HomeScreen() {
         );
       case 'todayTimes':
         return live ? (
-          <Card key={id} accent>
-            <Column gap="sm">
+          <Card key={id} accent padding="md">
+            <Column gap="xs">
               <Row align="center" gap="sm">
                 <Icon name="mosque" size={20} color={theme.colors.onAccentHighlight} />
-                <Text variant="caption" tone="onAccent" style={{ color: theme.colors.onAccentHighlight }}>
+                <Text variant="bodyStrong" tone="onAccent" style={{ color: theme.colors.onAccentHighlight }}>
                   {t('prayer.todayTimes')}
                 </Text>
               </Row>
-              <PrayerList day={live.today} highlight={live.current} branded />
+              <PrayerList day={live.today} highlight={live.current} branded compact
+                onPrayerPress={() => router.push('/prayer-calendar')} />
             </Column>
           </Card>
         ) : <Banner key={id} tone="info" title={t('common.loading')} />;
@@ -157,11 +156,9 @@ export default function HomeScreen() {
   };
 
   return (
-    <Screen scroll motif="marka">
-      {/* Üst çubuk: solda bildirimler, ortada marka, sağda vakit ayarları.
-          Onaylanan taslaktaki düzen budur; daire içindeki düğmeler markanın
-          altın hattını taşır. */}
-      <Row align="center" justify="space-between" style={{ marginBottom: theme.spacing.md }}>
+    <Screen scroll motif="marka" padding="none">
+      <View style={{ paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.sm }}>
+      <Row align="center" justify="space-between" style={{ marginBottom: theme.spacing.sm }}>
         <IconButton
           name="bell"
           label={t('reminder.title')}
@@ -174,7 +171,7 @@ export default function HomeScreen() {
             resizeMode="contain"
             accessible
             accessibilityLabel={Brand.appName}
-            style={{ width: 40, height: 40 }}
+          style={{ width: 52, height: 52 }}
           />
           <Text variant="caption" tone="muted">{Brand.tagline}</Text>
         </Column>
@@ -186,53 +183,56 @@ export default function HomeScreen() {
         />
       </Row>
 
-      {/* Konum hapı: iğne, şehir, ülke ve ok — taslaktaki satırın aynısı. */}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`${konum.label}, ${konum.country}`}
         onPress={() => router.push('/location')}
         style={{
           flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm,
-          paddingVertical: theme.spacing.sm, paddingHorizontal: theme.spacing.md,
-          borderRadius: theme.radius.lg, borderWidth: 1,
+          minHeight: 48, paddingVertical: theme.spacing.xs, paddingHorizontal: theme.spacing.md,
+          borderRadius: theme.radius.pill, borderWidth: 1,
           borderColor: theme.colors.bezemeSolgun, backgroundColor: theme.colors.surface,
-          marginBottom: theme.spacing.md,
+          marginBottom: theme.spacing.sm,
         }}
       >
         <Icon name="location" size={20} color={theme.colors.highlight} />
-        <Column gap="xxs" style={{ flex: 1 }}>
-          <Text variant="bodyStrong">{konum.label}</Text>
-          <Text variant="caption" tone="muted">{konum.country}</Text>
-        </Column>
+        <Text variant="bodyStrong" lines={1} style={{ flex: 1 }}>{`${konum.label}, ${konum.country}`}</Text>
         <Icon name="chevronDown" size={18} color={theme.colors.textSubtle} />
       </Pressable>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}
-        style={{ marginBottom: theme.spacing.lg }}
-        contentContainerStyle={{ gap: theme.spacing.sm }}>
-        <Button label={t('nav.quran')} icon="book" variant="secondary" size="sm"
-          onPress={() => router.push('/(tabs)/quran')} />
-        <Button label={t('qibla.title')} icon="compass" variant="secondary" size="sm"
-          onPress={() => router.push('/qibla')} />
-        <Button label={t('worship.dhikr')} icon="beads" variant="secondary" size="sm"
-          onPress={() => router.push('/dhikr')} />
-        <Button label={t('prayer.calendar')} icon="calendar" variant="secondary" size="sm"
-          onPress={() => router.push('/prayer-calendar')} />
-      </ScrollView>
+      <View style={{ alignItems: 'center', marginBottom: theme.spacing.sm }}>{kart('nextPrayer')}</View>
+      {vakitlerAcik ? <View style={{ marginBottom: theme.spacing.sm }}>{kart('todayTimes')}</View> : null}
 
-      <Column gap="md">
-        {gorunenKartlar.slice(0, 3).map((c) => kart(c.id))}
-      </Column>
+      <Row gap="sm">
+        <Card padding="sm" onPress={() => router.push('/(tabs)/quran')}
+          accessibilityLabel={t('nav.quran')} style={{ flex: 1 }}>
+          <Row gap="sm" align="center" style={{ minHeight: 40 }}>
+            <Icon name="book" size={24} color={theme.colors.highlight} />
+            <Text variant="bodyStrong" lines={1} style={{ flex: 1 }}>{t('nav.quran')}</Text>
+            <Icon name="chevronRight" size={16} color={theme.colors.highlight} />
+          </Row>
+        </Card>
+        <Card padding="sm" onPress={() => router.push('/qibla')}
+          accessibilityLabel={t('qibla.title')} style={{ flex: 1 }}>
+          <Row gap="sm" align="center" style={{ minHeight: 40 }}>
+            <Icon name="compass" size={24} color={theme.colors.highlight} />
+            <Text variant="bodyStrong" lines={1} style={{ flex: 1 }}>{t('qibla.title')}</Text>
+            <Icon name="chevronRight" size={16} color={theme.colors.highlight} />
+          </Row>
+        </Card>
+      </Row>
 
-      {gorunenKartlar.length > 3 ? (
+      {digerKartlar.length > 0 ? (
         <>
-          <SectionHeader title={t('common.today')} />
           {digerKartlarAcik ? (
-            <Column gap="md">{gorunenKartlar.slice(3).map((c) => kart(c.id))}</Column>
+            <>
+              <SectionHeader title={t('common.today')} />
+              <Column gap="md">{digerKartlar.map((c) => kart(c.id))}</Column>
+            </>
           ) : null}
           <Button label={digerKartlarAcik ? t('nav.close') : t('common.more')}
             icon={digerKartlarAcik ? 'chevronUp' : 'chevronDown'}
-            variant="secondary" block
+            variant="secondary" block style={{ marginTop: theme.spacing.md }}
             onPress={() => setDigerKartlarAcik((open) => !open)} />
         </>
       ) : null}
@@ -254,6 +254,7 @@ export default function HomeScreen() {
           onPress={() => router.push('/home-layout')}
         />
       </Row>
+      </View>
     </Screen>
   );
 }

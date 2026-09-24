@@ -7,7 +7,7 @@
  * listede gözle bulunmuyordu.
  */
 import React from 'react';
-import { View } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT, type StringKey } from '@/lib/i18n';
 import { Row, Text, Divider, Icon, type IconName } from '@/ui';
@@ -51,7 +51,10 @@ export function usePrayerShortLabel(): (key: PrayerKey) => string {
   return (key) => t(SHORT_KEY[key]);
 }
 
-export function PrayerList({ day, highlight, branded = false }: { day: DaySchedule; highlight?: PrayerKey | null; branded?: boolean }) {
+export function PrayerList({ day, highlight, branded = false, compact = false, onPrayerPress }: {
+  day: DaySchedule; highlight?: PrayerKey | null; branded?: boolean;
+  compact?: boolean; onPrayerPress?: (key: PrayerKey) => void;
+}) {
   const theme = useTheme();
   const label = usePrayerLabel();
   return (
@@ -64,17 +67,19 @@ export function PrayerList({ day, highlight, branded = false }: { day: DaySchedu
             {i > 0 && !aktif ? branded
               ? <View style={{ height: 1, backgroundColor: theme.colors.bezemeSolgun }} />
               : <Divider /> : null}
-            <Row
-              align="center"
-              justify="space-between"
-              style={{
-                paddingVertical: theme.spacing.md,
-                paddingHorizontal: aktif ? theme.spacing.sm : 0,
+            <Pressable
+              onPress={onPrayerPress ? () => onPrayerPress(key) : undefined}
+              accessibilityRole={onPrayerPress ? 'button' : 'text'}
+              style={({ pressed }) => ({
+                flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+                minHeight: compact ? 38 : 48,
+                paddingVertical: compact ? theme.spacing.xs : theme.spacing.md,
+                paddingHorizontal: aktif ? theme.spacing.sm : compact ? theme.spacing.xs : 0,
                 borderRadius: aktif ? theme.radius.md : 0,
                 borderWidth: aktif ? 1 : 0,
                 borderColor: aktif ? (branded ? theme.colors.onAccentHighlight : theme.colors.highlight) : 'transparent',
-                backgroundColor: aktif ? theme.colors.onAccentBorder : 'transparent',
-              }}
+                backgroundColor: aktif ? theme.colors.onAccentBorder : pressed ? theme.colors.onAccentBorder : 'transparent',
+              })}
               accessible
               accessibilityLabel={`${label(key)} ${formatHM(entry?.hours ?? null)}`}
             >
@@ -94,13 +99,10 @@ export function PrayerList({ day, highlight, branded = false }: { day: DaySchedu
                   style={branded && aktif ? { color: theme.colors.onAccentHighlight } : undefined}>
                   {formatHM(entry?.hours ?? null)}
                 </Text>
-                <Icon
-                  name="chevronRight"
-                  size={16}
-                  color={branded ? theme.colors.onAccentHighlight : aktif ? theme.colors.highlight : theme.colors.textSubtle}
-                />
+                {onPrayerPress ? <Icon name="chevronRight" size={16}
+                  color={branded ? theme.colors.onAccentHighlight : aktif ? theme.colors.highlight : theme.colors.textSubtle} /> : null}
               </Row>
-            </Row>
+            </Pressable>
           </View>
         );
       })}
