@@ -32,7 +32,7 @@ export default function DhikrStatsScreen() {
 
   if (sessions.length === 0) {
     return (
-      <Screen>
+      <Screen topInset={false}>
         <Stack.Screen options={{ headerShown: true, title: t('dhikr.stats') }} />
         {/* Açıklama "Saymak için dokun" diyordu; bu ekranda dokunulacak sayaç
             yok, sayaç zikirmatik ekranında. */}
@@ -64,7 +64,7 @@ export default function DhikrStatsScreen() {
   );
 
   return (
-    <Screen scroll motif="marka">
+    <Screen topInset={false} scroll motif="marka">
       <Stack.Screen options={{ headerShown: true, title: t('dhikr.stats') }} />
 
       <Card accent motif="starLattice">
