@@ -4,6 +4,7 @@
  * kalırdı. Bu sınama iki tarafı metin olarak karşılaştırır.
  */
 import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { buildWidgetPayload, nextTwo, WIDGET_KEY } from '@/features/widget/payload';
 import { rangeSchedule } from '@/features/prayer/schedule';
@@ -60,5 +61,20 @@ describe('widget verisi', () => {
     const modul = govde(readFileSync(join(KOK, 'modules', 'bes-live-activity', 'ios', 'BesLiveActivityModule.swift'), 'utf8'));
     expect(widget).toBeTruthy();
     expect(modul).toBe(widget);
+  });
+
+  it('yerel kaynaklar git tarafından yok sayılmıyor', () => {
+    // `.gitignore`daki `ios/` kuralı bir kez modülün ios klasörünü de
+    // yutmuştu: Swift dosyası depoya hiç girmedi, CI'da derleme kırıldı.
+    const dosyalar = [
+      'modules/bes-live-activity/ios/BesLiveActivityModule.swift',
+      'modules/bes-live-activity/ios/BesLiveActivity.podspec',
+      'targets/widget/index.swift',
+    ];
+    for (const f of dosyalar) {
+      let yokSayiliyor = true;
+      try { execFileSync('git', ['check-ignore', '-q', f], { cwd: KOK }); } catch { yokSayiliyor = false; }
+      expect({ f, yokSayiliyor }).toEqual({ f, yokSayiliyor: false });
+    }
   });
 });
