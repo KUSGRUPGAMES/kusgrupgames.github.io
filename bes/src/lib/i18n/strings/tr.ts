@@ -781,6 +781,13 @@ export const tr = {
   'share.styleIvory': 'Fildişi',
   'share.styleGold': 'Altın',
   'share.catDua': 'Dua',
+  'ezan.setting': 'Vakitte ezan okunsun',
+  'ezan.settingHint': 'Uygulama kapalıyken bildirimle ezanın ilk 30 saniyesi, açıkken tamamı okunur. Ses tuşuna basmak ya da Durdur ezanı susturur.',
+  'ezan.preview': 'Ezanı dinle',
+  'ezan.playing': 'Ezan okunuyor',
+  'ezan.stop': 'Durdur',
+  'ezan.stopHint': 'Durdurmak için dokun ya da ses tuşuna bas',
+  'ezan.source': 'Ezan kaydı: Adam-synagda, Wikimedia Commons (CC0, kamu malı).',
 } as const;
 
 export type StringKey = keyof typeof tr;

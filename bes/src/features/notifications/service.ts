@@ -4,6 +4,7 @@
  * sınanmıştır; burada yalnız platform çağrıları vardır.
  */
 import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
 import { logger } from '@/lib/log';
 import type { PlannedNotification } from './plan';
 import { bizimMi, farkAl, bildirimImzasi, type KurulacakBildirim, type KuruluKayit } from './coordinator';
@@ -80,6 +81,30 @@ export async function installedRecords(): Promise<KuruluKayit[]> {
   }
 }
 
+/** Pakete gömülü ezan bildirim sesinin dosya adı. */
+export const EZAN_SESI = 'ezan.wav';
+const KANAL_EZAN = 'ezan';
+const KANAL_VAKIT = 'vakit';
+
+/**
+ * Android bildirim kanalları. Kanalın sesi **kanal oluşturulurken** sabitlenir,
+ * sonradan değiştirilemez; bu yüzden ezan ayrı bir kanaldır.
+ */
+async function kanallariKur(): Promise<void> {
+  if (Platform.OS !== 'android') return;
+  try {
+    await Notifications.setNotificationChannelAsync(KANAL_EZAN, {
+      name: 'Ezan', importance: Notifications.AndroidImportance.HIGH, sound: EZAN_SESI,
+      vibrationPattern: [0, 250, 250, 250],
+    });
+    await Notifications.setNotificationChannelAsync(KANAL_VAKIT, {
+      name: 'Vakit ve hatırlatıcılar', importance: Notifications.AndroidImportance.HIGH,
+    });
+  } catch (e) {
+    log.warn('bildirim kanalları kurulamadı', { error: e });
+  }
+}
+
 export interface EsitlemeSonucu {
   izin: boolean;
   kurulan: number;
@@ -112,6 +137,7 @@ async function gercekSyncNotifications(
     for (const id of iptalEdilecek) {
       await Notifications.cancelScheduledNotificationAsync(id);
     }
+    await kanallariKur();
     let kurulan = 0;
     for (const n of kurulacak) {
       await Notifications.scheduleNotificationAsync({
@@ -119,14 +145,21 @@ async function gercekSyncNotifications(
         content: {
           title: n.title,
           body: n.body,
-          sound: options.sound,
+          // Ezan: pakete gömülü ses (app.config → expo-notifications
+          // `sounds`). iOS bildirim sesine en çok 30 sn izin verir; dosya
+          // 29,5 sn'dir. Android'de ses kanaldan gelir (`kanallariKur`).
+          sound: options.sound ? (n.ezan ? EZAN_SESI : true) : false,
           // Fark almak için gereken alanlar. Tetikleyici okunamadığı için
           // zaman damgası ve içerik imzası bilerek içeriğe yazılır — imza
           // başlık/gövde/ses değişimini yakalar, yalnız zaman kıyaslamak
           // dil değişikliğini ya da ses ayarını kaçırıyordu.
-          data: { at: n.at.getTime(), tur: n.tur, imza: bildirimImzasi(n, options.sound) },
+          data: { at: n.at.getTime(), tur: n.tur, imza: bildirimImzasi(n, options.sound), ezan: n.ezan === true },
         },
-        trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: n.at },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          date: n.at,
+          ...(Platform.OS === 'android' ? { channelId: n.ezan && options.sound ? KANAL_EZAN : KANAL_VAKIT } : {}),
+        },
       });
       kurulan += 1;
     }

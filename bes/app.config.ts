@@ -144,6 +144,9 @@ const config: ExpoConfig = {
     ['expo-notifications', {
       icon: './assets/brand/notification-icon.png',
       color: VURGU,
+      // Vakit girişinde ezan (D29). Bildirim sesi pakette olmak zorunda:
+      // uygulama kapalıyken çalınır.
+      sounds: ['./assets/sounds/ezan.wav'],
     }],
     // Konum izni yalnız **uygulama açıkken**. expo-location eklentisi kendi
     // İngilizce varsayılanlarıyla üç anahtar birden yazıyor; "Always" izni

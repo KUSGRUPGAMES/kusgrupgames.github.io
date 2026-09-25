@@ -15,7 +15,7 @@ module.exports = {
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
         // Font ve görsel varlıkları paketleyici çözer; testte sahte modül yeter.
-        '\\.(ttf|otf|png|jpg|jpeg|svg|webp)$': '<rootDir>/__mocks__/assetStub.js',
+        '\\.(ttf|otf|png|jpg|jpeg|svg|webp|m4a|wav)$': '<rootDir>/__mocks__/assetStub.js',
       },
     },
     {

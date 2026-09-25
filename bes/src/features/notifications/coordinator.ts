@@ -57,6 +57,8 @@ export interface KurulacakBildirim {
   at: Date;
   title: string;
   body: string;
+  /** Vakit girişinde ezan sesiyle çalınsın (D29). */
+  ezan?: boolean;
 }
 
 export interface PlanMetinleri {
@@ -69,6 +71,8 @@ export interface PlanGirdisi {
   bildirimAyari: NotificationSettings;
   hatirlaticilar: readonly Reminder[];
   metin: PlanMetinleri;
+  /** Vakit girişi bildirimleri ezan sesiyle mi çalsın (Ayarlar). */
+  ezan?: boolean;
 }
 
 /**
@@ -107,6 +111,9 @@ export function birlesikPlan(
       at: n.at,
       title: metin.vakitBaslik(n.key, n.beforeMinutes),
       body: metin.vakitGovde(n.key, n.beforeMinutes),
+      // Ezan yalnız namaz vaktinin **girişinde**: önceden uyarıda ve güneşte
+      // (namaz vakti değil) okunmaz.
+      ...(girdi.ezan && n.beforeMinutes === 0 && n.key !== 'sunrise' ? { ezan: true } : {}),
     }));
 
   const hatirlatmalar: KurulacakBildirim[] = planReminders(hatirlaticilar, gunler, now, sinirsiz)
@@ -131,8 +138,8 @@ export function birlesikPlan(
  * `\u001F` (birim ayıracı) sınırlayıcı: başlık ya da gövdenin doğal
  * metninde neredeyse hiç geçmeyen bir kontrol karakteri, çarpışma riski yok.
  */
-export function bildirimImzasi(n: { title: string; body: string }, ses: boolean): string {
-  return `${n.title}\u001F${n.body}\u001F${ses ? '1' : '0'}`;
+export function bildirimImzasi(n: { title: string; body: string; ezan?: boolean }, ses: boolean): string {
+  return `${n.title}\u001F${n.body}\u001F${ses ? (n.ezan ? 'E' : '1') : '0'}`;
 }
 
 /**

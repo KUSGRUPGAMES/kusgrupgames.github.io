@@ -337,3 +337,27 @@ describe('bildirim metinleri', () => {
     expect(diller[0]!['notify.title.fajr']).toBe('İmsak vakti girdi');
   });
 });
+
+describe('vakitte ezan', () => {
+  it('ezan yalnız namaz vaktinin girişinde; önceden uyarıda ve güneşte yok', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { birlesikPlan } = require('@/features/notifications/coordinator') as typeof import('@/features/notifications/coordinator');
+    const metin = { vakitBaslik: () => 'b', vakitGovde: () => 'g' };
+    const p = birlesikPlan({
+      gunler: gunler(istanbul, 2026, 2, 15, 2),
+      bildirimAyari: { ...defaultNotificationSettings, beforeMinutes: 10, includeSunrise: true },
+      hatirlaticilar: [], metin, ezan: true,
+    }, new Date('2026-03-15T00:00:00Z'));
+    const ezanli = p.filter((n) => n.ezan);
+    expect(ezanli.length).toBeGreaterThan(0);
+    for (const n of ezanli) {
+      expect(n.id.endsWith('-vakit')).toBe(true);
+      expect(n.id.includes('sunrise')).toBe(false);
+    }
+    const kapali = birlesikPlan({
+      gunler: gunler(istanbul, 2026, 2, 15, 2), bildirimAyari: defaultNotificationSettings,
+      hatirlaticilar: [], metin, ezan: false,
+    }, new Date('2026-03-15T00:00:00Z'));
+    expect(kapali.some((n) => n.ezan)).toBe(false);
+  });
+});

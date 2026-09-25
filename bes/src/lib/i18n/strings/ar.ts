@@ -511,4 +511,11 @@ export const ar: Partial<Record<StringKey, string>> = {
   'share.styleIvory': 'عاجي',
   'share.styleGold': 'ذهبي',
   'share.catDua': 'دعاء',
+  'ezan.setting': 'الأذان عند دخول الوقت',
+  'ezan.settingHint': 'عند إغلاق التطبيق يُشغَّل أول ٣٠ ثانية مع الإشعار، وعند فتحه يُشغَّل الأذان كاملًا. اضغط زر الصوت أو «إيقاف» لإسكاته.',
+  'ezan.preview': 'استمع إلى الأذان',
+  'ezan.playing': 'يُرفع الأذان',
+  'ezan.stop': 'إيقاف',
+  'ezan.stopHint': 'اضغط هنا أو على زر الصوت للإيقاف',
+  'ezan.source': 'تسجيل الأذان: Adam-synagda، ويكيميديا كومنز (CC0، ملكية عامة).',
 } as const;

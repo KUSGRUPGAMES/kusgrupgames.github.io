@@ -150,6 +150,7 @@ export function useNotificationSync(): NotificationSyncDurumu {
     gunler,
     bildirimAyari,
     hatirlaticilar: reminders,
+    ezan: settings.notifications.ezan,
     metin: {
       // Metin vakte özeldir: "Vaktin geldi" her vakit için aynı ve anlamsız
       // bir cümleydi; imsak ve güneş namaz değil, kendi anlamları var.
@@ -160,7 +161,7 @@ export function useNotificationSync(): NotificationSyncDurumu {
         ? t(key === 'sunrise' ? 'notify.beforeBodySunrise' : 'notify.beforeBody')
         : t(`notify.body.${key}` as StringKey)),
     },
-  }), [gunler, bildirimAyari, reminders, t, label]);
+  }), [gunler, bildirimAyari, reminders, t, label, settings.notifications.ezan]);
 
   const ses = settings.notifications.sound;
 

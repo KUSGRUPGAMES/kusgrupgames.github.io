@@ -5,7 +5,7 @@
  * patlarsa bile kullanıcı anlamlı bir ekran görsün.
  */
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { Image, View, useColorScheme } from 'react-native';
+import { Animated, Image, StyleSheet, View, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
@@ -22,11 +22,10 @@ import { hydrateAll } from './persistence';
 import { kv } from './storage';
 import { Brand } from '@/config/brand';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
+import { EzanOkuyucu } from '@/features/ezan/EzanOkuyucu';
 import Constants from 'expo-constants';
 import { reloadAppAsync } from 'expo';
-import { palette, opacity } from '@/theme/tokens';
-import { BrandPattern } from '@/ui/BrandPattern';
-import { Gradient } from '@/ui/Gradient';
+import { palette } from '@/theme/tokens';
 import splashLogo from '../../assets/splash-icon.png';
 import splashLogoLight from '../../assets/brand/splash-icon-light.png';
 
@@ -173,27 +172,47 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
               <QueryClientProvider client={queryClient}>
                 <BildirimEsitleyici />
                 {children}
+                <EzanOkuyucu />
               </QueryClientProvider>
             </BootContext.Provider>
           </AppErrorBoundary>
         </I18nProvider>
       </ThemeProvider>
+      <AcilisPerdesi />
     </SafeAreaProvider>
   );
 }
 
-/** JS hazırlandıktan sonraki kısa bekleme de kurulum kartının marka dilini taşır. */
+/**
+ * Açılış ekranı — yerel açılış ekranının (app.config.ts, expo-splash-screen)
+ * **birebir devamı**: aynı düz zemin rengi, aynı logo, aynı boyut ve konum.
+ * Eskiden burada gradyan ve desen vardı; yerel ekrandan buraya geçerken zemin
+ * ve logo bir anda değişiyordu. Uygulama hazır olunca bu katman yumuşakça
+ * solar (`AcilisPerdesi`).
+ */
 function StartupScreen() {
   const dark = useColorScheme() === 'dark';
   return (
-    <View style={{ flex: 1, backgroundColor: dark ? palette.emerald900 : palette.ivory100,
-      justifyContent: 'center', alignItems: 'center' }}>
-      <Gradient colors={dark
-        ? [palette.emerald800, palette.emerald950]
-        : [palette.ivory50, palette.ivory200]} />
-      <BrandPattern opacity={opacity.motifEkran} />
+    <View pointerEvents="none" style={[{ flex: 1, backgroundColor: dark ? palette.emerald900 : palette.ivory100,
+      justifyContent: 'center', alignItems: 'center' }]}>
       <Image source={dark ? splashLogo : splashLogoLight} resizeMode="contain" style={{ width: 200, height: 200 }} />
     </View>
+  );
+}
+
+/** Uygulama çizildikten sonra açılış ekranını 280 ms'de soldurur. */
+function AcilisPerdesi() {
+  const [bitti, setBitti] = useState(false);
+  const [saydamlik] = useState(() => new Animated.Value(1));
+  useEffect(() => {
+    Animated.timing(saydamlik, { toValue: 0, duration: 280, delay: 60, useNativeDriver: true })
+      .start(() => setBitti(true));
+  }, [saydamlik]);
+  if (bitti) return null;
+  return (
+    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, { opacity: saydamlik }]}>
+      <StartupScreen />
+    </Animated.View>
   );
 }
 

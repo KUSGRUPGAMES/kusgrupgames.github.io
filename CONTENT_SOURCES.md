@@ -52,3 +52,14 @@ aktarmada doğrulanır.
 - Ticari kullanım (reklamlı/abonelikli uygulama) izni
 - Atıf metninin nasıl görünmesi gerektiği
 - Süre ve fesih koşulları
+
+## Ezan sesi (D29)
+
+| Alan | Değer |
+|---|---|
+| Dosya | `bes/assets/sounds/ezan.wav` (ilk 29,5 sn, bildirim sesi), `bes/assets/sounds/ezan-tam.m4a` (tamamı, uygulama içi) |
+| Kaynak | Wikimedia Commons — [File:Beautiful adhan.ogg](https://commons.wikimedia.org/wiki/File:Beautiful_adhan.ogg) |
+| Kaydeden | Adam-synagda ("Own work", 29 Nisan 2022) |
+| Lisans | **CC0 1.0** — kamu malı adanması; atıf zorunlu değil, yine de uygulamada belirtilir |
+| İşlem | ffmpeg ile tek kanal, ses seviyesi eşitleme (loudnorm −14 LUFS), bildirim kopyasında 29,5 sn'de kesme ve sönümleme. İçerik değiştirilmedi. |
+| Doğrulama | İndirilen dosya 1 229 032 bayt, Commons'taki boyutla aynı; süre 2:34. |

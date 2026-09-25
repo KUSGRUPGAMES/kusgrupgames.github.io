@@ -511,4 +511,11 @@ export const fr: Partial<Record<StringKey, string>> = {
   'share.styleIvory': 'Ivoire',
   'share.styleGold': 'Or',
   'share.catDua': 'Dua',
+  'ezan.setting': 'Adhan à l’heure de la prière',
+  'ezan.settingHint': 'App fermée, la notification joue les 30 premières secondes ; app ouverte, l’adhan complet. Une touche de volume ou « Arrêter » le coupe.',
+  'ezan.preview': 'Écouter l’adhan',
+  'ezan.playing': 'Adhan en cours',
+  'ezan.stop': 'Arrêter',
+  'ezan.stopHint': 'Touchez ou appuyez sur une touche de volume',
+  'ezan.source': 'Enregistrement : Adam-synagda, Wikimedia Commons (CC0, domaine public).',
 } as const;

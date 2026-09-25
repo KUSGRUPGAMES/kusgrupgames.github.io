@@ -98,17 +98,21 @@ describe('veri boyutları', () => {
     expect(boyut).toBeLessThan(2 * 1024 * 1024);
   });
 
-  it('ses paketle dağıtılmıyor', () => {
+  it('ses paketle dağıtılmıyor — yalnız ezan (D29)', () => {
+    // Kıraat akıştan gelir, pakete girmez. Tek istisna ezan: bildirim sesi
+    // cihazda olmak zorunda (uygulama kapalıyken çalınır). İki dosya, toplam
+    // boyut sınırlı.
     const varlik = join(ROOT, 'assets');
-    const sesler: string[] = [];
+    const sesler: { ad: string; boyut: number }[] = [];
     const tara = (d: string) => {
       for (const e of readdirSync(d)) {
         const f = join(d, e);
         if (statSync(f).isDirectory()) tara(f);
-        else if (/\.(mp3|m4a|wav|aac|ogg)$/i.test(e)) sesler.push(e);
+        else if (/\.(mp3|m4a|wav|aac|ogg|caf)$/i.test(e)) sesler.push({ ad: e, boyut: statSync(f).size });
       }
     };
     tara(varlik);
-    expect(sesler).toEqual([]);
+    expect(sesler.map((x) => x.ad).sort()).toEqual(['ezan-tam.m4a', 'ezan.wav']);
+    expect(sesler.reduce((t, x) => t + x.boyut, 0)).toBeLessThan(3.5 * 1024 * 1024);
   });
 });

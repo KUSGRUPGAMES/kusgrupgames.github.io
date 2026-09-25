@@ -25,6 +25,7 @@ import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
 import { coverageDays, type NotificationSettings } from '@/features/notifications/plan';
 import { requestPermission, cancelOwned } from '@/features/notifications/service';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
+import { useEzanStore } from '@/features/ezan/ezanStore';
 
 const ONCEDEN = [0, 5, 10, 15, 20, 30, 45, 60] as const;
 
@@ -86,7 +87,12 @@ export default function AlarmsScreen() {
       <Card padding="sm" style={{ marginTop: theme.spacing.md }}>
         <Toggle title={t('alarm.prayerAlerts')} value={n.enabled} onChange={(v) => ayarla({ enabled: v })} icon="bell" />
         <Toggle title={t('settings.sound')} value={n.sound} onChange={(v) => ayarla({ sound: v })} />
+        <Toggle title={t('ezan.setting')} subtitle={t('ezan.settingHint')} value={n.ezan}
+          onChange={(v) => ayarla({ ezan: v })} icon="mosque" />
+        <ListItem title={t('ezan.preview')} icon="play" chevron={false}
+          onPress={() => useEzanStore.getState().baslat(null)} />
       </Card>
+      <Text variant="micro" tone="subtle" style={{ marginTop: theme.spacing.xs }}>{t('ezan.source')}</Text>
 
       {n.enabled ? (
         <>

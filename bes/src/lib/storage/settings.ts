@@ -24,6 +24,8 @@ export const settingsSchema = z.object({
     beforeMinutes: z.number().int().min(0).max(120).default(0),
     /** Önceden uyarı açıkken vakit girince de bildir (plan.ts `alsoAtTime`). */
     alsoAtTime: z.boolean().default(true),
+    /** Vakit girişinde ezan sesi (D29). */
+    ezan: z.boolean().default(true),
     sound: z.boolean().default(true),
     vibration: z.boolean().default(true),
   }).default({}),
