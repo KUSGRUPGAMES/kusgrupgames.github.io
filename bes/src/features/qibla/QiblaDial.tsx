@@ -95,10 +95,13 @@ export function QiblaDial({ qibla, heading, aligned, size = 280, labels }: Qibla
               fotoğraf ya da figüratif öge değil (§9). Küp dik kalsın diye
               iğnenin dönüşü içeride geri alınır. */}
           <G transform={`rotate(${-okAci} ${c} ${c - r})`}>
-            <Circle cx={c} cy={c - r} r={17} fill={theme.colors.surfaceRaised}
-              stroke={aligned ? theme.colors.success : theme.colors.highlight} strokeWidth={2} />
-            <Rect x={c - 8} y={c - r - 8} width={16} height={16} rx={1.5} fill={palette.ink900} />
-            <Rect x={c - 8} y={c - r - 4} width={16} height={3} fill={theme.colors.highlight} />
+            {/* Altın madalyon + koyu küp: iki temada da okunur. Eskiden
+                zemin `surfaceRaised` idi; koyu temada koyu küp koyu zeminde
+                kayboluyordu. */}
+            <Circle cx={c} cy={c - r} r={19} fill={aligned ? theme.colors.success : palette.gold400}
+              stroke={palette.ivory50} strokeWidth={2} />
+            <Rect x={c - 9} y={c - r - 9} width={18} height={18} rx={1.5} fill={palette.ink900} />
+            <Rect x={c - 9} y={c - r - 4.5} width={18} height={3.5} fill={palette.gold300} />
           </G>
         </G>
         <Circle cx={c} cy={c} r={6} fill={theme.colors.accent} />

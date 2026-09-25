@@ -10,7 +10,7 @@ import { View } from 'react-native';
 import { router } from 'expo-router';
 import {
   Screen, SectionHeader, Card, ListItem, PageHeader, Text, Button, ProgressBar, Column, Row, Icon,
-  SourceNote,
+  SourceNote, FeatureTile,
 } from '@/ui';
 import { useT } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -61,15 +61,15 @@ export default function LearnScreen() {
         </Column>
       </Card>
 
-      <View style={{ height: theme.spacing.md }} />
-      <Card padding="md">
-        <ListItem
-          title={t('learn.alphabet')}
-          subtitle={t('learn.alphabetHint')}
-          icon="sparkle"
-          onPress={() => router.push('/alphabet')}
-        />
-      </Card>
+      {/* Bilgi ve rehberler en üstte: eskiden "Diğer" başlığıyla yedi
+          ünitenin altında kalıyordu; İslami bilgi sayfasını bulan olmuyordu. */}
+      <SectionHeader title={t('learn.guides')} />
+      <Row gap="sm" wrap>
+        <FeatureTile title={t('learn.alphabet')} icon="sparkle" onPress={() => router.push('/alphabet')} />
+        <FeatureTile title={t('worship.guide')} icon="mosque" onPress={() => router.push('/prayer-guide')} />
+        <FeatureTile title={t('explore.articles')} icon="info" onPress={() => router.push('/knowledge')} />
+        <FeatureTile title={t('worship.names')} icon="star" onPress={() => router.push('/names')} />
+      </Row>
 
       {UNITS.map((u) => (
         <View key={u.no}>
@@ -92,13 +92,6 @@ export default function LearnScreen() {
           </Card>
         </View>
       ))}
-
-      <SectionHeader title={t('learn.other')} />
-      <Card padding="md">
-        <ListItem title={t('worship.guide')} icon="mosque" onPress={() => router.push('/prayer-guide')} />
-        <ListItem title={t('explore.articles')} icon="info" onPress={() => router.push('/knowledge')} />
-        <ListItem title={t('worship.names')} icon="star" onPress={() => router.push('/names')} />
-      </Card>
 
       <View style={{ marginTop: theme.spacing.lg }}>
         <Text variant="caption" tone="muted">{t('learn.disclaimer')}</Text>

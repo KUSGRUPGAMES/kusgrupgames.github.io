@@ -24,16 +24,18 @@ export interface ListItemProps {
    */
   selected?: boolean;
   style?: StyleProp<ViewStyle>;
+  /** Alt ayırıcı çizgi. Kart son satırda kendisi kapatır. */
+  divider?: boolean;
 }
 
 export function ListItem({
-  title, subtitle, value, icon, right, onPress, disabled = false, chevron, selected, style,
+  title, subtitle, value, icon, right, onPress, disabled = false, chevron, selected, style, divider = true,
 }: ListItemProps) {
   const theme = useTheme();
   const showChevron = chevron ?? (!!onPress && !right && !selected);
   const body = (
     <Row gap="md" align="center" style={{ minHeight: 52, paddingVertical: theme.spacing.sm,
-      borderBottomWidth: 1, borderBottomColor: theme.colors.bezemeSolgun }}>
+      borderBottomWidth: divider ? 1 : 0, borderBottomColor: theme.colors.bezemeSolgun }}>
       {icon ? (
         <View style={{ width: 38, height: 38, alignItems: 'center', justifyContent: 'center',
           borderRadius: theme.radius.md, backgroundColor: theme.colors.surfaceRaised }}>

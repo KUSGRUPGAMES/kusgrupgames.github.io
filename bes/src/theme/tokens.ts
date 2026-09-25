@@ -78,6 +78,7 @@ export const palette = {
   gold200: '#FBEECC',      // ölçüm: altın %95 — parlama
 
   // --- Fildişi: açık masterın zemini.
+  ivory0: '#FFFDF8',       // türetilmiş: açık temada kart yüzeyi — sıcak beyaz, steril değil
   ivory25: '#FDFAF3',      // türetilmiş: açık temada kart yüzeyi
   ivory50: '#FBF6EC',      // ölçüm: açık zemin %90 — kartın üst ucu
   ivory100: '#FAF2E3',     // ölçüm: açık zemin ortancası — açık tema tabanı

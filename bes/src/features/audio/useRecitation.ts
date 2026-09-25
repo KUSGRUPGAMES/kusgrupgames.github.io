@@ -291,7 +291,11 @@ export function useRecitation(options: RecitationOptions): RecitationController 
       c[1].pause();
       try { c[aktif.current].clearLockScreenControls(); } catch { /* yok */ }
     }
-    setState({ ...durum.current, playing: false });
+    // Kuyruk da sıfırlanır: eskiden yalnız `playing: false` yapılıyordu,
+    // konum (index) kaldığı için ekran bunu "duraklatıldı" sayıyor ve alttaki
+    // çalma çubuğu kapanmıyordu — kapat (X) düğmesi hiçbir şey yapmıyor gibi
+    // görünüyordu. Tekrar/hız ayarları korunur.
+    setState({ ...durum.current, playing: false, queue: [], index: -1, rangeCycles: 0 });
   }, [setState]);
 
   // Ekrandan çıkıldığı anda (geri, sekme) çalma durur.

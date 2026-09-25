@@ -60,7 +60,7 @@ export interface KurulacakBildirim {
 }
 
 export interface PlanMetinleri {
-  vakitBaslik: (key: PrayerKey) => string;
+  vakitBaslik: (key: PrayerKey, beforeMinutes: number) => string;
   vakitGovde: (key: PrayerKey, beforeMinutes: number) => string;
 }
 
@@ -105,7 +105,7 @@ export function birlesikPlan(
       id: n.id,
       tur: 'prayer' as const,
       at: n.at,
-      title: metin.vakitBaslik(n.key),
+      title: metin.vakitBaslik(n.key, n.beforeMinutes),
       body: metin.vakitGovde(n.key, n.beforeMinutes),
     }));
 

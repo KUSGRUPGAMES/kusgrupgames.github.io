@@ -31,6 +31,8 @@ const REHBER: Oge[] = [
   { href: '/ramadan', icon: 'crescentStar', label: 'ramadan.title' },
   { href: '/hajj', icon: 'kaaba', label: 'hajj.title' },
   { href: '/hijri', icon: 'moon', label: 'explore.hijri' },
+  { href: '/prayer-guide', icon: 'mosque', label: 'worship.guide' },
+  { href: '/knowledge', icon: 'info', label: 'explore.articles' },
 ];
 
 export default function WorshipScreen() {

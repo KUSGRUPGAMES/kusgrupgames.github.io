@@ -122,7 +122,10 @@ export const lightTheme: Theme = {
     // Zemin markanın warmIvory'si: açık ikonun zeminiyle birebir aynı renk.
     background: palette.ivory100,
     backgroundGradient: [palette.ivory50, palette.ivory200],
-    surface: palette.ivory25,
+    // Kart zeminden açıkça ayrılsın: eskiden krem üstüne krem (ivory25 /
+    // ivory100) idi, kartlar sayfada kayboluyordu. Kart sıcak beyaz ve
+    // gölgeli (Card.tsx).
+    surface: palette.ivory0,
     surfaceRaised: palette.ivory200,
     border: palette.ivory300,
     hairline: palette.ivory300,

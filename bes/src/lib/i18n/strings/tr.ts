@@ -760,6 +760,22 @@ export const tr = {
   'share.templatesHint': 'Birini seç, kartta hemen görünür',
   'share.scene': 'Cami silueti',
   'share.greetingSource': 'Tebrik mesajı',
+  'notify.title.fajr': 'İmsak vakti girdi',
+  'notify.body.fajr': 'Sabah namazının vakti başladı. Oruç tutacaksan yeme içme vakti sona erdi.',
+  'notify.title.sunrise': 'Güneş doğdu',
+  'notify.body.sunrise': 'Sabah namazının vakti çıktı.',
+  'notify.title.dhuhr': 'Öğle namazı vakti',
+  'notify.body.dhuhr': 'Öğle namazının vakti girdi. Hayırlı namazlar.',
+  'notify.title.asr': 'İkindi namazı vakti',
+  'notify.body.asr': 'İkindi namazının vakti girdi. Hayırlı namazlar.',
+  'notify.title.maghrib': 'Akşam namazı vakti',
+  'notify.body.maghrib': 'Akşam namazının vakti girdi. Oruçluysan iftar vakti.',
+  'notify.title.isha': 'Yatsı namazı vakti',
+  'notify.body.isha': 'Yatsı namazının vakti girdi. Hayırlı namazlar.',
+  'notify.beforeTitle': '{name} vaktine {min} dakika kaldı',
+  'notify.beforeBody': 'Namaza hazırlanabilirsin.',
+  'notify.beforeBodySunrise': 'Sabah namazını kılmadıysan vakit daralıyor.',
+  'learn.guides': 'Bilgi ve rehberler',
 } as const;
 
 export type StringKey = keyof typeof tr;

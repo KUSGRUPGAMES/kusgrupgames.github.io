@@ -321,3 +321,19 @@ describe('koordinatör — yalnız hatırlatıcı açıkken gün sayısı', () =
     expect(dort).toBeGreaterThan(0);
   });
 });
+
+describe('bildirim metinleri', () => {
+  it('her vaktin kendi başlığı ve cümlesi var (beş dilde)', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const diller = ['tr', 'en', 'ar', 'de', 'fr'].map((l) => require(`@/lib/i18n/strings/${l}`)[l] as Record<string, string>);
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { PRAYER_KEYS } = require('@/features/prayer/methods') as { PRAYER_KEYS: readonly string[] };
+    for (const tablo of diller) {
+      for (const k of PRAYER_KEYS) {
+        expect(tablo[`notify.title.${k}`]).toBeTruthy();
+        expect(tablo[`notify.body.${k}`]).toBeTruthy();
+      }
+    }
+    expect(diller[0]!['notify.title.fajr']).toBe('İmsak vakti girdi');
+  });
+});

@@ -34,7 +34,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState } from 'react-native';
-import { useT } from '@/lib/i18n';
+import { useT, type StringKey } from '@/lib/i18n';
 import { useSettingsStore } from '@/store/settings';
 import { useLocationStore } from '@/store/locations';
 import { useWorshipStore } from '@/store/worship';
@@ -151,17 +151,14 @@ export function useNotificationSync(): NotificationSyncDurumu {
     bildirimAyari,
     hatirlaticilar: reminders,
     metin: {
-      vakitBaslik: () => t('notification.enteredTitle'),
-      // Erken uyarı kuruluysa metin "girdi" değil "kaldı" demeli. Bu mantık
-      // eskiden yalnız ayarlar ekranında vardı; merkez aynı bildirimi başka
-      // metinle kuruyordu ve hangisinin geçerli olduğu çağrı sırasına
-      // bağlıydı.
+      // Metin vakte özeldir: "Vaktin geldi" her vakit için aynı ve anlamsız
+      // bir cümleydi; imsak ve güneş namaz değil, kendi anlamları var.
+      vakitBaslik: (key, oncesi) => (oncesi > 0
+        ? t('notify.beforeTitle', { name: label(key), min: oncesi })
+        : t(`notify.title.${key}` as StringKey)),
       vakitGovde: (key, oncesi) => (oncesi > 0
-        ? t('prayer.remainingTo', {
-          name: label(key),
-          time: `${oncesi} ${t('notification.beforeUnit')}`,
-        })
-        : t('notification.enteredBody', { name: label(key) })),
+        ? t(key === 'sunrise' ? 'notify.beforeBodySunrise' : 'notify.beforeBody')
+        : t(`notify.body.${key}` as StringKey)),
     },
   }), [gunler, bildirimAyari, reminders, t, label]);
 

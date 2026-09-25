@@ -96,6 +96,29 @@ describe('yönlendirme bütünlüğü', () => {
     expect(hatali).toEqual([]);
   });
 
+  it('her ekrana arama kullanmadan, en çok iki dokunuşla ulaşılıyor', () => {
+    // İslami bilgi sayfası yalnız aramadan bulunabiliyordu (kullanıcı
+    // bildirimi). Sekmelerden başlayıp yönlendirmeleri izleyen bir grafik
+    // kurulur; arama sonuçları (search/global.ts) kenar sayılmaz.
+    const kalip = /(?:router\.(?:push|replace|dismissTo)\(\s*\{?\s*(?:pathname:\s*)?|href:\s*|pathname:\s*)[`'"]\/(?:\(tabs\)\/)?([a-z-]+)/g;
+    const hedefler = (dosya: string) => [...oku(dosya).matchAll(kalip)].map((m) => m[1]!);
+    const sekmeDosyalari = uygulamaDosyalari.filter((p) => p.includes('(tabs)'));
+    const ekranYolu = (ad: string) => join(ROOT, 'app', `${ad}.tsx`);
+    // Ana sayfanın günlük kartları da sekmenin parçasıdır.
+    const kok = new Set([
+      ...sekmeDosyalari.flatMap(hedefler),
+      ...hedefler(join(ROOT, 'src', 'features', 'daily', 'components', 'DailyCards.tsx')),
+    ]);
+    const ikinci = new Set([...kok].flatMap((ad) => (existsSync(ekranYolu(ad)) ? hedefler(ekranYolu(ad)) : [])));
+    const ulasilan = new Set([...kok, ...ikinci]);
+    const HARIC = new Set(['onboarding', '+not-found', '_layout']);
+    const eksik = readdirSync(join(ROOT, 'app'))
+      .filter((f) => f.endsWith('.tsx'))
+      .map((f) => f.replace(/\.tsx$/, ''))
+      .filter((ad) => !HARIC.has(ad) && !ulasilan.has(ad));
+    expect(eksik).toEqual([]);
+  });
+
   it('sekme ekranları eksiksiz', () => {
     for (const ad of ['index', 'quran', 'learn', 'worship', 'profile']) {
       expect({ ad, var: existsSync(join(ROOT, 'app', '(tabs)', `${ad}.tsx`)) })
