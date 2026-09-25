@@ -113,6 +113,34 @@ jobs:
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO | tail -60
           ls -la build/App.xcarchive/Products/Applications
 
+      - name: Yetkileri arsive isle
+        working-directory: bes/ios
+        # Imzasiz arsivde yetki (entitlements) YOKTUR; disa aktarma imzayi
+        # arsivdeki imzadan kopyalar. Sonuc: App Group'suz uygulama ve widget,
+        # yani widget hep bos. Bu bir kez yasandi (dogrulama adimi yakaladi).
+        # Cozum: arsivdeki her paketi projenin kendi yetki dosyasiyla gecici
+        # (ad-hoc) imzalamak; gercek magaza imzasi disa aktarmada atilir.
+        # aps-environment cikarilir: uzak bildirim yok, yerel bildirim istemez.
+        run: |
+          APP=$(ls -d build/App.xcarchive/Products/Applications/*.app | head -1)
+          yetki() {
+            cp "$1" "$2"
+            /usr/libexec/PlistBuddy -c 'Delete :aps-environment' "$2" 2>/dev/null || true
+            echo "-- $2"; plutil -p "$2"
+          }
+          find "$APP/Frameworks" -maxdepth 1 \( -name '*.framework' -o -name '*.dylib' \) \
+            -exec codesign --force --sign - {} \; 2>/dev/null || true
+          for EK in "$APP"/PlugIns/*.appex; do
+            [ -e "$EK" ] || continue
+            AD=$(basename "$EK" .appex)
+            yetki ".targets/$AD/generated.entitlements" "build/$AD.xcent"
+            codesign --force --sign - --entitlements "build/$AD.xcent" "$EK"
+          done
+          yetki "$SEMA/$SEMA.entitlements" build/uygulama.xcent
+          codesign --force --sign - --entitlements build/uygulama.xcent "$APP"
+          codesign -d --entitlements - "$APP" 2>/dev/null | grep -q application-groups \
+            || { echo "::error::yetki arsive islenemedi"; exit 1; }
+
       - name: IPA uret
         working-directory: bes/ios
         # method adi Xcode 16'da "app-store-connect", oncesinde "app-store".
