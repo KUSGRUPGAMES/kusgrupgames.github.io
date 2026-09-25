@@ -13,7 +13,7 @@ import {
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT, type StringKey } from '@/lib/i18n';
-import { ShareCard } from '@/features/share/ShareCard';
+import { ShareCard, type CardStyle } from '@/features/share/ShareCard';
 import { shareCard } from '@/features/share/capture';
 import type { CardContent, CardFormat } from '@/features/share/card';
 import { resolveTemplate } from '@/features/share/templates';
@@ -22,7 +22,7 @@ import { Brand } from '@/config/brand';
 
 const KATEGORI_ADI: Record<TemplateCategory, StringKey> = {
   friday: 'share.catFriday', eid: 'share.catEid', kandil: 'share.catKandil',
-  ramadan: 'share.catRamadan', verse: 'share.catVerse', daily: 'share.catDaily',
+  ramadan: 'share.catRamadan', dua: 'share.catDua', verse: 'share.catVerse', daily: 'share.catDaily',
 };
 
 type Secim = 'own' | TemplateCategory;
@@ -47,7 +47,7 @@ export default function ShareCardScreen() {
   const [secim, setSecim] = useState<Secim>(kendi ? 'own' : 'friday');
   const [sablonId, setSablonId] = useState<string | null>(null);
   const [format, setFormat] = useState<CardFormat>('portrait');
-  const [koyu, setKoyu] = useState(true);
+  const [stil, setStil] = useState<CardStyle>('emerald');
   const [motif, setMotif] = useState(true);
   const [sahne, setSahne] = useState(true);
   const [hata, setHata] = useState(false);
@@ -92,7 +92,7 @@ export default function ShareCardScreen() {
       {icerik ? (
         <Card padding="md">
           <Column align="center">
-            <ShareCard format={format} content={icerik} dark={koyu} motif={motif} scene={sahne} width={onizleme} />
+            <ShareCard format={format} content={icerik} cardStyle={stil} motif={motif} scene={sahne} width={onizleme} />
           </Column>
         </Card>
       ) : (
@@ -137,8 +137,19 @@ export default function ShareCardScreen() {
             accessibilityLabel={t('share.format')}
           />
 
+          <SectionHeader title={t('share.style')} />
+          <Segmented
+            options={[
+              { value: 'emerald', label: t('share.styleEmerald') },
+              { value: 'ivory', label: t('share.styleIvory') },
+              { value: 'gold', label: t('share.styleGold') },
+            ]}
+            value={stil}
+            onChange={(v) => setStil(v as CardStyle)}
+            accessibilityLabel={t('share.style')}
+          />
+
           <Card padding="sm" style={{ marginTop: theme.spacing.md }}>
-            <Toggle title={t('share.themeDark')} value={koyu} onChange={setKoyu} />
             <Toggle title={t('share.motif')} value={motif} onChange={setMotif} />
             <Toggle title={t('share.scene')} value={sahne} onChange={setSahne} />
           </Card>
@@ -165,7 +176,7 @@ export default function ShareCardScreen() {
           {/* Tam boy kart (360 birim; 3x ekranda 1080 piksel): ekran dışında
               durur, görsele bu alınır. */}
           <View style={{ position: 'absolute', left: -10000, top: 0 }} pointerEvents="none">
-            <ShareCard ref={gizliRef} format={format} content={icerik} dark={koyu} motif={motif} scene={sahne} />
+            <ShareCard ref={gizliRef} format={format} content={icerik} cardStyle={stil} motif={motif} scene={sahne} />
           </View>
         </>
       ) : null}

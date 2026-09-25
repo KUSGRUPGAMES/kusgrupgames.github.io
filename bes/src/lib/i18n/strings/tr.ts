@@ -776,6 +776,11 @@ export const tr = {
   'notify.beforeBody': 'Namaza hazırlanabilirsin.',
   'notify.beforeBodySunrise': 'Sabah namazını kılmadıysan vakit daralıyor.',
   'learn.guides': 'Bilgi ve rehberler',
+  'share.style': 'Renk',
+  'share.styleEmerald': 'Zümrüt',
+  'share.styleIvory': 'Fildişi',
+  'share.styleGold': 'Altın',
+  'share.catDua': 'Dua',
 } as const;
 
 export type StringKey = keyof typeof tr;

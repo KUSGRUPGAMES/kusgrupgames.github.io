@@ -506,4 +506,9 @@ export const ar: Partial<Record<StringKey, string>> = {
   'notify.beforeBody': 'يمكنك الاستعداد للصلاة.',
   'notify.beforeBodySunrise': 'إن لم تصلِّ الفجر بعد فالوقت يضيق.',
   'learn.guides': 'المعرفة والأدلة',
+  'share.style': 'اللون',
+  'share.styleEmerald': 'زمردي',
+  'share.styleIvory': 'عاجي',
+  'share.styleGold': 'ذهبي',
+  'share.catDua': 'دعاء',
 } as const;

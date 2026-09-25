@@ -83,8 +83,10 @@ export interface CardTypography {
 export function cardTypography(format: CardFormat, bodyLength: number, arabicLength: number): CardTypography {
   const alan = format === 'story' ? 1.25 : format === 'portrait' ? 1 : 0.8;
   const toplam = bodyLength + arabicLength * 1.4;
-  const govde = toplam < 60 ? 24 : toplam < 140 ? 19 : toplam < 260 ? 16 : toplam < 400 ? 14 : 12;
-  const arapca = arabicLength < 40 ? 30 : arabicLength < 120 ? 24 : arabicLength < 200 ? 20 : 17;
+  // Tahmin temkinli: web'de ve Android'de sığdırarak küçültme yok, iOS da
+  // yalnız satır sayısına bakıyor; uzun Arapça kemerin tepesine taşıyordu.
+  const govde = toplam < 60 ? 22 : toplam < 140 ? 17 : toplam < 260 ? 14.5 : toplam < 400 ? 13 : 11.5;
+  const arapca = arabicLength < 40 ? 28 : arabicLength < 90 ? 21 : arabicLength < 150 ? 18 : arabicLength < 210 ? 16 : 14.5;
   const k = Math.min(1.15, Math.max(0.8, alan));
-  return { arabic: Math.round(arapca * k), body: Math.round(govde * k) };
+  return { arabic: Math.round(arapca * k * 2) / 2, body: Math.round(govde * k * 2) / 2 };
 }

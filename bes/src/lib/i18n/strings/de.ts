@@ -506,4 +506,9 @@ export const de: Partial<Record<StringKey, string>> = {
   'notify.beforeBody': 'Zeit, dich auf das Gebet vorzubereiten.',
   'notify.beforeBodySunrise': 'Wenn du das Morgengebet noch nicht verrichtet hast, wird die Zeit knapp.',
   'learn.guides': 'Wissen & Leitfäden',
+  'share.style': 'Farbe',
+  'share.styleEmerald': 'Smaragd',
+  'share.styleIvory': 'Elfenbein',
+  'share.styleGold': 'Gold',
+  'share.catDua': 'Dua',
 } as const;

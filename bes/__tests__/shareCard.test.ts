@@ -3,6 +3,7 @@ import {
 } from '@/features/share/card';
 import { resolveTemplate } from '@/features/share/templates';
 import { CARD_TEMPLATES, TEMPLATE_CATEGORIES } from '@/content/cardTemplates';
+import { MAX_ARABIC_CHARS } from '@/features/share/card';
 import { getAyah, getTranslation } from '@/features/quran/data';
 
 const etiket = { greetingSource: 'Tebrik mesajı', translationSource: (n: string) => `${n} meali`, brand: 'BEŞ' };
@@ -55,6 +56,8 @@ describe('hazır kartlar', () => {
         expect(c!.body).toBe(getTranslation(s.surah, s.ayah));
         expect(c!.source).toContain('meali');
         expect(c!.reference).toMatch(new RegExp(`${s.ayah}$`));
+        // Seçicideki etiket de aynı âyeti söylemeli (elle yazıldı, yanlış olmasın).
+        expect(s.eyebrow.endsWith(` ${s.ayah}`)).toBe(true);
       } else {
         expect(c!.source).toBe('Tebrik mesajı');
       }
@@ -64,7 +67,9 @@ describe('hazır kartlar', () => {
   it('âyet kartları kısaltılmadan sığacak uzunlukta', () => {
     for (const s of CARD_TEMPLATES) {
       if (s.kind !== 'verse') continue;
+      // Âyet kısaltılarak paylaşılmaz: meal de Arapça metin de sığmalı.
       expect({ id: s.id, uzun: (getTranslation(s.surah, s.ayah) ?? '').length > MAX_BODY_CHARS }).toEqual({ id: s.id, uzun: false });
+      expect({ id: s.id, arapcaUzun: (getAyah(s.surah, s.ayah)?.text ?? '').length > MAX_ARABIC_CHARS }).toEqual({ id: s.id, arapcaUzun: false });
     }
   });
 });

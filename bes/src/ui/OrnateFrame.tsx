@@ -16,10 +16,14 @@ export interface OrnateFrameProps {
   children?: React.ReactNode;
   /** Çerçevenin tabanında, metnin arkasında kalan saydam sahne. */
   siluet?: number;
+  /** Siluetin yüksekliği (birim). Verilmezse ana sayfa oranı kullanılır. */
+  siluetHeight?: number;
+  /** İçerik alanının alt boşluğu (birim). Verilmezse ana sayfa oranı. */
+  contentBottom?: number;
   style?: StyleProp<ViewStyle>;
 }
 
-export function OrnateFrame({ width, height, children, siluet, style }: OrnateFrameProps) {
+export function OrnateFrame({ width, height, children, siluet, siluetHeight, contentBottom, style }: OrnateFrameProps) {
   const theme = useTheme();
   const pictureHeight = width * FRAME_RATIO;
   const topHeight = pictureHeight * 0.75;
@@ -54,7 +58,7 @@ export function OrnateFrame({ width, height, children, siluet, style }: OrnateFr
       {siluet ? (
         <Image source={siluet} resizeMode="contain" accessible={false}
           style={{ position: 'absolute', bottom: 5, left: 4, width: width - 8,
-            height: Math.min(height * 0.57, width * 0.48), opacity: 0.87 }} />
+            height: siluetHeight ?? Math.min(height * 0.57, width * 0.48), opacity: 0.87 }} />
       ) : null}
 
       {/* İki kırpma aynı tam çerçeve PNG'sini kullanır; dosyaya dokunulmaz. */}
@@ -73,7 +77,7 @@ export function OrnateFrame({ width, height, children, siluet, style }: OrnateFr
       </View>
 
       <View style={{ position: 'absolute', top: pictureHeight * 0.30,
-        bottom: Math.max(48, height * 0.21), left: 20, right: 20 }}>
+        bottom: contentBottom ?? Math.max(48, height * 0.21), left: 20, right: 20 }}>
         {children}
       </View>
     </View>

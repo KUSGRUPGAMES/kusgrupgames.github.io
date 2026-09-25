@@ -21,17 +21,21 @@ import {
   type CardContent, type CardFormat,
 } from './card';
 // D17: logo yalnız verilen bitmiş master'dan gelir, burada çizilmez.
-import symbolLight from '../../../assets/brand/symbol-micro-light.png';
-import symbolDark from '../../../assets/brand/symbol-micro-dark.png';
+// Logonun kendisi (renkli, saydam): altın işaret koyu zeminde, zümrüt işaret
+// açık zeminde. Eskiden tek renk mikro sembol küçücük duruyordu.
+import isaretAltin from '../../../assets/splash-icon.png';
+import isaretZumrut from '../../../assets/brand/splash-icon-light.png';
 import camiSiluet from '../../../assets/brand/hero-mosque-sunset.png';
 
 const TABAN = 360;
 
+/** Kartın renk stili: dış zemin. Kemer her stilde zümrüttür. */
+export type CardStyle = 'emerald' | 'ivory' | 'gold';
+
 export interface ShareCardProps {
   format: CardFormat;
   content: CardContent;
-  /** Dış zemin: koyu zümrüt ya da açık fildişi. Kemer her zaman zümrüttür. */
-  dark?: boolean;
+  cardStyle?: CardStyle;
   /** Marka motifi dış zeminde görünsün mü. */
   motif?: boolean;
   /** Kemerin dibinde cami silueti. */
@@ -41,7 +45,7 @@ export interface ShareCardProps {
 }
 
 export const ShareCard = forwardRef<View, ShareCardProps>(function ShareCard(
-  { format, content, dark = true, motif = true, scene = true, width = TABAN },
+  { format, content, cardStyle = 'emerald', motif = true, scene = true, width = TABAN },
   ref,
 ) {
   const oran = CARD_SIZES[format].height / CARD_SIZES[format].width;
@@ -53,16 +57,17 @@ export const ShareCard = forwardRef<View, ShareCardProps>(function ShareCard(
   const govde = truncateBody(decodeEntities(content.body));
   const punto = cardTypography(format, govde.length, arapca.length);
 
-  const ust = Math.round(58 * s);
+  const dark = cardStyle === 'emerald';
+  const ust = Math.round(84 * s);
   const alt = Math.round(46 * s);
   const cerceveGen = W - Math.round(28 * s);
   const cerceveYuk = H - ust - alt;
 
-  const zemin: readonly [string, string] = dark
+  const zemin: readonly [string, string] = cardStyle === 'emerald'
     ? [token.emerald800, token.emerald950]
-    : [token.ivory50, token.ivory200];
-  const ikincil = dark ? token.gold300 : token.gold600;
-  const soluk = dark ? 'rgba(251,246,236,0.62)' : 'rgba(1,29,19,0.62)';
+    : cardStyle === 'gold' ? [token.gold200, token.gold500] : [token.ivory50, token.ivory200];
+  const ikincil = dark ? token.gold300 : token.emerald900;
+  const soluk = dark ? 'rgba(251,246,236,0.62)' : 'rgba(0,36,25,0.66)';
 
   return (
     <View
@@ -74,39 +79,40 @@ export const ShareCard = forwardRef<View, ShareCardProps>(function ShareCard(
       accessibilityLabel={govde}
     >
       <Gradient colors={zemin} />
-      {motif ? <BrandPattern opacity={dark ? 0.16 : 0.22} /> : null}
+      {motif ? <BrandPattern opacity={dark ? 0.16 : cardStyle === 'gold' ? 0.18 : 0.22} /> : null}
       {/* İnce altın iç kenar: kartı çerçeveler, kenara taşan kırpmayı gizler. */}
       <View pointerEvents="none" style={{ position: 'absolute', top: 8 * s, left: 8 * s, right: 8 * s, bottom: 8 * s,
         borderRadius: 18 * s, borderWidth: 1, borderColor: dark ? 'rgba(211,182,133,0.45)' : 'rgba(138,106,42,0.35)' }} />
 
       <Image
-        source={dark ? symbolLight : symbolDark}
+        source={dark ? isaretAltin : isaretZumrut}
         resizeMode="contain"
-        style={{ position: 'absolute', top: 14 * s, left: W / 2 - 18 * s, width: 36 * s, height: 36 * s }}
+        style={{ position: 'absolute', top: 12 * s, left: W / 2 - 34 * s, width: 68 * s, height: 68 * s }}
       />
 
       <View style={{ position: 'absolute', top: ust, left: (W - cerceveGen) / 2 }}>
-        <OrnateFrame width={cerceveGen} height={cerceveYuk} {...(scene ? { siluet: camiSiluet } : {})}>
+        <OrnateFrame
+          width={cerceveGen}
+          height={cerceveYuk}
+          {...(scene ? { siluet: camiSiluet, siluetHeight: Math.round(cerceveGen * 0.3) } : {})}
+          // Metin siluetin üstünde biter: künye camilerin arkasında kalıyordu.
+          contentBottom={Math.round(scene ? cerceveGen * 0.3 : cerceveGen * 0.14)}
+        >
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8 * s,
             // Kemerin tepesindeki bezemeye değmesin: karede alan dar.
-            paddingTop: (format === 'square' ? 24 : 12) * s }}>
-            {content.eyebrow ? (
-              <Text style={{ color: token.gold400, fontSize: 10 * s, fontWeight: '700', letterSpacing: 2 * s,
-                marginBottom: 8 * s, textAlign: 'center' }}>
-                {content.eyebrow.toLocaleUpperCase('tr-TR')}
-              </Text>
-            ) : null}
+            paddingTop: (format === 'square' ? 30 : 36) * s }}>
             {arapca ? (
               <Text
                 numberOfLines={format === 'square' ? 3 : 5}
                 adjustsFontSizeToFit
                 minimumFontScale={0.5}
                 style={{ fontFamily: scriptureFont(), fontSize: punto.arabic * s, lineHeight: punto.arabic * 1.75 * s,
-                  color: token.ivory50, textAlign: 'center', writingDirection: 'rtl', marginBottom: 10 * s }}
+                  color: token.ivory50, textAlign: 'center', writingDirection: 'rtl', marginBottom: 4 * s }}
               >
                 {arapca}
               </Text>
             ) : null}
+            {arapca ? <Susleme s={s} /> : null}
             <Text
               numberOfLines={format === 'square' ? 8 : 12}
               adjustsFontSizeToFit
@@ -138,3 +144,14 @@ export const ShareCard = forwardRef<View, ShareCardProps>(function ShareCard(
     </View>
   );
 });
+
+/** Arapça ile meal arasında küçük altın süsleme: çizgi, baklava, çizgi. */
+function Susleme({ s }: { s: number }) {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 * s, marginBottom: 10 * s }}>
+      <View style={{ width: 26 * s, height: 1, backgroundColor: token.gold400, opacity: 0.8 }} />
+      <View style={{ width: 6 * s, height: 6 * s, backgroundColor: token.gold400, transform: [{ rotate: '45deg' }] }} />
+      <View style={{ width: 26 * s, height: 1, backgroundColor: token.gold400, opacity: 0.8 }} />
+    </View>
+  );
+}
