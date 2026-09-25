@@ -15,7 +15,7 @@ import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
-import { VolumeManager } from 'react-native-volume-manager';
+import type { VolumeManager as VolumeManagerType } from 'react-native-volume-manager';
 import { Icon, Text } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -71,15 +71,30 @@ export function EzanOkuyucu() {
   }, [caliyor, istek]);
 
   // Ses tuşları: çalarken herhangi bir ses değişimi ezanı durdurur.
+  //
+  // `react-native-volume-manager` modülü, dosyasının en üstünde
+  // `NativeModules.VolumeManager`'a dokunuyor (bkz. kütüphanenin
+  // `module.ts` dosyası); bu da native tarafta gizli bir `MPVolumeView`
+  // oluşturup pencereye ekliyor. Dosya en üstte `import` edilseydi bu,
+  // uygulama daha açılırken (pencere hazır olmadan, ana ekran
+  // render olmadan) tetiklenir ve Yeni Mimari'de köprü kurulumunu kilitleyip
+  // "TurboModuleManager: Timed out waiting for modules to be invalidated"
+  // ile açılışta kırmızı ekrana yol açardı (bu bir kez yaşandı). Modülü
+  // yalnızca ezan gerçekten çalarken, burada, gecikmeli (`import()`) ile
+  // yüklemek bunu önlüyor.
   useEffect(() => {
     if (!caliyor) return undefined;
+    let iptal = false;
     let sub: { remove: () => void } | null = null;
-    try {
-      sub = VolumeManager.addVolumeListener(() => useEzanStore.getState().durdur());
-    } catch (e) {
-      log.warn('ses tuşu dinlenemiyor', { error: e });
-    }
-    return () => { try { sub?.remove(); } catch { /* yok */ } };
+    void import('react-native-volume-manager').then(({ VolumeManager }: { VolumeManager: typeof VolumeManagerType }) => {
+      if (iptal) return;
+      try {
+        sub = VolumeManager.addVolumeListener(() => useEzanStore.getState().durdur());
+      } catch (e) {
+        log.warn('ses tuşu dinlenemiyor', { error: e });
+      }
+    }).catch((e: unknown) => log.warn('ses tuşu modülü yüklenemedi', { error: e }));
+    return () => { iptal = true; try { sub?.remove(); } catch { /* yok */ } };
   }, [caliyor]);
 
   if (!caliyor) return null;
