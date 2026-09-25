@@ -149,6 +149,25 @@ jobs:
           fi
           ls -la build/ipa
 
+      - name: Imza yetkilerini dogrula
+        working-directory: bes/ios
+        # Widget, vakitleri uygulamayla ortak App Group'tan okur. Arsiv imzasiz
+        # alindigi icin yetkilerin disa aktarmada gercekten islendigini burada
+        # goruyoruz: grup eksikse widget bos kalir, bunu yuklemeden yakala.
+        run: |
+          rm -rf build/ipa-ac && mkdir -p build/ipa-ac
+          unzip -q "$(ls build/ipa/*.ipa | head -1)" -d build/ipa-ac
+          APP=$(ls -d build/ipa-ac/Payload/*.app | head -1)
+          HATA=0
+          for HEDEF in "$APP" "$APP"/PlugIns/*.appex; do
+            echo "== $(basename "$HEDEF")"
+            codesign -d --entitlements - --xml "$HEDEF" 2>/dev/null > yetki.plist || true
+            plutil -p yetki.plist || true
+            grep -q "group.com.kusgrupgames.bes" yetki.plist || { echo "::error::$(basename "$HEDEF") App Group yetkisi yok"; HATA=1; }
+          done
+          ls "$APP"/PlugIns/*.appex >/dev/null 2>&1 || { echo "::error::widget eklentisi IPA'da yok"; HATA=1; }
+          exit $HATA
+
       - name: TestFlight e yukle
         if: ${{ inputs.upload }}
         working-directory: bes/ios
