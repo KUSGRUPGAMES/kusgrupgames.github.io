@@ -17,17 +17,17 @@
  *
  * | Token | Kaynak | Ölçülen |
  * |---|---|---|
- * | `emerald950` | koyu zemin %10 dilimi | `#000D08` |
- * | `emerald900` | koyu zemin ortancası | `#011D13` |
- * | `emerald800` | koyu zemin %90 dilimi | `#042B21` |
- * | `gold500` | altın %5 dilimi | `#A88652` |
- * | `gold400` | altın ortancası | `#D3B685` |
- * | `gold300` | altın %70 dilimi | `#E9CFA6` |
- * | `gold200` | altın %95 dilimi | `#F6E5C8` |
+ * | `emerald950` | koyu zemin %10 dilimi | `#01140B` |
+ * | `emerald900` | koyu zemin ortancası | `#002419` |
+ * | `emerald800` | koyu zemin %90 dilimi | `#023023` |
+ * | `gold500` | altın %5 dilimi | `#AF7E3D` |
+ * | `gold400` | altın ortancası | `#E6B965` |
+ * | `gold300` | altın %70 dilimi | `#F7D595` |
+ * | `gold200` | altın %95 dilimi | `#FBEECC` |
  * | `ivory50` | açık zemin %90 dilimi | `#FBF6EC` |
- * | `ivory100` | açık zemin ortancası | `#F6F1E4` |
- * | `ivory200` | açık zemin %10 dilimi | `#EDE4D3` |
- * | `ink900` | açık masterdaki figür ortancası | `#011E17` |
+ * | `ivory100` | açık zemin ortancası | `#FAF2E3` |
+ * | `ivory200` | açık zemin %10 dilimi | `#F4E8D3` |
+ * | `ink900` | açık masterdaki figür ortancası | `#00281B` |
  *
  * Ara basamaklar (`emerald700`, `emerald600`, `emerald500`, `ivory300`,
  * `gold600`) ölçülen uçlar arasından türetilmiştir; hepsi WCAG sınamasından
@@ -40,10 +40,10 @@
 /** Ham palet. Tema katmanı bunlardan anlamlı rolleri türetir. */
 export const palette = {
   // --- Zümrüt: koyu masterın zemin gradyanı.
-  emerald950: '#000D08',   // ölçüm: koyu zemin %10 — gradyanın dibi
-  emerald900: '#011D13',   // ölçüm: koyu zemin ortancası — koyu tema tabanı
+  emerald950: '#01140B',   // ölçüm: koyu zemin %10 — gradyanın dibi
+  emerald900: '#002419',   // ölçüm: koyu zemin ortancası — koyu tema tabanı
   emerald850: '#03241B',   // türetilmiş: koyu temada kart yüzeyi
-  emerald800: '#042B21',   // ölçüm: koyu zemin %90 — gradyanın tepesi
+  emerald800: '#023023',   // ölçüm: koyu zemin %90 — gradyanın tepesi
   emerald700: '#06382B',   // türetilmiş: yükseltilmiş yüzey
   emerald600: '#0A4636',   // türetilmiş: marka yüzeyi (hero kart, düğme)
   emerald500: '#0A5A45',   // türetilmiş: açık temada bağlantı ve ikon (AA)
@@ -72,16 +72,16 @@ export const palette = {
 
   // --- Altın: koyu masterdaki "5"in rampası.
   gold600: '#8A6A2A',      // türetilmiş: açık zeminde okunabilir koyu altın
-  gold500: '#A88652',      // ölçüm: altın %5 — rampanın koyu ucu
-  gold400: '#D3B685',      // ölçüm: altın ortancası — markanın imza altını
-  gold300: '#E9CFA6',      // ölçüm: altın %70
-  gold200: '#F6E5C8',      // ölçüm: altın %95 — parlama
+  gold500: '#AF7E3D',      // ölçüm: altın %5 — rampanın koyu ucu
+  gold400: '#E6B965',      // ölçüm: altın ortancası — markanın imza altını
+  gold300: '#F7D595',      // ölçüm: altın %70
+  gold200: '#FBEECC',      // ölçüm: altın %95 — parlama
 
   // --- Fildişi: açık masterın zemini.
   ivory25: '#FDFAF3',      // türetilmiş: açık temada kart yüzeyi
   ivory50: '#FBF6EC',      // ölçüm: açık zemin %90 — kartın üst ucu
-  ivory100: '#F6F1E4',     // ölçüm: açık zemin ortancası — açık tema tabanı
-  ivory200: '#EDE4D3',     // ölçüm: açık zemin %10 — gradyanın dibi
+  ivory100: '#FAF2E3',     // ölçüm: açık zemin ortancası — açık tema tabanı
+  ivory200: '#F4E8D3',     // ölçüm: açık zemin %10 — gradyanın dibi
   ivory300: '#DFD4BC',     // türetilmiş: kenarlık ve ayırıcı
 
   // --- Adaçayı: denetim kenarlığı. WCAG 1.4.11 arayüz bileşeninin sınırından
@@ -93,7 +93,7 @@ export const palette = {
   sage400: '#75897F',      // koyu tema: en düşük 3.51:1 (emerald700'e karşı)
 
   // --- Metin: açık masterdaki figürün koyusu.
-  ink900: '#011E17',       // ölçüm: açık master figür ortancası
+  ink900: '#00281B',       // ölçüm: açık master figür ortancası
   ink700: '#20302A',
   ink500: '#4F625B',
   // WCAG AA: üçüncül metin de en az 3:1 olmalı. Eski değer (#8FA29B) ivory

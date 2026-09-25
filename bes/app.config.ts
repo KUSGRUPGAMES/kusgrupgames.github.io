@@ -19,16 +19,16 @@ const suffix: Record<Variant, string> = {
  * Koyu açılış zemini — **logodan ölçülen** değer (D18).
  *
  * Paketin `brand.tokens.json`'u burada `#003F32` öneriyor ama logonun kendi
- * zemini o değil: masterın piksellerinde zemin `#000D08`–`#042B21` arasında
- * bir gradyan, ortancası `#011D13`. Düz `#003F32` ikonun yanında açık ve
+ * zemini o değil: masterın piksellerinde zemin `#01140B`–`#023023` arasında
+ * bir gradyan, ortancası `#002419`. Düz `#003F32` ikonun yanında açık ve
  * yavan kalıyordu. İkon zemini, açılış ekranı, Android maskesi ve uygulama
  * teması aynı değeri kullanır (`palette.emerald900`); ayrışırlarsa açılıştan
  * ana ekrana geçerken renk sıçraması görünür.
  */
-const ZEMIN = '#011D13';
+const ZEMIN = '#002419';
 
 /** Açık açılış zemini — açık masterın zemin ortancası (`palette.ivory100`). */
-const ZEMIN_ACIK = '#F6F1E4';
+const ZEMIN_ACIK = '#FAF2E3';
 
 /**
  * Android bildirim rozetinin tint rengi. Rozet beyaz bildirim zemininde

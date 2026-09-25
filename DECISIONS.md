@@ -688,3 +688,19 @@ gerçekten var olduğu yerde (kelime ve âyet) kullanıldı.
   açık); 64 bildirim sınırı yüzünden kapsama günü yarıya iner.
 - **Dinamik Ada / Live Activity:** yerel bildirim kilit ekranında görünür;
   canlı geri sayım yerel bir widget eklentisi ister (D3), bu sürümde yok.
+
+## D28 — Logo yenilendi (2026-09-25)
+
+Marka sahibi ChatGPT ile yenilenmiş iki master teslim etti (aynı "5 + hilal +
+cami" kavramı, daha net çizim, daha canlı altın). D17 aynen geçerli: tek
+kaynak `bes/assets/brand/png/BES_AppIcon_{Dark,Light}_1024.png`; onay görseli
+`bes/assets/brand/reference/BES_Approved_Preview_2026-09.png`. Paketteki
+SVG/PDF/EPS dosyaları rasteri taşıyan kaplardır, vektör değildir; depoya
+alınmadı.
+
+`gen-brand.js` yeni masterda iki iz bırakıyordu, ikisi de geometriye
+dokunmadan giderildi: köşe dolgusu ışınsal uzatma yerine yay içindeki
+**ayna** ile yapılıyor (desenli zeminde ışın çizgileri kalıyordu; köşe
+yarıçapı 0.28), kutucuk kenarındaki parlak hat için ikon 6 px, sembol
+ayıklama 24 px içeriden alınıyor. D18 gereği palet yeni masterdan yeniden
+ölçüldü (`tokens.ts`, açılış ekranı zeminleri).

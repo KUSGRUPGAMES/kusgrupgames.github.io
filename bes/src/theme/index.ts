@@ -10,7 +10,7 @@ export interface ThemeColors {
   /**
    * Ekran zemininin gradyan durakları — **yukarıdan aşağı**, tıpkı logonun
    * zemini gibi. Uygulama tek düz renk kullandığı için logonun yanında yavan
-   * duruyordu: masterın zemini üstte `#042B21`, altta `#000D08`.
+   * duruyordu: masterın zemini üstte `#023023`, altta `#01140B`.
    */
   backgroundGradient: readonly [string, string];
   /** Kart ve yüzeyler. */
