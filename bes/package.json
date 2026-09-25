@@ -25,6 +25,7 @@
     "store:shots": "node tools/store-shots.js"
   },
   "dependencies": {
+    "@bacons/apple-targets": "5.0.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/netinfo": "11.4.1",
     "@tanstack/react-query": "^5.103.1",

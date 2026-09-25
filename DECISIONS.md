@@ -704,3 +704,26 @@ dokunmadan giderildi: köşe dolgusu ışınsal uzatma yerine yay içindeki
 yarıçapı 0.28), kutucuk kenarındaki parlak hat için ikon 6 px, sembol
 ayıklama 24 px içeriden alınıyor. D18 gereği palet yeni masterdan yeniden
 ölçüldü (`tokens.ts`, açılış ekranı zeminleri).
+
+## D29 — Vakitte ezan
+
+Kayıt: Wikimedia Commons "Beautiful adhan.ogg" (Adam-synagda, CC0) —
+ayrıntı `CONTENT_SOURCES.md`. Uygulama kapalıyken ezanı yalnız sistem
+çalabilir: bildirim sesi pakette olmalı ve iOS'ta en çok 30 sn sürebilir,
+bu yüzden `ezan.wav` ilk 29,5 sn'dir. Uygulama açıkken bildirim sessiz
+gösterilir ve tam ezan (`ezan-tam.m4a`) `EzanOkuyucu` ile çalınır; üstteki
+"Durdur" çubuğu ya da ses tuşu (react-native-volume-manager) susturur.
+Android'de ses kanala bağlı olduğundan ezan ayrı kanaldır (`ezan`).
+Ayar: Vakit uyarıları → "Vakitte ezan okunsun" (varsayılan açık).
+
+## D30 — Widget'lar ve Dinamik Ada
+
+`@bacons/apple-targets` ile `targets/widget` eklentisi: vakit widget'ı
+(küçük: sıradaki vakit + geri sayım; orta/büyük: günün vakitleri; kilit
+ekranı aileleri), günün âyeti/duası widget'ı ve canlı etkinlik (Dinamik
+Ada + kilit ekranı geri sayımı). Veri App Group `group.<bundle id>` içinde
+tek JSON (`bes.widget.v1`); yazan `useWidgetSync`. Canlı etkinliği yerel
+modül `modules/bes-live-activity` başlatır; `BesVakitAttributes` iki hedefte
+aynı tanımlıdır (sınama `widget.test.ts`). Geri sayım `Text(timerInterval:)`
+ile sistemde akar, uygulama çalışmasa da ilerler; vakit geçince sıfırda
+durur, uygulama bir sonraki açılışta/arka plana geçişte sıradakine kurar.

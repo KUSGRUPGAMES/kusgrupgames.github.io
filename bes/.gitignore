@@ -6,3 +6,5 @@ coverage/
 *.log
 ios/
 android/
+# @bacons/apple-targets her prebuild'de expo-target.config.js'ten üretir.
+targets/*/Assets.xcassets/

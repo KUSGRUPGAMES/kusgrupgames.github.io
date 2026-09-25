@@ -50,6 +50,13 @@ const nameSuffix: Record<Variant, string> = {
   production: '',
 };
 
+const bundleIos = Brand.bundleId.ios + suffix[variant];
+/**
+ * Uygulama ile widget eklentisinin paylaştığı alan (D30). Varyant başına
+ * ayrı: geliştirme ve mağaza sürümü aynı telefonda birbirinin verisini okumaz.
+ */
+const APP_GROUP = `group.${bundleIos}`;
+
 const config: ExpoConfig = {
   name: Brand.appName + nameSuffix[variant],
   slug: 'bes',
@@ -61,7 +68,12 @@ const config: ExpoConfig = {
   newArchEnabled: true,
   assetBundlePatterns: ['**/*'],
   ios: {
-    bundleIdentifier: Brand.bundleId.ios + suffix[variant],
+    bundleIdentifier: bundleIos,
+    // Widget eklentisi de aynı ekiple imzalanır (withDevelopmentTeam ile aynı).
+    appleTeamId: 'C4NUF2G789',
+    entitlements: {
+      'com.apple.security.application-groups': [APP_GROUP],
+    },
     supportsTablet: true,
     // App Store ikonu saydamlık kabul etmez; icon.png zeminli üretilir.
     icon: './assets/icon.png',
@@ -69,6 +81,8 @@ const config: ExpoConfig = {
     infoPlist: {
       // Kıraat arka planda sürsün ve kilit ekranından yönetilebilsin (§32).
       UIBackgroundModes: ['audio'],
+      // Dinamik Ada ve kilit ekranında vakte geri sayım (D30).
+      NSSupportsLiveActivities: true,
       NSMotionUsageDescription:
         'Kıble pusulası, telefonun yönünü okumak için hareket algılayıcısını kullanır.',
     },
@@ -136,6 +150,8 @@ const config: ExpoConfig = {
     // seçilen Development Team ayarı da bu sıfırlamada kayboluyor. Bu
     // eklenti Team ID'yi build ayarlarına kalıcı olarak yazıyor.
     './plugins/withDevelopmentTeam',
+    // Widget'lar ve canlı etkinlik: targets/widget (D30).
+    '@bacons/apple-targets',
     'expo-localization',
     'expo-system-ui',
     // Android bildirim küçük ikonu **tek renk siluet** olmalı: sistem onu
@@ -167,7 +183,7 @@ const config: ExpoConfig = {
     ['expo-font', { fonts: ['./assets/fonts/Amiri-Regular.ttf', './assets/fonts/AmiriQuran-Regular.ttf'] }],
   ],
   experiments: { typedRoutes: true },
-  extra: { variant },
+  extra: { variant, appGroup: APP_GROUP },
 };
 
 export default config;

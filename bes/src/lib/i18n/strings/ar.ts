@@ -518,4 +518,7 @@ export const ar: Partial<Record<StringKey, string>> = {
   'ezan.stop': 'إيقاف',
   'ezan.stopHint': 'اضغط هنا أو على زر الصوت للإيقاف',
   'ezan.source': 'تسجيل الأذان: Adam-synagda، ويكيميديا كومنز (CC0، ملكية عامة).',
+  'widget.openApp': 'افتح «BEŞ» لعرض المواقيت',
+  'widget.liveActivity': 'العد التنازلي في الجزيرة الديناميكية',
+  'widget.liveActivityHint': 'يظهر الوقت المتبقي للصلاة التالية مباشرة على شاشة القفل وفي الجزيرة الديناميكية.',
 } as const;

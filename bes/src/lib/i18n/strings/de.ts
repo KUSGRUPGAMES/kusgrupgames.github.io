@@ -518,4 +518,7 @@ export const de: Partial<Record<StringKey, string>> = {
   'ezan.stop': 'Stopp',
   'ezan.stopHint': 'Tippen oder Lautstärketaste drücken',
   'ezan.source': 'Adhan-Aufnahme: Adam-synagda, Wikimedia Commons (CC0, gemeinfrei).',
+  'widget.openApp': 'Öffne BEŞ, um die Zeiten zu laden',
+  'widget.liveActivity': 'Countdown in der Dynamic Island',
+  'widget.liveActivityHint': 'Die Zeit bis zum nächsten Gebet erscheint live auf dem Sperrbildschirm und in der Dynamic Island.',
 } as const;

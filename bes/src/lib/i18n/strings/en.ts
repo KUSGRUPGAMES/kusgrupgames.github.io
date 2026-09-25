@@ -518,4 +518,7 @@ export const en: Partial<Record<StringKey, string>> = {
   'ezan.stop': 'Stop',
   'ezan.stopHint': 'Tap or press a volume key to stop',
   'ezan.source': 'Adhan recording: Adam-synagda, Wikimedia Commons (CC0, public domain).',
+  'widget.openApp': 'Open BEŞ to load prayer times',
+  'widget.liveActivity': 'Countdown in the Dynamic Island',
+  'widget.liveActivityHint': 'Time left to the next prayer shows live on the lock screen and in the Dynamic Island.',
 } as const;

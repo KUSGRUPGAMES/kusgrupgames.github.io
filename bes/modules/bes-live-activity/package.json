@@ -1,0 +1,7 @@
+{
+  "name": "bes-live-activity",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BEŞ: Dinamik Ada / kilit ekranı canlı etkinliği (ActivityKit)",
+  "main": "index.ts"
+}

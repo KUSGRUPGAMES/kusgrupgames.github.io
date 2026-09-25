@@ -26,6 +26,8 @@ export const settingsSchema = z.object({
     alsoAtTime: z.boolean().default(true),
     /** Vakit girişinde ezan sesi (D29). */
     ezan: z.boolean().default(true),
+    /** Dinamik Ada / kilit ekranında sıradaki vakte geri sayım (D30). */
+    liveActivity: z.boolean().default(true),
     sound: z.boolean().default(true),
     vibration: z.boolean().default(true),
   }).default({}),

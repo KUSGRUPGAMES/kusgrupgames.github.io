@@ -10,7 +10,7 @@
  * kilit ekranında ve bildirim merkezinde görünür.
  */
 import React, { useCallback, useEffect, useState } from 'react';
-import { Linking } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import { Stack, router } from 'expo-router';
 import {
   Screen, SectionHeader, Card, ListItem, Toggle, Banner, Text, Column, Row, Chip,
@@ -89,6 +89,10 @@ export default function AlarmsScreen() {
         <Toggle title={t('settings.sound')} value={n.sound} onChange={(v) => ayarla({ sound: v })} />
         <Toggle title={t('ezan.setting')} subtitle={t('ezan.settingHint')} value={n.ezan}
           onChange={(v) => ayarla({ ezan: v })} icon="mosque" />
+        {Platform.OS === 'ios' ? (
+          <Toggle title={t('widget.liveActivity')} subtitle={t('widget.liveActivityHint')} value={n.liveActivity}
+            onChange={(v) => ayarla({ liveActivity: v })} icon="clock" />
+        ) : null}
         <ListItem title={t('ezan.preview')} icon="play" chevron={false}
           onPress={() => useEzanStore.getState().baslat(null)} />
       </Card>

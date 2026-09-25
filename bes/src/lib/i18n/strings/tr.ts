@@ -788,6 +788,9 @@ export const tr = {
   'ezan.stop': 'Durdur',
   'ezan.stopHint': 'Durdurmak için dokun ya da ses tuşuna bas',
   'ezan.source': 'Ezan kaydı: Adam-synagda, Wikimedia Commons (CC0, kamu malı).',
+  'widget.openApp': 'Vakitleri görmek için BEŞ’i aç',
+  'widget.liveActivity': 'Dinamik Ada’da geri sayım',
+  'widget.liveActivityHint': 'Sıradaki vakte kalan süre kilit ekranında ve Dinamik Ada’da canlı görünür.',
 } as const;
 
 export type StringKey = keyof typeof tr;

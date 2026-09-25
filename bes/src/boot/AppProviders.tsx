@@ -23,6 +23,7 @@ import { kv } from './storage';
 import { Brand } from '@/config/brand';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import { EzanOkuyucu } from '@/features/ezan/EzanOkuyucu';
+import { useWidgetSync } from '@/features/widget/useWidgetSync';
 import Constants from 'expo-constants';
 import { reloadAppAsync } from 'expo';
 import { palette } from '@/theme/tokens';
@@ -229,6 +230,7 @@ function AcilisPerdesi() {
  */
 function BildirimEsitleyici() {
   useNotificationSync();
+  useWidgetSync();
   return null;
 }
 

@@ -518,4 +518,7 @@ export const fr: Partial<Record<StringKey, string>> = {
   'ezan.stop': 'Arrêter',
   'ezan.stopHint': 'Touchez ou appuyez sur une touche de volume',
   'ezan.source': 'Enregistrement : Adam-synagda, Wikimedia Commons (CC0, domaine public).',
+  'widget.openApp': 'Ouvre BEŞ pour charger les horaires',
+  'widget.liveActivity': 'Compte à rebours dans la Dynamic Island',
+  'widget.liveActivityHint': 'Le temps restant avant la prochaine prière s’affiche en direct sur l’écran verrouillé.',
 } as const;
