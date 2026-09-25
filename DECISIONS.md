@@ -727,3 +727,10 @@ modül `modules/bes-live-activity` başlatır; `BesVakitAttributes` iki hedefte
 aynı tanımlıdır (sınama `widget.test.ts`). Geri sayım `Text(timerInterval:)`
 ile sistemde akar, uygulama çalışmasa da ilerler; vakit geçince sıfırda
 durur, uygulama bir sonraki açılışta/arka plana geçişte sıradakine kurar.
+
+**İmza (yaşandı).** Yayın akışı arşivi imzasız alıyordu; imzasız arşivde
+yetki (entitlements) olmadığından dışa aktarılan IPA'da App Group yoktu —
+widget mağaza sürümünde hep boş kalacaktı. Akış artık her paketi projenin
+yetki dosyasıyla geçici imzalıyor ve IPA'daki yetkiyi doğruluyor. App Store
+Connect API anahtarı App Group oluşturamadığı için grup, Mac'te Apple
+hesabıyla bir kez kaydedilir: `tools/ios-uretim-kaydi.sh`.

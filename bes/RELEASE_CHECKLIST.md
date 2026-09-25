@@ -26,6 +26,10 @@ yazılır**; sessizce geçilmez.
 - [x] `CHANGELOG.md` 1.0.0 maddesi yazıldı
 - [ ] Git etiketi atıldı *(dal `main`'e birleştikten sonra `v1.0.0`)*
 
+- [ ] **App Group kaydı (bir kez):** Mac'te `cd ~/bes-repo/bes && bash tools/ios-uretim-kaydi.sh`.
+  Yayın akışının API anahtarı App Group oluşturamaz; kayıt yoksa imza
+  "Authentication failed / No profiles" ile düşer (D30).
+
 ## 4. Mağaza
 
 - [x] `npm run store:shots` çalıştırıldı; `store/screenshots/` güncel

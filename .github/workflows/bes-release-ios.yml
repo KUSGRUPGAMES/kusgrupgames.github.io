@@ -173,7 +173,13 @@ jobs:
           if ! disar; then
             echo "app-store-connect kabul edilmedi, eski ad deneniyor: app-store"
             yaz app-store
-            disar
+            # API anahtari App Group olusturamaz; grup Apple hesabiyla bir kez
+            # kaydedilmemisse disa aktarma "Authentication failed / No profiles"
+            # der. Cozum Mac'te tek komut: bes/tools/ios-uretim-kaydi.sh
+            disar || {
+              echo "::error::Imza profili uretilemedi. App Group kaydi eksik olabilir: Mac'te bir kez 'cd ~/bes-repo/bes && bash tools/ios-uretim-kaydi.sh' calistir, sonra bu akisi yeniden baslat."
+              exit 1
+            }
           fi
           ls -la build/ipa
 
