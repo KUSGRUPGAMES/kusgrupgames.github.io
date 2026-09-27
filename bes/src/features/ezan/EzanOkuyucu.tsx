@@ -52,23 +52,26 @@ export function EzanOkuyucu() {
     });
   }, []);
 
+  // Oynatıcı burada, ilk ezan gerçekten çalınacağı an kurulur — `caliyor`
+  // hep `false`yken (uygulamanın neredeyse tüm ömrü) `createAudioPlayer`
+  // hiç çağrılmaz. Eskiden ayrı bir effect uygulama her açıldığında,
+  // ezan çalıp çalmayacağına bakılmaksızın native oynatıcıyı kuruyordu;
+  // ses tuşu dinleyicisiyle aynı sınıftan bir hataydı (bkz. aşağıdaki not)
+  // ve açılışta zaman zaman aynı "TurboModuleManager" kilitlenmesine yol
+  // açıyordu — bazen kazanıp açılıyor, bazen kaybedip kırmızı ekran
+  // veriyordu. `istek` bağımlılığı sayesinde çalarken gelen ikinci bir
+  // "baslat" isteği oynatıcıyı yeniden kurmadan baştan başlatır.
   useEffect(() => {
-    const p = createAudioPlayer(ezanTam);
-    oynatici.current = p;
+    if (!caliyor) { oynatici.current?.pause(); return undefined; }
+    let p = oynatici.current;
+    if (!p) { p = createAudioPlayer(ezanTam); oynatici.current = p; }
     const sub = p.addListener('playbackStatusUpdate', (s) => { if (s.didJustFinish) bitti(); });
-    return () => { sub.remove(); p.remove(); oynatici.current = null; };
-  }, [bitti]);
+    void setAudioModeAsync({ playsInSilentMode: true }).catch(() => log.warn('ses kipi ayarlanamadı'));
+    void p.seekTo(0).then(() => p!.play()).catch((e: unknown) => log.warn('ezan çalınamadı', { error: e }));
+    return () => { sub.remove(); };
+  }, [caliyor, istek, bitti]);
 
-  useEffect(() => {
-    const p = oynatici.current;
-    if (!p) return;
-    if (caliyor) {
-      void setAudioModeAsync({ playsInSilentMode: true }).catch(() => log.warn('ses kipi ayarlanamadı'));
-      void p.seekTo(0).then(() => p.play()).catch((e: unknown) => log.warn('ezan çalınamadı', { error: e }));
-    } else {
-      p.pause();
-    }
-  }, [caliyor, istek]);
+  useEffect(() => () => { oynatici.current?.remove(); oynatici.current = null; }, []);
 
   // Ses tuşları: çalarken herhangi bir ses değişimi ezanı durdurur.
   //
