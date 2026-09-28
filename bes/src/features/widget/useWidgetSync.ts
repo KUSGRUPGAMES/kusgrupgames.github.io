@@ -85,10 +85,18 @@ export function useWidgetSync(): void {
 
   // Widget verisi.
   useEffect(() => {
+    // TEŞHİS (geçici — bulunca kaldırılacak): widget'ın "sadece logo"
+    // göstermesinin üç olası nedeni var — bu satır hangisi olduğunu
+    // Console.app'te ("widget" araması) gösterir. `warn` bilerek: `debug`/
+    // `info` sink yokken hiç konsola yazmıyor (bkz. src/lib/log).
+    log.warn('widget eşitleme denemesi', {
+      depoVar: Boolean(depo), grupVar: Boolean(grup), veriVar: Boolean(veri), grup,
+    });
     if (!depo || !grup || !veri) return;
     try {
       depo.setString(WIDGET_KEY, JSON.stringify(veri), grup);
       depo.reloadWidget();
+      log.warn('widget verisi yazıldı', { boyut: JSON.stringify(veri).length });
     } catch (e) {
       log.warn('widget verisi yazılamadı', { error: e });
     }
