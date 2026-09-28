@@ -23,11 +23,13 @@ import { useWorshipStore } from '@/store/worship';
 import { PRAYER_KEYS, type PrayerKey } from '@/features/prayer/methods';
 import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
 import { coverageDays, type NotificationSettings } from '@/features/notifications/plan';
-import { requestPermission, cancelOwned } from '@/features/notifications/service';
+import { requestPermission, cancelOwned, soundAllowed, scheduleTestEzan } from '@/features/notifications/service';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import { useEzanStore } from '@/features/ezan/ezanStore';
 
 const ONCEDEN = [0, 5, 10, 15, 20, 30, 45, 60] as const;
+/** Sınama bildirimi kaç saniye sonra çalsın — kilitlemeye yetecek kadar. */
+const SINAMA_SANIYE = 12;
 
 export default function AlarmsScreen() {
   const t = useT();
@@ -40,6 +42,8 @@ export default function AlarmsScreen() {
   const { esitle } = useNotificationSync();
   const [kurulu, setKurulu] = useState(0);
   const [izin, setIzin] = useState(true);
+  const [sesKapali, setSesKapali] = useState(false);
+  const [sinamaKuruldu, setSinamaKuruldu] = useState(false);
   const n = settings.notifications;
 
   const bildirimAyari: NotificationSettings = {
@@ -67,6 +71,9 @@ export default function AlarmsScreen() {
     const sonuc = await esitle();
     setIzin(sonuc.izin);
     setKurulu(sonuc.kurulan + sonuc.dokunulmayan);
+    // İzin verilmiş olsa da ses ayrıca kapalı olabilir (Ayarlar → Bildirimler
+    // → BEŞ → Sesler) — bildirim görünür ama hiç ses çalmaz.
+    setSesKapali((await soundAllowed()) === false);
   }, [esitle]);
 
   useEffect(() => { void bildirimleriKur(); }, [bildirimleriKur]);
@@ -83,11 +90,16 @@ export default function AlarmsScreen() {
         <Banner tone="warning" title={t('notification.permissionMissing')} style={{ marginTop: theme.spacing.md }}
           actionLabel={t('qibla.openSettings')} onAction={() => { void Linking.openSettings(); }} />
       ) : null}
+      {izin && sesKapali ? (
+        <Banner tone="warning" title={t('ezan.soundOff')} style={{ marginTop: theme.spacing.md }}
+          actionLabel={t('qibla.openSettings')} onAction={() => { void Linking.openSettings(); }} />
+      ) : null}
 
       <Card padding="sm" style={{ marginTop: theme.spacing.md }}>
         <Toggle title={t('alarm.prayerAlerts')} value={n.enabled} onChange={(v) => ayarla({ enabled: v })} icon="bell" />
         <Toggle title={t('settings.sound')} value={n.sound} onChange={(v) => ayarla({ sound: v })} />
-        <Toggle title={t('ezan.setting')} subtitle={t('ezan.settingHint')} value={n.ezan}
+        <Toggle title={t('ezan.setting')}
+          subtitle={n.ezan && !n.sound ? t('ezan.soundToggleOff') : t('ezan.settingHint')} value={n.ezan}
           onChange={(v) => ayarla({ ezan: v })} icon="mosque" />
         {Platform.OS === 'ios' ? (
           <Toggle title={t('widget.liveActivity')} subtitle={t('widget.liveActivityHint')} value={n.liveActivity}
@@ -95,6 +107,15 @@ export default function AlarmsScreen() {
         ) : null}
         <ListItem title={t('ezan.preview')} icon="play" chevron={false}
           onPress={() => useEzanStore.getState().baslat(null)} />
+        <ListItem
+          title={t('ezan.testReal')}
+          subtitle={sinamaKuruldu ? t('ezan.testRealSent', { n: SINAMA_SANIYE }) : t('ezan.testRealHint')}
+          icon="bell" chevron={false}
+          onPress={() => {
+            void scheduleTestEzan(t('notify.title.fajr'), t('ezan.testRealBody'), SINAMA_SANIYE);
+            setSinamaKuruldu(true);
+          }}
+        />
       </Card>
       <Text variant="micro" tone="subtle" style={{ marginTop: theme.spacing.xs }}>{t('ezan.source')}</Text>
 

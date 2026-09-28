@@ -43,6 +43,49 @@ export async function hasPermission(): Promise<boolean> {
   }
 }
 
+/**
+ * Bildirim izni verilmiş olsa bile iOS'ta **ses** ayrıca kapatılabilir
+ * (Ayarlar → Bildirimler → BEŞ → Sesler). Böyle bir durumda `hasPermission`
+ * yine `true` döner, bildirim görünür ama hiç ses çalmaz — kullanıcı bunu
+ * "ezan okumuyor" diye yaşar, uygulamanın kendisi bunu bilemez. Android'de
+ * bu ayrım yok (`ios` alanı gelmez); orada `null` dönüp banner gösterilmez.
+ */
+export async function soundAllowed(): Promise<boolean | null> {
+  try {
+    const durum = await Notifications.getPermissionsAsync();
+    const ios = (durum as { ios?: { allowsSound?: boolean | null } }).ios;
+    if (!ios || ios.allowsSound == null) return null;
+    return ios.allowsSound;
+  } catch (e) {
+    log.warn('ses izni okunamadı', { error: e });
+    return null;
+  }
+}
+
+/**
+ * Gerçek vakit bildirimiyle **birebir aynı yoldan** bir sınama bildirimi
+ * kurar — "Ezanı dinle" düğmesi yalnız uygulama içi tam ezanı çalıyordu,
+ * asıl özelliği (uygulama kapalıyken sistemin çaldığı 30 sn'lik bildirim
+ * sesi) hiç sınamıyordu. Kullanıcı bunu kurup uygulamadan çıkarak ya da
+ * kilitleyerek gerçek deneyimi duyabilir.
+ */
+export async function scheduleTestEzan(title: string, body: string, afterSeconds = 12): Promise<void> {
+  await kanallariKur();
+  await Notifications.scheduleNotificationAsync({
+    identifier: 'test-ezan',
+    content: {
+      title, body, sound: EZAN_SESI,
+      data: { at: Date.now() + afterSeconds * 1000, tur: 'reminder', imza: 'test', ezan: true },
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      seconds: afterSeconds,
+      repeats: false,
+      ...(Platform.OS === 'android' ? { channelId: KANAL_EZAN } : {}),
+    },
+  });
+}
+
 /** Kullanıcı eylemiyle izin ister. Açılışta **çağrılmaz**. */
 export async function requestPermission(): Promise<boolean> {
   try {
