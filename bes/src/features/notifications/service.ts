@@ -190,7 +190,7 @@ async function gercekSyncNotifications(
           body: n.body,
           // Ezan: pakete gömülü ses (app.config → expo-notifications
           // `sounds`). iOS bildirim sesine en çok 30 sn izin verir; dosya
-          // 29,5 sn'dir. Android'de ses kanaldan gelir (`kanallariKur`).
+          // ~18,6 sn'dir. Android'de ses kanaldan gelir (`kanallariKur`).
           sound: options.sound ? (n.ezan ? EZAN_SESI : true) : false,
           // Fark almak için gereken alanlar. Tetikleyici okunamadığı için
           // zaman damgası ve içerik imzası bilerek içeriğe yazılır — imza
