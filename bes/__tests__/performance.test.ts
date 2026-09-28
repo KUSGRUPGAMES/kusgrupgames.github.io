@@ -112,7 +112,7 @@ describe('veri boyutları', () => {
       }
     };
     tara(varlik);
-    expect(sesler.map((x) => x.ad).sort()).toEqual(['ezan-tam.m4a', 'ezan.wav']);
+    expect(sesler.map((x) => x.ad).sort()).toEqual(['ezan-tam.m4a', 'ezan.caf']);
     expect(sesler.reduce((t, x) => t + x.boyut, 0)).toBeLessThan(3.5 * 1024 * 1024);
   });
 });

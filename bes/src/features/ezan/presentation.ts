@@ -7,7 +7,7 @@
  * işleyicisi (`handleNotification`) yine de tetiklenmiş olsa bile —
  * burada başlatılacak oynatıcının sesi duyulacağı garanti değildir (arka
  * planda sıfırdan yeni bir ses oturumu başlatmak iOS'ta kısıtlı); bu
- * yüzden sistemin kendi bildirim sesi (pakete gömülü ezan.wav) devrede
+ * yüzden sistemin kendi bildirim sesi (pakete gömülü ezan.caf) devrede
  * kalmalı, yoksa kullanıcı hiç ses duymuyor.
  *
  * Bu, "sına'ya basıp hemen ekranı kilitleyince ezan çalmıyor" şikâyetinin

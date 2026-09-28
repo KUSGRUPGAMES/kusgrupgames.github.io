@@ -127,7 +127,7 @@ export async function installedRecords(): Promise<KuruluKayit[]> {
 }
 
 /** Pakete gömülü ezan bildirim sesinin dosya adı. */
-export const EZAN_SESI = 'ezan.wav';
+export const EZAN_SESI = 'ezan.caf';
 const KANAL_EZAN = 'ezan';
 const KANAL_VAKIT = 'vakit';
 
@@ -192,7 +192,10 @@ async function gercekSyncNotifications(
           body: n.body,
           // Ezan: pakete gömülü ses (app.config → expo-notifications
           // `sounds`). iOS bildirim sesine en çok 30 sn izin verir; dosya
-          // ~18,6 sn'dir. Android'de ses kanaldan gelir (`kanallariKur`).
+          // ~16,1 sn'dir. CAF biçiminde: cihazda konsol kaydı WAV için
+          // "Failed to find sound" hatası veriyordu (expo/expo#40954'te
+          // bilinen bir UNNotificationSound(named:) sorunu); CAF, Apple'ın
+          // yerel/beklenen biçimi. Android'de ses kanaldan gelir (`kanallariKur`).
           sound: options.sound ? (n.ezan ? EZAN_SESI : true) : false,
           // Yalnız iOS: odak/Rahatsız Etmeyin modunda bildirim geliyor ama
           // sesi kesiliyordu (kullanıcı bunu "ezan okumuyor" diye yaşadı).

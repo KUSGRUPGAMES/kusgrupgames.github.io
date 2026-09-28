@@ -52,7 +52,7 @@ export function EzanOkuyucu() {
   // sonuç: kullanıcı hiç ses duymuyordu ("sına'ya basıp ekranı hemen
   // kilitleyince ezan okumuyor" şikâyetinin kök nedeni). Artık yalnız
   // uygulama gerçekten ön plandaysa (`active`) sistem sesi susturulup
-  // içeride çalınıyor; aksi halde pakete gömülü `ezan.wav`i sistem çalsın
+  // içeride çalınıyor; aksi halde pakete gömülü `ezan.caf`ı sistem çalsın
   // diye dokunulmuyor.
   useEffect(() => {
     Notifications.setNotificationHandler({
