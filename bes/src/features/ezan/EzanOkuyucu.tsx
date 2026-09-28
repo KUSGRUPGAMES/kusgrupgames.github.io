@@ -1,17 +1,20 @@
 /**
  * Vakitte ezan — D29.
  *
- * - **Uygulama kapalıyken:** vakit bildirimi pakete gömülü ezanın ilk 29,5
- *   saniyesini çalar (iOS bildirim sesine en çok 30 sn izin verir). O sesi
- *   sistem çalar; uygulama müdahale edemez.
- * - **Uygulama açıkken:** bildirim sessiz gösterilir, ezanın **tamamı**
- *   burada çalınır. Üstte "Durdur" çubuğu çıkar; telefonun ses tuşlarından
- *   birine basmak da ezanı susturur (müsait olmayan kullanıcı için).
+ * - **Uygulama ön planda değilken** (kapalı, arka planda ya da ekran
+ *   kilitliyken): vakit bildirimi pakete gömülü ezanın ilk ~16,1 saniyesini
+ *   çalar (iOS bildirim sesine en çok 30 sn izin verir). O sesi sistem
+ *   çalar; uygulama müdahale edemez — ve etmemeli: arka planda sıfırdan
+ *   bir ses oturumu başlatmak iOS'ta güvenilir değil (bkz. `presentation.ts`).
+ * - **Uygulama gerçekten ön plandayken** (`AppState === 'active'`):
+ *   bildirim sessiz gösterilir, ezanın **tamamı** burada çalınır. Üstte
+ *   "Durdur" çubuğu çıkar; telefonun ses tuşlarından birine basmak da
+ *   ezanı susturur (müsait olmayan kullanıcı için).
  *
  * Görünmez olduğunda hiçbir şey çizmez; uygulama ağacında bir kez durur.
  */
 import React, { useEffect, useRef } from 'react';
-import { Pressable, View } from 'react-native';
+import { AppState, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
@@ -22,6 +25,7 @@ import { useT } from '@/lib/i18n';
 import { useSettingsStore } from '@/store/settings';
 import { logger } from '@/lib/log';
 import { useEzanStore } from './ezanStore';
+import { ezanBildirimKarari } from './presentation';
 import ezanTam from '../../../assets/sounds/ezan-tam.m4a';
 
 const log = logger('ezan');
@@ -39,14 +43,27 @@ export function EzanOkuyucu() {
   // Ön plandaki bildirim: ezanlıysa sessiz gösterilir ve tam ezan burada
   // başlar; diğerleri kendi sesiyle gösterilir. Eskiden hiç işleyici yoktu
   // ve uygulama açıkken gelen bildirim hiç görünmüyordu.
+  //
+  // `AppState.currentState` burada **şart**: bu işleyici uygulama arka
+  // planda (ekran kilitli ama süreç hâlâ bellekteyken) da tetiklenebiliyor.
+  // Yalnız `ezanli`ye bakan eski hâli o durumda da sistemin sesini
+  // susturup uygulama içi oynatıcıyı başlatmaya çalışıyordu — ama arka
+  // planda sıfırdan başlayan bir ses oturumu duyulacağı garanti değil,
+  // sonuç: kullanıcı hiç ses duymuyordu ("sına'ya basıp ekranı hemen
+  // kilitleyince ezan okumuyor" şikâyetinin kök nedeni). Artık yalnız
+  // uygulama gerçekten ön plandaysa (`active`) sistem sesi susturulup
+  // içeride çalınıyor; aksi halde pakete gömülü `ezan.wav`i sistem çalsın
+  // diye dokunulmuyor.
   useEffect(() => {
     Notifications.setNotificationHandler({
       handleNotification: async (n) => {
         const ezanli = (n.request.content.data as { ezan?: unknown } | undefined)?.ezan === true;
-        if (ezanli && ezanAcikRef.current) useEzanStore.getState().baslat(n.request.content.title ?? null);
+        const onPlanda = AppState.currentState === 'active';
+        const { uygulamaIcindeCal, sistemSesiCalsin } = ezanBildirimKarari(ezanli, ezanAcikRef.current, onPlanda);
+        if (uygulamaIcindeCal) useEzanStore.getState().baslat(n.request.content.title ?? null);
         return {
           shouldShowBanner: true, shouldShowList: true,
-          shouldPlaySound: !ezanli, shouldSetBadge: false,
+          shouldPlaySound: sistemSesiCalsin, shouldSetBadge: false,
         };
       },
     });
