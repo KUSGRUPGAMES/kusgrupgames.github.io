@@ -48,6 +48,18 @@ export const settingsSchema = z.object({
   /** Hicri tarih için gün düzeltmesi (-2..+2) — bölgesel rüyet farkı (§44). */
   hijriOffset: z.number().int().min(-2).max(2).default(0),
   analyticsOptIn: z.boolean().default(false),
+  /**
+   * Topluluk modülü (dua panosu, sohbet odaları, hatim grupları) — D31.
+   * Uygulamanın geri kalanı **hesapsız** çalışır (D12); bu, kullanıcının
+   * kendi isteğiyle açtığı **tek** ağ bağlantılı, kimlikli özelliktir. Bu
+   * yüzden varsayılan **kapalı**: sunucu (Supabase) yapılandırılmış olsa
+   * bile kullanıcı ekrandaki anahtarı elle açmadan hiçbir veri gönderilmez.
+   */
+  community: z.object({
+    enabled: z.boolean().default(false),
+    /** Takma ad — gerçek ad/e-posta asla kullanılmaz. */
+    nickname: z.string().max(24).default(''),
+  }).default({}),
 });
 
 export type Settings = z.infer<typeof settingsSchema>;

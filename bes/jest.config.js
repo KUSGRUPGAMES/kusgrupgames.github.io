@@ -16,6 +16,12 @@ module.exports = {
         '^@/(.*)$': '<rootDir>/src/$1',
         // Font ve görsel varlıkları paketleyici çözer; testte sahte modül yeter.
         '\\.(ttf|otf|png|jpg|jpeg|svg|webp|m4a|wav)$': '<rootDir>/__mocks__/assetStub.js',
+        // İkisi de ham ESM dağıtıyor; ts-jest yalnız .ts/.tsx dönüştürüyor,
+        // node_modules'daki bu iki dosya transform zincirinin dışında kalıp
+        // "Cannot use import statement outside a module" ile çöküyordu.
+        // Topluluk modülü (D31) test ortamında zaten pasif (bkz. stub'lardaki not).
+        '^react-native-url-polyfill/auto$': '<rootDir>/__mocks__/urlPolyfillStub.js',
+        '^@supabase/supabase-js$': '<rootDir>/__mocks__/supabaseJsStub.js',
       },
     },
     {
