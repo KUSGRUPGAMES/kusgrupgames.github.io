@@ -45,6 +45,17 @@ function withEzanSoundCopyFix(config) {
       `cp -f "$SRC" "$DEST_DIR/${SES_DOSYASI}"\n` +
       `echo "ezan sesi elle kopyalandı: $DEST_DIR/${SES_DOSYASI}"\n`;
 
+    // `inputPaths`/`outputPaths` BİLEREK boş bırakılıyor: `${VAR}` ya da
+    // `$(VAR)` içeren değerler `xcode` paketinin pbxproj yazıcısında
+    // (parantez/ayraçları kendi dizi söz dizimiyle karıştırıp) bozuk çıktı
+    // üretiyor — projeyi sonraki eklentiler (ör. @bacons/apple-targets)
+    // ayrıştıramaz hale geliyor (yerel bir `expo prebuild` ile denenip
+    // görüldü). Bunun yerine Xcode 15+'ın "User Script Sandboxing"
+    // özelliğini hedefin tamamı için kapatıyoruz (aşağıda) — kum havuzu,
+    // girdi/çıktı bildirilmemiş bir script'in dosya okuma/yazmasını
+    // sessizce engelleyebiliyordu (derleme yine "0 error" ile bitiyor,
+    // yalnız script'in içindeki kopyalama hiç gerçekleşmiyordu — ilk
+    // denemede tam bunu yaşadık).
     project.addBuildPhase(
       [],
       'PBXShellScriptBuildPhase',
@@ -52,6 +63,16 @@ function withEzanSoundCopyFix(config) {
       targetUuid,
       { shellPath: '/bin/sh', shellScript },
     );
+
+    // Bu proje zaten imzasız/geliştirme derlemesi, App Store'a gitmiyor —
+    // tüm hedef için sandbox'ı kapatmak burada güvenli.
+    const configurations = project.pbxXCBuildConfigurationSection();
+    for (const key in configurations) {
+      const entry = configurations[key];
+      if (entry?.buildSettings) {
+        entry.buildSettings.ENABLE_USER_SCRIPT_SANDBOXING = 'NO';
+      }
+    }
 
     return config;
   });
