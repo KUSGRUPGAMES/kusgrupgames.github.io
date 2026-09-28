@@ -18,7 +18,7 @@ export type IconName =
   | 'moon' | 'sun' | 'location' | 'calendar' | 'user' | 'users'
   | 'sparkle' | 'play' | 'pause' | 'bookmark' | 'info' | 'alert' | 'refresh' | 'star' | 'copy'
   | 'crescentStar' | 'coins' | 'kaaba'
-  | 'sunrise' | 'sunHigh' | 'sunLow' | 'sunset' | 'crescent' | 'mosque' | 'chart';
+  | 'sunrise' | 'sunHigh' | 'sunLow' | 'sunset' | 'crescent' | 'mosque' | 'chart' | 'message';
 
 export interface IconProps {
   name: IconName;
@@ -133,6 +133,8 @@ function render(name: IconName, p: P): React.ReactNode {
       return <><Circle cx={12} cy={8.5} r={3.8} {...p} /><Path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" {...p} /></>;
     case 'users':
       return <><Circle cx={9} cy={8.5} r={3.4} {...p} /><Path d="M2.8 20a6.2 6.2 0 0 1 12.4 0" {...p} /><Path d="M16 5.5a3.4 3.4 0 0 1 0 6.6M17 14.6a6.2 6.2 0 0 1 4.2 5.4" {...p} /></>;
+    case 'message':
+      return <><Path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9A1.5 1.5 0 0 1 18.5 16H9l-4 3.5V16H5.5A1.5 1.5 0 0 1 4 14.5Z" {...p} /></>;
     case 'sparkle':
       return <Path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9ZM18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8Z" {...p} />;
     case 'play': return <Path d="M8 5.5 18 12 8 18.5Z" {...p} />;

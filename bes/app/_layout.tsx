@@ -98,6 +98,16 @@ function RootStack() {
         <Stack.Screen name="notifications-center" />
         <Stack.Screen name="diagnostics" />
         <Stack.Screen name="account" />
+        <Stack.Screen name="community" />
+        <Stack.Screen name="community-guidelines" />
+        <Stack.Screen name="community-info" />
+        <Stack.Screen name="dua-board" />
+        <Stack.Screen name="chat-rooms" />
+        <Stack.Screen name="chat-room" />
+        <Stack.Screen name="khatm-circles" />
+        <Stack.Screen name="khatm-circle" />
+        <Stack.Screen name="khatm-history" />
+        <Stack.Screen name="announcements" />
       </Stack>
     </>
   );

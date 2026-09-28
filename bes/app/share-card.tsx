@@ -19,17 +19,29 @@ import type { CardContent, CardFormat } from '@/features/share/card';
 import { resolveTemplate } from '@/features/share/templates';
 import { CARD_TEMPLATES, TEMPLATE_CATEGORIES, type TemplateCategory } from '@/content/cardTemplates';
 import { Brand } from '@/config/brand';
+import { useI18n } from '@/lib/i18n';
+import { useSettingsStore } from '@/store/settings';
+import { useContentItems } from '@/features/community/content';
 
 const KATEGORI_ADI: Record<TemplateCategory, StringKey> = {
   friday: 'share.catFriday', eid: 'share.catEid', kandil: 'share.catKandil',
   ramadan: 'share.catRamadan', dua: 'share.catDua', verse: 'share.catVerse', daily: 'share.catDaily',
 };
 
-type Secim = 'own' | TemplateCategory;
+/**
+ * "community": yönetici panelinden eklenen ek hazır kartlar (D31,
+ * `content_items` tür `share_card`) — mevcut, doğrulanmış katalogdan
+ * (`CARD_TEMPLATES`) TAMAMEN AYRI, yalnız topluluk açıkken görünen bir ek
+ * kaynak. Âyet çözümlemesi gerekmez, metin zaten hazır gelir.
+ */
+type Secim = 'own' | TemplateCategory | 'community';
 
 export default function ShareCardScreen() {
   const t = useT();
   const theme = useTheme();
+  const { language } = useI18n();
+  const settings = useSettingsStore((s) => s.settings);
+  const toplulukIcerik = useContentItems('share_card', language, settings.community.enabled);
   const { width: ekran } = useWindowDimensions();
   const params = useLocalSearchParams<{
     body?: string; arabic?: string; reference?: string; source?: string;
@@ -60,17 +72,33 @@ export default function ShareCardScreen() {
   }), [t]);
 
   const sablonlar = useMemo(
-    () => (secim === 'own' ? [] : CARD_TEMPLATES
+    () => (secim === 'own' || secim === 'community' ? [] : CARD_TEMPLATES
       .filter((s) => s.category === secim)
-      .map((s) => ({ s, icerik: resolveTemplate(s, etiketler) }))
-      .filter((x): x is { s: typeof x.s; icerik: CardContent } => x.icerik !== null)),
+      .map((s) => ({ id: s.id, icerik: resolveTemplate(s, etiketler) }))
+      .filter((x): x is { id: string; icerik: CardContent } => x.icerik !== null)),
     [secim, etiketler],
   );
 
+  const toplulukKartlari = useMemo(
+    () => (toplulukIcerik.data ?? []).map((c): { id: string; icerik: CardContent } => ({
+      id: c.id,
+      icerik: {
+        body: c.body,
+        ...(typeof c.extra.arabic === 'string' ? { arabic: c.extra.arabic } : {}),
+        ...(typeof c.extra.reference === 'string' ? { reference: c.extra.reference } : {}),
+        source: Brand.appName,
+        brand: Brand.appName,
+      },
+    })),
+    [toplulukIcerik.data],
+  );
+
+  const listelenenler = secim === 'community' ? toplulukKartlari : sablonlar;
+
   const icerik: CardContent | null = secim === 'own'
     ? kendi
-    : (sablonlar.find((x) => x.s.id === sablonId) ?? sablonlar[0])?.icerik ?? null;
-  const seciliId = secim === 'own' ? null : (sablonlar.find((x) => x.s.id === sablonId) ?? sablonlar[0])?.s.id;
+    : (listelenenler.find((x) => x.id === sablonId) ?? listelenenler[0])?.icerik ?? null;
+  const seciliId = secim === 'own' ? null : (listelenenler.find((x) => x.id === sablonId) ?? listelenenler[0])?.id;
 
   const onizleme = Math.min(ekran - theme.spacing.lg * 2 - theme.spacing.md * 2, format === 'story' ? 250 : 320);
 
@@ -87,6 +115,10 @@ export default function ShareCardScreen() {
           <Chip key={k} label={t(KATEGORI_ADI[k])} selected={secim === k}
             onPress={() => { setSecim(k); setSablonId(null); }} />
         ))}
+        {settings.community.enabled ? (
+          <Chip label={t('share.catCommunity')} selected={secim === 'community'}
+            onPress={() => { setSecim('community'); setSablonId(null); }} />
+        ) : null}
       </ScrollView>
 
       {icerik ? (
@@ -99,20 +131,20 @@ export default function ShareCardScreen() {
         <Banner tone="info" title={t('share.nothing')} description={t('share.nothingBody')} />
       )}
 
-      {sablonlar.length > 1 ? (
+      {listelenenler.length > 1 ? (
         <>
           <SectionHeader title={t('share.templates')} subtitle={t('share.templatesHint')} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: theme.spacing.sm }}>
-            {sablonlar.map(({ s, icerik: c }) => (
+            {listelenenler.map(({ id, icerik: c }) => (
               <Pressable
-                key={s.id}
+                key={id}
                 accessibilityRole="button"
-                accessibilityState={{ selected: seciliId === s.id }}
+                accessibilityState={{ selected: seciliId === id }}
                 accessibilityLabel={c.body}
-                onPress={() => setSablonId(s.id)}
+                onPress={() => setSablonId(id)}
                 style={{ width: 180, minHeight: 96, padding: theme.spacing.md, borderRadius: theme.radius.lg,
-                  borderWidth: seciliId === s.id ? 2 : 1,
-                  borderColor: seciliId === s.id ? theme.colors.highlight : theme.colors.bezemeSolgun,
+                  borderWidth: seciliId === id ? 2 : 1,
+                  borderColor: seciliId === id ? theme.colors.highlight : theme.colors.bezemeSolgun,
                   backgroundColor: theme.colors.surface }}
               >
                 <Text variant="micro" tone="highlight" lines={1}>{c.reference ?? c.eyebrow ?? ''}</Text>

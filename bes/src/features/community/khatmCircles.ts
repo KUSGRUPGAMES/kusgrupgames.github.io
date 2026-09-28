@@ -75,6 +75,20 @@ export function useOpenKhatmCircles() {
   });
 }
 
+/** Herkese açık/özel, tamamlanmış/tamamlanmamış — id ile tek bir grup. */
+export function useKhatmCircleById(id: string | null) {
+  return useQuery({
+    queryKey: ['khatm-circle', id],
+    enabled: Boolean(supabase && id),
+    queryFn: async (): Promise<KhatmCircle | null> => {
+      if (!supabase || !id) return null;
+      const { data, error } = await supabase.from('khatm_circles').select('*').eq('id', id).maybeSingle();
+      if (error) throw error;
+      return data ? fromCircleRow(data as CircleRow) : null;
+    },
+  });
+}
+
 export function useKhatmCircleByCode(code: string | null) {
   return useQuery({
     queryKey: ['khatm-circle-by-code', code],

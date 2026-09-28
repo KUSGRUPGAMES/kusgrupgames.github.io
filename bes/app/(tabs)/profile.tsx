@@ -81,6 +81,13 @@ export default function SettingsScreen() {
         <ListItem title={t('account.title')} subtitle={t('profile.guest')} icon="user" onPress={() => router.push('/account')} />
       </Card>
 
+      <SectionHeader title={t('community.title')} subtitle={t('community.sectionHint')} />
+      <Card padding="md">
+        <ListItem title={t('community.title')} subtitle={t('community.tagline')} icon="users" onPress={() => router.push('/community')} />
+        <ListItem title={t('community.chatRooms')} subtitle={t('community.chatRoomsHint')} icon="message" onPress={() => router.push('/chat-rooms')} />
+        <ListItem title={t('community.khatmCircles')} subtitle={t('community.khatmCirclesHint')} icon="book" onPress={() => router.push('/khatm-circles')} />
+      </Card>
+
       <SectionHeader title={t('settings.about')} />
       <Card padding="md">
         <ListItem title={t('settings.publisher')} value={Brand.publisher} chevron={false} />
