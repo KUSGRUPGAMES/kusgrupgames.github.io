@@ -97,6 +97,23 @@ jobs:
           done
           echo "arka plan konum izni yok (dogrulandi)"
 
+          # Widget hic gorunmeme sikayeti bir kez yasandi; kok neden
+          # bulunamadi ama olasi butun kirilma noktalari burada sinaniyor —
+          # biri regrese olursa derleme kirmizi doner, sessizce kaybolmaz.
+          WIDGET_PLIST="targets/widget/Info.plist"
+          /usr/libexec/PlistBuddy -c "Print :NSExtension:NSExtensionPointIdentifier" "$WIDGET_PLIST" \
+            | grep -q "com.apple.widgetkit-extension" \
+            || { echo "::error::widget NSExtensionPointIdentifier eksik/yanlis"; exit 1; }
+          test -n "$(ls targets/widget/Assets.xcassets/AppIcon.appiconset/*.png 2>/dev/null | head -1)" \
+            || { echo "::error::widget ikonu yerlestirilmemis"; exit 1; }
+          grep -q "com.apple.security.application-groups" ios/.targets/BesWidget/generated.entitlements \
+            || { echo "::error::widget App Group yetkisi eksik"; exit 1; }
+          grep -q "com.apple.security.application-groups" "ios/$AD/$AD.entitlements" \
+            || { echo "::error::uygulama App Group yetkisi eksik"; exit 1; }
+          grep -q "BesWidget.appex in Embed Foundation Extensions" ios/*.xcodeproj/project.pbxproj \
+            || { echo "::error::widget uygulamaya gomulmemis (Embed Foundation Extensions)"; exit 1; }
+          echo "widget yapilandirmasi dogrulandi"
+
       - name: Derle (simulator, imzasiz)
         working-directory: bes/ios
         # pipefail olmadan "xcodebuild | tail" derleme coktugunde bile YESIL
