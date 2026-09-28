@@ -137,9 +137,16 @@ export function birlesikPlan(
  *
  * `\u001F` (birim ayıracı) sınırlayıcı: başlık ya da gövdenin doğal
  * metninde neredeyse hiç geçmeyen bir kontrol karakteri, çarpışma riski yok.
+ *
+ * Ezan harfi bilerek `E` değil `T` (timeSensitive): odak modunu kıran
+ * `interruptionLevel` eklendiğinde bu harf değişti — cihazda önceden kurulu,
+ * eski `E` imzalı ezan bildirimleri böylece "değişmiş" sayılıp bir sonraki
+ * açılışta yeni alanla yeniden kurulur; harf aynı kalsaydı güncelleme
+ * sessizce atlanır, kullanıcı uygulamayı güncelledikten sonra bile eski
+ * (odak modunu kıramayan) bildirimle kalırdı.
  */
 export function bildirimImzasi(n: { title: string; body: string; ezan?: boolean }, ses: boolean): string {
-  return `${n.title}\u001F${n.body}\u001F${ses ? (n.ezan ? 'E' : '1') : '0'}`;
+  return `${n.title}\u001F${n.body}\u001F${ses ? (n.ezan ? 'T' : '1') : '0'}`;
 }
 
 /**

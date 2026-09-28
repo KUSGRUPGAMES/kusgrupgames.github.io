@@ -73,6 +73,12 @@ const config: ExpoConfig = {
     appleTeamId: 'C4NUF2G789',
     entitlements: {
       'com.apple.security.application-groups': [APP_GROUP],
+      // Ezan bildirimi "Rahatsız Etmeyin"/odak modlarını kırabilsin diye
+      // (D29 devamı — bildirim geliyor ama ses çalmıyor şikâyeti odak modu
+      // ezan bildirimini pasif seviyede tuttuğu için oluyordu). Apple'dan
+      // özel onay istemez (Critical Alerts'ten farklı); yalnız bu yetkiyi
+      // ve içerikte `interruptionLevel: 'timeSensitive'`i gerektirir.
+      'com.apple.developer.usernotifications.time-sensitive': true,
     },
     supportsTablet: true,
     // App Store ikonu saydamlık kabul etmez; icon.png zeminli üretilir.

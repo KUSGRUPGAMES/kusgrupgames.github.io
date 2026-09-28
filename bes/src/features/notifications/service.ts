@@ -75,6 +75,8 @@ export async function scheduleTestEzan(title: string, body: string, afterSeconds
     identifier: 'test-ezan',
     content: {
       title, body, sound: EZAN_SESI,
+      // Odak/Rahatsız Etmeyin modunu kırar (yalnız iOS, bkz. gercekSyncNotifications).
+      interruptionLevel: 'timeSensitive',
       data: { at: Date.now() + afterSeconds * 1000, tur: 'reminder', imza: 'test', ezan: true },
     },
     trigger: {
@@ -192,6 +194,11 @@ async function gercekSyncNotifications(
           // `sounds`). iOS bildirim sesine en çok 30 sn izin verir; dosya
           // ~18,6 sn'dir. Android'de ses kanaldan gelir (`kanallariKur`).
           sound: options.sound ? (n.ezan ? EZAN_SESI : true) : false,
+          // Yalnız iOS: odak/Rahatsız Etmeyin modunda bildirim geliyor ama
+          // sesi kesiliyordu (kullanıcı bunu "ezan okumuyor" diye yaşadı).
+          // Ezan sesi taşıyan bildirim `timeSensitive` işaretlenince odak
+          // modunu kırar; app.config'teki entitlement bunu gerektiriyor.
+          ...(n.ezan && options.sound ? { interruptionLevel: 'timeSensitive' as const } : {}),
           // Fark almak için gereken alanlar. Tetikleyici okunamadığı için
           // zaman damgası ve içerik imzası bilerek içeriğe yazılır — imza
           // başlık/gövde/ses değişimini yakalar, yalnız zaman kıyaslamak
