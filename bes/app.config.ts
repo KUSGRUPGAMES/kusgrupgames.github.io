@@ -170,6 +170,14 @@ const config: ExpoConfig = {
       // uygulama kapalıyken çalınır.
       sounds: ['./assets/sounds/ezan.caf'],
     }],
+    // expo-notifications yukarıdaki `sounds` dosyasını Xcode projesine
+    // "Copy Bundle Resources" listesine ekliyor (ve diskte doğru yere
+    // kopyalıyor) ama gerçek cihazda derlenen pakette dosya yine de
+    // görünmüyor — aynı listedeki font dosyaları kopyalanırken bu sessizce
+    // atlanıyor (Xcode 27 uyumsuzluğu, kesin sebep doğrulanamadı). Bu
+    // eklenti dosyayı açık bir Run Script adımıyla elle kopyalayıp garantiye
+    // alıyor.
+    './plugins/withEzanSoundCopyFix',
     // Konum izni yalnız **uygulama açıkken**. expo-location eklentisi kendi
     // İngilizce varsayılanlarıyla üç anahtar birden yazıyor; "Always" izni
     // hiç kullanılmadığı hâlde beyan edilmiş oluyordu. App Review kullanılmayan
