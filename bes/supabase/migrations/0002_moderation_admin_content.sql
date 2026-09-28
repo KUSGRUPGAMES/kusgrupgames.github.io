@@ -33,9 +33,11 @@ create policy "yönetici herkesin profilini yönetir" on public.profiles
   for update using (public.is_admin(auth.uid())) with check (true);
 
 -- ── yasaklı kelimeler ──────────────────────────────────────────────────
--- Yönetici panelinden düzenlenir; liste burada TUTULMAZ (kelime listesini
--- deponun genel geçmişine yazmamak için) — ilk kurulumda bes/admin
--- panelinden birkaç temel kelime eklenir (bkz. COMMUNITY_SETUP.md).
+-- Yönetici panelinden büyütülür. Aşağıdaki temel liste bilerek burada:
+-- boş bırakılsaydı sunucu tarafı denetim ilk kurulumda etkisiz kalırdı
+-- (yalnız istemcideki `wordFilter.ts` ön denetimi çalışırdı, o da atlanabilir
+-- bir istemci kontrolü). Bu liste `wordFilter.ts`teki temel listeyle aynı;
+-- ikisi ayrı yerde büyüyebilir ama başlangıç noktası eşleşiyor.
 create table if not exists public.banned_words (
   word text primary key,
   added_by uuid references auth.users (id),
@@ -48,6 +50,11 @@ create policy "yalnız yönetici kelime ekler" on public.banned_words
   for insert with check (public.is_admin(auth.uid()));
 create policy "yalnız yönetici kelime siler" on public.banned_words
   for delete using (public.is_admin(auth.uid()));
+
+insert into public.banned_words (word) values
+  ('amk'), ('aq'), ('orospu'), ('piç'), ('yavşak'), ('göt'), ('siktir'),
+  ('sikeyim'), ('ibne'), ('amcık'), ('yarrak'), ('kahpe'), ('şerefsiz'), ('gavat')
+on conflict (word) do nothing;
 
 -- Kelime sınırlı eşleşme (ör. "kez" kelimesi "herkez" içinde yakalanmasın).
 create or replace function public.contains_banned_word(body text)
@@ -134,11 +141,19 @@ create policy "yönetici raporu sonuçlandırır" on public.reports
 
 -- Yönetici, şikâyet edilen içeriği doğrudan gizleyebilsin diye
 -- dua_requests/chat_messages üstünde de yönetici güncelleme izni gerekiyor
--- (0001'deki politika yalnız yazarın kendi satırına izin veriyordu).
+-- (0001'deki politika yalnız yazarın kendi satırına izin veriyordu). Ayrıca
+-- yönetici paneli ZATEN GİZLENMİŞ bir içeriği de görebilmeli (şikâyet
+-- panelinde önceki bir eylemden sonra tekrar bakmak gerekebilir) — 0001'in
+-- select politikası yalnız `is_hidden = false or author_id = auth.uid()`
+-- diyordu, yönetici yazar olmadığı için o durumda hiçbir şey görmezdi.
 create policy "yönetici herhangi bir dua isteğini gizleyebilir" on public.dua_requests
   for update using (public.is_admin(auth.uid())) with check (true);
 create policy "yönetici herhangi bir mesajı gizleyebilir" on public.chat_messages
   for update using (public.is_admin(auth.uid())) with check (true);
+create policy "yönetici tüm dua isteklerini görür" on public.dua_requests
+  for select using (public.is_admin(auth.uid()));
+create policy "yönetici tüm mesajları görür" on public.chat_messages
+  for select using (public.is_admin(auth.uid()));
 
 -- ── uzaktan içerik: duyuru, ek dua, bilgi yazısı, hazır kart ─────────────
 create table if not exists public.content_items (

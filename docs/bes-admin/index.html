@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="tr" data-game="bes">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>BEŞ — Yönetici Paneli</title>
+<!--
+  BEŞ yönetici paneli — tek dosya, derleme gerektirmez (kök CLAUDE.md'nin
+  "tek dosya" ilkesiyle aynı ruhta). Supabase JS'i CDN'den yükler.
+
+  KURULUM (bir kez): aşağıdaki SUPABASE_URL ve SUPABASE_ANON_KEY sabitlerini
+  kendi değerlerinle değiştir (bes/COMMUNITY_SETUP.md Adım 6'daki "Project
+  URL" ve "anon / public" anahtarı — ikisi de GİZLİ DEĞİLDİR, İSTEMCİYE HER
+  ZAMAN açık olacak şekilde tasarlanmıştır; gerçek yetki `profiles.is_admin`
+  ve sunucudaki RLS politikalarından gelir, bu anahtardan değil).
+
+  Bu sayfa GitHub Pages'te herkese açıktır (kimse linksiz bulamaz, ama URL'yi
+  bilen herkes LOGIN EKRANINI görebilir) — asıl güvenlik, Supabase Auth'a
+  giriş yapabilmek VE `is_admin = true` olmaktır. İkisi de sende yoksa
+  panelin hiçbir düğmesi çalışmaz (RLS her isteği reddeder).
+-->
+<script>
+  const SUPABASE_URL = 'BURAYA_PROJE_URLNI_YAZ';
+  const SUPABASE_ANON_KEY = 'BURAYA_ANON_ANAHTARINI_YAZ';
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root {
+    --emerald950: #01140B; --emerald900: #002419; --emerald800: #023023;
+    --gold500: #AF7E3D; --gold400: #E6B965; --gold300: #F7D595;
+    --ivory50: #FBF6EC; --ivory100: #FAF2E3; --ink900: #00281B;
+    --danger: #B3462C; --warn: #AF7E3D; --ok: #2F7A4F;
+    --border: rgba(230, 185, 101, 0.28);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--emerald950); color: var(--ivory100); min-height: 100vh;
+  }
+  header {
+    display: flex; align-items: center; gap: 12px; padding: 14px 20px;
+    background: var(--emerald900); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 5;
+  }
+  header h1 { font-size: 17px; margin: 0; font-weight: 700; color: var(--gold300); flex: 1; }
+  header .who { font-size: 13px; color: rgba(251,246,236,0.65); }
+  button { font: inherit; cursor: pointer; }
+  .btn {
+    background: var(--gold400); color: var(--ink900); border: none; border-radius: 10px;
+    padding: 9px 16px; font-weight: 700; font-size: 14px;
+  }
+  .btn:disabled { opacity: 0.5; cursor: default; }
+  .btn.secondary { background: transparent; color: var(--gold300); border: 1px solid var(--border); }
+  .btn.danger { background: var(--danger); color: #fff; }
+  .btn.small { padding: 6px 10px; font-size: 12px; border-radius: 8px; }
+  main { max-width: 960px; margin: 0 auto; padding: 20px; padding-bottom: 80px; }
+  .card {
+    background: var(--emerald900); border: 1px solid var(--border); border-radius: 14px;
+    padding: 16px; margin-bottom: 16px;
+  }
+  .card h2 { margin: 0 0 4px; font-size: 15px; color: var(--gold300); }
+  .card p.hint { margin: 0 0 14px; font-size: 13px; color: rgba(251,246,236,0.6); }
+  input, textarea, select {
+    width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--emerald950); color: var(--ivory100); font: inherit; font-size: 14px;
+  }
+  textarea { min-height: 80px; resize: vertical; }
+  label { display: block; font-size: 12px; color: rgba(251,246,236,0.65); margin-bottom: 4px; margin-top: 10px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; }
+  .row > div { flex: 1; min-width: 140px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--gold300); font-weight: 600; font-size: 12px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .tab {
+    padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border);
+    background: transparent; color: var(--ivory100); font-size: 13px;
+  }
+  .tab.active { background: var(--gold400); color: var(--ink900); border-color: var(--gold400); font-weight: 700; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .badge.open { background: var(--warn); color: var(--ink900); }
+  .badge.reviewed { background: var(--border); color: var(--ivory100); }
+  .badge.dismissed { background: rgba(251,246,236,0.15); color: rgba(251,246,236,0.6); }
+  .badge.action_taken { background: var(--danger); color: #fff; }
+  .badge.banned { background: var(--danger); color: #fff; }
+  .badge.muted { background: var(--warn); color: var(--ink900); }
+  .msg { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
+  .msg.err { background: rgba(179,70,44,0.2); border: 1px solid var(--danger); color: #ffb3a0; }
+  .msg.ok { background: rgba(47,122,79,0.2); border: 1px solid var(--ok); color: #a8e0bb; }
+  .empty { color: rgba(251,246,236,0.5); font-size: 13px; padding: 12px 0; }
+  #login-screen { max-width: 380px; margin: 12vh auto; padding: 0 20px; }
+  .field-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .content-item { border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+  .content-item .meta { font-size: 11px; color: rgba(251,246,236,0.55); margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="card">
+    <h2>BEŞ — Yönetici Paneli</h2>
+    <p class="hint">Supabase hesabınla giriş yap. Yönetici yetkisi (<code>is_admin</code>) yoksa hiçbir işlem çalışmaz.</p>
+    <div id="login-msg"></div>
+    <label>E-posta</label>
+    <input id="login-email" type="email" autocomplete="username">
+    <label>Parola</label>
+    <input id="login-password" type="password" autocomplete="current-password">
+    <div class="field-actions">
+      <button class="btn" onclick="signIn()">Giriş yap</button>
+      <button class="btn secondary" onclick="signUp()">Hesap oluştur</button>
+    </div>
+    <p class="hint" style="margin-top:14px;">
+      "Hesap oluştur" yalnız Supabase'te bir oturum açar; yönetici yetkisi
+      olmaz. Kendini yönetici yapmak için bes/COMMUNITY_SETUP.md'deki tek
+      satırlık SQL'i Supabase SQL Editor'de çalıştırman gerekiyor.
+    </p>
+  </div>
+</div>
+
+<div id="app" style="display:none;">
+  <header>
+    <h1>BEŞ — Yönetici Paneli</h1>
+    <span class="who" id="who"></span>
+    <button class="btn secondary small" onclick="signOut()">Çıkış</button>
+  </header>
+  <main>
+    <div id="admin-gate-msg"></div>
+    <div id="panel" style="display:none;">
+      <div class="tabs">
+        <button class="tab active" data-tab="reports" onclick="showTab('reports')">Şikâyetler</button>
+        <button class="tab" data-tab="content" onclick="showTab('content')">İçerik</button>
+        <button class="tab" data-tab="words" onclick="showTab('words')">Yasaklı kelimeler</button>
+        <button class="tab" data-tab="users" onclick="showTab('users')">Kullanıcılar</button>
+      </div>
+
+      <section id="tab-reports"></section>
+      <section id="tab-content" style="display:none;"></section>
+      <section id="tab-words" style="display:none;"></section>
+      <section id="tab-users" style="display:none;"></section>
+    </div>
+  </main>
+</div>
+
+<script>
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let session = null;
+let isAdmin = false;
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function msgBox(id, text, tone) {
+  document.getElementById(id).innerHTML = text ? `<div class="msg ${tone}">${esc(text)}</div>` : '';
+}
+function fmtDate(iso) {
+  try { return new Date(iso).toLocaleString('tr-TR'); } catch { return iso; }
+}
+
+async function signIn() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  msgBox('login-msg', '', '');
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) { msgBox('login-msg', error.message, 'err'); return; }
+  await boot();
+}
+
+async function signUp() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  msgBox('login-msg', '', '');
+  if (password.length < 8) { msgBox('login-msg', 'Parola en az 8 karakter olmalı.', 'err'); return; }
+  const { error } = await sb.auth.signUp({ email, password });
+  if (error) { msgBox('login-msg', error.message, 'err'); return; }
+  msgBox('login-msg', 'Hesap oluşturuldu. E-postana gelen doğrulama bağlantısına tıkladıktan sonra giriş yapabilirsin.', 'ok');
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+  location.reload();
+}
+
+async function boot() {
+  const { data } = await sb.auth.getSession();
+  session = data.session;
+  if (!session) return;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('who').textContent = session.user.email ?? '';
+
+  const { data: profil, error } = await sb.from('profiles').select('is_admin').eq('id', session.user.id).maybeSingle();
+  if (error || !profil) {
+    // Profil henüz yoksa (ilk giriş), oluştur — is_admin varsayılan false.
+    await sb.from('profiles').upsert({ id: session.user.id, nickname: (session.user.email || 'yönetici').split('@')[0] });
+  }
+  isAdmin = Boolean(profil?.is_admin);
+  if (!isAdmin) {
+    msgBox('admin-gate-msg',
+      'Bu hesapta yönetici yetkisi yok. bes/COMMUNITY_SETUP.md\u2019deki SQL ile kendini yönetici yap, sonra sayfayı yenile.', 'err');
+    return;
+  }
+  document.getElementById('panel').style.display = 'block';
+  await loadReports();
+  await loadContent();
+  await loadWords();
+}
+
+function showTab(name) {
+  for (const t of document.querySelectorAll('.tab')) t.classList.toggle('active', t.dataset.tab === name);
+  for (const s of document.querySelectorAll('main section')) s.style.display = 'none';
+  document.getElementById('tab-' + name).style.display = 'block';
+}
+
+/* ---------------- Şikâyetler ---------------- */
+
+async function loadReports() {
+  const el = document.getElementById('tab-reports');
+  el.innerHTML = '<div class="card"><h2>Şikâyetler</h2><p class="hint">Yükleniyor…</p></div>';
+  const { data, error } = await sb.from('reports').select('*').order('created_at', { ascending: false }).limit(200);
+  if (error) { el.innerHTML = `<div class="msg err">${esc(error.message)}</div>`; return; }
+  if (!data.length) { el.innerHTML = '<div class="card"><h2>Şikâyetler</h2><p class="empty">Bekleyen şikâyet yok.</p></div>'; return; }
+
+  const satirlar = await Promise.all(data.map(async (r) => {
+    let icerik = '(silinmiş ya da bulunamadı)';
+    const tablo = r.target_type === 'dua_request' ? 'dua_requests' : 'chat_messages';
+    const { data: hedef } = await sb.from(tablo).select('id, author_id, body, is_hidden').eq('id', r.target_id).maybeSingle();
+    if (hedef) icerik = hedef.body;
+    return { r, hedef, icerik, tablo };
+  }));
+
+  el.innerHTML = `<div class="card"><h2>Şikâyetler (${data.length})</h2><p class="hint">
+    Her şikâyet için: içeriği gizle, kullanıcıyı kısıtla (7 gün) ya da tamamen yasakla. 24 saat içinde
+    incelemek Apple 1.2 kuralının gereği.</p>
+    <table><thead><tr><th>Tarih</th><th>Tür</th><th>İçerik</th><th>Sebep</th><th>Durum</th><th>İşlem</th></tr></thead>
+    <tbody>${satirlar.map(({ r, hedef, icerik, tablo }) => `
+      <tr>
+        <td>${fmtDate(r.created_at)}</td>
+        <td>${r.target_type === 'dua_request' ? 'Dua isteği' : 'Sohbet mesajı'}</td>
+        <td style="max-width:220px;">${esc(icerik)}${hedef?.is_hidden ? ' <span class="badge dismissed">gizli</span>' : ''}</td>
+        <td style="max-width:160px;">${esc(r.reason)}</td>
+        <td><span class="badge ${r.status}">${esc(r.status)}</span></td>
+        <td>
+          <div style="display:flex; flex-direction:column; gap:4px; min-width:150px;">
+            ${!hedef?.is_hidden ? `<button class="btn small" onclick="hideContent('${tablo}','${r.target_id}','${r.id}')">İçeriği gizle</button>` : ''}
+            <button class="btn small secondary" onclick="restrictUser('${hedef?.author_id ?? ''}','${r.id}')" ${hedef ? '' : 'disabled'}>Kısıtla (7 gün)</button>
+            <button class="btn small danger" onclick="banUser('${hedef?.author_id ?? ''}','${r.id}')" ${hedef ? '' : 'disabled'}>Yasakla</button>
+            <button class="btn small secondary" onclick="resolveReport('${r.id}','dismissed')">Reddet</button>
+          </div>
+        </td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+async function resolveReport(id, status, note) {
+  await sb.from('reports').update({
+    status, resolved_by: session.user.id, resolved_at: new Date().toISOString(),
+    ...(note ? { resolution_note: note } : {}),
+  }).eq('id', id);
+  await loadReports();
+}
+
+async function hideContent(tablo, id, reportId) {
+  await sb.from(tablo).update({ is_hidden: true }).eq('id', id);
+  await resolveReport(reportId, 'action_taken', 'İçerik gizlendi.');
+}
+
+async function restrictUser(userId, reportId) {
+  if (!userId) return;
+  const suresi = new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString();
+  await sb.from('profiles').update({ muted_until: suresi }).eq('id', userId);
+  await resolveReport(reportId, 'action_taken', 'Kullanıcı 7 gün kısıtlandı.');
+}
+
+async function banUser(userId, reportId) {
+  if (!userId) return;
+  if (!confirm('Bu kullanıcıyı KALICI olarak yasaklamak istediğine emin misin?')) return;
+  await sb.from('profiles').update({ banned: true, ban_reason: 'Şikâyet üzerine yönetici kararı' }).eq('id', userId);
+  await resolveReport(reportId, 'action_taken', 'Kullanıcı yasaklandı.');
+}
+
+/* ---------------- İçerik (duyuru / dua / bilgi yazısı / hazır kart) ---------------- */
+
+const CONTENT_TYPES = [
+  { v: 'announcement', l: 'Duyuru' },
+  { v: 'dua', l: 'Ek dua' },
+  { v: 'info_article', l: 'Bilgilendirme yazısı' },
+  { v: 'share_card', l: 'Hazır kart' },
+];
+const LOCALES = ['tr', 'en', 'ar', 'de', 'fr'];
+
+async function loadContent() {
+  const el = document.getElementById('tab-content');
+  const { data, error } = await sb.from('content_items').select('*').order('type').order('sort_order');
+  el.innerHTML = `
+    <div class="card">
+      <h2>Yeni içerik ekle</h2>
+      <p class="hint">Uygulama güncellemesi gerekmeden, kaydettiğin an topluluk açık kullanıcılara görünür.</p>
+      <div class="row">
+        <div><label>Tür</label><select id="ci-type">${CONTENT_TYPES.map((t) => `<option value="${t.v}">${t.l}</option>`).join('')}</select></div>
+        <div><label>Dil</label><select id="ci-locale">${LOCALES.map((l) => `<option value="${l}">${l}</option>`).join('')}</select></div>
+        <div><label>Sıra</label><input id="ci-sort" type="number" value="0"></div>
+      </div>
+      <label>Başlık</label><input id="ci-title">
+      <label>Metin</label><textarea id="ci-body"></textarea>
+      <label>Ek alanlar (JSON, isteğe bağlı — hazır kart için <code>{"reference":"...","arabic":"..."}</code>)</label>
+      <textarea id="ci-extra" placeholder="{}"></textarea>
+      <div class="field-actions">
+        <button class="btn" onclick="createContent()">Yayınla</button>
+      </div>
+      <div id="content-msg"></div>
+    </div>
+    <div class="card"><h2>Mevcut içerik (${error ? '?' : data.length})</h2>
+      ${error ? `<div class="msg err">${esc(error.message)}</div>` : (
+        !data.length ? '<p class="empty">Henüz içerik yok.</p>' :
+        data.map((c) => `
+          <div class="content-item">
+            <div class="meta">${esc(CONTENT_TYPES.find((t) => t.v === c.type)?.l ?? c.type)} · ${esc(c.locale)} · sıra ${c.sort_order}
+              · ${c.is_published ? '<span class="badge reviewed">yayında</span>' : '<span class="badge dismissed">taslak</span>'}</div>
+            <strong>${esc(c.title)}</strong>
+            <p style="font-size:13px; white-space:pre-wrap;">${esc(c.body)}</p>
+            <div class="field-actions">
+              <button class="btn small secondary" onclick="togglePublish('${c.id}', ${!c.is_published})">${c.is_published ? 'Yayından kaldır' : 'Yayınla'}</button>
+              <button class="btn small danger" onclick="deleteContent('${c.id}')">Sil</button>
+            </div>
+          </div>`).join('')
+      )}
+    </div>`;
+}
+
+async function createContent() {
+  const type = document.getElementById('ci-type').value;
+  const locale = document.getElementById('ci-locale').value;
+  const sort_order = Number(document.getElementById('ci-sort').value) || 0;
+  const title = document.getElementById('ci-title').value.trim();
+  const body = document.getElementById('ci-body').value.trim();
+  const extraRaw = document.getElementById('ci-extra').value.trim();
+  let extra = {};
+  if (extraRaw) {
+    try { extra = JSON.parse(extraRaw); } catch { msgBox('content-msg', 'Ek alanlar geçerli JSON değil.', 'err'); return; }
+  }
+  if (!title || !body) { msgBox('content-msg', 'Başlık ve metin zorunlu.', 'err'); return; }
+  const { error } = await sb.from('content_items').insert({
+    type, locale, sort_order, title, body, extra, created_by: session.user.id,
+  });
+  if (error) { msgBox('content-msg', error.message, 'err'); return; }
+  msgBox('content-msg', 'Yayınlandı.', 'ok');
+  document.getElementById('ci-title').value = '';
+  document.getElementById('ci-body').value = '';
+  document.getElementById('ci-extra').value = '';
+  await loadContent();
+}
+
+async function togglePublish(id, publish) {
+  await sb.from('content_items').update({ is_published: publish }).eq('id', id);
+  await loadContent();
+}
+
+async function deleteContent(id) {
+  if (!confirm('Bu içeriği silmek istediğine emin misin?')) return;
+  await sb.from('content_items').delete().eq('id', id);
+  await loadContent();
+}
+
+/* ---------------- Yasaklı kelimeler ---------------- */
+
+async function loadWords() {
+  const el = document.getElementById('tab-words');
+  const { data, error } = await sb.from('banned_words').select('word').order('word');
+  el.innerHTML = `
+    <div class="card">
+      <h2>Yasaklı kelimeler</h2>
+      <p class="hint">Sohbet mesajları ve dua istekleri sunucuda bu listeye göre süzülür (kelime sınırlı, büyük/küçük harf duyarsız).</p>
+      <div class="row">
+        <div><input id="word-new" placeholder="yeni kelime"></div>
+        <div style="flex:0;"><button class="btn" onclick="addWord()">Ekle</button></div>
+      </div>
+      <div id="words-msg"></div>
+      ${error ? `<div class="msg err">${esc(error.message)}</div>` : `
+        <table style="margin-top:12px;"><tbody>
+          ${data.map((w) => `<tr><td>${esc(w.word)}</td><td style="text-align:right;">
+            <button class="btn small danger" onclick="removeWord('${esc(w.word).replace(/'/g, "\\'")}')">Kaldır</button></td></tr>`).join('')}
+        </tbody></table>`}
+    </div>`;
+}
+
+async function addWord() {
+  const w = document.getElementById('word-new').value.trim().toLocaleLowerCase('tr');
+  if (!w) return;
+  const { error } = await sb.from('banned_words').insert({ word: w, added_by: session.user.id });
+  if (error) { msgBox('words-msg', error.message, 'err'); return; }
+  await loadWords();
+}
+
+async function removeWord(w) {
+  await sb.from('banned_words').delete().eq('word', w);
+  await loadWords();
+}
+
+/* ---------------- Kullanıcılar ---------------- */
+
+async function loadUsers(query) {
+  const el = document.getElementById('tab-users');
+  el.innerHTML = `
+    <div class="card">
+      <h2>Kullanıcılar</h2>
+      <p class="hint">Takma ada göre ara.</p>
+      <div class="row">
+        <div><input id="user-q" placeholder="takma ad ara…" value="${esc(query ?? '')}"></div>
+        <div style="flex:0;"><button class="btn" onclick="loadUsers(document.getElementById('user-q').value)">Ara</button></div>
+      </div>
+      <div id="users-list"></div>
+    </div>`;
+  if (!query) return;
+  const { data, error } = await sb.from('profiles').select('*').ilike('nickname', `%${query}%`).limit(50);
+  const list = document.getElementById('users-list');
+  if (error) { list.innerHTML = `<div class="msg err">${esc(error.message)}</div>`; return; }
+  if (!data.length) { list.innerHTML = '<p class="empty">Sonuç yok.</p>'; return; }
+  list.innerHTML = `<table><thead><tr><th>Takma ad</th><th>Durum</th><th>İşlem</th></tr></thead><tbody>
+    ${data.map((u) => `
+      <tr>
+        <td>${esc(u.nickname)}${u.is_admin ? ' <span class="badge reviewed">yönetici</span>' : ''}</td>
+        <td>${u.banned ? '<span class="badge banned">yasaklı</span>' : (u.muted_until && new Date(u.muted_until) > new Date()) ? `<span class="badge muted">kısıtlı: ${fmtDate(u.muted_until)}</span>` : '—'}</td>
+        <td>
+          ${u.banned ? `<button class="btn small secondary" onclick="unbanUser('${u.id}','${esc(query)}')">Yasağı kaldır</button>`
+            : `<button class="btn small danger" onclick="banUserDirect('${u.id}','${esc(query)}')">Yasakla</button>`}
+        </td>
+      </tr>`).join('')}
+    </tbody></table>`;
+}
+
+async function banUserDirect(id, q) {
+  if (!confirm('Bu kullanıcıyı KALICI olarak yasaklamak istediğine emin misin?')) return;
+  await sb.from('profiles').update({ banned: true, ban_reason: 'Yönetici paneli — doğrudan işlem' }).eq('id', id);
+  await loadUsers(q);
+}
+async function unbanUser(id, q) {
+  await sb.from('profiles').update({ banned: false, ban_reason: null, muted_until: null }).eq('id', id);
+  await loadUsers(q);
+}
+
+/* ---------------- Başlangıç ---------------- */
+
+(async () => {
+  document.getElementById('tab-users').innerHTML = '';
+  await loadUsers();
+  const { data } = await sb.auth.getSession();
+  if (data.session) await boot();
+})();
+</script>
+</body>
+</html>

@@ -734,3 +734,62 @@ widget mağaza sürümünde hep boş kalacaktı. Akış artık her paketi projen
 yetki dosyasıyla geçici imzalıyor ve IPA'daki yetkiyi doğruluyor. App Store
 Connect API anahtarı App Group oluşturamadığı için grup, Mac'te Apple
 hesabıyla bir kez kaydedilir: `tools/ios-uretim-kaydi.sh`.
+
+## D31 — Topluluk modülü: dua panosu, sohbet odaları, hatim grupları, yönetici paneli
+
+Şartname §55'in ("Dua kardeşliği") ilk gerçek uygulaması. Kullanıcı
+talebiyle üç özellik: (1) **dua panosu** — istek paylaş, "dua ettim" say;
+kim ettiği gizli kalır (riya/gösterişten kaçınma — bkz. Sahih Müslim 2733:
+"Bir Müslüman din kardeşi için gıyabında dua ettiğinde, baş ucundaki melek
+'âmin, sana da aynısı' der"), yalnız toplam sayı ve isteyen kişiye "X kişi
+senin için dua etti" görünür; (2) **sohbet odaları** — sabit, konu başlıklı,
+herkese açık dört oda (rastgele/özel eşleşme YOK — Apple 1.2 kuralı
+"rastgele/anonim sohbet"i ayrıca sıkı denetliyor, sabit odalar hem daha
+güvenli hem denetlenmesi daha basit); (3) **hatim grupları** — çok kişili,
+30 cüzü paylaşarak okuma; grup 30/30 tamamlanınca kendiliğinden biter ve her
+katılımcının kayıtlarında kalıcı iz bırakır. Ayrıca: sunucu tarafında
+atlanamaz yasaklı kelime süzgeci, şikâyet + engelleme, ve **web tabanlı bir
+yönetici paneli** (`docs/bes-admin/index.html`, GitHub Pages) — şikâyetleri
+incele/içeriği gizle/kullanıcı kısıtla-yasakla, yasaklı kelime listesini
+büyüt, ve dört tür içerik (duyuru, ek dua, bilgilendirme yazısı, hazır kart)
+uygulama güncellemesi gerekmeden ekle/düzenle/yayından kaldır.
+
+**Mimari kararı — kimlik.** Uygulamanın geri kalanı hesapsız çalışır (D12,
+`app/account.tsx`: "Bu ekran bir 'giriş yap' ekranı değildir çünkü hesap
+yoktur"). Bu, o ilkeyi bozmadan ekleniyor: topluluk **ayrı, isteğe bağlı**
+bir katman. Kimlik Supabase'in **anonim girişi** (`signInAnonymously`) +
+kullanıcının seçtiği bir takma ad — e-posta/ad/telefon hiç istenmez. Modül
+`settings.community.enabled` ile varsayılan **kapalı**; sunucu
+yapılandırılmamışsa (`EXPO_PUBLIC_SUPABASE_URL/ANON_KEY` yoksa) `supabase`
+istemcisi `null`e düşer, ekranlar "henüz hazır değil" gösterir, hiçbir yerde
+çökme olmaz (aynı "kapatma anahtarı" deseni `SUPABASE_KURULUM.md`de zaten
+istenmişti).
+
+**Neden şema Supabase'te, kodda değil.** RLS politikaları (Postgres row
+level security) istemci atlayamayacağı şekilde: hız sınırı (`dua_requests`
+günde 5, `chat_messages` 5 dakikada 30), yasaklı kelime süzgeci
+(`contains_banned_word()`), ve kısıtlı/yasaklı kullanıcının hiçbir yere
+yazamaması hep sunucu tarafında, tetikleyicilerde. Bu, gerçek bir PostgreSQL
+16 kopyasında (bu depoda değil, yalnız yerel sınama için) `auth.users`/
+`auth.uid()` taklit edilip 10 senaryoyla (kendini yönetici yapamama, yasaklı
+kelime reddi, günlük sınır, dua sayacı, tekrar dua engeli, yöneticinin
+başkasının mesajını gizlemesi, kısıtlı kullanıcının yazamaması, hatim
+grubunun 30 cüzünün otomatik oluşması, alınmış cüzün tekrar alınamaması,
+30/30 tamamlanınca grubun kendiliğinden bitmesi) doğrulandı — hepsi geçti.
+
+**Yönetici paneli neden ayrı bir HTML dosyası.** Kök `CLAUDE.md`nin "tek
+dosya" ilkesiyle aynı ruhta: derleme adımı yok, Supabase JS'i CDN'den
+yükler, GitHub Pages'te barınır (`docs/bes-admin/`). Anon anahtar dosyanın
+içinde açık — bu bilerek: gizli değil, güvenlik RLS'ten ve girenin
+`profiles.is_admin` olmasından geliyor. İlk yönetici hesabı elle, tek satır
+SQL ile işaretlenir (`COMMUNITY_SETUP.md`); bir kullanıcının kendini
+yönetici yapması `profiles_guard_privileged_fields` tetikleyicisiyle
+kapatıldı (bir WITH CHECK yerine trigger seçildi: WITH CHECK zaten yönetici
+olan/susturulmuş bir kullanıcının kendi takma adını değiştirmesini de
+yanlışlıkla engellerdi).
+
+**Kapsam dışı bırakılanlar (bilerek).** Görsel/medya paylaşımı yok (yalnız
+metin — moderasyon yükü). Özel (1'e1) mesajlaşma yok. Denetim günlüğü
+(audit log) yok, yalnız `reports.resolved_by/resolved_at/resolution_note`
+temel bir iz bırakıyor. Bunlar `SUPABASE_KURULUM.md`deki çoklu cihaz
+eşitleme ve AI asistanla birlikte gelecekteki genişleme alanı.
