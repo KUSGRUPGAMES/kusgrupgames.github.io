@@ -4,6 +4,10 @@
  * Bu ekran bir "giriş yap" ekranı değildir çünkü hesap **yoktur**. Kullanıcının
  * bilmek istediği asıl soruyu yanıtlar: verilerim nerede, ne oluyor, nasıl
  * silinir (DECISIONS D12).
+ *
+ * Tek istisna Topluluk (D31, `/community`): kullanıcının kendi isteğiyle
+ * açtığı, anonim/takma adlı, ayrı bir katman — buradaki "hesapsız" ilkesini
+ * bozmaz çünkü varsayılan kapalıdır ve gerçek ad/e-posta hiç istemez.
  */
 import React, { useState } from 'react';
 import { router, Stack } from 'expo-router';
