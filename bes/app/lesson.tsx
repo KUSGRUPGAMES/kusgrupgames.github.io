@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { I18nManager, Pressable, View } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import {
-  Screen, Card, Text, Column, Row, Button, ProgressBar, Banner, ArabicText, Icon, IconButton, Badge,
+  Screen, Card, Text, Column, Row, Button, ProgressBar, Banner, ArabicText, Icon, IconButton, Badge, EmptyState,
 } from '@/ui';
 import { useT } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -24,6 +24,9 @@ import { surahWords, type QuranWord } from '@/features/learn/words';
 import { useLearnAudio, type LearnAudio } from '@/features/learn/useLearnAudio';
 import { useLearningStore } from '@/store/learning';
 import { getSurah } from '@/features/quran/data';
+import { usePro } from '@/features/pro/purchases';
+import { isLessonFree } from '@/features/pro/gates';
+import { maybeShowInterstitial } from '@/features/pro/adsRuntime';
 
 /** Arapça dizilim: LTR arayüzde satırı ters çevir, RTL'de zaten sağdan başlar. */
 const ARAPCA_SATIR = I18nManager.isRTL ? 'row' : 'row-reverse';
@@ -42,6 +45,7 @@ export default function LessonScreen() {
   const ses = useLearnAudio();
   const tamamla = useLearningStore((s) => s.complete);
   const sonuclar = useLearningStore((s) => s.results);
+  const pro = usePro();
 
   // Ders değişince (Sonraki ders) baştan başla.
   useEffect(() => {
@@ -56,7 +60,10 @@ export default function LessonScreen() {
 
   // Ders bittiğinde sonucu bir kez kaydet.
   useEffect(() => {
-    if (bitti) tamamla(id, starsFor(dogru, toplam));
+    if (!bitti) return;
+    tamamla(id, starsFor(dogru, toplam));
+    // Ders sonu doğal bir duraklama: kurallar izin verirse tam ekran reklam (D33).
+    maybeShowInterstitial('learn');
   }, [bitti]);
 
   const tekrar = () => {
@@ -66,6 +73,17 @@ export default function LessonScreen() {
 
   const adim = adimlar[sira];
   const baslik = meta?.title ?? t('learn.title');
+
+  // "Sonraki ders" ya da bir bağlantıyla kilitli derse gelinirse (D33).
+  if (meta && !pro && !isLessonFree(meta.unit)) {
+    return (
+      <Screen topInset={false}>
+        <Stack.Screen options={{ headerShown: true, title: baslik }} />
+        <EmptyState icon="lock" title={t('pro.locked')} description={t('pro.learnLocked')}
+          actionLabel={t('pro.seePlans')} onAction={() => router.replace('/pro')} />
+      </Screen>
+    );
+  }
 
   if (!meta || !adim) {
     return (

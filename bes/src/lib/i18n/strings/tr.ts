@@ -331,14 +331,14 @@ export const tr = {
   'settings.publisher': 'Yayıncı', 'settings.version': 'Sürüm',
 
   // --- abonelik (§67)
-  'pro.title': 'Pro',
-  'pro.unlock': 'Pro ile açılır',
-  'pro.monthly': 'Aylık',
-  'pro.yearly': 'Yıllık',
-  'pro.restore': 'Satın alımları geri yükle',
-  'pro.manage': 'Aboneliği yönet',
-  'pro.active': 'Pro üyeliğin etkin',
-  'pro.renewalNote': 'Abonelik, iptal edilmedikçe dönem sonunda kendini yeniler. İstediğin an mağaza ayarlarından iptal edebilirsin.',
+
+  
+
+  
+
+  
+
+  
 
   // --- zekât, Ramazan, mukabele, cuma (FAZ 9)
   'zakat.title': 'Zekât hesaplama',
@@ -948,6 +948,41 @@ export const tr = {
   'knowledge.topic.tarih': 'Tarih',
   'knowledge.topic.kuran': 'Kur’an bilgisi',
   'knowledge.topic.ahlak': 'Ahlak',
+  'pro.title': 'BEŞ Pro',
+  'pro.tagline': 'Reklamsız kullanım ve daha fazlası',
+  'pro.benefitNoAds': 'Reklamsız kullanım',
+  'pro.benefitNoAdsHint': 'Hiçbir ekranda reklam görmezsin.',
+  'pro.benefitLearn': 'Öğren kursunun tamamı',
+  'pro.benefitLearnHint': 'Cezm ve şeddeden kısa surelere kadar bütün dersler.',
+  'pro.benefitCommunity': 'Toplulukta daha fazlası',
+  'pro.benefitCommunityHint': 'Sohbet odalarına yaz, hatim grubu kur, günde 5 dua isteği paylaş.',
+  'pro.alwaysFree': 'Namaz vakitleri, kıble, Kur’an ve meal, dualar, zikir ve kaza takibi her zaman ücretsizdir.',
+  'pro.planAnnual': 'Yıllık',
+  'pro.planMonthly': 'Aylık',
+  'pro.planLifetime': 'Ömür boyu',
+  'pro.perYear': '{price} / yıl',
+  'pro.perMonth': '{price} / ay',
+  'pro.once': '{price} · tek seferlik',
+  'pro.buy': 'Devam et',
+  'pro.restore': 'Satın alımları geri yükle',
+  'pro.restored': 'Pro yeniden etkin.',
+  'pro.restoreNone': 'Bu hesapta etkin bir Pro satın alımı bulunamadı.',
+  'pro.failed': 'Satın alma tamamlanamadı. Tekrar dene.',
+  'pro.loadFailed': 'Fiyatlar yüklenemedi. İnternet bağlantını kontrol et.',
+  'pro.active': 'Pro etkin',
+  'pro.activeBody': 'Destek olduğun için teşekkürler.',
+  'pro.manage': 'Aboneliği yönet',
+  'pro.renewNote': 'Aylık ve yıllık abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı ücretle kendiliğinden yenilenir. İptal ve yönetim mağaza hesabının ayarlarından yapılır. Ömür boyu seçeneği tek seferlik ödemedir.',
+  'pro.notReadyTitle': 'Pro henüz hazır değil',
+  'pro.notReadyBody': 'Mağaza bağlantısı kurulduğunda burada açılır.',
+  'pro.locked': 'Pro ile açılır',
+  'pro.settingsHint': 'Reklamsız kullanım ve fazlası',
+  'pro.learnLocked': 'Bu ders Pro ile açılır. İlk üç ünite herkese açık.',
+  'pro.chatLocked': 'Sohbet odalarına yazmak Pro ile açılır. Okumak herkese açık.',
+  'pro.khatmLocked': 'Hatim grubu kurmak Pro ile açılır. Var olan gruplara katılmak herkese açık.',
+  'pro.duaLimit': 'Bugünkü dua isteği hakkını kullandın. Pro ile günde 5 istek paylaşabilirsin.',
+  'pro.seePlans': 'Pro’yu incele',
+  'ads.privacyOptions': 'Reklam gizlilik seçenekleri',
 } as const;
 
 export type StringKey = keyof typeof tr;

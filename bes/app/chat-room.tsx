@@ -17,6 +17,8 @@ import {
 } from '@/features/community/chat';
 import { useReportContent, useBlockUser, useBlockedIds } from '@/features/community/duaBoard';
 import { containsBannedWord } from '@/features/community/wordFilter';
+import { usePro } from '@/features/pro/purchases';
+import { communityLimits } from '@/features/pro/gates';
 
 export default function ChatRoomScreen() {
   const t = useT();
@@ -28,6 +30,8 @@ export default function ChatRoomScreen() {
   const { mesajlar } = useChatMessages(id ?? null);
   const gonder = useSendMessage(userId, nickname);
   const blocked = useBlockedIds(userId);
+  // Okumak herkese açık; yazmak Pro (D33).
+  const yazabilir = communityLimits(usePro()).canChat;
   const listRef = useRef<FlatList<ChatMessage>>(null);
 
   const [metin, setMetin] = useState('');
@@ -76,6 +80,12 @@ export default function ChatRoomScreen() {
             {t('community.bannedWordWarning')}
           </Text>
         ) : null}
+        {!yazabilir ? (
+          <Column gap="sm" style={{ padding: theme.spacing.lg, paddingTop: theme.spacing.xs }}>
+            <Text variant="caption" tone="muted">{t('pro.chatLocked')}</Text>
+            <Button label={t('pro.seePlans')} icon="star" size="sm" onPress={() => router.push('/pro')} />
+          </Column>
+        ) : (
         <Row gap="sm" align="center" style={{ padding: theme.spacing.lg, paddingTop: theme.spacing.xs }}>
           <View style={{ flex: 1 }}>
             <Field
@@ -90,6 +100,7 @@ export default function ChatRoomScreen() {
           <Button label={t('community.send')} icon="share" size="sm" disabled={metin.trim().length === 0 || yasakliKelime}
             loading={gonder.isPending} onPress={gonderVeTemizle} />
         </Row>
+        )}
       </KeyboardAvoidingView>
     </Screen>
   );

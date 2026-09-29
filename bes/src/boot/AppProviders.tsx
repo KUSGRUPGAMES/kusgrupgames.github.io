@@ -29,6 +29,8 @@ import { reloadAppAsync } from 'expo';
 import { palette } from '@/theme/tokens';
 import splashLogo from '../../assets/splash-icon.png';
 import splashLogoLight from '../../assets/brand/splash-icon-light.png';
+import { initPurchases } from '@/features/pro/purchases';
+import { initAds } from '@/features/pro/adsRuntime';
 
 // Üretimde debug/info günlüğe yazılmaz (§83).
 configureLogging({ minLevel: __DEV__ ? 'debug' : 'warn' });
@@ -137,6 +139,16 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     })();
     return () => { alive = false; };
   }, []);
+
+  // Pro durumu açılışta sorulur (D33); cevap gelene kadar kilit ve reklam
+  // kararı verilmez (`useProStore.ready`).
+  useEffect(() => { initPurchases(); }, []);
+
+  // Reklam onayı ve iOS izleme izni onboarding'den SONRA sorulur: kullanıcı
+  // uygulamayı görmeden izin pencereleriyle karşılaşmasın.
+  useEffect(() => {
+    if (ready && onboardingDone) void initAds();
+  }, [ready, onboardingDone]);
 
   const completeOnboarding = useCallback(() => setOnboardingDone(true), []);
 

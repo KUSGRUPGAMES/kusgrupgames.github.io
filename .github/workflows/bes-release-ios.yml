@@ -29,6 +29,20 @@ jobs:
     env:
       APP_VARIANT: production
       BUILD_NUMBER: ${{ github.run_number }}
+      # Mağaza derlemesi: gerçek AdMob kimliği yoksa app.config.ts derlemeyi durdurur.
+      BES_STORE_RELEASE: '1'
+      # D32/D33: sunucu, abonelik ve reklam kimlikleri. Secret yoksa boş gelir;
+      # uygulama topluluğu/Pro'yu kapalı, reklamı test biriminde tutar.
+      EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+      EXPO_PUBLIC_REVENUECAT_IOS_KEY: ${{ secrets.EXPO_PUBLIC_REVENUECAT_IOS_KEY }}
+      EXPO_PUBLIC_REVENUECAT_ANDROID_KEY: ${{ secrets.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY }}
+      ADMOB_IOS_APP_ID: ${{ secrets.ADMOB_IOS_APP_ID }}
+      ADMOB_ANDROID_APP_ID: ${{ secrets.ADMOB_ANDROID_APP_ID }}
+      EXPO_PUBLIC_ADMOB_BANNER_IOS: ${{ secrets.EXPO_PUBLIC_ADMOB_BANNER_IOS }}
+      EXPO_PUBLIC_ADMOB_BANNER_ANDROID: ${{ secrets.EXPO_PUBLIC_ADMOB_BANNER_ANDROID }}
+      EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS: ${{ secrets.EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS }}
+      EXPO_PUBLIC_ADMOB_INTERSTITIAL_ANDROID: ${{ secrets.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ANDROID }}
       ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
       KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
       KEY_P8: ${{ secrets.APPSTORE_PRIVATE_KEY }}

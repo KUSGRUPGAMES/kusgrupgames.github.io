@@ -41,7 +41,7 @@ export const CORE_KEYS: readonly StringKey[] = [
   'settings.themeLight', 'settings.themeDark', 'settings.language',
   'settings.notifications', 'settings.about', 'settings.privacy', 'settings.version',
 
-  'pro.title', 'pro.unlock', 'pro.monthly', 'pro.yearly', 'pro.restore',
+  'pro.title', 'pro.locked', 'pro.planMonthly', 'pro.planAnnual', 'pro.restore',
 
   'error.title', 'error.generic', 'error.network', 'error.timeout',
   'error.restart', 'offline.title', 'offline.body',

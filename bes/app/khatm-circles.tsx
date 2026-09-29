@@ -15,6 +15,8 @@ import { useCommunitySession } from '@/features/community/session';
 import {
   useOpenKhatmCircles, useCreateKhatmCircle, useKhatmCircleByCode, JUZ_COUNT,
 } from '@/features/community/khatmCircles';
+import { usePro } from '@/features/pro/purchases';
+import { communityLimits } from '@/features/pro/gates';
 
 export default function KhatmCirclesScreen() {
   const t = useT();
@@ -23,6 +25,8 @@ export default function KhatmCirclesScreen() {
   const { userId } = useCommunitySession();
   const circles = useOpenKhatmCircles();
   const olustur = useCreateKhatmCircle(userId);
+  // Katılmak herkese açık; grup kurmak Pro (D33).
+  const kurabilir = communityLimits(usePro()).canCreateKhatm;
 
   const [yeniAcik, setYeniAcik] = useState(false);
   const [baslik, setBaslik] = useState('');
@@ -48,8 +52,10 @@ export default function KhatmCirclesScreen() {
       <Text variant="callout" tone="muted">{t('community.khatmIntro')}</Text>
 
       <Row gap="sm" style={{ marginTop: theme.spacing.md }}>
-        <Button label={t('community.newCircle')} icon="plus" onPress={() => setYeniAcik(true)} />
+        <Button label={t('community.newCircle')} icon={kurabilir ? 'plus' : 'lock'}
+          onPress={() => (kurabilir ? setYeniAcik(true) : router.push('/pro'))} />
       </Row>
+      {!kurabilir ? <Text variant="caption" tone="muted" style={{ marginTop: theme.spacing.xs }}>{t('pro.khatmLocked')}</Text> : null}
 
       <SectionHeader title={t('community.joinByCode')} />
       <Card padding="md">

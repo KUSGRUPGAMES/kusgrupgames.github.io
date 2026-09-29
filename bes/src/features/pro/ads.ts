@@ -14,7 +14,7 @@
 
 export type AdSurface =
   | 'home' | 'explore' | 'profile' | 'quranList' | 'settings'
-  | 'reader' | 'qibla' | 'dhikr' | 'prayerGuide' | 'ramadan';
+  | 'reader' | 'qibla' | 'dhikr' | 'prayerGuide' | 'ramadan' | 'learn';
 
 /** Reklam **hiçbir koşulda** gösterilmeyen ekranlar. */
 export const AD_FREE_SURFACES: readonly AdSurface[] = [

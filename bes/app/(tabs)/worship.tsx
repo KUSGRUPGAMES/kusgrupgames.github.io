@@ -10,6 +10,7 @@ import { router, type Href } from 'expo-router';
 import { Screen, SectionHeader, PageHeader, FeatureTile, Row, type IconName } from '@/ui';
 import { useT, type StringKey } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
+import { AdBanner } from '@/features/pro/AdBanner';
 
 type Oge = { href: Href; icon: IconName; label: StringKey };
 
@@ -60,6 +61,7 @@ export default function WorshipScreen() {
       {izgara(TAKIP)}
       <SectionHeader title={t('worship.sectionGuides')} />
       {izgara(REHBER)}
+      <AdBanner surface="explore" />
       <View style={{ height: theme.spacing.xxl }} />
     </Screen>
   );

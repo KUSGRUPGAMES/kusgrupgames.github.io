@@ -22,6 +22,8 @@ import {
   useDuaFeed, usePostDua, usePrayFor, usePrayedFor, useReportContent, useBlockUser, useBlockedIds,
 } from '@/features/community/duaBoard';
 import { containsBannedWord } from '@/features/community/wordFilter';
+import { usePro } from '@/features/pro/purchases';
+import { communityLimits, countInLast24h } from '@/features/pro/gates';
 
 const KATEGORI_ADI: Record<DuaCategory, StringKey> = {
   saglik: 'community.catHealth', aile: 'community.catFamily', sinav_is: 'community.catExamWork',
@@ -37,6 +39,7 @@ export default function DuaBoardScreen() {
   const feed = useDuaFeed(userId);
   const gonder = usePostDua(userId);
   const blocked = useBlockedIds(userId);
+  const pro = usePro();
 
   const [kategori, setKategori] = useState<DuaCategory>('genel');
   const [metin, setMetin] = useState('');
@@ -53,12 +56,22 @@ export default function DuaBoardScreen() {
   }
 
   const gorunurler = (feed.data ?? []).filter((r) => !blocked.data?.has(r.authorId));
+  // Günlük istek hakkı: ücretsizde 1, Pro'da 5 (sunucunun üst sınırı) — D33.
+  const bugunkuIstek = countInLast24h((feed.data ?? []).filter((r) => r.benimMi).map((r) => r.createdAt));
+  const hakBitti = bugunkuIstek >= communityLimits(pro).duaRequestsPerDay;
 
   return (
     <Screen topInset={false} scroll={false}>
       <Stack.Screen options={{ headerShown: true, title: t('community.duaBoard') }} />
       <View style={{ paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.md }}>
-        <Button label={t('community.newRequest')} icon="plus" onPress={() => setFormAcik(true)} block />
+        <Button label={t('community.newRequest')} icon="plus" onPress={() => setFormAcik(true)} block
+          disabled={hakBitti} />
+        {hakBitti && !pro ? (
+          <Column gap="xs" style={{ marginTop: theme.spacing.sm }}>
+            <Text variant="caption" tone="muted">{t('pro.duaLimit')}</Text>
+            <Button label={t('pro.seePlans')} icon="star" size="sm" variant="secondary" onPress={() => router.push('/pro')} />
+          </Column>
+        ) : null}
       </View>
 
       {feed.isLoading ? (

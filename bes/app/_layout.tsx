@@ -67,6 +67,7 @@ function RootStack() {
       >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
+        <Stack.Screen name="pro" />
         {/* Google girişinin dönüş adresi; kullanıcı görmez, hemen geri döner (D32). */}
         <Stack.Screen name="auth-callback" options={{ animation: 'none' }} />
         <Stack.Screen name="location" options={{ presentation: 'modal' }} />

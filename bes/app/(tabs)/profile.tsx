@@ -14,8 +14,11 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { useLocationStore } from '@/store/locations';
 import { Brand } from '@/config/brand';
 import { openLegalPage } from '@/lib/legal';
+import { AdBanner } from '@/features/pro/AdBanner';
+import { showAdPrivacyOptions, useAdsStore } from '@/features/pro/adsRuntime';
 
 export default function SettingsScreen() {
+  const reklamGizlilik = useAdsStore((s) => s.privacyOptions);
   const t = useT();
   const theme = useTheme();
   const { language, setLanguage } = useI18n();
@@ -31,6 +34,10 @@ export default function SettingsScreen() {
   return (
     <Screen scroll>
       <PageHeader title={t('settings.title')} icon="settings" />
+
+      <Card padding="sm">
+        <ListItem title={t('pro.title')} subtitle={t('pro.settingsHint')} icon="star" onPress={() => router.push('/pro')} />
+      </Card>
 
       <SectionHeader title={t('settings.sectionPrayer')} />
       <Card padding="md">
@@ -93,12 +100,16 @@ export default function SettingsScreen() {
         <ListItem title={t('settings.publisher')} value={Brand.publisher} chevron={false} />
         <ListItem title={t('settings.version')} value={Brand.version} chevron={false} />
         <ListItem title={t('settings.privacy')} icon="lock" onPress={() => openLegalPage('privacy')} />
+        {reklamGizlilik ? (
+          <ListItem title={t('ads.privacyOptions')} icon="lock" onPress={() => { void showAdPrivacyOptions(); }} />
+        ) : null}
         <ListItem title={t('settings.terms')} icon="book" onPress={() => openLegalPage('terms')} />
         <ListItem title={t('diagnostics.title')} icon="info" onPress={() => router.push('/diagnostics')} />
         {__DEV__ ? (
           <ListItem title={`${t('onboarding.welcomeTitle')} (BEdev)`} icon="star" onPress={() => router.push('/onboarding')} />
         ) : null}
       </Card>
+      <AdBanner surface="profile" />
       <View style={{ height: theme.spacing.xxl }} />
     </Screen>
   );

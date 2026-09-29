@@ -51,6 +51,22 @@ const nameSuffix: Record<Variant, string> = {
 };
 
 const bundleIos = Brand.bundleId.ios + suffix[variant];
+
+/**
+ * AdMob uygulama kimlikleri (D33). Gerçek kimlikler derleme ortamından gelir.
+ * Yoksa geliştirmede Google'ın herkese açık test kimlikleri kullanılır;
+ * mağazaya yükleme iş akışı (`BES_STORE_RELEASE=1`) test kimliğiyle
+ * **derlenmez** — test kimliğiyle yayına çıkan uygulama hiç gelir getirmez ve
+ * bunu kimse fark etmez. CI'daki doğrulama derlemeleri bayraksız çalışır.
+ */
+const ADMOB_TEST = { ios: 'ca-app-pub-3940256099942544~1458002511', android: 'ca-app-pub-3940256099942544~3347511713' };
+const ADMOB = {
+  ios: process.env.ADMOB_IOS_APP_ID ?? ADMOB_TEST.ios,
+  android: process.env.ADMOB_ANDROID_APP_ID ?? ADMOB_TEST.android,
+};
+if (process.env.BES_STORE_RELEASE === '1' && (ADMOB.ios === ADMOB_TEST.ios || ADMOB.android === ADMOB_TEST.android)) {
+  throw new Error('Mağaza derlemesi için ADMOB_IOS_APP_ID ve ADMOB_ANDROID_APP_ID gerekli (D33).');
+}
 /**
  * Uygulama ile widget eklentisinin paylaştığı alan (D30). Varyant başına
  * ayrı: geliştirme ve mağaza sürümü aynı telefonda birbirinin verisini okumaz.
@@ -117,11 +133,8 @@ const config: ExpoConfig = {
       'android.permission.SYSTEM_ALERT_WINDOW',
       'android.permission.READ_EXTERNAL_STORAGE',
       'android.permission.WRITE_EXTERNAL_STORAGE',
-      // Reklam kimliği: uygulamada reklam yok ve okunmuyor. Play, bu izni
-      // bildirip kullanmayan uygulamayı da, kullanıp bildirmeyeni de
-      // reddediyor. Google Play Services'i çeken herhangi bir bağımlılık
-      // manifest'e sessizce ekleyebildiği için burada kapatılıyor.
-      'com.google.android.gms.permission.AD_ID',
+      // AD_ID artık engellenmiyor (D33): AdMob reklam kimliğini kullanır ve
+      // Play Console'daki reklam kimliği beyanı "evet" olarak doldurulur.
     ],
   },
   web: { favicon: './assets/favicon.png' },
@@ -213,6 +226,18 @@ const config: ExpoConfig = {
     // kütüphanenin kendi manifest'indeki bildirim ise `blockedPermissions`
     // ile silinir. İkisi birden gerekiyor.
     ['expo-audio', { microphonePermission: false, recordAudioAndroid: false }],
+    // Reklam (D33). İçerik derecesi ve engellenen kategoriler `features/pro`
+    // içinde; ATT metni kullanıcıya neden sorulduğunu dürüstçe söyler.
+    ['react-native-google-mobile-ads', {
+      iosAppId: ADMOB.ios,
+      androidAppId: ADMOB.android,
+      delayAppMeasurementInit: true,
+      skAdNetworkItems: ['cstr6suwn9.skadnetwork'],
+    }],
+    ['expo-tracking-transparency', {
+      userTrackingPermission:
+        'Bu izin yalnız reklamların sana daha uygun olması için kullanılır. İzin vermezsen de reklamlar gösterilir, uygulamanın hiçbir özelliği kısıtlanmaz.',
+    }],
     ['expo-font', { fonts: ['./assets/fonts/Amiri-Regular.ttf', './assets/fonts/AmiriQuran-Regular.ttf'] }],
   ],
   experiments: { typedRoutes: true },

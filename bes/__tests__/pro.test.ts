@@ -100,3 +100,52 @@ describe('reklam kuralları', () => {
     expect(MAX_AD_CONTENT_RATING).toBe('G');
   });
 });
+
+describe('Pro kapıları (D33)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const g = require('@/features/pro/gates') as typeof import('@/features/pro/gates');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { LESSONS } = require('@/features/learn/course') as typeof import('@/features/learn/course');
+
+  it('ilk üç ünite herkese açık, sonrası Pro', () => {
+    expect([1, 2, 3].every(g.isLessonFree)).toBe(true);
+    expect([4, 5, 6, 7].some(g.isLessonFree)).toBe(false);
+    // Harfleri öğrenmek hiçbir zaman ücretli değil.
+    expect(LESSONS.filter((l) => l.id.startsWith('harf-')).every((l) => g.isLessonFree(l.unit))).toBe(true);
+    expect(LESSONS.filter((l) => g.isLessonFree(l.unit)).length).toBeGreaterThanOrEqual(10);
+  });
+
+  it('toplulukta okumak/katılmak ücretsiz; yazmak, kurmak ve 5 istek Pro', () => {
+    expect(g.communityLimits(false)).toEqual({ duaRequestsPerDay: 1, canChat: false, canCreateKhatm: false });
+    expect(g.communityLimits(true)).toEqual({ duaRequestsPerDay: 5, canChat: true, canCreateKhatm: true });
+  });
+
+  it('dua isteği sayımı sunucuyla aynı: kayan 24 saat', () => {
+    const simdi = Date.parse('2026-09-30T12:00:00Z');
+    const kayitlar = ['2026-09-30T11:00:00Z', '2026-09-29T12:30:00Z', '2026-09-29T11:59:00Z'];
+    expect(g.countInLast24h(kayitlar, simdi)).toBe(2);
+  });
+});
+
+describe('vakit penceresi (reklam kuralı)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { prayerWindow, scheduleInputFrom } = require('@/features/prayer/window') as typeof import('@/features/prayer/window');
+  const istanbul = scheduleInputFrom(
+    { latitude: 41.0082, longitude: 28.9784, timezone: 'Europe/Istanbul' },
+    { method: 'diyanet', asrShadow: 1, adjustments: {} },
+  );
+
+  it('konum yoksa pencere bilinmez', () => {
+    expect(prayerWindow(null)).toEqual({ secondsToNextPrayer: null, secondsSincePrayer: null });
+  });
+
+  it('sıradaki vakte kalan ve içindeki vaktin geçen süresi hesaplanır', () => {
+    const w = prayerWindow(istanbul, new Date('2026-09-30T10:00:00Z')); // 13:00 İstanbul
+    expect(w.secondsToNextPrayer).not.toBeNull();
+    expect(w.secondsSincePrayer).not.toBeNull();
+    expect(w.secondsToNextPrayer!).toBeGreaterThan(0);
+    expect(w.secondsSincePrayer!).toBeGreaterThanOrEqual(0);
+    // Öğle 13:00 civarı: ya yeni girdi ya birazdan girecek — ikisinden biri 1 saatin altında.
+    expect(Math.min(w.secondsToNextPrayer!, w.secondsSincePrayer!)).toBeLessThan(3600);
+  });
+});

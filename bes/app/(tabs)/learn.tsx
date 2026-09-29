@@ -16,6 +16,8 @@ import { useT } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useLearningStore } from '@/store/learning';
 import { LESSONS, UNITS, nextLesson } from '@/features/learn/course';
+import { usePro } from '@/features/pro/purchases';
+import { isLessonFree } from '@/features/pro/gates';
 
 export default function LearnScreen() {
   const t = useT();
@@ -27,7 +29,14 @@ export default function LearnScreen() {
   const sirada = nextLesson(biten);
   const tamam = LESSONS.filter((l) => biten.has(l.id)).length;
 
-  const ac = (id: string) => router.push({ pathname: '/lesson', params: { id } });
+  const pro = usePro();
+  const kilitli = (unit: number) => !pro && !isLessonFree(unit);
+  // Kilitli ders Pro sayfasını açar (D33); ilk üç ünite herkese açık.
+  const ac = (id: string) => {
+    const m = LESSONS.find((l) => l.id === id);
+    if (m && kilitli(m.unit)) { router.push('/pro'); return; }
+    router.push({ pathname: '/lesson', params: { id } });
+  };
 
   return (
     <Screen scroll motif="arch">
@@ -83,7 +92,8 @@ export default function LearnScreen() {
                   title={l.title}
                   subtitle={l.subtitle}
                   onPress={() => ac(l.id)}
-                  {...(s ? { right: <Yildizlar n={s} etiket={t('learn.stars', { n: s })} /> }
+                  {...(kilitli(l.unit) ? { right: <Icon name="lock" size={16} color={theme.colors.textSubtle} /> }
+                    : s ? { right: <Yildizlar n={s} etiket={t('learn.stars', { n: s })} /> }
                     : sirada?.id === l.id ? { right: <Icon name="play" size={18} color={theme.colors.highlight} /> }
                       : {})}
                 />

@@ -28,7 +28,7 @@ import { useLiveView } from '@/features/prayer/useSchedule';
 import { PrayerList, usePrayerLabel } from '@/features/prayer/components/PrayerList';
 import { formatCountdown } from '@/features/prayer/calc';
 import type { ScheduleInput } from '@/features/prayer/schedule';
-import type { MethodId, PrayerKey } from '@/features/prayer/methods';
+import { scheduleInputFrom } from '@/features/prayer/window';
 import { zonedNow } from '@/lib/time/zone';
 import { useWorshipStore } from '@/store/worship';
 import { dateKey } from '@/features/dhikr/stats';
@@ -36,6 +36,7 @@ import {
   DailyAyahCard, DailyDuaCard, DailyKnowledgeCard, DailyNameCard, HijriDateCard,
   ReligiousDayCard, MoonCard, FridayCard, RamadanCard, type DailyContext,
 } from '@/features/daily/components/DailyCards';
+import { AdBanner } from '@/features/pro/AdBanner';
 
 const HIZLI = [
   { href: '/qibla', icon: 'compass', label: 'qibla.title' },
@@ -57,17 +58,7 @@ export default function HomeScreen() {
 
   const input = useMemo<ScheduleInput | null>(() => {
     if (!konum) return null;
-    return {
-      latitude: konum.latitude,
-      longitude: konum.longitude,
-      timezone: konum.timezone,
-      options: {
-        method: settings.method as MethodId,
-        asrShadow: settings.asrShadow,
-        adjustments: settings.adjustments as Partial<Record<PrayerKey, number>>,
-        ...(konum.elevation === undefined ? {} : { elevation: konum.elevation }),
-      },
-    };
+    return scheduleInputFrom(konum, settings);
   }, [konum, settings]);
 
   const live = useLiveView(input);
@@ -266,6 +257,7 @@ export default function HomeScreen() {
           onPress={() => router.push('/home-layout')}
         />
       </Row>
+      <AdBanner surface="home" />
       </View>
     </Screen>
   );

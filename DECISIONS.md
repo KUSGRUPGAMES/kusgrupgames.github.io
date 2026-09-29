@@ -823,3 +823,39 @@ uygulamayı reddettiği için atlanabilir yol seçildi (kullanıcı onayladı).
 silindiğinde Apple belirtecinin REST API ile iptal edilmesini de istiyor.
 Bu, Apple'dan alınacak bir anahtarla (.p8) sunucu tarafında çalışan bir
 Edge Function gerektiriyor; mağazaya göndermeden önce eklenecek.
+
+## D33 — Gelir modeli: reklam + Pro abonelik (RevenueCat)
+
+**Karar (kullanıcı, 2026-09-30):**
+
+| Konu | Karar |
+|---|---|
+| Reklam | Alt şerit (banner) + seyrek tam ekran (en az 3 dk arayla). AdMob. |
+| Pro | Reklamsız · Öğren'in ileri dersleri · Topluluğun ek özellikleri |
+| Fiyat | Aylık + yıllık + ömür boyu (tutarlar mağaza panelinde; kodda yok) |
+| Altyapı | RevenueCat (App Store + Google Play tek yerden, makbuz doğrulaması onda) |
+
+**Her zaman ücretsiz (değişmez, `ALWAYS_FREE` sınaması korur):** namaz
+vakti, kıble, Kur'an metni ve meal, dualar, zikir, kaza, zekât, esmâ, hicrî
+takvim, namaz rehberi, bildirimler. "İbadetin kendisi kilitlenmez" ilkesi (§66).
+
+**Reklam kuralları (`features/pro/ads.ts`, §68):** okuyucu, kıble, zikir ve
+namaz rehberinde hiç reklam yok; vakitten 15 dk önce / 30 dk sonra reklam
+yok; tam ekran reklamlar arası en az 180 sn; uygunsuz kategoriler engelli,
+içerik derecesi G.
+
+**Öğren:** 1-3. üniteler (harfler, bitişme, harekeler — 13 ders) ücretsiz;
+4-7. üniteler (cezm/şedde, tenvin/med, kelime, kısa sureler) Pro. Gerekçe:
+Kur'an harflerini tanımak herkese açık kalsın; ücretli olan, ilerlemeyi
+hızlandıran kısım.
+
+**Topluluk:** okumak, "dua ettim" demek, günde 1 dua isteği ve hatim grubuna
+katılıp cüz almak ücretsiz. Pro: sohbet odalarına yazmak, hatim grubu kurmak,
+günde 5 dua isteği (sunucudaki üst sınır). Bu sınır v1'de istemcide
+uygulanır; sunucuya taşımak RevenueCat webhook'u ister (KNOWN_ISSUES T9).
+
+**Gizlilik etkisi:** "Veri Toplanmıyor" etiketi bu kararla biter. AdMob
+reklam kimliği ve kaba konum kullanır; iOS'ta izin penceresi (ATT), AB'de
+Google'ın onay formu (UMP) gösterilir. İzin verilmezse kişiselleştirilmemiş
+reklam gösterilir. Mağaza gizlilik formları ve gizlilik sayfaları buna göre
+güncellenir.

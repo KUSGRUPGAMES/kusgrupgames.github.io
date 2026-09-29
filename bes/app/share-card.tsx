@@ -22,6 +22,7 @@ import { Brand } from '@/config/brand';
 import { useI18n } from '@/lib/i18n';
 import { useSettingsStore } from '@/store/settings';
 import { useContentItems } from '@/features/community/content';
+import { maybeShowInterstitial } from '@/features/pro/adsRuntime';
 
 const KATEGORI_ADI: Record<TemplateCategory, StringKey> = {
   friday: 'share.catFriday', eid: 'share.catEid', kandil: 'share.catKandil',
@@ -200,7 +201,9 @@ export default function ShareCardScreen() {
               onPress={async () => {
                 setHata(false);
                 const sonuc = await shareCard(gizliRef);
-                if (!sonuc.ok) setHata(true);
+                if (!sonuc.ok) { setHata(true); return; }
+                // Paylaşım bitti: doğal bir duraklama, kurallar izin verirse tam ekran reklam (D33).
+                maybeShowInterstitial('explore');
               }}
             />
           </Row>

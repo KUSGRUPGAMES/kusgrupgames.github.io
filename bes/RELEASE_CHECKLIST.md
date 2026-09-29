@@ -45,6 +45,33 @@ yazılır**; sessizce geçilmez.
 - [ ] Yaş derecesi 4+ / Herkes; reklam sorusu yok (reklam gösterilmiyor) — **sende**
 - [ ] EU DSA tüccar beyanı dolduruldu — **sende**
 
+## 4a. Reklam, Pro ve Topluluk hesapları (D32, D33)
+
+Hepsi bir kez yapılır; kimlikler GitHub secret'ı olarak girilir
+(`.github/workflows/bes-*.yml` hepsini okur, `bes/.env.example` listesi).
+
+- [ ] **AdMob:** uygulama (iOS + Android) açıldı; banner ve tam ekran birimleri
+      oluşturuldu; hassas kategoriler engellendi, en yüksek derece **G**;
+      GDPR onay mesajı yayınlandı (`store/app-privacy.md` → "AdMob konsolunda").
+- [ ] Secret'lar: `ADMOB_IOS_APP_ID`, `ADMOB_ANDROID_APP_ID`,
+      `EXPO_PUBLIC_ADMOB_BANNER_IOS/_ANDROID`, `EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS/_ANDROID`.
+      Mağaza iş akışı (`BES_STORE_RELEASE=1`) gerçek kimlik yoksa derlemeyi durdurur.
+- [ ] **App Store Connect:** Ücretli Uygulamalar Sözleşmesi, banka ve vergi
+      formları; abonelik grubu "BEŞ Pro" içinde aylık ve yıllık otomatik
+      yenilenen ürün + tüketilmeyen "ömür boyu" ürün.
+- [ ] **Play Console:** ödeme profili; aylık/yıllık abonelik ve tek seferlik
+      ömür boyu ürün.
+- [ ] **RevenueCat:** iki mağaza bağlandı; `pro` hakkı (entitlement) ve
+      `default` teklifi (monthly, annual, lifetime paketleri) tanımlı.
+      Secret'lar: `EXPO_PUBLIC_REVENUECAT_IOS_KEY`, `_ANDROID_KEY`.
+- [ ] **Supabase:** Google ve Apple girişi açık, `bes://auth-callback`
+      yönlendirmede, migration 0001–0003 uygulandı (`COMMUNITY_SETUP.md`).
+      Secret'lar: `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`.
+- [ ] Gizlilik formları `store/app-privacy.md`'ye göre dolduruldu; Play'de
+      reklam kimliği ve "reklam içerir" beyanı "evet".
+- [ ] Cihazda: satın al → Pro etkin → reklam kayboldu → uygulamayı sil,
+      kur → "Satın alımları geri yükle" Pro'yu geri getiriyor (sandbox hesabıyla).
+
 ## 5. Elle sınama — beş kullanıcı yolculuğu (§102)
 
 Her biri **gerçek cihazda**, uçak modunda bir kez daha tekrarlanır:

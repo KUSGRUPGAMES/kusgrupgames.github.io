@@ -40,11 +40,14 @@ kıble ve zikri ekler. Play iki alanı da taradığı için hepsi kazanılır.
 ```
 BEŞ; ezan vakitlerini, kıble yönünü ve Kur’an-ı Kerim’in tamamını tek bir sade uygulamada toplar. Namaz vakitleri telefonunda güneşin konumundan hesaplanır — bir sunucuya sorulmaz, internet gerektirmez. Uçakta, yurt dışında, hattın çekmediği yerde de doğru çalışır.
 
-★ HESAP YOK, SUNUCU YOK
-Adınızı, e-postanızı, telefon numaranızı sormuyoruz. Konumunuz, ayarlarınız, ibadet kayıtlarınız, notlarınız ve zikir sayılarınız telefonunuzdan hiç çıkmıyor — bize ulaşmıyor, çünkü onları alacak bir sunucumuz yok.
+★ İBADET KAYITLARIN SENDE
+Vakitler, kıble, Kur’an, zikir, kaza ve ibadet defteri hesap istemez. Konumunuz, ibadet kayıtlarınız, notlarınız ve zikir sayılarınız telefonunuzdan çıkmaz.
+
+★ İSTEĞE BAĞLI TOPLULUK
+Dua panosu, sohbet odaları ve birlikte hatim. Google ya da Apple ile giriş yapılır; başkaları yalnız takma adını görür. Hesabını uygulamadan silebilirsin.
 
 YEDEK SİZDE
-Bütün kayıtlarınızı tek bir dosyaya aktarıp yeni telefonunuza taşıyabilirsiniz. Dosya sizde kalır; uygulama onu hiçbir yere göndermez. Uygulamayı silerseniz hepsi onunla birlikte gider.
+Bütün kayıtlarınızı tek dosyaya aktarıp yeni telefonunuza taşıyabilirsiniz. Dosya sizde kalır.
 
 ★ EZAN VE NAMAZ VAKİTLERİ
 Sıradaki vakte saniye saniye geri sayım. Beş vakit ve güneş doğuşu tek bakışta, ay boyu vakit takvimi tek ekranda. Her vakit için ayrı bildirim kurabilirsiniz.
@@ -73,17 +76,19 @@ Kaza namazı sayaçları ve toplu giriş, gün gün ibadet defteri, oruç takibi
 İmsak ve iftar geri sayımı, ay boyu imsakiye, oruç kaydı.
 
 ★ AYRICA
-Zekât hesaplama (altın veya gümüş nisabı seçmeli, metodoloji ekranda yazılı), Esmâü'l-Hüsnâ, 14 kategoride dua, adım adım namaz rehberi, hicrî takvim ve yaklaşan dinî günler, Hac ve Umre rehberi, 43 maddelik İslami bilgi kütüphanesi, paylaşılabilir âyet kartları.
+Zekât hesaplama (altın veya gümüş nisabı seçmeli, metodoloji ekranda yazılı), Esmâü'l-Hüsnâ, Kur’an’daki 64 dua dahil 98 dua, adım adım namaz rehberi, hicrî takvim ve yaklaşan dinî günler, Hac ve Umre rehberi, 43 maddelik İslami bilgi kütüphanesi, paylaşılabilir âyet kartları.
 
 ★ DİL DESTEĞİ
 Arayüzün tamamı Türkçe, İngilizce, Arapça, Almanca ve Fransızca. Arapça seçildiğinde yazı yönü sağdan sola döner. Kur’an meali (Elmalılı) ve bilgi yazıları Türkçedir.
 
-★ TAMAMEN ÜCRETSİZ, REKLAMSIZ
-Abonelik yok, uygulama içi satın alma yok, reklam yok. Hiçbir özellik kilitli değil. Reklam kimliğiniz okunmuyor; uygulamada izleyici, piksel ya da analitik kütüphanesi bulunmuyor.
+★ İBADET HER ZAMAN ÜCRETSİZ
+Vakitler, kıble, Kur’an ve meal, dualar, zikir ve kaza takibi her zaman ücretsiz. Ücretsiz sürümde reklam vardır; Kur’an okuyucu, kıble, zikir ve namaz rehberinde ve vakit girişine yakın reklam yoktur.
+
+★ BEŞ PRO
+Aylık, yıllık ya da ömür boyu: reklamsız kullanım, Öğren kursunun tamamı, toplulukta ek özellikler. Abonelik, dönem bitmeden 24 saat önce iptal edilmezse kendiliğinden yenilenir.
 
 ★ DÜRÜSTLÜK NOTU
-Vakit hesabı yönteme, konuma ve rakıma bağlıdır; resmî ilanla bir iki dakika farklılık gösterebilir. Hicrî tarih aritmetik hesaplanır ve rüyete dayalı ilandan bir gün sapabilir. Kıble yönü telefonunuzun pusulasının doğruluğuna bağlıdır. Bunları gizlemiyor, ilgili ekranda yazıyoruz. BEŞ bir yardımcı araçtır; dinî hüküm (fetva) vermez ve bir din görevlisinin yerini tutmaz.
-```
+Vakit hesabı yönteme ve konuma bağlıdır; resmî ilanla bir iki dakika fark olabilir. Hicrî tarih aritmetiktir, ilandan bir gün sapabilir. BEŞ bir yardımcı araçtır; dinî hüküm (fetva) vermez.```
 
 ## Kategori
 
@@ -91,11 +96,12 @@ Uygulamalar → Yaşam Tarzı
 
 ## İçerik derecelendirmesi
 
-Herkes (3+). Kullanıcı üretimi içerik yok, uygulama içi satın alma yok,
-reklam yok.
+IARC anketinde: kullanıcılar etkileşimde bulunabilir (**evet** — Topluluk,
+moderasyonlu), uygulama içi satın alma (**evet** — Pro), reklam (**evet** —
+G derecesi, hassas kategoriler engelli). Derece bu cevaplara göre çıkar.
 
 ## Veri güvenliği formu
 
-**"Veri toplanmıyor" ve "veri paylaşılmıyor"** — konum, ibadet kayıtları ve
-notlar cihazdan çıkmaz; hesap, reklam SDK'sı ve analitik yoktur. Konsolda
-verilecek yanıtların tamamı `app-privacy.md` içinde yazılıdır.
+**"Veri toplanmıyor" artık doğru değil (D32, D33).** Reklam, Pro ve isteğe
+bağlı Topluluk veri işliyor; konum, ibadet kayıtları ve notlar hâlâ cihazdan
+çıkmıyor. Konsoldaki her kutunun yanıtı `app-privacy.md` içinde yazılıdır.
