@@ -9,7 +9,8 @@ import { Card, Column, Row, Text, Badge, IconButton } from '@/ui';
 import { useT } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
 import { pickDaily } from '../pick';
-import { DUAS } from '@/content/duas';
+import { allDuas } from '@/features/duas/pool';
+import { DuaText } from '@/features/duas/DuaText';
 import { KNOWLEDGE } from '@/content/knowledge';
 import { DIVINE_NAMES } from '@/content/names';
 import { useFavoriteStore } from '@/store/favorites';
@@ -33,7 +34,7 @@ export interface DailyContext {
 export function DailyDuaCard({ ctx }: { ctx: DailyContext }) {
   const t = useT();
   const fav = useFavoriteStore();
-  const dua = pickDaily(DUAS, ctx);
+  const dua = pickDaily(allDuas(), ctx);
   if (!dua) return null;
   const secili = fav.has('dua', dua.id);
   return (
@@ -49,8 +50,7 @@ export function DailyDuaCard({ ctx }: { ctx: DailyContext }) {
           />
         </Row>
         <Text variant="title3">{dua.title}</Text>
-        <Text variant="body" tone="muted">{dua.body}</Text>
-        <Text variant="micro" tone="subtle">{t('dua.ownContent')}</Text>
+        <DuaText dua={dua} showOwnNote />
       </Column>
     </Card>
   );

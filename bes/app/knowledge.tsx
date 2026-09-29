@@ -32,7 +32,7 @@ export default function KnowledgeScreen() {
       <Row gap="sm" wrap style={{ marginTop: theme.spacing.md }}>
         <Chip label={t('common.all')} selected={konu === null} onPress={() => setKonu(null)} />
         {KNOWLEDGE_TOPICS.map((c) => (
-          <Chip key={c.id} label={c.label} selected={konu === c.id} onPress={() => setKonu(c.id)} />
+          <Chip key={c.id} label={t(`knowledge.topic.${c.id}`)} selected={konu === c.id} onPress={() => setKonu(c.id)} />
         ))}
       </Row>
 

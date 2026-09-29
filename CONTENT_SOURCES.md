@@ -14,7 +14,8 @@ kaynağı olmayan dinî içerik üretimde yayınlanmaz, AI âyet/hadis/dua üret
 | Kıraat kayıtları | [Islamic Network CDN](https://cdn.islamic.network) | **Akış ve indirme serbest** — kayıtlar okuyuculardan lisanslı; telif okuyucularda, kaldırma talebinde kaldırılır ([şartlar](https://alquran.cloud/terms-and-conditions) Böl. IV) | **Var** — 18 okuyucu, akış + isteğe bağlı indirme; paketle dağıtılmaz |
 | ~~QuranicAudio.com~~ | — | **Kullanılmadı** — şartlarında ticari kullanım açıkça yasak | Elendi |
 | Esmâü'l-Hüsnâ (okunuş + Türkçe anlam) | Bu uygulama için yazıldı | Özgün | Var |
-| Dua metinleri (okunuş + anlam) | Bu uygulama için yazılacak | Özgün | FAZ 7 |
+| Dua metinleri — yazılmış (34) | Bu uygulama için yazıldı; âyet/hadis değildir, öyle sunulmaz | Özgün | Var |
+| Dua metinleri — Kur'an'dan (64) | Tanzil Arapça metni + Elmalılı meali; dosyada yalnız sure:âyet referansı (`bes/src/content/quranDuas.ts`) | Yukarıdaki iki satırla aynı | Var — sure ve âyet numarası, meal künyesi görünür |
 | Arapça yazı tipi (Amiri, Amiri Quran) | [Amiri Project](https://github.com/aliftype/amiri) | **Kullanılabilir** — SIL Open Font License 1.1; lisans metni paketle dağıtılıyor (`bes/assets/fonts/Amiri-OFL.txt`) | Var |
 | Namaz vakti hesabı | Astronomik hesap, cihazda | Kaynak gerekmez | Var |
 | Hicrî takvim | Aritmetik takvim | Kaynak gerekmez, sapma arayüzde yazılı | Var |

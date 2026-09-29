@@ -25,8 +25,13 @@ const WEB = path.join(KOK_DIZIN, '.expo', 'web-build');
 const SHOTS = path.join(KOK_DIZIN, '.expo', 'shots');
 const VIDEO = path.join(KOK_DIZIN, '.expo', 'video');
 
-/** Playwright'ın indirdiği Chromium; sistemde başka tarayıcı yok. */
+/**
+ * Playwright'ın indirdiği Chromium (CI kapsayıcısı). Mac'te geliştirici
+ * makinesinde o dizin yok; kurulu Google Chrome kullanılır.
+ */
 function tarayiciYolu() {
+  const mac = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  if (!process.env.PLAYWRIGHT_BROWSERS_PATH && process.platform === 'darwin' && fs.existsSync(mac)) return mac;
   const taban = process.env.PLAYWRIGHT_BROWSERS_PATH || '/opt/pw-browsers';
   const dizin = fs.readdirSync(taban).find((d) => /^chromium-\d+$/.test(d));
   if (!dizin) throw new Error(`Chromium bulunamadı: ${taban}`);
@@ -151,6 +156,11 @@ async function ekranlar(port) {
     page.on('pageerror', (e) => sorunlar.push({ gecis: 'acilis', ekran: 'onboarding', tur: 'hata', ayrinti: String(e).slice(0, 160) }));
     await page.goto(`${kok}/`, { waitUntil: 'load' });
     await bekle(page, 3000);
+    // Adım 0: dil seçimi. Tarayıcının dili ne olursa olsun Türkçe seçilir;
+    // sonraki adımların metinleri ona göre aranıyor.
+    await page.screenshot({ path: path.join(dizin, '0-dil.png') });
+    await yazi(page, 'Türkçe').first().click(); await bekle(page, 800);
+    await yazi(page, 'İleri').first().click(); await bekle(page, 1200);
     await page.screenshot({ path: path.join(dizin, '1-hosgeldin.png') });
 
     await yazi(page, 'Başla').first().click(); await bekle(page, 1200);
@@ -166,9 +176,16 @@ async function ekranlar(port) {
     await yazi(page, 'İleri').first().click(); await bekle(page, 1200);
     await page.screenshot({ path: path.join(dizin, '5-bildirim.png') });
     await yazi(page, 'Geç').first().click(); await bekle(page, 1200);
-    await page.screenshot({ path: path.join(dizin, '6-hazir.png') });
+    // Giriş adımı yalnız topluluk sunucusu yapılandırılmışsa var (D32).
+    let kare = 7;
+    if (await yazi(page, 'Google ile devam et').count()) {
+      await page.screenshot({ path: path.join(dizin, '6-giris.png') });
+      await yazi(page, 'Geç').first().click(); await bekle(page, 1200);
+      kare = 8;
+    }
+    await page.screenshot({ path: path.join(dizin, '7-hazir.png') });
     await ctx.close();
-    console.log('  . açılış akışı (6 kare)');
+    console.log(`  . açılış akışı (${kare} kare)`);
   }
 
   for (const gecis of GECISLER) {

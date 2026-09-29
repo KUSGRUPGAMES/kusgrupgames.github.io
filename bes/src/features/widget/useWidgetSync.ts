@@ -22,7 +22,7 @@ import { zonedNow } from '@/lib/time/zone';
 import { dateKey } from '@/features/dhikr/stats';
 import { dailyIndex, pickDaily } from '@/features/daily/pick';
 import { getAyahByIndex, getQuranIndexSize, getTranslationByIndex } from '@/features/quran/data';
-import { DUAS } from '@/content/duas';
+import { allDuas } from '@/features/duas/pool';
 import { logger } from '@/lib/log';
 import { liveActivity } from '../../../modules/bes-live-activity';
 import { buildWidgetPayload, nextTwo, WIDGET_KEY, type WidgetDaily } from './payload';
@@ -62,7 +62,7 @@ export function useWidgetSync(): void {
     const daily: WidgetDaily[] = days.map((g) => {
       const i = dailyIndex({ year: g.year, month: g.month, day: g.day, length: toplam, salt: 313 });
       const ayet = i < 0 ? null : getAyahByIndex(i);
-      const dua = pickDaily(DUAS, { year: g.year, month: g.month, day: g.day });
+      const dua = pickDaily(allDuas(), { year: g.year, month: g.month, day: g.day });
       return {
         d: dateKey(g.year, g.month, g.day),
         ar: ayet?.text ?? '',

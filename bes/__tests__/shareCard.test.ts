@@ -73,3 +73,26 @@ describe('hazır kartlar', () => {
     }
   });
 });
+
+describe('Kur\'an duaları', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { QURAN_DUAS } = require('@/content/quranDuas') as typeof import('@/content/quranDuas');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { allDuas, resolveQuranDua } = require('@/features/duas/pool') as typeof import('@/features/duas/pool');
+
+  it('her referans pakette var; metin ve meal paketten gelir', () => {
+    for (const d of QURAN_DUAS) {
+      const e = resolveQuranDua(d);
+      expect({ id: d.id, var: e !== null }).toEqual({ id: d.id, var: true });
+      expect(e!.body.startsWith(getTranslation(d.surah, d.ayah)!)).toBe(true);
+      expect(e!.arabic!.startsWith(getAyah(d.surah, d.ayah)!.text)).toBe(true);
+    }
+  });
+
+  it('birleşik listede kimlikler tekil, iki kaynak da var', () => {
+    const liste = allDuas();
+    expect(new Set(liste.map((d) => d.id)).size).toBe(liste.length);
+    expect(liste.filter((d) => d.kind === 'quran').length).toBe(QURAN_DUAS.length);
+    expect(liste.filter((d) => d.kind === 'own').length).toBeGreaterThan(0);
+  });
+});

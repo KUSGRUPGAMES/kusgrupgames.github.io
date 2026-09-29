@@ -21,6 +21,23 @@ Fransızca (573 anahtar × 5). Kur'an meali ve bilgi yazıları Türkçedir.
 **Gizlilik:** hesap yok, sunucu yok, reklam yok, izleyici yok, analitik yok.
 Kişisel veri cihazdan çıkmıyor. İki mağaza formunda da "veri toplanmıyor".
 
+### İçerik çoğaltıldı, gözden geçirme düzeltmeleri (2026-09-30)
+
+- **Dualar 34 → 98:** Kur'an'daki 64 dua eklendi (`content/quranDuas.ts`).
+  Dosyada yalnız sure:âyet referansı var; Arapça metin ve meal paketten okunur.
+  Her referans meal metni okunarak doğrulandı. Günün duası, dualar ekranı,
+  arama ve widget aynı birleşik listeyi kullanıyor. Yeni kategori: İman ve hidayet.
+- **Hazır kartlar ~80 → ~150:** yeni tebrik mesajları (cuma, bayram, kandil,
+  Ramazan, gün), 25 yeni âyet kartı, Kur'an dualarından otomatik dua kartları.
+  Kartta kırpılacak uzunluktaki âyet kart olmuyor (sınamaya bağlı).
+- **Meal düzeltmesi:** Tanzil tr.yazir'de Yûsuf 101'in sonuna ~700 karakterlik
+  tefsir paragrafı karışmıştı; içe aktarma artık `{*}` işaretinden sonrasını
+  atıyor. Yalnız o satır değişti.
+- Dua ve bilgi konusu düğmeleri beş dile çevrildi (Arapça arayüzde Türkçe
+  kalıyordu).
+- `tools/preview.js` onboarding'deki dil ve giriş adımlarını tanıyor ve Mac'te
+  kurulu Chrome'la çalışıyor (dil adımı eklendiğinden beri tarama kırıktı).
+
 ### Kimlik: KUS GRUP GAMES (D23)
 
 Paket kimliği kalıbı `com.kusgrup.<ürün>` → **`com.kusgrupgames.<ürün>`**, beş
