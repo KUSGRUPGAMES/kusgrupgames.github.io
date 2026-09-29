@@ -17,8 +17,17 @@ module.exports = (config) => ({
     $widgetBackground: '#002419',
     $accent: '#E6B965',
   },
+  // Tek string verilirse @bacons/apple-targets yalnız 1x üretir, 2x/3x'i
+  // Contents.json'da dosyasız bırakır — ev ekranı widget'ı buna toleranslı
+  // (1x'e düşüyor) ama Dinamik Ada'yı çizen `chronod` süreci değil: eksik
+  // ölçeği bulamayınca görseli boş bırakıyor (D30 devamı). Üç ölçeği de
+  // aynı yüksek çözünürlüklü kaynaktan açıkça vermek gerçek dosya üretiyor.
   images: {
-    besIsaret: '../../assets/splash-icon.png',
+    besIsaret: {
+      '1x': '../../assets/splash-icon.png',
+      '2x': '../../assets/splash-icon.png',
+      '3x': '../../assets/splash-icon.png',
+    },
   },
   entitlements: {
     'com.apple.security.application-groups': config.ios.entitlements['com.apple.security.application-groups'],
