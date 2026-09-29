@@ -258,6 +258,7 @@ export const ar: Partial<Record<StringKey, string>> = {
   'offline.body': 'المواقيت والقرآن والذكر تعمل دون اتصال. وتستأنف المزامنة عند عودة الاتصال.',
   'empty.title': 'لا شيء هنا بعد', 'empty.body': 'سيظهر هنا ما تضيفه.',
 
+  'onboarding.languageTitle': 'اختر لغتك', 'onboarding.languageBody': 'بأي لغة تريد استخدام التطبيق؟',
   'onboarding.welcomeTitle': 'مرحبًا', 'onboarding.welcomeBody': 'في وقتها، ببساطة وسكينة.',
   'onboarding.locationTitle': 'حدِّد موقعك',
   'onboarding.notificationTitle': 'إشعارات المواقيت',

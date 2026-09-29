@@ -258,6 +258,7 @@ export const en: Partial<Record<StringKey, string>> = {
   'offline.body': 'Prayer times, the Qur\u2019an and dhikr work offline. Syncing resumes when the connection returns.',
   'empty.title': 'Nothing here yet', 'empty.body': 'What you add will show up here.',
 
+  'onboarding.languageTitle': 'Choose your language', 'onboarding.languageBody': 'Which language would you like to use the app in?',
   'onboarding.welcomeTitle': 'Welcome', 'onboarding.welcomeBody': 'On time, simple, peaceful.',
   'onboarding.locationTitle': 'Set your location',
   'onboarding.notificationTitle': 'Prayer notifications',

@@ -2,8 +2,13 @@
  * Onboarding — şartname §12. Beş aşama:
  * hoş geldin → konum → hesaplama yöntemi → bildirimler → hazır.
  *
- * Kural: hiçbir aşama kullanıcıyı kilitlemez; konum dışında hepsi atlanabilir
- * ve sonradan ayarlardan değiştirilebilir.
+ * Önce, sayaca dahil olmayan bir "adım 0" gelir: dil seçimi. Cihaz dili
+ * zaten desteklenen beş dilden biriyse otomatik seçili gelir, ama farklı
+ * bir dil konuşan biri geri kalan adımları anlayamadan ilerlemesin diye
+ * bu adım her zaman gösterilir ve atlanamaz.
+ *
+ * Kural: hiçbir aşama kullanıcıyı kilitlemez; konum ve dil dışında hepsi
+ * atlanabilir ve sonradan ayarlardan değiştirilebilir.
  */
 import React, { useMemo, useState } from 'react';
 import { Image, Pressable, View } from 'react-native';
@@ -14,7 +19,7 @@ import {
 import { useTheme } from '@/theme/ThemeProvider';
 import { palette } from '@/theme/tokens';
 import { BrandPattern } from '@/ui/BrandPattern';
-import { useT } from '@/lib/i18n';
+import { useT, useI18n, LANGUAGES, LANGUAGE_NAMES } from '@/lib/i18n';
 import { Brand } from '@/config/brand';
 import { searchPlaces } from '@/features/location/search';
 import { requestDeviceLocation } from '@/features/location/device';
@@ -32,11 +37,14 @@ const TOPLAM = 5;
 
 export default function OnboardingScreen() {
   const t = useT();
+  const { language, setLanguage } = useI18n();
   const yontemAdi = useMethodName();
   const theme = useTheme();
   const eylemStili = { backgroundColor: palette.emerald500, borderWidth: 1, borderColor: theme.colors.bezemeSolgun };
   const { completeOnboarding } = useBoot();
-  const [adim, setAdim] = useState(1);
+  // Dil seçimi (adım 0) TOPLAM'a dahil değil: farklı dil konuşan biri
+  // geri kalan adımları anlayabilsin diye en başta, sayaçtan önce sorulur.
+  const [adim, setAdim] = useState(0);
   const [sorgu, setSorgu] = useState('');
   const [uyari, setUyari] = useState<string | null>(null);
   const [aliniyor, setAliniyor] = useState(false);
@@ -85,12 +93,33 @@ export default function OnboardingScreen() {
         }}
       >
         <BrandPattern opacity={theme.opacity.motifEkran} />
-        <Column gap="sm" style={{ marginBottom: theme.spacing.xl }}>
-          <Text variant="micro" tone="onAccent">
-            {t('onboarding.step', { current: adim, total: TOPLAM })}
-          </Text>
-          <ProgressBar value={adim / TOPLAM} accessibilityLabel={t('onboarding.step', { current: adim, total: TOPLAM })} />
-        </Column>
+        {adim >= 1 ? (
+          <Column gap="sm" style={{ marginBottom: theme.spacing.xl }}>
+            <Text variant="micro" tone="onAccent">
+              {t('onboarding.step', { current: adim, total: TOPLAM })}
+            </Text>
+            <ProgressBar value={adim / TOPLAM} accessibilityLabel={t('onboarding.step', { current: adim, total: TOPLAM })} />
+          </Column>
+        ) : null}
+
+        {adim === 0 ? (
+          <Column gap="md">
+            <Text variant="title2" tone="onAccent">{t('onboarding.languageTitle')}</Text>
+            <Text variant="body" tone="onAccent">{t('onboarding.languageBody')}</Text>
+            <Card padding="sm" style={{ backgroundColor: theme.colors.kat3, borderColor: theme.colors.onAccentBorder }}>
+              {LANGUAGES.map((l) => (
+                <ListItem
+                  key={l}
+                  title={LANGUAGE_NAMES[l]}
+                  chevron={false}
+                  selected={l === language}
+                  {...(l === language ? { right: <Icon name="check" size={18} /> } : {})}
+                  onPress={() => setLanguage(l)}
+                />
+              ))}
+            </Card>
+          </Column>
+        ) : null}
 
         {adim === 1 ? (
           <View style={{ flexGrow: 1, justifyContent: 'center', minHeight: 352, paddingVertical: theme.spacing.xxl }}>
@@ -207,7 +236,10 @@ export default function OnboardingScreen() {
 
         {adim > 1 && adim < TOPLAM ? <View style={{ flexGrow: 1, minHeight: theme.spacing.xxl }} /> : null}
 
-        {adim === 1 ? (
+        {adim === 0 ? (
+          <Button label={t('common.next')} size="lg" block onPress={() => setAdim(1)}
+            style={eylemStili} />
+        ) : adim === 1 ? (
           <Button label={t('onboarding.start')} size="lg" block onPress={ilerle}
             style={eylemStili} />
         ) : (

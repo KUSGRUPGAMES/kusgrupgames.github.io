@@ -503,6 +503,8 @@ export const tr = {
   'empty.body': 'Eklediklerin burada görünecek.',
 
   // --- onboarding (§12)
+  'onboarding.languageTitle': 'Dilini seç',
+  'onboarding.languageBody': 'Uygulamayı hangi dilde kullanmak istersin?',
   'onboarding.welcomeTitle': 'Hoş geldin',
   'onboarding.welcomeBody': 'Vaktinde, sade, huzurlu.',
   'onboarding.locationTitle': 'Konumunu belirle',

@@ -258,6 +258,7 @@ export const de: Partial<Record<StringKey, string>> = {
   'offline.body': 'Gebetszeiten, der Koran und Dhikr funktionieren offline. Die Synchronisierung wird fortgesetzt, sobald die Verbindung zurück ist.',
   'empty.title': 'Hier ist noch nichts', 'empty.body': 'Was du hinzufügst, erscheint hier.',
 
+  'onboarding.languageTitle': 'Sprache wählen', 'onboarding.languageBody': 'In welcher Sprache möchtest du die App nutzen?',
   'onboarding.welcomeTitle': 'Willkommen', 'onboarding.welcomeBody': 'Pünktlich, schlicht, ruhig.',
   'onboarding.locationTitle': 'Standort festlegen',
   'onboarding.notificationTitle': 'Gebetsbenachrichtigungen',

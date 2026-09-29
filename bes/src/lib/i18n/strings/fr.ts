@@ -258,6 +258,7 @@ export const fr: Partial<Record<StringKey, string>> = {
   'offline.body': 'Les horaires, le Coran et le dhikr fonctionnent hors ligne. La synchronisation reprendra au retour de la connexion.',
   'empty.title': "Rien ici pour l'instant", 'empty.body': 'Ce que vous ajouterez apparaîtra ici.',
 
+  'onboarding.languageTitle': 'Choisissez votre langue', 'onboarding.languageBody': 'Dans quelle langue voulez-vous utiliser l\'application ?',
   'onboarding.welcomeTitle': 'Bienvenue', 'onboarding.welcomeBody': "À l'heure, simple, paisible.",
   'onboarding.locationTitle': 'Définissez votre lieu',
   'onboarding.notificationTitle': 'Notifications de prière',
