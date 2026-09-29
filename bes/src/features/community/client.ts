@@ -8,8 +8,8 @@
  * `bes/COMMUNITY_SETUP.md`); ayarlanmamışsa `supabase` `null` olur ve
  * topluluk ekranları "henüz hazır değil" gösterir — hiçbir yerde çökme yok.
  *
- * Kimlik **anonim**: e-posta/ad istenmez, yalnız cihaz başına kararlı bir
- * `auth.uid()` ve kullanıcının seçtiği bir takma ad vardır.
+ * Kimlik Google ya da Apple girişiyle gelir (D32, `auth.ts`); toplulukta
+ * başkalarına yalnız kullanıcının seçtiği takma ad görünür.
  */
 import 'react-native-url-polyfill/auto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -28,6 +28,9 @@ export const supabase: SupabaseClient | null = communityAvailable
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: false,
+        // Google girişi tarayıcıdan `bes://auth-callback?code=…` ile döner;
+        // kod, cihazda saklanan doğrulayıcıyla oturuma çevrilir (auth.ts).
+        flowType: 'pkce',
       },
     })
   : null;

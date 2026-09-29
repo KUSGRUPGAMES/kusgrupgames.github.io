@@ -81,6 +81,10 @@ const config: ExpoConfig = {
       'com.apple.developer.usernotifications.time-sensitive': true,
     },
     supportsTablet: true,
+    // Topluluk girişi (D32). App Review 4.8: Google girişi sunan iOS
+    // uygulaması Apple girişini de sunmak zorunda. Bu anahtar
+    // `com.apple.developer.applesignin` yetkisini ekler.
+    usesAppleSignIn: true,
     // App Store ikonu saydamlık kabul etmez; icon.png zeminli üretilir.
     icon: './assets/icon.png',
     buildNumber: BUILD,
@@ -165,6 +169,9 @@ const config: ExpoConfig = {
     // Widget'lar ve canlı etkinlik: targets/widget (D30).
     '@bacons/apple-targets',
     'expo-localization',
+    // Google girişi sistemin güvenli tarayıcı oturumunda açılır (D32).
+    'expo-web-browser',
+    'expo-apple-authentication',
     'expo-system-ui',
     // Android bildirim küçük ikonu **tek renk siluet** olmalı: sistem onu
     // alfa kanalından okur ve kendi rengiyle boyar. Renkli ikon verilirse

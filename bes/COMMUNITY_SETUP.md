@@ -5,8 +5,10 @@ takip et. Kod ve tasarım tamamen hazır ve sınandı (gerçek bir PostgreSQL
 üzerinde 10 senaryo çalıştırılarak doğrulandı); geriye yalnız bu kurulum
 kalıyor.
 
-> **Hiçbir anahtarı bana sohbette gönderme.** Bu belgedeki değerler yalnız
-> Supabase panosuna ve iki dosyaya (aşağıda söyleniyor) yazılır.
+> **Gizli anahtarları bana sohbette gönderme:** Google **Client secret**,
+> veritabanı parolası ve `service_role` anahtarı yalnız Supabase panosuna
+> yazılır. Sohbette paylaşılabilen yalnız iki değer var: **Project URL** ve
+> **anon** anahtar (Adım 4) — bunlar zaten uygulamanın içinde açık duruyor.
 
 **Not — `SUPABASE_KURULUM.md` ile ilişkisi:** O belge çoklu cihaz eşitleme,
 AI asistan ve tam yönetici paneli için yazılmıştı (v2'nin tamamı). Bu belge
@@ -51,31 +53,72 @@ bu kurulumu bitirmeden önce haber vereceğim.
 
 **Ne görmelisin:** Proje ana sayfası.
 
-## Adım 2 — Anonim girişi aç
+## Adım 2 — Google ve Apple girişini aç
 
-`Authentication` → `Sign In / Providers` → **Anonymous Sign-Ins**'i aç.
+Topluluğa katılmak için kullanıcı **Google ya da Apple hesabıyla** giriş
+yapar (D32). Uygulamanın geri kalanı girişsiz çalışır; onboarding'deki giriş
+adımı atlanabilir. Diğer katılımcılar yalnız takma adı görür, e-posta hiçbir
+ekranda gösterilmez.
 
-Topluluk kimliği e-posta İSTEMEZ — her cihaz kararlı, anonim bir kimlik
-alır, kullanıcı yalnız bir takma ad seçer. Bu anahtar olmadan "Topluluğa
-katıl" düğmesi çalışmaz.
+### 2a — Google
+
+1. <https://console.cloud.google.com> → üstteki proje seçiciden **New
+   Project** → ad `BES` → **Create**.
+2. Sol menü → `APIs & Services` → **OAuth consent screen** → **Get
+   started**. Uygulama adı `BEŞ`, destek e-postası kendi adresin,
+   kitle **External**, iletişim e-postası yine kendi adresin → **Create**.
+3. `APIs & Services` → **Credentials** → **Create credentials** → **OAuth
+   client ID** → tür **Web application**, ad `BES Supabase`.
+4. **Authorized redirect URIs** → **Add URI** →
+   `https://PROJE-KIMLIGI.supabase.co/auth/v1/callback`
+   (PROJE-KIMLIGI: Supabase proje adresindeki kısım — Adım 4'teki
+   Project URL ile aynı başlangıç) → **Create**.
+5. Açılan pencerede **Client ID** ve **Client secret** görünür. İkisini de
+   kopyala.
+6. Supabase → `Authentication` → `Sign In / Providers` → **Google** → aç,
+   Client ID ve Client Secret'ı yapıştır → **Save**.
+
+### 2b — Apple
+
+1. Supabase → `Authentication` → `Sign In / Providers` → **Apple** → aç.
+2. **Client IDs** alanına şunu yaz (virgülle, boşluksuz):
+   `com.kusgrupgames.bes,com.kusgrupgames.bes.dev`
+3. Diğer alanları (Secret Key vb.) **boş bırak** — uygulama iPhone'un kendi
+   Apple panelini kullanıyor, onlara gerek yok. → **Save**.
+
+Apple tarafında elle bir şey yapman gerekmiyor: Xcode, uygulamayı
+derlerken "Sign in with Apple" yetkisini Apple Developer hesabına kendisi
+ekliyor.
+
+### 2c — Dönüş adresi
+
+`Authentication` → `URL Configuration` → **Redirect URLs** → **Add URL** →
+`bes://auth-callback` → **Save**.
+
+Bu olmadan Google girişi tarayıcıda takılı kalır, uygulamaya geri dönmez.
+
+### 2d — E-posta girişi (yönetici paneli için)
 
 `Authentication` → `Sign In / Providers` → **Email**'in açık olduğunu
 doğrula (yönetici paneli girişi için gerekiyor; varsayılan zaten açık).
+**Anonymous Sign-Ins** kapalı kalabilir — artık kullanılmıyor.
 
-**Ne görmelisin:** Anonymous Sign-Ins satırı yeşil/açık.
+**Ne görmelisin:** Google, Apple ve Email satırları yeşil/açık.
 
 ## Adım 3 — Veritabanı şemasını uygula
 
-`SQL Editor` → `New query`. Aşağıdaki iki dosyayı **sırayla**, olduğu gibi
+`SQL Editor` → `New query`. Aşağıdaki üç dosyayı **sırayla**, olduğu gibi
 yapıştırıp **Run**'a bas:
 
 1. `bes/supabase/migrations/0001_community.sql`
 2. `bes/supabase/migrations/0002_moderation_admin_content.sql`
+3. `bes/supabase/migrations/0003_account_deletion.sql` — uygulama içinden
+   hesap silme (Apple bunu zorunlu tutuyor)
 
-Her ikisi de tekrar çalıştırılabilir şekilde yazıldı (`create table if not
+Hepsi tekrar çalıştırılabilir şekilde yazıldı (`create table if not
 exists`, `drop trigger if exists` — hata almadan yeniden basabilirsin).
 
-**Ne görmelisin:** İkisi de "Success. No rows returned" ya da benzeri yeşil
+**Ne görmelisin:** Üçü de "Success. No rows returned" ya da benzeri yeşil
 bir sonuç. Hata alırsan tam metnini bana gönder.
 
 ## Adım 4 — Proje bilgilerini topla
@@ -105,13 +148,12 @@ bir sonuç. Hata alırsan tam metnini bana gönder.
 
 Bunlar eklenince (ve iş akışları bunları ortam değişkeni olarak geçirecek
 şekilde bir sonraki oturumda güncellenince) uygulama içindeki "Topluluk"
-bölümü sunucuyu görür. Şimdilik **Mac'te kendin denemek** istersen, terminale
-derlemeden hemen önce şunu ekle (aynı satırda, `npx expo prebuild`'den önce):
+bölümü sunucuyu görür.
 
-```
-export EXPO_PUBLIC_SUPABASE_URL="Adım 4teki Project URL"
-export EXPO_PUBLIC_SUPABASE_ANON_KEY="Adım 4teki anon anahtar"
-```
+**Mac'te kendi telefonunda denemek için** bu adımı bana bırak: iki değeri
+bana söylemen yeterli, `bes/.env` dosyasına ben yazarım. (Bu iki değer
+gizli değildir, sohbette paylaşılabilir. `service_role` anahtarını ise
+**asla** gönderme.) `.env` dosyası depoya girmez.
 
 ## Adım 6 — Yönetici panelini bağla
 

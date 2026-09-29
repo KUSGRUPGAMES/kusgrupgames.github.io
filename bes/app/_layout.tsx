@@ -67,6 +67,8 @@ function RootStack() {
       >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
+        {/* Google girişinin dönüş adresi; kullanıcı görmez, hemen geri döner (D32). */}
+        <Stack.Screen name="auth-callback" options={{ animation: 'none' }} />
         <Stack.Screen name="location" options={{ presentation: 'modal' }} />
         <Stack.Screen name="prayer-settings" />
         <Stack.Screen name="prayer-calendar" />

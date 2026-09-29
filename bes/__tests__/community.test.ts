@@ -89,3 +89,44 @@ describe('topluluk — sunucu yapılandırması', () => {
     expect(communityAvailable).toBe(false);
   });
 });
+
+/**
+ * Google/Apple girişi (D32). Bu kurallar mağaza reddi sebebidir ve hiçbiri
+ * web önizlemesinde görünmez; o yüzden kaynak metne bağlandı.
+ */
+describe('topluluk — giriş ve hesap silme', () => {
+  const { readFileSync } = jest.requireActual<typeof import('node:fs')>('node:fs');
+  const { join } = jest.requireActual<typeof import('node:path')>('node:path');
+  const oku = (p: string) => readFileSync(join(__dirname, '..', p), 'utf8');
+
+  it('hesap silme işlevi yalnız çağıranın kendi hesabını siler', () => {
+    const sql = oku('supabase/migrations/0003_account_deletion.sql');
+    // Parametresiz: başka bir kullanıcının kimliği verilemez.
+    expect(sql).toMatch(/function public\.delete_my_account\(\)/);
+    expect(sql).toMatch(/delete from auth\.users where id = uid/);
+    expect(sql).toMatch(/uid uuid := auth\.uid\(\)/);
+    // Anonim rol çağıramaz, yalnız girişli kullanıcı.
+    expect(sql).toMatch(/revoke all on function public\.delete_my_account\(\) from public, anon/);
+    expect(sql).toMatch(/grant execute on function public\.delete_my_account\(\) to authenticated/);
+  });
+
+  it('hesap ekranı silmeyi sunuyor (App Review 5.1.1(v))', () => {
+    const ekran = oku('app/account.tsx');
+    expect(ekran).toContain('hesabiSil');
+    expect(ekran).toContain("t('auth.deleteAccount')");
+  });
+
+  it('onboarding girişi zorunlu kılmıyor — giriş adımı atlanabilir', () => {
+    const ekran = oku('app/onboarding.tsx');
+    // "Geç" düğmesi konum adımından sonra bitişe kadar her adımda var;
+    // giriş adımı bu aralıkta kalmalı.
+    expect(ekran).toMatch(/adim > 2 && adim < TOPLAM/);
+    expect(ekran).toMatch(/const GIRIS_ADIMI = communityAvailable \? 5 : -1;/);
+    expect(ekran).toMatch(/const TOPLAM = communityAvailable \? 6 : 5;/);
+  });
+
+  it('iOS\'ta Apple girişi açık (App Review 4.8) ve anonim giriş kaldırıldı', () => {
+    expect(oku('app.config.ts')).toMatch(/usesAppleSignIn: true/);
+    expect(oku('src/features/community/session.ts')).not.toMatch(/signInAnonymously\(/);
+  });
+});

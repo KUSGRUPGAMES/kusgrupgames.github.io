@@ -2,6 +2,11 @@
  * Onboarding — şartname §12. Beş aşama:
  * hoş geldin → konum → hesaplama yöntemi → bildirimler → hazır.
  *
+ * Topluluk sunucusu kuruluysa bildirimlerden sonra bir aşama daha gelir:
+ * Google / Apple ile giriş (D32). Atlanabilir — giriş yalnız Topluluk için
+ * gerekir; App Review 5.1.1(v) hesap gerektirmeyen özelliği girişe
+ * bağlamayı reddeder.
+ *
  * Önce, sayaca dahil olmayan bir "adım 0" gelir: dil seçimi. Cihaz dili
  * zaten desteklenen beş dilden biriyse otomatik seçili gelir, ama farklı
  * bir dil konuşan biri geri kalan adımları anlayamadan ilerlemesin diye
@@ -30,10 +35,15 @@ import { useMethodName } from '@/features/hijri/labels';
 import { METHODS } from '@/features/prayer/methods';
 import { markOnboardingDone } from '@/boot/persistence';
 import { useBoot } from '@/boot/AppProviders';
+import { communityAvailable } from '@/features/community/client';
+import { useOturum } from '@/features/community/auth';
+import { SignInButtons } from '@/features/community/SignInButtons';
 // Logo dosya olarak gelir, kodla çizilmez (D17).
 import logoSembol from '../assets/splash-icon.png';
 
-const TOPLAM = 5;
+/** Giriş aşaması yalnız sunucu kuruluysa var; yoksa giriş zaten yapılamaz. */
+const GIRIS_ADIMI = communityAvailable ? 5 : -1;
+const TOPLAM = communityAvailable ? 6 : 5;
 
 export default function OnboardingScreen() {
   const t = useT();
@@ -42,6 +52,7 @@ export default function OnboardingScreen() {
   const theme = useTheme();
   const eylemStili = { backgroundColor: palette.emerald500, borderWidth: 1, borderColor: theme.colors.bezemeSolgun };
   const { completeOnboarding } = useBoot();
+  const { girisli } = useOturum();
   // Dil seçimi (adım 0) TOPLAM'a dahil değil: farklı dil konuşan biri
   // geri kalan adımları anlayabilsin diye en başta, sayaçtan önce sorulur.
   const [adim, setAdim] = useState(0);
@@ -218,7 +229,24 @@ export default function OnboardingScreen() {
           </Column>
         ) : null}
 
-        {adim === 5 ? (
+        {adim === GIRIS_ADIMI ? (
+          <Column gap="md">
+            <Text variant="title2" tone="onAccent">{t('auth.onboardingTitle')}</Text>
+            <Text variant="body" tone="onAccent">{t('auth.onboardingBody')}</Text>
+            {girisli ? (
+              <Banner
+                tone="success"
+                title={t('auth.signedIn')}
+                style={{ backgroundColor: theme.colors.kat3, borderWidth: 1, borderColor: theme.colors.onAccentBorder }}
+              />
+            ) : (
+              <SignInButtons onAccent onSignedIn={() => setAdim(TOPLAM)} />
+            )}
+            <Text variant="caption" tone="onAccent">{t('auth.optionalNote')}</Text>
+          </Column>
+        ) : null}
+
+        {adim === TOPLAM ? (
           <View style={{ flexGrow: 1, justifyContent: 'center', minHeight: 352 }}>
             <Column gap="lg" align="center">
               <Icon name="check" size={48} color={theme.colors.onAccentHighlight} />

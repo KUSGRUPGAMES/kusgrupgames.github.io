@@ -6,8 +6,10 @@
  * silinir (DECISIONS D12).
  *
  * Tek istisna Topluluk (D31, `/community`): kullanıcının kendi isteğiyle
- * açtığı, anonim/takma adlı, ayrı bir katman — buradaki "hesapsız" ilkesini
- * bozmaz çünkü varsayılan kapalıdır ve gerçek ad/e-posta hiç istemez.
+ * açtığı, takma adlı, ayrı bir katman — buradaki "hesapsız" ilkesini bozmaz
+ * çünkü varsayılan kapalıdır. Topluluk için Google/Apple girişi (D32) bu
+ * ekranda yönetilir: çıkış ve **hesabı silme** (App Review 5.1.1(v): hesap
+ * açtıran uygulama silmeyi uygulama içinde sunmak zorunda).
  */
 import React, { useState } from 'react';
 import { router, Stack } from 'expo-router';
@@ -26,6 +28,10 @@ import { useDateFormat } from '@/lib/i18n/dates';
 import { restore, totalAdded, type Backup, type RestoreMode } from '@/features/backup/backup';
 import { exportBackup, pickBackup, type ImportFailure } from '@/features/backup/file';
 import { snapshotAll, applySnapshot } from '@/boot/persistence';
+import { communityAvailable } from '@/features/community/client';
+import { useOturum, cikisYap, hesabiSil } from '@/features/community/auth';
+import { SignInButtons } from '@/features/community/SignInButtons';
+import { useSettingsStore } from '@/store/settings';
 
 export default function AccountScreen() {
   const t = useT();
@@ -36,6 +42,31 @@ export default function AccountScreen() {
   const gunler = useWorshipStore((s) => s.days);
   const yerImleri = useReadingStore((s) => s.bookmarks);
   const favoriler = useFavoriteStore((s) => s.items);
+  const oturum = useOturum();
+  const ayarlar = useSettingsStore((s) => s.settings);
+  const ayarGuncelle = useSettingsStore((s) => s.update);
+  const [silmeOnayi, setSilmeOnayi] = useState(false);
+  const [siliniyor, setSiliniyor] = useState(false);
+  const [oturumSonuc, setOturumSonuc] = useState<{ tone: 'success' | 'warning'; title: string } | null>(null);
+
+  const toplulugaKapat = () => ayarGuncelle({ community: { ...ayarlar.community, enabled: false } });
+
+  const cik = async () => {
+    await cikisYap();
+    toplulugaKapat();
+    setOturumSonuc(null);
+  };
+
+  const sil = async () => {
+    setSiliniyor(true);
+    const ok = await hesabiSil();
+    setSiliniyor(false);
+    setSilmeOnayi(false);
+    if (ok) toplulugaKapat();
+    setOturumSonuc(ok
+      ? { tone: 'success', title: t('auth.deleted') }
+      : { tone: 'warning', title: t('auth.deleteFailed') });
+  };
 
   // Yedekleme durumu — DECISIONS D19.
   const [calisiyor, setCalisiyor] = useState(false);
@@ -99,6 +130,42 @@ export default function AccountScreen() {
           <Text variant="body" tone="onAccent">{t('account.guestBody')}</Text>
         </Column>
       </Card>
+
+      {communityAvailable && oturum.hazir ? (
+        <>
+          <SectionHeader title={t('auth.sectionTitle')} subtitle={t('auth.sectionHint')} />
+          {oturum.girisli ? (
+            <Card padding="sm">
+              <ListItem
+                title={t(oturum.saglayici === 'apple' ? 'auth.viaApple' : 'auth.viaGoogle')}
+                // E-posta yalnız kullanıcının kendisine, bu ekranda gösterilir.
+                {...(oturum.email ? { subtitle: oturum.email } : {})}
+                icon="user"
+                chevron={false}
+              />
+              <Divider />
+              <ListItem title={t('auth.signOut')} icon="close" chevron={false} onPress={() => { void cik(); }} />
+              <Divider />
+              <ListItem title={t('auth.deleteAccount')} subtitle={t('auth.deleteHint')} icon="trash"
+                chevron={false} onPress={() => setSilmeOnayi(true)} />
+            </Card>
+          ) : (
+            <Card padding="md">
+              <SignInButtons />
+            </Card>
+          )}
+          {oturumSonuc ? <Banner tone={oturumSonuc.tone} title={oturumSonuc.title} /> : null}
+        </>
+      ) : null}
+
+      <Sheet visible={silmeOnayi} onClose={() => setSilmeOnayi(false)} title={t('auth.deleteTitle')}>
+        <Column gap="md" style={{ paddingVertical: theme.spacing.lg }}>
+          <Text tone="muted">{t('auth.deleteBody')}</Text>
+          <Button label={t('auth.deleteConfirm')} variant="danger" loading={siliniyor}
+            onPress={() => { void sil(); }} block />
+          <Button label={t('common.cancel')} variant="ghost" onPress={() => setSilmeOnayi(false)} block />
+        </Column>
+      </Sheet>
 
       <SectionHeader title={t('account.dataLocation')} />
       <Card>

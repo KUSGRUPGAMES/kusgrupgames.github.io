@@ -6,6 +6,8 @@
  * - Sunucu yapılandırılmamışsa (Supabase kurulmadıysa) sessizce "hazır değil" der.
  * - Yapılandırılmış olsa bile varsayılan **kapalı**dır; kullanıcı burada
  *   açıkça "katıl" demeden hiçbir veri gönderilmez/okunmaz.
+ * - Katılmak için önce Google ya da Apple ile giriş gerekir (D32); giriş
+ *   onboarding'de atlandıysa burada istenir.
  */
 import React, { useState } from 'react';
 import { View } from 'react-native';
@@ -19,13 +21,14 @@ import { useSettingsStore } from '@/store/settings';
 import { communityAvailable } from '@/features/community/client';
 import { useCommunitySession, suggestNickname } from '@/features/community/session';
 import { isValidNickname } from '@/features/community/nickname';
+import { SignInButtons } from '@/features/community/SignInButtons';
 
 export default function CommunityScreen() {
   const t = useT();
   const theme = useTheme();
   const settings = useSettingsStore((s) => s.settings);
   const update = useSettingsStore((s) => s.update);
-  const { hazir, userId, nickname, girisYap, takmaAdiGuncelle } = useCommunitySession();
+  const { hazir, girisli, userId, nickname, girisYap, takmaAdiGuncelle } = useCommunitySession();
 
   const [ad, setAd] = useState('');
   const [duzenle, setDuzenle] = useState(false);
@@ -65,20 +68,30 @@ export default function CommunityScreen() {
         <>
           <Banner tone="info" title={t('community.privacyTitle')} description={t('community.privacyBody')}
             style={{ marginTop: theme.spacing.md }} />
-          <Card padding="md" style={{ marginTop: theme.spacing.md }}>
-            <Column gap="md">
-              <Field
-                label={t('community.nicknameLabel')}
-                hint={t('community.nicknameHint')}
-                value={ad}
-                onChangeText={setAd}
-                placeholder={hazir ? suggestNickname(userId ?? String(Date.now())) : ''}
-                maxLength={24}
-                error={hata ? t('community.nicknameError') : undefined}
-              />
-              <Button label={t('community.join')} onPress={() => { void katil(); }} loading={gonderiliyor} block />
-            </Column>
-          </Card>
+          {hazir && !girisli ? (
+            <Card padding="md" style={{ marginTop: theme.spacing.md }}>
+              <Column gap="md">
+                <Text variant="bodyStrong">{t('auth.communityTitle')}</Text>
+                <Text variant="callout" tone="muted">{t('auth.communityBody')}</Text>
+                <SignInButtons />
+              </Column>
+            </Card>
+          ) : (
+            <Card padding="md" style={{ marginTop: theme.spacing.md }}>
+              <Column gap="md">
+                <Field
+                  label={t('community.nicknameLabel')}
+                  hint={t('community.nicknameHint')}
+                  value={ad}
+                  onChangeText={setAd}
+                  placeholder={hazir ? suggestNickname(userId ?? String(Date.now())) : ''}
+                  maxLength={24}
+                  error={hata ? t('community.nicknameError') : undefined}
+                />
+                <Button label={t('community.join')} onPress={() => { void katil(); }} loading={gonderiliyor} block />
+              </Column>
+            </Card>
+          )}
           <Text variant="micro" tone="subtle" style={{ marginTop: theme.spacing.sm }}>
             {t('community.guidelinesNote')}
           </Text>

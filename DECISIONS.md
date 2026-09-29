@@ -793,3 +793,33 @@ metin — moderasyon yükü). Özel (1'e1) mesajlaşma yok. Denetim günlüğü
 (audit log) yok, yalnız `reports.resolved_by/resolved_at/resolution_note`
 temel bir iz bırakıyor. Bunlar `SUPABASE_KURULUM.md`deki çoklu cihaz
 eşitleme ve AI asistanla birlikte gelecekteki genişleme alanı.
+
+## D32 — Topluluk kimliği: anonim giriş yerine Google / Apple
+
+**Karar:** Topluluğa katılmak için Google ya da Apple hesabıyla giriş
+gerekir. D31'deki anonim giriş kaldırıldı. Giriş onboarding'de **atlanabilir**
+bir adım olarak sorulur (yalnız sunucu kuruluysa görünür), sonradan Hesap ve
+Topluluk ekranlarından yapılabilir. Uygulamanın geri kalanı girişsiz çalışır.
+
+**Neden atlanabilir:** Kullanıcı başta zorunlu giriş istedi; App Review
+5.1.1(v) hesap gerektirmeyen özelliği (vakit, Kur'an, kıble) girişe bağlayan
+uygulamayı reddettiği için atlanabilir yol seçildi (kullanıcı onayladı).
+
+**Nasıl:**
+- Apple: iOS'un kendi paneli (`expo-apple-authentication`) → Supabase
+  `signInWithIdToken`. Ham nonce Supabase'e, SHA-256 özeti Apple'a gider.
+  Yalnız e-posta kapsamı istenir; ad istenmez (topluluk takma adla çalışır).
+- Google: Supabase OAuth, sistemin güvenli tarayıcı oturumunda
+  (`expo-web-browser`), PKCE ile `bes://auth-callback`'e döner. Uygulamaya
+  Google SDK'sı girmez — Google Cloud'da yalnız bir "Web application"
+  istemcisi gerekir, iOS/Android istemci kimliği gerekmez.
+- App Review 4.8: iOS'ta Google sunan uygulama Apple'ı da sunmak zorunda —
+  ikisi hep birlikte. Android'de Apple düğmesi yok.
+- App Review 5.1.1(v): hesap silme uygulama içinde (Hesap ekranı →
+  `delete_my_account()`, migration 0003). İşlev parametresizdir, yalnız
+  `auth.uid()`'yi siler; topluluk tabloları cascade ile gider.
+
+**Eksik kalan (KNOWN_ISSUES T7):** Apple, Sign in with Apple kullanan hesap
+silindiğinde Apple belirtecinin REST API ile iptal edilmesini de istiyor.
+Bu, Apple'dan alınacak bir anahtarla (.p8) sunucu tarafında çalışan bir
+Edge Function gerektiriyor; mağazaya göndermeden önce eklenecek.

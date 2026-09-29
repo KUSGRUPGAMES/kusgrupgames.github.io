@@ -341,12 +341,15 @@ export default function ReaderScreen() {
                   const kunye = t('quran.translationSource', {
                     name: mealKunye.name, rights: t('quran.publicDomain'),
                   });
-                  router.push(
-                    `/share-card?body=${encodeURIComponent(meal)}` +
-                    `&arabic=${encodeURIComponent(secili.text)}` +
-                    `&reference=${encodeURIComponent(`${sureAdi(sure)} ${secili.ayah}`)}` +
-                    `&source=${encodeURIComponent(kunye)}`,
-                  );
+                  router.push({
+                    pathname: '/share-card',
+                    params: {
+                      body: meal,
+                      arabic: secili.text,
+                      reference: `${sureAdi(sure)} ${secili.ayah}`,
+                      source: kunye,
+                    },
+                  });
                   setSecili(null);
                 }}
               />

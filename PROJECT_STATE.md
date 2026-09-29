@@ -151,6 +151,7 @@ depolama hesabı yazıldı ve sınandı; ses dosyaları kıraat lisansına bağl
 
 - [ ] Mağaza hesapları açılınca: abonelik, widget, Live Activity (⛔B6, B7)
 - [ ] Gerçek cihazda son bakış (⛔E3 — bu kapsayıcıda emülatör yok)
+- [ ] **Topluluk + Google/Apple girişi (D31, D32)** — kod hazır ve sınandı; kullanıcı Supabase projesini `bes/COMMUNITY_SETUP.md`'ye göre açıyor. Açılınca: `bes/.env`, uçtan uca cihaz denemesi, gizlilik metinleri (T8), Apple belirteci iptali (T7)
 
 ## Sıradaki iş
 

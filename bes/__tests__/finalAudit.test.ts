@@ -111,7 +111,8 @@ describe('yönlendirme bütünlüğü', () => {
     ]);
     const ikinci = new Set([...kok].flatMap((ad) => (existsSync(ekranYolu(ad)) ? hedefler(ekranYolu(ad)) : [])));
     const ulasilan = new Set([...kok, ...ikinci]);
-    const HARIC = new Set(['onboarding', '+not-found', '_layout']);
+    // auth-callback: menüden değil, Google girişinin dönüşünden açılır (D32).
+    const HARIC = new Set(['onboarding', '+not-found', '_layout', 'auth-callback']);
     const eksik = readdirSync(join(ROOT, 'app'))
       .filter((f) => f.endsWith('.tsx'))
       .map((f) => f.replace(/\.tsx$/, ''))
