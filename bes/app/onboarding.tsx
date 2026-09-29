@@ -240,8 +240,18 @@ export default function OnboardingScreen() {
           <Button label={t('common.next')} size="lg" block onPress={() => setAdim(1)}
             style={eylemStili} />
         ) : adim === 1 ? (
-          <Button label={t('onboarding.start')} size="lg" block onPress={ilerle}
-            style={eylemStili} />
+          <Column gap="md">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('nav.back')}
+              onPress={() => setAdim(0)}
+              style={{ alignSelf: 'flex-start', minHeight: 48, justifyContent: 'center', paddingHorizontal: theme.spacing.xs }}
+            >
+              <Text variant="bodyStrong" tone="onAccent">{t('nav.back')}</Text>
+            </Pressable>
+            <Button label={t('onboarding.start')} size="lg" block onPress={ilerle}
+              style={eylemStili} />
+          </Column>
         ) : (
           <Row gap="md" align="center">
             <Pressable
