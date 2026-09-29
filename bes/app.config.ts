@@ -147,6 +147,12 @@ const config: ExpoConfig = {
     // oluşturduğu hedeflere (RNSVG-RNSVGFilters, RNCAsyncStorage_resources
     // gibi) dokunmuyor. Bu ek eklenti tüm hedefleri zorla düzeltiyor.
     './plugins/withPodDeploymentTargetFix',
+    // Widget'a veri taşıyan ExtensionStorage native modülü (@bacons/
+    // apple-targets), podspec'i 16.4 istediği için Expo'nun otomatik
+    // bağlama kontrolünde (proje hedefi 15.1) sessizce atlanıyordu —
+    // widget hep yalnız logo gösteriyordu. Bu eklenti pod'u elle ekleyip
+    // o kontrolü atlatıyor.
+    './plugins/withExtensionStoragePod',
     // Yeni Xcode/iOS SDK'lar "scene-based life cycle" benimsemeyen
     // uygulamaları artık başlatmayı reddediyor (Expo'nun varsayılan
     // AppDelegate.swift şablonu hâlâ eski, sahnesiz UIWindow kurulumunu
