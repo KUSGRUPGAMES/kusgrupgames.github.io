@@ -184,6 +184,12 @@ const config: ExpoConfig = {
     // eklenti dosyayı açık bir Run Script adımıyla elle kopyalayıp garantiye
     // alıyor.
     './plugins/withEzanSoundCopyFix',
+    // Ezan bildirimi kilitli ekranda sessiz kalıyordu: `interruptionLevel:
+    // 'timeSensitive'` içerikte yazılı olsa da expo-notifications'ın iOS
+    // izin isteği bu yetkiyi JS'ten hiç almıyordu (bkz. eklentinin kendi
+    // yorumu) — uygulama gerçekte hiç `.timeSensitive` yetkisine sahip
+    // değildi, iOS sessizce `active` seviyeye düşürüyordu.
+    './plugins/withTimeSensitiveNotificationFix',
     // Konum izni yalnız **uygulama açıkken**. expo-location eklentisi kendi
     // İngilizce varsayılanlarıyla üç anahtar birden yazıyor; "Always" izni
     // hiç kullanılmadığı hâlde beyan edilmiş oluyordu. App Review kullanılmayan
