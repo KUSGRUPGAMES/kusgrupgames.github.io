@@ -106,7 +106,10 @@ const config: ExpoConfig = {
     buildNumber: BUILD,
     infoPlist: {
       // Kıraat arka planda sürsün ve kilit ekranından yönetilebilsin (§32).
-      UIBackgroundModes: ['audio'],
+      UIBackgroundModes: ['audio', 'fetch'],
+      // Canlı etkinliği uygulama uyurken sıradaki vakte geçiren arka plan
+      // yenilemesi (modules/bes-live-activity → BesVakitYenileme.kimlik).
+      BGTaskSchedulerPermittedIdentifiers: ['bes.vakit-yenile'],
       // Dinamik Ada ve kilit ekranında vakte geri sayım (D30).
       NSSupportsLiveActivities: true,
       NSMotionUsageDescription:

@@ -30,46 +30,103 @@ struct BesVakitAttributes: ActivityAttributes {
     var target: Date
     var hm: String
     var following: String
+    /// Önümüzdeki vakitler (sıradaki dahil), zaman sırasıyla.
+    var upcoming: [BesVakitSlot] = []
+
+    init(name: String, target: Date, hm: String, following: String, upcoming: [BesVakitSlot]) {
+      self.name = name; self.target = target; self.hm = hm; self.following = following; self.upcoming = upcoming
+    }
+
+    // Eski sürümün başlattığı etkinlikte `upcoming` yok; eksikse boş sayılır.
+    init(from decoder: Decoder) throws {
+      let c = try decoder.container(keyedBy: CodingKeys.self)
+      name = try c.decode(String.self, forKey: .name)
+      target = try c.decode(Date.self, forKey: .target)
+      hm = try c.decode(String.self, forKey: .hm)
+      following = try c.decode(String.self, forKey: .following)
+      upcoming = try c.decodeIfPresent([BesVakitSlot].self, forKey: .upcoming) ?? []
+    }
   }
   var city: String
   var title: String
 }
 
+struct BesVakitSlot: Codable, Hashable {
+  var n: String
+  var t: Date
+  var hm: String
+}
+
+/// Görünümün o an göstereceği vakit. iOS görünümü vakit girdiği an
+/// (`staleDate`) yeniden çizer; o çizimde "şimdi"den sonraki ilk vakit
+/// seçilir. Böylece uygulama uyurken bile "0:00"da donup kalmaz.
+private struct GosterilenVakit {
+  let name: String
+  let target: Date
+  let hm: String
+  let following: String
+  /// Listede gelecek vakit kalmadı: son vakit de girdi.
+  let bitti: Bool
+
+  init(_ s: BesVakitAttributes.ContentState, simdiGercek: Date = Date()) {
+    // iOS yeniden çizimi vaktin girdiği saniyeden bir an önce yapabilir; pay
+    // olmasa aynı vakit yeniden seçilip "0:00"da kalırdı.
+    let simdi = simdiGercek.addingTimeInterval(5)
+    let slots = s.upcoming
+    if let i = slots.firstIndex(where: { $0.t > simdi }) {
+      name = slots[i].n; target = slots[i].t; hm = slots[i].hm
+      following = i + 1 < slots.count ? "\(slots[i + 1].n) \(slots[i + 1].hm)" : ""
+      bitti = false
+    } else {
+      name = s.name; target = s.target; hm = s.hm; following = s.following
+      bitti = s.target <= simdi
+    }
+  }
+}
+
 struct VakitAktivitesi: Widget {
   var body: some WidgetConfiguration {
     ActivityConfiguration(for: BesVakitAttributes.self) { baglam in
+      let v = GosterilenVakit(baglam.state)
       // Kilit ekranı ve bildirim bandı.
       HStack(spacing: 12) {
         besIsaretGorseli().resizable().scaledToFit().frame(width: 40, height: 40)
         VStack(alignment: .leading, spacing: 2) {
           Text(baglam.attributes.title.uppercased(with: Locale(identifier: "tr_TR")))
             .font(.system(size: 10, weight: .bold)).kerning(1.2).foregroundColor(BesRenk.altin)
-          Text("\(baglam.state.name) · \(baglam.state.hm)")
+          Text("\(v.name) · \(v.hm)")
             .font(.system(size: 18, weight: .bold)).foregroundColor(BesRenk.fildisi)
           Text(baglam.attributes.city).font(.system(size: 11)).foregroundColor(BesRenk.soluk)
         }
         Spacer()
-        GeriSayim(hedef: baglam.state.target)
-          .font(.system(size: 28, weight: .bold, design: .rounded))
-          .foregroundColor(BesRenk.altin)
-          .frame(maxWidth: 120, alignment: .trailing)
+        if v.bitti {
+          // Son vakit de girdi ve uygulama henüz yenilemedi: sahte "0:00" yerine
+          // vaktin girdiğini söyle.
+          Text("✓").font(.system(size: 28, weight: .bold)).foregroundColor(BesRenk.altin)
+        } else {
+          GeriSayim(hedef: v.target)
+            .font(.system(size: 28, weight: .bold, design: .rounded))
+            .foregroundColor(BesRenk.altin)
+            .frame(maxWidth: 120, alignment: .trailing)
+        }
       }
       .padding(16)
       .activityBackgroundTint(BesRenk.zumrutAlt)
       .activitySystemActionForegroundColor(BesRenk.altin)
     } dynamicIsland: { baglam in
-      DynamicIsland {
+      let v = GosterilenVakit(baglam.state)
+      return DynamicIsland {
         DynamicIslandExpandedRegion(.leading) {
           HStack(spacing: 6) {
             besIsaretGorseli().resizable().scaledToFit().frame(width: 26, height: 26)
             VStack(alignment: .leading, spacing: 0) {
-              Text(baglam.state.name).font(.system(size: 16, weight: .bold)).foregroundColor(BesRenk.fildisi)
-              Text(baglam.state.hm).font(.system(size: 12)).foregroundColor(BesRenk.soluk)
+              Text(v.name).font(.system(size: 16, weight: .bold)).foregroundColor(BesRenk.fildisi)
+              Text(v.hm).font(.system(size: 12)).foregroundColor(BesRenk.soluk)
             }
           }
         }
         DynamicIslandExpandedRegion(.trailing) {
-          GeriSayim(hedef: baglam.state.target)
+          GeriSayim(hedef: v.target)
             .font(.system(size: 24, weight: .bold, design: .rounded))
             .foregroundColor(BesRenk.altin)
             .frame(maxWidth: 110, alignment: .trailing)
@@ -78,14 +135,14 @@ struct VakitAktivitesi: Widget {
           HStack {
             Text(baglam.attributes.city)
             Spacer()
-            Text(baglam.state.following)
+            Text(v.following)
           }
           .font(.system(size: 12)).foregroundColor(BesRenk.soluk)
         }
       } compactLeading: {
-        Text(baglam.state.name).font(.system(size: 13, weight: .semibold)).foregroundColor(BesRenk.altin)
+        Text(v.name).font(.system(size: 13, weight: .semibold)).foregroundColor(BesRenk.altin)
       } compactTrailing: {
-        GeriSayim(hedef: baglam.state.target)
+        GeriSayim(hedef: v.target)
           .font(.system(size: 13, weight: .semibold))
           .foregroundColor(BesRenk.altin)
           .frame(maxWidth: 58)

@@ -1,6 +1,7 @@
 {
   "platforms": ["ios"],
   "ios": {
-    "modules": ["BesLiveActivityModule"]
+    "modules": ["BesLiveActivityModule"],
+    "appDelegateSubscribers": ["BesLiveActivityAppDelegate"]
   }
 }

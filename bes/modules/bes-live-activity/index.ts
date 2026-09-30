@@ -4,6 +4,9 @@
  */
 import { requireOptionalNativeModule } from 'expo-modules-core';
 
+/** Önümüzdeki bir vakit: ad, an (saniye, Unix), "12:52". */
+export interface VakitSlotu { n: string; t: number; hm: string }
+
 export interface VakitEtkinligi {
   city: string;
   title: string;
@@ -12,6 +15,11 @@ export interface VakitEtkinligi {
   target: number;
   hm: string;
   following: string;
+  /**
+   * Sıradaki dahil önümüzdeki vakitler. Etkinlik uygulama uyurken bunlardan
+   * sıradakine kendisi geçer (yerel modül ve widget görünümü).
+   */
+  upcoming: VakitSlotu[];
 }
 
 interface Yerel {

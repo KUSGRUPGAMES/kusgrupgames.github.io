@@ -1,6 +1,18 @@
 // BEŞ — canlı etkinlik (Dinamik Ada) köprüsü. Arayüz widget eklentisinde:
 // targets/widget/VakitAktivitesi.swift.
+//
+// Neden önümüzdeki vakitlerin listesi taşınıyor: canlı etkinlik kendi kendine
+// güncellenemez; uygulama uyurken sıradaki vakte geçecek kimse yoktu ve
+// etkinlik "İmsak 0:00"da donup kalıyordu (cihazda görüldü, 30 Eylül). Artık:
+//  1. `staleDate` = sıradaki vakit. Vakit girdiği an iOS görünümü yeniden
+//     çizer; görünüm listeden bir sonraki vakti seçip ona saymaya devam eder.
+//  2. Arka plan yenilemesi (BGAppRefreshTask) uyandırdığında bu dosya,
+//     JavaScript'e gerek kalmadan listedeki sıradaki vakte geçer ve bir
+//     sonraki uyanmayı o vaktin hemen sonrasına ister.
+// Tam kesinlik (her vakitte anında) yalnız sunucudan push ile mümkün; bu,
+// sunucusuz yapılabilecek en iyisi.
 import ActivityKit
+import BackgroundTasks
 import ExpoModulesCore
 
 /// **Aynı tanım** targets/widget/VakitAktivitesi.swift içinde de var:
@@ -12,9 +24,37 @@ struct BesVakitAttributes: ActivityAttributes {
     var target: Date
     var hm: String
     var following: String
+    /// Önümüzdeki vakitler (sıradaki dahil), zaman sırasıyla.
+    var upcoming: [BesVakitSlot] = []
+
+    init(name: String, target: Date, hm: String, following: String, upcoming: [BesVakitSlot]) {
+      self.name = name; self.target = target; self.hm = hm; self.following = following; self.upcoming = upcoming
+    }
+
+    // Eski sürümün başlattığı etkinlikte `upcoming` yok; eksikse boş sayılır.
+    init(from decoder: Decoder) throws {
+      let c = try decoder.container(keyedBy: CodingKeys.self)
+      name = try c.decode(String.self, forKey: .name)
+      target = try c.decode(Date.self, forKey: .target)
+      hm = try c.decode(String.self, forKey: .hm)
+      following = try c.decode(String.self, forKey: .following)
+      upcoming = try c.decodeIfPresent([BesVakitSlot].self, forKey: .upcoming) ?? []
+    }
   }
   var city: String
   var title: String
+}
+
+struct BesVakitSlot: Codable, Hashable {
+  var n: String
+  var t: Date
+  var hm: String
+}
+
+struct VakitSlotu: Record {
+  @Field var n: String = ""
+  @Field var t: Double = 0
+  @Field var hm: String = ""
 }
 
 struct VakitEtkinligi: Record {
@@ -24,6 +64,33 @@ struct VakitEtkinligi: Record {
   @Field var target: Double = 0
   @Field var hm: String = ""
   @Field var following: String = ""
+  @Field var upcoming: [VakitSlotu] = []
+}
+
+/// Listeden "şimdi"den sonraki vakti seçip etkinlik içeriği kurar.
+@available(iOS 16.2, *)
+enum BesVakitIcerik {
+  static func kur(_ slots: [BesVakitSlot], simdi: Date = Date()) -> ActivityContent<BesVakitAttributes.ContentState>? {
+    guard let i = slots.firstIndex(where: { $0.t > simdi }) else { return nil }
+    let s = slots[i]
+    let sonraki = i + 1 < slots.count ? "\(slots[i + 1].n) \(slots[i + 1].hm)" : ""
+    let durum = BesVakitAttributes.ContentState(
+      name: s.n, target: s.t, hm: s.hm, following: sonraki, upcoming: Array(slots[i...]))
+    return ActivityContent(state: durum, staleDate: s.t)
+  }
+
+  /// Arka planda çağrılır: çalışan etkinliği sıradaki vakte geçirir.
+  /// Dönüş: bir sonraki uyanmanın isteneceği an.
+  static func ilerlet() async -> Date? {
+    guard let a = Activity<BesVakitAttributes>.activities.first else { return nil }
+    let slots = a.content.state.upcoming
+    guard let yeni = kur(slots) else {
+      await a.end(nil, dismissalPolicy: .immediate)
+      return nil
+    }
+    if yeni.state.target != a.content.state.target { await a.update(yeni) }
+    return yeni.state.target
+  }
 }
 
 public class BesLiveActivityModule: Module {
@@ -39,29 +106,72 @@ public class BesLiveActivityModule: Module {
 
     AsyncFunction("startOrUpdate") { (p: VakitEtkinligi) async -> Bool in
       guard #available(iOS 16.2, *) else { return false }
-      let durum = BesVakitAttributes.ContentState(
-        name: p.name, target: Date(timeIntervalSince1970: p.target), hm: p.hm, following: p.following)
-      // Vakit girdikten on dakika sonra etkinlik "bayat" sayılır.
-      let icerik = ActivityContent(state: durum, staleDate: Date(timeIntervalSince1970: p.target + 600))
+      var slots = p.upcoming.map { BesVakitSlot(n: $0.n, t: Date(timeIntervalSince1970: $0.t), hm: $0.hm) }
+      if slots.isEmpty {
+        slots = [BesVakitSlot(n: p.name, t: Date(timeIntervalSince1970: p.target), hm: p.hm)]
+      }
+      guard let icerik = BesVakitIcerik.kur(slots) else { return false }
       let mevcut = Activity<BesVakitAttributes>.activities
+      var sonuc = true
       if let ilk = mevcut.first, ilk.attributes.city == p.city {
         await ilk.update(icerik)
         for fazla in mevcut.dropFirst() { await fazla.end(nil, dismissalPolicy: .immediate) }
-        return true
+      } else {
+        for eski in mevcut { await eski.end(nil, dismissalPolicy: .immediate) }
+        do {
+          _ = try Activity.request(
+            attributes: BesVakitAttributes(city: p.city, title: p.title), content: icerik, pushType: nil)
+        } catch {
+          sonuc = false
+        }
       }
-      for eski in mevcut { await eski.end(nil, dismissalPolicy: .immediate) }
-      do {
-        _ = try Activity.request(
-          attributes: BesVakitAttributes(city: p.city, title: p.title), content: icerik, pushType: nil)
-        return true
-      } catch {
-        return false
-      }
+      if sonuc { BesVakitYenileme.planla(icerik.state.target) }
+      return sonuc
     }
 
     AsyncFunction("end") { () async in
       guard #available(iOS 16.2, *) else { return }
       for a in Activity<BesVakitAttributes>.activities { await a.end(nil, dismissalPolicy: .immediate) }
+      BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: BesVakitYenileme.kimlik)
     }
+  }
+}
+
+/// Arka plan yenilemesi. Kimlik Info.plist'teki
+/// `BGTaskSchedulerPermittedIdentifiers` ile aynı olmalı (app.config.ts).
+enum BesVakitYenileme {
+  static let kimlik = "bes.vakit-yenile"
+
+  static func kaydet() {
+    BGTaskScheduler.shared.register(forTaskWithIdentifier: kimlik, using: nil) { gorev in
+      guard let gorev = gorev as? BGAppRefreshTask else { gorev.setTaskCompleted(success: false); return }
+      let is_ = Task {
+        guard #available(iOS 16.2, *) else { gorev.setTaskCompleted(success: true); return }
+        let sonraki = await BesVakitIcerik.ilerlet()
+        if let sonraki { planla(sonraki) }
+        gorev.setTaskCompleted(success: true)
+      }
+      gorev.expirationHandler = { is_.cancel() }
+    }
+  }
+
+  /// iOS'tan vakit girdikten hemen sonra uyandırılmayı ister. iOS bunu bir
+  /// taban olarak alır; uyandırma daha geç gelebilir (pil, kullanım).
+  static func planla(_ vakit: Date) {
+    let istek = BGAppRefreshTaskRequest(identifier: kimlik)
+    istek.earliestBeginDate = vakit.addingTimeInterval(30)
+    try? BGTaskScheduler.shared.submit(istek)
+  }
+}
+
+/// Görev, uygulama açılışı bitmeden kaydedilmek zorunda (BGTaskScheduler
+/// kuralı); modül yüklenmesi bunun için geç kalır.
+public class BesLiveActivityAppDelegate: ExpoAppDelegateSubscriber {
+  public func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+  ) -> Bool {
+    BesVakitYenileme.kaydet()
+    return true
   }
 }

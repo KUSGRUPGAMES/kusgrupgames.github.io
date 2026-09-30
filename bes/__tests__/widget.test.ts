@@ -78,3 +78,30 @@ describe('widget verisi', () => {
     }
   });
 });
+
+describe('canlı etkinlik arka plan yenilemesi', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { readFileSync } = require('node:fs') as typeof import('node:fs');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { join } = require('node:path') as typeof import('node:path');
+  const oku = (p: string) => readFileSync(join(__dirname, '..', p), 'utf8');
+
+  it('görev kimliği Info.plist izin listesinde ve fetch arka plan modu açık', () => {
+    // Kimlik izin listesinde yoksa iOS görevi sessizce reddeder; etkinlik
+    // yine "0:00"da donar (30 Eylül cihaz hatası).
+    const swift = oku('modules/bes-live-activity/ios/BesLiveActivityModule.swift');
+    const kimlik = /static let kimlik = "([^"]+)"/.exec(swift)?.[1];
+    expect(kimlik).toBeTruthy();
+    const cfg = oku('app.config.ts');
+    expect(cfg).toContain(`BGTaskSchedulerPermittedIdentifiers: ['${kimlik}']`);
+    expect(cfg).toMatch(/UIBackgroundModes: \[[^\]]*'fetch'/);
+    expect(oku('modules/bes-live-activity/expo-module.config.json')).toContain('BesLiveActivityAppDelegate');
+  });
+
+  it('etkinliğe önümüzdeki vakitlerin listesi gönderiliyor; iki Swift tanımı aynı alanları taşıyor', () => {
+    expect(oku('src/features/widget/useWidgetSync.ts')).toMatch(/upcoming,\n/);
+    const alan = /var upcoming: \[BesVakitSlot\] = \[\]/;
+    expect(oku('modules/bes-live-activity/ios/BesLiveActivityModule.swift')).toMatch(alan);
+    expect(oku('targets/widget/VakitAktivitesi.swift')).toMatch(alan);
+  });
+});

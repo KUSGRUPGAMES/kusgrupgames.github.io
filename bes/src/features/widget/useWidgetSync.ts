@@ -110,6 +110,10 @@ export function useWidgetSync(): void {
       const iki = nextTwo(v.times, Date.now() / 1000);
       if (!iki) { void liveActivity.end(); return; }
       const [s, sonra] = iki;
+      // Önümüzdeki vakitler (en çok 10 — yaklaşık iki gün): etkinlik uygulama
+      // uyurken sıradakine bunlardan geçer.
+      const simdi = Date.now() / 1000;
+      const upcoming = v.times.filter((x) => x.t > simdi).slice(0, 10).map((x) => ({ n: x.n, t: x.t, hm: x.hm }));
       // Aynı vakit için tekrar tekrar güncelleme yok; yalnız değişince.
       const imza = `${v.city}|${s.t}|${s.n}`;
       if (sonHedef.current === imza) return;
@@ -117,6 +121,7 @@ export function useWidgetSync(): void {
       void liveActivity.startOrUpdate({
         city: v.city, title: t('prayer.next'), name: s.n, target: s.t, hm: s.hm,
         following: sonra ? `${sonra.n} ${sonra.hm}` : '',
+        upcoming,
       });
     };
     kur();
