@@ -116,6 +116,9 @@ Aylık, yıllık ya da ömür boyu. Reklamları tamamen kaldırır, Öğren kurs
 
 DÜRÜSTLÜK NOTU
 Vakit hesabı yönteme, konuma ve rakıma bağlıdır; resmî ilanla bir iki dakika farklılık gösterebilir. Hicrî tarih aritmetiktir ve rüyete dayalı ilandan bir gün sapabilir. Bunları gizlemiyor, ilgili ekranda yazıyoruz. BEŞ bir yardımcı araçtır; dinî hüküm vermez.
+
+Kullanım Koşulları: https://kusgrupgames.github.io/bes/kosullar.html
+Gizlilik Politikası: https://kusgrupgames.github.io/bes/gizlilik.html
 ```
 
 ## Sürüm notları (4000 karakter sınırı)
