@@ -13,7 +13,7 @@
  * gösterilir. Kilit hiçbir zaman kandırıcı değildir (§66).
  */
 import { Platform } from 'react-native';
-import Purchases, { type CustomerInfo, type PurchasesPackage } from 'react-native-purchases';
+import Purchases, { LOG_LEVEL, type CustomerInfo, type PurchasesPackage } from 'react-native-purchases';
 import { create } from 'zustand';
 import { logger } from '@/lib/log';
 
@@ -52,6 +52,14 @@ export function initPurchases(): void {
   if (!purchasesAvailable || kuruldu) return;
   kuruldu = true;
   try {
+    // SDK kendi hatalarını console.error'a yazıyor; geliştirmede bu, ekranı
+    // kaplayan kırmızı bir kutu demek (ör. mağaza sözleşmesi etkin değilken
+    // her açılışta "Error fetching offerings"). Kayıtlar bizim günlükleyiciye
+    // yönlendirilir (info: ekrana basılmaz). Kullanıcıyı ilgilendiren hata
+    // zaten Pro ekranında gösteriliyor (`pro.loadFailed`, `pro.failed`).
+    Purchases.setLogHandler((seviye, mesaj) => {
+      if (seviye === LOG_LEVEL.ERROR || seviye === LOG_LEVEL.WARN) log.info(mesaj);
+    });
     Purchases.configure({ apiKey: API_KEY as string });
     Purchases.addCustomerInfoUpdateListener(uygula);
     Purchases.getCustomerInfo().then(uygula).catch((e: unknown) => {
