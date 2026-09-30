@@ -859,3 +859,19 @@ reklam kimliği ve kaba konum kullanır; iOS'ta izin penceresi (ATT), AB'de
 Google'ın onay formu (UMP) gösterilir. İzin verilmezse kişiselleştirilmemiş
 reklam gösterilir. Mağaza gizlilik formları ve gizlilik sayfaları buna göre
 güncellenir.
+
+## D34 — Yalnız koyu tema
+
+**Karar (kullanıcı, 2026-09-30):** Uygulama her zaman koyu yeşil-altın temada
+açılır; Ayarlar'daki tema seçici kaldırıldı. Açılış ekranı ve sistem arayüzü
+(`userInterfaceStyle: 'dark'`) de koyu.
+
+**Neden:** Açık tema krem zemin üstünde koyu yeşil bloklar (vakit kartı,
+zikir sayacı) ve beyaz kartlarla parça parça duruyordu; kullanıcı
+"hiçbir şey uyuşmuyor" dedi. Koyu temada bütün yüzeyler aynı ailede ve
+mağaza görselleriyle birebir aynı. Yeniden tasarım yerine kaldırma seçildi:
+en hızlı ve yayını geciktirmeyen yol.
+
+**Yerinde bırakılanlar:** `lightTheme` tokenları ve `ThemeProvider`'ın `mode`
+API'si silinmedi (sınamalar ve ileride uyumlu bir açık tema için). Denetim
+taraması (`npm run preview`) artık yalnız koyu geçişlerle çalışıyor.

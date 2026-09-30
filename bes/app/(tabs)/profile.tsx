@@ -7,9 +7,8 @@
 import React from 'react';
 import { View } from 'react-native';
 import { router } from 'expo-router';
-import { Screen, SectionHeader, Card, ListItem, Segmented, Icon, PageHeader } from '@/ui';
+import { Screen, SectionHeader, Card, ListItem, Icon, PageHeader } from '@/ui';
 import { useI18n, useT, LANGUAGES, LANGUAGE_NAMES } from '@/lib/i18n';
-import { useThemeContext, type ThemeMode } from '@/theme/ThemeProvider';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useLocationStore } from '@/store/locations';
 import { Brand } from '@/config/brand';
@@ -22,14 +21,7 @@ export default function SettingsScreen() {
   const t = useT();
   const theme = useTheme();
   const { language, setLanguage } = useI18n();
-  const { mode, setMode } = useThemeContext();
   const konum = useLocationStore((s) => s.active());
-
-  const temaSecenekleri: { value: ThemeMode; label: string }[] = [
-    { value: 'system', label: t('settings.themeSystem') },
-    { value: 'light', label: t('settings.themeLight') },
-    { value: 'dark', label: t('settings.themeDark') },
-  ];
 
   return (
     <Screen scroll>
@@ -59,13 +51,7 @@ export default function SettingsScreen() {
       </Card>
 
       <SectionHeader title={t('settings.appearance')} />
-      <Segmented
-        options={temaSecenekleri}
-        value={mode}
-        onChange={setMode}
-        label={t('settings.theme')}
-      />
-      <Card padding="md" style={{ marginTop: theme.spacing.md }}>
+      <Card padding="md">
         <ListItem title={t('home.customize')} subtitle={t('home.customizeHint')} icon="settings"
           onPress={() => router.push('/home-layout')} />
       </Card>

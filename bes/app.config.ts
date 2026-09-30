@@ -27,8 +27,6 @@ const suffix: Record<Variant, string> = {
  */
 const ZEMIN = '#002419';
 
-/** Açık açılış zemini — açık masterın zemin ortancası (`palette.ivory100`). */
-const ZEMIN_ACIK = '#FAF2E3';
 
 /**
  * Android bildirim rozetinin tint rengi. Rozet beyaz bildirim zemininde
@@ -80,7 +78,9 @@ const config: ExpoConfig = {
   orientation: 'portrait',
   icon: './assets/icon.png',
   scheme: 'bes',
-  userInterfaceStyle: 'automatic',
+  // D34: yalnız koyu tema. Sistem arayüzü (klavye, uyarı pencereleri,
+  // durum çubuğu) de koyu çizilsin.
+  userInterfaceStyle: 'dark',
   newArchEnabled: true,
   assetBundlePatterns: ['**/*'],
   ios: {
@@ -144,13 +144,11 @@ const config: ExpoConfig = {
   plugins: [
     'expo-router',
     ['expo-splash-screen', {
-      image: './assets/brand/splash-icon-light.png',
+      // D34: yalnız koyu tema — açılış da her zaman koyu.
+      image: './assets/splash-icon.png',
       imageWidth: 200,
       resizeMode: 'contain',
-      backgroundColor: ZEMIN_ACIK,
-      // Koyu tema paketin koyu ikonuyla, açık tema açık ikonuyla aynı zemini
-      // ve aynı sembol varyantını kullanır.
-      dark: { image: './assets/splash-icon.png', backgroundColor: ZEMIN },
+      backgroundColor: ZEMIN,
     }],
     // Bazı üçüncü taraf paketler (RNCAsyncStorage, RNSVG) kendi Pod
     // tanımlarında çok eski bir iOS hedefi bildiriyor (13.4, 12.4);

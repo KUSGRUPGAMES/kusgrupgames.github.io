@@ -98,12 +98,12 @@ const EKRANLAR = [
  * çubuğu, dar ekranda taşan geri sayım). Her geçiş bütün ekranları çizer.
  */
 const GECISLER = [
-  { ad: 'acik', klasor: 'acik', viewport: { width: 390, height: 844 }, tema: 'light' },
+  // D34: uygulama yalnız koyu temada; açık tema geçişi kaldırıldı.
   { ad: 'koyu', klasor: 'koyu', viewport: { width: 390, height: 844 }, tema: 'dark' },
   // iPhone SE genişliği: düzen kırılmaları önce burada görünür.
-  { ad: 'dar', klasor: 'dar', viewport: { width: 320, height: 568 }, tema: 'light' },
+  { ad: 'dar', klasor: 'dar', viewport: { width: 320, height: 568 }, tema: 'dark' },
   // Arapça arayüz: sağdan sola akış ve uzun kelimeler.
-  { ad: 'arapca', klasor: 'ar', viewport: { width: 390, height: 844 }, tema: 'light', dil: 'ar' },
+  { ad: 'arapca', klasor: 'ar', viewport: { width: 390, height: 844 }, tema: 'dark', dil: 'ar' },
   // Mağaza kareleri: koyu tema + örnek kullanım verisi (tools/store-shots.js).
   // Uzun ekran: mağaza karesinde telefon alttan taşar; kısa kare altta boşluk bırakıyordu.
   { ad: 'vitrin', klasor: 'vitrin', viewport: { width: 390, height: 1120 }, tema: 'dark', vitrin: true },
@@ -352,9 +352,8 @@ async function film(port) {
   await git('/prayer-calendar', 2000);
   await kaydir(page, 900); await bekle(page, 1200);
 
-  // 7. Koyu tema
+  // 7. Ayarlar ve ana sayfaya dönüş (D34: tema seçici yok, uygulama hep koyu)
   await git('/profile', 1800);
-  await tikla('Koyu', 1800);
   await kaydir(page, 600); await bekle(page, 1000);
   await git('/', 2200);
   await kaydir(page, 800); await bekle(page, 1000);

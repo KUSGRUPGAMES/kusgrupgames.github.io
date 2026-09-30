@@ -24,6 +24,7 @@ const KOK = join(__dirname, '..');
 type Cozulmus = {
   name?: string;
   icon?: string;
+  userInterfaceStyle?: string;
   plugins?: unknown[];
   ios?: { icon?: string; bundleIdentifier?: string; infoPlist?: Record<string, unknown> };
   android?: { package?: string; adaptiveIcon?: { foregroundImage?: string; backgroundColor?: string } };
@@ -74,20 +75,19 @@ describe('görsel varlıklar', () => {
     expect(exp.android?.adaptiveIcon?.foregroundImage).toBe('./assets/adaptive-icon.png');
   });
 
-  it('açılış ekranı iki temada da paketin zeminini kullanıyor', () => {
+  it('açılış ekranı ve sistem arayüzü yalnız koyu (D34)', () => {
     const splash = eklenti(exp, 'expo-splash-screen');
     expect(splash).not.toBeNull();
-    // Açık tema: fildişi zemin + zümrüt sembol. Değer uygulamanın kendi
-    // paletinden gelmeli; yapılandırma ile tema ayrışırsa açılıştan ana
-    // ekrana geçerken renk sıçraması görünür (D18).
-    expect(splash?.image).toBe('./assets/brand/splash-icon-light.png');
-    expect(splash?.backgroundColor).toBe(palette.ivory100);
-    // Koyu tema: masterın zemin ortancası + altın sembol. Android maskesiyle
-    // aynı renk olmalı.
-    const koyu = splash?.dark as { image?: string; backgroundColor?: string } | undefined;
-    expect(koyu?.image).toBe('./assets/splash-icon.png');
-    expect(koyu?.backgroundColor).toBe(palette.emerald900);
-    expect(koyu?.backgroundColor).toBe(exp.android?.adaptiveIcon?.backgroundColor);
+    // Masterın zemin ortancası + altın sembol; uygulamanın zemini ve Android
+    // maskesiyle aynı renk — ayrışırsa açılıştan ana ekrana geçerken renk
+    // sıçraması görünür (D18).
+    expect(splash?.image).toBe('./assets/splash-icon.png');
+    expect(splash?.backgroundColor).toBe(palette.emerald900);
+    expect(splash?.backgroundColor).toBe(exp.android?.adaptiveIcon?.backgroundColor);
+    // Açık varyant kalmamalı: telefon açık temadayken fildişi açılış ekranı
+    // ardından koyu uygulama açılırdı.
+    expect(splash?.dark).toBeUndefined();
+    expect(exp.userInterfaceStyle).toBe('dark');
   });
 
   it('Android bildirim ikonu tek renk siluet', () => {
