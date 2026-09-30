@@ -70,7 +70,13 @@ export async function initAds(): Promise<void> {
   if (basladi || Platform.OS === 'web') return;
   basladi = true;
   try {
-    const onay = await AdsConsent.gatherConsent();
+    // Onay formu alınamazsa (ağ hatası, AdMob'da mesaj yayınlanmamış) bu
+    // bir engel değildir: Google'ın son bilinen durumuna bakılır. Formun
+    // gerekmediği ülkelerde (ör. Türkiye) `canRequestAds` zaten true döner.
+    const onay = await AdsConsent.gatherConsent().catch(async (e: unknown) => {
+      log.info('onay formu alınamadı, mevcut durumla devam', { error: e });
+      return AdsConsent.getConsentInfo();
+    });
     useAdsStore.setState({
       privacyOptions: onay.privacyOptionsRequirementStatus === AdsConsentPrivacyOptionsRequirementStatus.REQUIRED,
     });
