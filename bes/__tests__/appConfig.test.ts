@@ -128,9 +128,12 @@ describe('iOS izinleri', () => {
     }
   });
 
-  it('kıraat için arka plan sesi açık, başka arka plan kipi yok', () => {
+  it('arka plan kipleri yalnız kıraat sesi ve canlı etkinlik yenilemesi', () => {
+    // audio: kıraat arka planda sürer. fetch: canlı etkinliği uygulama
+    // uyurken sıradaki vakte geçiren BGAppRefreshTask (bes.vakit-yenile).
+    // Başka kip (konum, voip vb.) App Review'da gerekçe ister; eklenmemeli.
     const modes = (exp.ios?.infoPlist as Record<string, unknown>)?.UIBackgroundModes;
-    expect(modes).toEqual(['audio']);
+    expect(modes).toEqual(['audio', 'fetch']);
   });
 });
 
