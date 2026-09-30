@@ -1,10 +1,10 @@
 /** Özel hatırlatıcılar — şartname §64. */
 import React, { useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { Switch, View } from 'react-native';
 import { Stack } from 'expo-router';
 import {
   Screen, SectionHeader, Card, Column, Row, Text, Field, Button, Chip,
-  Segmented, Stepper, Toggle, EmptyState, IconButton, Banner, Divider,
+  Segmented, Stepper, EmptyState, IconButton, Banner, Divider,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT, type StringKey } from '@/lib/i18n';
@@ -98,10 +98,15 @@ export default function RemindersScreen() {
                     {`${anlat(r)} · ${r.weekdays.length === 0 ? t('reminder.everyDay') : GUN_SIRASI.filter((d) => r.weekdays.includes(d)).map((d) => t(GUN_ANAHTARI[d]!)).join(' ')}`}
                   </Text>
                 </Column>
-                <Toggle
-                  title={r.title}
+                {/* Yalın anahtar: `Toggle` tam bir liste satırıdır ve başlığı ikinci
+                    kez çizip yer kaplıyordu; asıl başlık dar sütunda harf harf
+                    kırılıyordu ("Sab/ah/na/ma…", 30 Eylül mağaza karesi). */}
+                <Switch
                   value={r.enabled}
-                  onChange={(v) => update(r.id, { enabled: v })}
+                  onValueChange={(v) => update(r.id, { enabled: v })}
+                  accessibilityLabel={r.title}
+                  trackColor={{ false: theme.colors.border, true: theme.colors.accent }}
+                  thumbColor={theme.colors.surface}
                 />
                 <IconButton name="close" label={t('common.delete')} size={18} onPress={() => remove(r.id)} />
               </Row>

@@ -85,6 +85,7 @@ const EKRANLAR = [
   ['50-namaz-rehberi', '/prayer-guide'], ['51-ibadet-gunlugu', '/worship-log'],
   ['52-kaza', '/qada'], ['53-hatim', '/khatm'], ['54-ramazan', '/ramadan'],
   ['55-zekat', '/zakat'], ['56-hac-umre', '/hajj'],
+  ['57-ibadet-istatistik', '/worship-stats'], ['63-topluluk', '/community'], ['64-hatim-gruplari', '/khatm-circles'],
   ['60-bilgi', '/knowledge'], ['61-hicri-takvim', '/hijri'], ['62-paylasim-karti', '/share-card'],
   ['70-ana-sayfa-duzeni', '/home-layout'], ['71-hesap', '/account'], ['72-tani', '/diagnostics'],
 ];
@@ -103,6 +104,9 @@ const GECISLER = [
   { ad: 'dar', klasor: 'dar', viewport: { width: 320, height: 568 }, tema: 'light' },
   // Arapça arayüz: sağdan sola akış ve uzun kelimeler.
   { ad: 'arapca', klasor: 'ar', viewport: { width: 390, height: 844 }, tema: 'light', dil: 'ar' },
+  // Mağaza kareleri: koyu tema + örnek kullanım verisi (tools/store-shots.js).
+  // Uzun ekran: mağaza karesinde telefon alttan taşar; kısa kare altta boşluk bırakıyordu.
+  { ad: 'vitrin', klasor: 'vitrin', viewport: { width: 390, height: 1120 }, tema: 'dark', vitrin: true },
 ];
 
 const bekle = (p, ms) => p.waitForTimeout(ms);
@@ -131,13 +135,58 @@ const BAGLAM = { viewport: { width: 390, height: 844 }, locale: 'tr-TR', timezon
  * Tema ve dil depodan okunuyor; arayüzden tıklayarak geçmek her ekranda
  * bir tur gezinme demekti ve bir kez de yanlış ekranda kaldı.
  */
-async function tohumla(ctx, { tema = 'light', dil = 'tr' } = {}) {
+async function tohumla(ctx, { tema = 'light', dil = 'tr', vitrin = false } = {}) {
   await ctx.addInitScript((veri) => {
     localStorage.setItem('bes.onboardingDone', 'true');
     localStorage.setItem('bes.locations', JSON.stringify({ locations: [veri.yer], activeId: veri.yer.id }));
     localStorage.setItem('bes.themeMode', JSON.stringify(veri.tema));
     localStorage.setItem('bes.settings', JSON.stringify({ language: veri.dil }));
-  }, { yer: ISTANBUL, tema, dil });
+    if (!veri.vitrin) return;
+    // --- Vitrin: mağaza kareleri için üç haftalık örnek kullanım. Yalnız
+    // `vitrin` geçişinde; denetim geçişleri boş ekranları da sınasın diye
+    // tohumsuz kalır. Rastgele değil, sabit örüntü: kareler her üretimde aynı.
+    const gun = (fark) => {
+      const d = new Date(); d.setDate(d.getDate() - fark);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    };
+    const ZIKIR = [['Sübhânallah', 33], ['Elhamdülillah', 33], ['Allâhu ekber', 34], ['Estağfirullah', 100], ['Salavât', 100]];
+    const sessions = [];
+    const days = {};
+    const VAKIT = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+    for (let f = 0; f < 21; f += 1) {
+      const t = gun(f);
+      const kac = f === 0 ? ZIKIR.length : 1 + ((f * 7) % 3);
+      for (let i = 0; i < kac; i += 1) {
+        const [ad, hedef] = ZIKIR[(f + i) % ZIKIR.length];
+        const tam = (f + i) % 4 !== 3;
+        sessions.push({ id: `z${f}-${i}`, title: ad, count: tam ? hedef : Math.round(hedef * 0.6), target: hedef, onDate: t, createdAt: Date.now() - f * 864e5 - i * 36e5 });
+      }
+      const prayers = {};
+      VAKIT.forEach((v, i) => {
+        if ((f + i) % 9 === 8) return;
+        prayers[v] = (f + i) % 3 === 0 ? 'jamaah' : 'alone';
+      });
+      days[t] = { date: t, prayers, quranMinutes: 10 + ((f * 13) % 35) };
+    }
+    const worship = {
+      sessions, days,
+      qada: { fajr: 12, dhuhr: 4, asr: 6, maghrib: 2, isha: 9, witr: 3 },
+      qadaHistory: [],
+      khatms: [{ id: 'h1', title: 'Ramazan hatmi', startedOn: gun(20), targetOn: gun(-18),
+        completedJuz: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], active: true }],
+      reminders: [
+        { id: 'r1', title: 'Kur’an okuma vakti', body: 'Bugünkü sayfanı oku', trigger: { kind: 'time', hour: 21, minute: 0 }, weekdays: [], enabled: true },
+        { id: 'r2', title: 'Sabah namazına hazırlan', trigger: { kind: 'prayer', slot: 'fajr', offsetMinutes: -20 }, weekdays: [], enabled: true },
+        { id: 'r3', title: 'Cuma — Kehf sûresi', trigger: { kind: 'time', hour: 10, minute: 0 }, weekdays: [5], enabled: true },
+        { id: 'r4', title: 'Akşam ezkârı', trigger: { kind: 'prayer', slot: 'maghrib', offsetMinutes: 15 }, weekdays: [], enabled: true },
+      ],
+      fasts: { [gun(1)]: { date: gun(1), kind: 'nafile', completed: true }, [gun(4)]: { date: gun(4), kind: 'nafile', completed: true } },
+    };
+    localStorage.setItem('bes.worship', JSON.stringify(worship));
+    const DERS = ['harf-1', 'harf-2', 'harf-3', 'harf-4', 'harf-5', 'harf-6', 'harf-7', 'harf-tekrar', 'bitisme', 'ustun', 'esre'];
+    localStorage.setItem('bes.learning', JSON.stringify(DERS.map((id, i) => ({ lessonId: id, stars: i % 4 === 3 ? 2 : 3, completedAt: Date.now() - (DERS.length - i) * 864e5 }))));
+    localStorage.setItem('bes.reading', JSON.stringify({ position: { surah: 18, ayah: 10, updatedAt: Date.now() }, bookmarks: [] }));
+  }, { yer: ISTANBUL, tema, dil, vitrin });
 }
 
 async function ekranlar(port) {
@@ -195,7 +244,7 @@ async function ekranlar(port) {
       ...BAGLAM, viewport: gecis.viewport, deviceScaleFactor: 2,
       ...(gecis.dil === 'ar' ? { locale: 'ar' } : {}),
     });
-    await tohumla(ctx, { tema: gecis.tema, dil: gecis.dil ?? 'tr' });
+    await tohumla(ctx, { tema: gecis.tema, dil: gecis.dil ?? 'tr', vitrin: gecis.vitrin ?? false });
     const page = await ctx.newPage();
     let suAnki = '';
     page.on('pageerror', (e) => sorunlar.push({ gecis: gecis.ad, ekran: suAnki, tur: 'hata', ayrinti: String(e).slice(0, 160) }));
