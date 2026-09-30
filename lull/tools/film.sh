@@ -10,6 +10,8 @@ set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="${1:-$ROOT/marketing/lull-tanitim.mp4}"
 CHROME="${CHROME:-/opt/pw-browsers/chromium-1194/chrome-linux/chrome}"
+# Mac: Linux yolu yoksa kurulu Chrome kullanilir.
+[ -x "$CHROME" ] || { [ -x "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ] && CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"; }
 FPS="${FPS:-12}"
 DUR="${DUR:-28}"
 W=500; H=1080                      # telefon orani (430x932 ile ayni), headless alt siniri 500

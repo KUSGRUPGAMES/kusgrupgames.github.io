@@ -9,7 +9,11 @@ const ROOT = path.join(__dirname, '..');
 const GAME = JSON.parse(require('fs').readFileSync(path.join(ROOT,'app.config.json'),'utf8')).gameId;
 const DOCS = path.join(ROOT, '..', 'docs', GAME);
 const DOCSROOT = path.join(ROOT, '..', 'docs');
-const CHROME = process.env.CHROME || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+// Mac'te Linux yolu yok; kurulu Chrome kullanılır.
+const CHROME = process.env.CHROME || [
+  '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+].find((p) => fs.existsSync(p)) || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 let fail = 0, warn = 0;
 const ok  = m => console.log('  \x1b[32mOK\x1b[0m   ' + m);
 const bad = m => { fail++; console.log('  \x1b[31mHATA\x1b[0m ' + m); };

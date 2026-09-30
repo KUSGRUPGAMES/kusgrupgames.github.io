@@ -42,6 +42,9 @@ const FILDISI = '#FBF6EC';
 const ALTIN = '#D3B685';
 
 function tarayiciYolu() {
+  // Mac'te Playwright dizini yok; kurulu Google Chrome kullanılır.
+  const mac = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  if (!process.env.PLAYWRIGHT_BROWSERS_PATH && process.platform === 'darwin' && fs.existsSync(mac)) return mac;
   const taban = process.env.PLAYWRIGHT_BROWSERS_PATH || '/opt/pw-browsers';
   const dizin = fs.readdirSync(taban).find((d) => /^chromium-\d+$/.test(d));
   if (!dizin) throw new Error(`Chromium bulunamadı: ${taban}`);

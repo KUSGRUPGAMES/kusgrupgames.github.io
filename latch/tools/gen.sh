@@ -2,6 +2,8 @@
 # Tum magaza gorsellerini yeniden uretir.  Kullanim:  bash tools/gen.sh
 set -e
 CHROME="${CHROME:-/opt/pw-browsers/chromium-1194/chrome-linux/chrome}"
+# Mac: Linux yolu yoksa kurulu Chrome kullanilir.
+[ -x "$CHROME" ] || { [ -x "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ] && CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"; }
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="$ROOT/assets"
 FLAGS="--headless=new --no-sandbox --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --virtual-time-budget=4000"
