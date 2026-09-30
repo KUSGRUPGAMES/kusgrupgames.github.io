@@ -149,3 +149,15 @@ describe('vakit penceresi (reklam kuralı)', () => {
     expect(Math.min(w.secondsToNextPrayer!, w.secondsSincePrayer!)).toBeLessThan(3600);
   });
 });
+
+describe('reklam birimi seçimi (AdMob politikası)', () => {
+  it('geliştirme derlemesi gerçek birim tanımlı olsa bile test birimini kullanır', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { readFileSync } = require('node:fs') as typeof import('node:fs');
+    const kod = readFileSync(require.resolve('../src/features/pro/adsRuntime.ts'), 'utf8');
+    const govde = kod.slice(kod.indexOf('function birim('), kod.indexOf('export const BANNER_UNIT'));
+    // İlk karar __DEV__: gerçek kimliğe bakılmadan test birimi döner.
+    expect(govde.indexOf('if (__DEV__) return test;')).toBeGreaterThan(-1);
+    expect(govde.indexOf('if (__DEV__) return test;')).toBeLessThan(govde.indexOf('const gercek'));
+  });
+});

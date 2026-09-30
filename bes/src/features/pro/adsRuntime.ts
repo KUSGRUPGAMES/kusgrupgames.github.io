@@ -9,9 +9,9 @@
  *    kişiselleştirilmemiş reklam gelir.
  * 3. İçerik derecesi G, sonra SDK başlatılır.
  *
- * Reklam birimi kimlikleri derleme ortamından gelir. Yoksa geliştirmede
- * Google'ın test birimleri kullanılır, mağaza derlemesinde hiç reklam
- * gösterilmez (test reklamı yayına çıkmaz).
+ * Reklam birimi kimlikleri derleme ortamından gelir. Geliştirmede her zaman
+ * Google'ın test birimleri kullanılır; mağaza derlemesinde gerçek birim yoksa
+ * hiç reklam gösterilmez (test reklamı yayına çıkmaz).
  */
 import { Platform } from 'react-native';
 import mobileAds, {
@@ -28,10 +28,16 @@ import { useProStore } from './purchases';
 
 const log = logger('reklam');
 
+/**
+ * Geliştirme derlemesi gerçek birim tanımlı olsa bile **her zaman** Google'ın
+ * test birimini kullanır: geliştiricinin kendi cihazında gerçek reklam
+ * görmesi/tıklaması AdMob'da "geçersiz trafik" sayılır ve hesabın
+ * kapatılma sebebidir.
+ */
 function birim(ios: string | undefined, android: string | undefined, test: string): string | null {
+  if (__DEV__) return test;
   const gercek = Platform.OS === 'ios' ? ios : Platform.OS === 'android' ? android : undefined;
-  if (gercek) return gercek;
-  return __DEV__ ? test : null;
+  return gercek ?? null;
 }
 
 export const BANNER_UNIT = birim(
