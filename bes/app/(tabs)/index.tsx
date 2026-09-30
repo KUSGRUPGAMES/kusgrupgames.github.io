@@ -36,7 +36,6 @@ import {
   DailyAyahCard, DailyDuaCard, DailyKnowledgeCard, DailyNameCard, HijriDateCard,
   ReligiousDayCard, MoonCard, FridayCard, RamadanCard, type DailyContext,
 } from '@/features/daily/components/DailyCards';
-import { AdBanner } from '@/features/pro/AdBanner';
 import { HomeNotices } from '@/features/permissions/HomeNotices';
 
 const HIZLI = [
@@ -261,7 +260,6 @@ export default function HomeScreen() {
           onPress={() => router.push('/home-layout')}
         />
       </Row>
-      <AdBanner surface="home" />
       </View>
     </Screen>
   );

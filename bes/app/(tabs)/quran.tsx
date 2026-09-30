@@ -16,7 +16,6 @@ import { useT } from '@/lib/i18n';
 import { getSurahs, getJuzStarts, getSource, type SurahMeta } from '@/features/quran/data';
 import { useSurahName } from '@/features/quran/names';
 import { useReadingStore, type Bookmark } from '@/store/reading';
-import { AdBanner } from '@/features/pro/AdBanner';
 
 type Sekme = 'surahs' | 'juz' | 'bookmarks';
 
@@ -158,7 +157,7 @@ export default function QuranScreen() {
             renderItem={sureSatiri}
             separators={false}
             header={baslik}
-            footer={<>{kunye}<AdBanner surface="quranList" /></>}
+            footer={kunye}
           />
         ) : null}
 
@@ -169,7 +168,7 @@ export default function QuranScreen() {
             renderItem={cuzSatiri}
             separators={false}
             header={baslik}
-            footer={<>{kunye}<AdBanner surface="quranList" /></>}
+            footer={kunye}
           />
         ) : null}
 
@@ -180,7 +179,7 @@ export default function QuranScreen() {
             renderItem={yerImiSatiri}
             separators={false}
             header={baslik}
-            footer={<>{kunye}<AdBanner surface="quranList" /></>}
+            footer={kunye}
             empty={
               <EmptyState icon="bookmark" title={t('quran.noBookmarks')} description={t('empty.body')} />
             }

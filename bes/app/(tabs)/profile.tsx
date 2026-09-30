@@ -13,8 +13,8 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { useLocationStore } from '@/store/locations';
 import { Brand } from '@/config/brand';
 import { openLegalPage } from '@/lib/legal';
-import { AdBanner } from '@/features/pro/AdBanner';
 import { showAdPrivacyOptions, useAdsStore } from '@/features/pro/adsRuntime';
+import { RewardedAdFreeItem } from '@/features/pro/RewardedAdFreeItem';
 
 export default function SettingsScreen() {
   const reklamGizlilik = useAdsStore((s) => s.privacyOptions);
@@ -29,6 +29,7 @@ export default function SettingsScreen() {
 
       <Card padding="sm">
         <ListItem title={t('pro.title')} subtitle={t('pro.settingsHint')} icon="star" onPress={() => router.push('/pro')} />
+        <RewardedAdFreeItem />
       </Card>
 
       <SectionHeader title={t('settings.sectionPrayer')} />
@@ -95,7 +96,6 @@ export default function SettingsScreen() {
           <ListItem title={`${t('onboarding.welcomeTitle')} (BEdev)`} icon="star" onPress={() => router.push('/onboarding')} />
         ) : null}
       </Card>
-      <AdBanner surface="profile" />
       <View style={{ height: theme.spacing.xxl }} />
     </Screen>
   );

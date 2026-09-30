@@ -19,6 +19,7 @@ import {
   buyPlan, loadPlans, purchasesAvailable, restorePurchases, usePro, type Plan,
 } from '@/features/pro/purchases';
 import type { IconName } from '@/ui/Icon';
+import { RewardedAdFreeItem } from '@/features/pro/RewardedAdFreeItem';
 
 const YONETIM = Platform.OS === 'ios'
   ? 'https://apps.apple.com/account/subscriptions'
@@ -134,6 +135,8 @@ export default function ProScreen() {
       )}
 
       {sonuc ? <Banner tone={sonuc.tone} title={sonuc.title} style={{ marginTop: theme.spacing.md }} /> : null}
+
+      <RewardedAdFreeItem kart />
 
       <Button label={t('pro.restore')} variant="ghost" block disabled={calisiyor}
         onPress={() => { void geriYukle(); }} style={{ marginTop: theme.spacing.md }} />

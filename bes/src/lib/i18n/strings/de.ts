@@ -726,4 +726,10 @@ export const de: Partial<Record<StringKey, string>> = {
   'permnudge.liveActivityBody': 'Live-Aktivitäten sind aus. Schalte sie ein, um den Countdown zum nächsten Gebet auf dem Sperrbildschirm und in der Dynamic Island zu sehen. Einstellungen → BEŞ → Live-Aktivitäten.',
   'permnudge.allow': 'Erlauben',
   'permnudge.later': 'Nicht jetzt',
+  'reward.title': 'Werbung ansehen, 24 Stunden werbefrei',
+  'reward.body': 'Sieh dir eine kurze Werbung bis zum Ende an und sieh einen ganzen Tag keine Werbung.',
+  'reward.activeTitle': 'Du bist werbefrei',
+  'reward.activeBody': 'Noch etwa {n} Stunden.',
+  'reward.cancelled': 'Die Werbung wurde vorzeitig geschlossen; keine werbefreie Zeit.',
+  'reward.failed': 'Gerade keine Werbung verfügbar. Versuche es etwas später.',
 } as const;

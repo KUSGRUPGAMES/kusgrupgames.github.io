@@ -726,4 +726,10 @@ export const en: Partial<Record<StringKey, string>> = {
   'permnudge.liveActivityBody': 'Live Activities are off. Turn them on to see the countdown to the next prayer on the lock screen and Dynamic Island. Settings → BEŞ → Live Activities.',
   'permnudge.allow': 'Allow',
   'permnudge.later': 'Not now',
+  'reward.title': 'Watch an ad, go ad-free for 24 hours',
+  'reward.body': 'Watch one short ad to the end and see no ads for a whole day.',
+  'reward.activeTitle': 'You’re ad-free',
+  'reward.activeBody': 'About {n} hours left.',
+  'reward.cancelled': 'The ad was closed early, so no ad-free time was granted.',
+  'reward.failed': 'No ad available right now. Try again a bit later.',
 } as const;

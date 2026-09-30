@@ -54,7 +54,8 @@ Hepsi bir kez yapılır; kimlikler GitHub secret'ı olarak girilir
       oluşturuldu; hassas kategoriler engellendi, en yüksek derece **G**;
       GDPR onay mesajı yayınlandı (`store/app-privacy.md` → "AdMob konsolunda").
 - [ ] Secret'lar: `ADMOB_IOS_APP_ID`, `ADMOB_ANDROID_APP_ID`,
-      `EXPO_PUBLIC_ADMOB_BANNER_IOS/_ANDROID`, `EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS/_ANDROID`.
+      `EXPO_PUBLIC_ADMOB_BANNER_IOS/_ANDROID`, `EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS/_ANDROID`,
+      `EXPO_PUBLIC_ADMOB_APPOPEN_IOS/_ANDROID`, `EXPO_PUBLIC_ADMOB_REWARDED_IOS/_ANDROID`.
       Mağaza iş akışı (`BES_STORE_RELEASE=1`) gerçek kimlik yoksa derlemeyi durdurur.
 - [ ] **App Store Connect:** Ücretli Uygulamalar Sözleşmesi, banka ve vergi
       formları; abonelik grubu "BEŞ Pro" içinde aylık ve yıllık otomatik

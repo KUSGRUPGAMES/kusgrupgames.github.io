@@ -726,4 +726,10 @@ export const fr: Partial<Record<StringKey, string>> = {
   'permnudge.liveActivityBody': 'Les Activités en direct sont désactivées. Active-les pour voir le compte à rebours de la prochaine prière sur l’écran verrouillé et la Dynamic Island. Réglages → BEŞ → Activités en direct.',
   'permnudge.allow': 'Autoriser',
   'permnudge.later': 'Plus tard',
+  'reward.title': 'Regarder une pub, 24 h sans publicité',
+  'reward.body': 'Regarde une courte publicité jusqu’au bout et ne vois plus aucune pub pendant une journée.',
+  'reward.activeTitle': 'Tu es sans publicité',
+  'reward.activeBody': 'Environ {n} heures restantes.',
+  'reward.cancelled': 'La publicité a été fermée trop tôt ; aucune période sans pub accordée.',
+  'reward.failed': 'Aucune publicité disponible pour le moment. Réessaie un peu plus tard.',
 } as const;

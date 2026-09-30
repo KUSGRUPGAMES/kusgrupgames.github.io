@@ -72,3 +72,47 @@ export function canShowInterstitial(lastShownAt: number | null, now: number): bo
   if (lastShownAt === null) return true;
   return (now - lastShownAt) / 1000 >= MIN_INTERSTITIAL_GAP_SECONDS;
 }
+
+// --- Açılış reklamı (App Open) — D33 devamı, kullanıcı kararı 1 Ekim
+
+/** Açılış reklamları arasında en az bu kadar süre. */
+export const APP_OPEN_GAP_MS = 4 * 60 * 60 * 1000;
+/** İlk bu kadar açılışta açılış reklamı yok: yeni kullanıcı uygulamayı önce tanısın. */
+export const APP_OPEN_GRACE_SESSIONS = 3;
+/**
+ * Reklam bu sürede yüklenemediyse o açılışta gösterilmez: kullanıcı vakitleri
+ * okumaya başlamışken önüne çıkan reklam Google'ın açılış reklamı kuralına
+ * aykırı (reklam yükleme ekranında gösterilmeli, sonradan değil).
+ */
+export const APP_OPEN_MAX_WAIT_MS = 4000;
+
+export interface AppOpenContext {
+  /** Bu açılış dahil toplam açılış sayısı. */
+  sessions: number;
+  lastShownAt: number | null;
+  now: number;
+  /** Açılışın başlangıcından bu yana geçen süre. */
+  sinceLaunchMs: number;
+  /** `shouldShowAd({ surface: 'home', ... })` sonucu: Pro, vakit penceresi. */
+  allowed: boolean;
+}
+
+export function shouldShowAppOpen(c: AppOpenContext): boolean {
+  if (!c.allowed) return false;
+  if (c.sessions <= APP_OPEN_GRACE_SESSIONS) return false;
+  if (c.sinceLaunchMs > APP_OPEN_MAX_WAIT_MS) return false;
+  return c.lastShownAt === null || c.now - c.lastShownAt >= APP_OPEN_GAP_MS;
+}
+
+// --- Ödüllü reklam: izleyene 24 saat reklamsız
+
+export const REWARD_AD_FREE_MS = 24 * 60 * 60 * 1000;
+
+/** Ödül alındı: reklamsızlık bitişi. Süre üst üste eklenmez, yenilenir. */
+export function rewardAdFreeUntil(now: number): number {
+  return now + REWARD_AD_FREE_MS;
+}
+
+export function isAdFree(adFreeUntil: number | null, now: number): boolean {
+  return adFreeUntil !== null && now < adFreeUntil;
+}

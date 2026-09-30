@@ -5,11 +5,19 @@
  */
 import React from 'react';
 import { Tabs, Redirect } from 'expo-router';
+import { BottomTabBar } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useBoot } from '@/boot/AppProviders';
 import { useT } from '@/lib/i18n';
 import { Icon, Text, type IconName } from '@/ui';
 import { OfflineBanner } from '@/features/network/OfflineBanner';
+import { AdBanner } from '@/features/pro/AdBanner';
+import type { AdSurface } from '@/features/pro/ads';
+
+/** Sekme → reklam yüzeyi (ads.ts kuralları yüzeye göre). */
+const YUZEY: Record<string, AdSurface> = {
+  index: 'home', quran: 'quranList', learn: 'learn', worship: 'explore', profile: 'profile',
+};
 
 export default function TabsLayout() {
   const theme = useTheme();
@@ -47,6 +55,13 @@ export default function TabsLayout() {
     <>
       <OfflineBanner />
       <Tabs
+        // Şerit reklam sekme çubuğunun hemen üstünde, sabit (1 Ekim kararı).
+        tabBar={(props) => (
+          <>
+            <AdBanner surface={YUZEY[props.state.routes[props.state.index]?.name ?? ''] ?? 'home'} sabit />
+            <BottomTabBar {...props} />
+          </>
+        )}
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: theme.colors.onAccentHighlight,

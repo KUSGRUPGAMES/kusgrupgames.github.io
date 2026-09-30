@@ -13,10 +13,11 @@
  * Google'ın test birimleri kullanılır; mağaza derlemesinde gerçek birim yoksa
  * hiç reklam gösterilmez (test reklamı yayına çıkmaz).
  */
-import { Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import Constants from 'expo-constants';
 import mobileAds, {
-  AdEventType, AdsConsent, AdsConsentPrivacyOptionsRequirementStatus, InterstitialAd, MaxAdContentRating, TestIds,
+  AdEventType, AdsConsent, AdsConsentPrivacyOptionsRequirementStatus, AppOpenAd, InterstitialAd, MaxAdContentRating,
+  RewardedAd, RewardedAdEventType, TestIds,
 } from 'react-native-google-mobile-ads';
 import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 import { create } from 'zustand';
@@ -24,7 +25,10 @@ import { logger } from '@/lib/log';
 import { useLocationStore } from '@/store/locations';
 import { useSettingsStore } from '@/store/settings';
 import { prayerWindow, scheduleInputFrom } from '@/features/prayer/window';
-import { canShowInterstitial, shouldShowAd, type AdSurface } from './ads';
+import { kv } from '@/boot/storage';
+import {
+  canShowInterstitial, isAdFree, rewardAdFreeUntil, shouldShowAd, shouldShowAppOpen, type AdSurface,
+} from './ads';
 import { useProStore } from './purchases';
 
 const log = logger('reklam');
@@ -54,6 +58,26 @@ export const BANNER_UNIT = birim(
 export const INTERSTITIAL_UNIT = birim(
   process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS, process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ANDROID, TestIds.INTERSTITIAL,
 );
+export const APP_OPEN_UNIT = birim(
+  process.env.EXPO_PUBLIC_ADMOB_APPOPEN_IOS, process.env.EXPO_PUBLIC_ADMOB_APPOPEN_ANDROID, TestIds.APP_OPEN,
+);
+export const REWARDED_UNIT = birim(
+  process.env.EXPO_PUBLIC_ADMOB_REWARDED_IOS, process.env.EXPO_PUBLIC_ADMOB_REWARDED_ANDROID, TestIds.REWARDED,
+);
+
+const K_REKLAMSIZ = 'adFreeUntil';
+const K_ACILIS = 'appOpenStats';
+const sayiVeyaNull = { parse: (r: unknown) => (typeof r === 'number' ? r : null), fallback: null as number | null };
+const acilisCodec = {
+  parse: (r: unknown) => {
+    const o = r as { sessions?: unknown; lastShownAt?: unknown } | null;
+    return {
+      sessions: typeof o?.sessions === 'number' ? o.sessions : 0,
+      lastShownAt: typeof o?.lastShownAt === 'number' ? o.lastShownAt : null,
+    };
+  },
+  fallback: { sessions: 0, lastShownAt: null as number | null },
+};
 
 interface AdsState {
   /** SDK başlatıldı ve reklam istenebilir. */
@@ -64,9 +88,11 @@ interface AdsState {
    * satır yalnız bu `true` iken görünür.
    */
   privacyOptions: boolean;
+  /** Ödüllü reklamla kazanılan reklamsızlığın bitişi (ms); yoksa null. */
+  adFreeUntil: number | null;
 }
 
-export const useAdsStore = create<AdsState>(() => ({ ready: false, privacyOptions: false }));
+export const useAdsStore = create<AdsState>(() => ({ ready: false, privacyOptions: false, adFreeUntil: null }));
 
 let basladi = false;
 
@@ -96,8 +122,10 @@ export async function initAds(): Promise<void> {
       tagForUnderAgeOfConsent: false,
     });
     await mobileAds().initialize();
-    useAdsStore.setState({ ready: true });
+    const reklamsiz = await kv.read(K_REKLAMSIZ, sayiVeyaNull);
+    useAdsStore.setState({ ready: true, adFreeUntil: reklamsiz });
     tamEkranHazirla();
+    acilisReklamiKur();
   } catch (e) {
     log.warn('reklam başlatılamadı', { error: e });
   }
@@ -114,7 +142,9 @@ export async function showAdPrivacyOptions(): Promise<void> {
 
 /** Şu an, bu yüzeyde reklam gösterilebilir mi — `ads.ts` kurallarıyla. */
 export function adAllowedNow(surface: AdSurface, now: Date = new Date()): boolean {
-  if (!useAdsStore.getState().ready) return false;
+  const durum = useAdsStore.getState();
+  if (!durum.ready) return false;
+  if (isAdFree(durum.adFreeUntil, now.getTime())) return false;
   const pro = useProStore.getState();
   if (!pro.ready) return false;
   const konum = useLocationStore.getState().active();
@@ -148,4 +178,83 @@ export function maybeShowInterstitial(surface: AdSurface): void {
   if (!canShowInterstitial(sonGosterim, simdi)) return;
   sonGosterim = simdi;
   tamEkran.show().catch((e: unknown) => log.info('tam ekran gösterilemedi', { error: e }));
+}
+
+// --- Açılış reklamı (App Open): açılışta, en sık 4 saatte bir, ilk 3 açılışta yok
+
+/** Soğuk açılışın ya da arka plandan dönüşün başladığı an. */
+let acilisAni = Date.now();
+let acilis: AppOpenAd | null = null;
+let acilisYuklendi = false;
+/** Bu açılış için karar verildi mi (aynı açılışta iki kez denenmez). */
+let acilisDenendi = false;
+let arkaPlanaGecis: number | null = null;
+
+async function acilisDene(): Promise<void> {
+  if (acilisDenendi || !acilis || !acilisYuklendi) return;
+  acilisDenendi = true;
+  const simdi = Date.now();
+  const kayit = await kv.read(K_ACILIS, acilisCodec);
+  const goster = shouldShowAppOpen({
+    sessions: kayit.sessions, lastShownAt: kayit.lastShownAt, now: simdi,
+    sinceLaunchMs: simdi - acilisAni, allowed: adAllowedNow('home', new Date(simdi)),
+  });
+  if (!goster) return;
+  await kv.write(K_ACILIS, { ...kayit, lastShownAt: simdi });
+  acilis.show().catch((e: unknown) => log.info('açılış reklamı gösterilemedi', { error: e }));
+}
+
+async function yeniAcilis(): Promise<void> {
+  acilisAni = Date.now();
+  acilisDenendi = false;
+  const kayit = await kv.read(K_ACILIS, acilisCodec);
+  await kv.write(K_ACILIS, { ...kayit, sessions: kayit.sessions + 1 });
+  if (acilisYuklendi) void acilisDene();
+}
+
+function acilisReklamiKur(): void {
+  if (!APP_OPEN_UNIT || acilis) return;
+  acilis = AppOpenAd.createForAdRequest(APP_OPEN_UNIT);
+  acilis.addAdEventListener(AdEventType.LOADED, () => { acilisYuklendi = true; void acilisDene(); });
+  acilis.addAdEventListener(AdEventType.CLOSED, () => { acilisYuklendi = false; acilis?.load(); });
+  acilis.addAdEventListener(AdEventType.ERROR, (e) => { acilisYuklendi = false; log.info('açılış reklamı yüklenemedi', { error: e }); });
+  acilis.load();
+  void yeniAcilis();
+  // Arka planda 30 sn'den uzun kalıp dönmek de yeni bir açılış sayılır.
+  AppState.addEventListener('change', (d) => {
+    if (d === 'background') arkaPlanaGecis = Date.now();
+    if (d === 'active' && arkaPlanaGecis !== null && Date.now() - arkaPlanaGecis > 30_000) {
+      arkaPlanaGecis = null;
+      void yeniAcilis();
+    }
+  });
+}
+
+// --- Ödüllü reklam: izleyene 24 saat reklamsız
+
+export type OdulSonucu = 'kazanildi' | 'vazgecildi' | 'hata';
+
+/** Kullanıcı kendi isteğiyle başlatır; reklamı sonuna kadar izlerse 24 saat reklam yok. */
+export function watchRewardedForAdFree(): Promise<OdulSonucu> {
+  return new Promise((resolve) => {
+    if (!REWARDED_UNIT || !useAdsStore.getState().ready) { resolve('hata'); return; }
+    const reklam = RewardedAd.createForAdRequest(REWARDED_UNIT);
+    let kazanildi = false;
+    const bitir = (s: OdulSonucu) => { temizle(); resolve(s); };
+    const abonelikler = [
+      reklam.addAdEventListener(RewardedAdEventType.LOADED, () => {
+        reklam.show().catch(() => bitir('hata'));
+      }),
+      reklam.addAdEventListener(RewardedAdEventType.EARNED_REWARD, () => {
+        kazanildi = true;
+        const bitis = rewardAdFreeUntil(Date.now());
+        useAdsStore.setState({ adFreeUntil: bitis });
+        void kv.write(K_REKLAMSIZ, bitis);
+      }),
+      reklam.addAdEventListener(AdEventType.CLOSED, () => bitir(kazanildi ? 'kazanildi' : 'vazgecildi')),
+      reklam.addAdEventListener(AdEventType.ERROR, (e) => { log.info('ödüllü reklam yüklenemedi', { error: e }); bitir('hata'); }),
+    ];
+    const temizle = () => abonelikler.forEach((kaldir) => kaldir());
+    reklam.load();
+  });
 }

@@ -164,3 +164,32 @@ describe('reklam birimi seçimi (AdMob politikası)', () => {
     expect(kod).toMatch(/variant === 'production'/);
   });
 });
+
+describe('açılış reklamı ve ödüllü reklam (D33 devamı)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const a = require('@/features/pro/ads') as typeof import('@/features/pro/ads');
+  const SAAT = 60 * 60 * 1000;
+  const temel = { sessions: 10, lastShownAt: null, now: 100 * SAAT, sinceLaunchMs: 1000, allowed: true };
+
+  it('ilk üç açılışta yok, sonra var', () => {
+    expect(a.shouldShowAppOpen({ ...temel, sessions: 3 })).toBe(false);
+    expect(a.shouldShowAppOpen({ ...temel, sessions: 4 })).toBe(true);
+  });
+
+  it('en sık dört saatte bir', () => {
+    expect(a.shouldShowAppOpen({ ...temel, lastShownAt: temel.now - 3 * SAAT })).toBe(false);
+    expect(a.shouldShowAppOpen({ ...temel, lastShownAt: temel.now - 4 * SAAT })).toBe(true);
+  });
+
+  it('geç yüklenen reklam gösterilmez; Pro ya da vakit penceresi engeller', () => {
+    expect(a.shouldShowAppOpen({ ...temel, sinceLaunchMs: 5000 })).toBe(false);
+    expect(a.shouldShowAppOpen({ ...temel, allowed: false })).toBe(false);
+  });
+
+  it('ödül 24 saat reklamsızlık verir, süre dolunca biter', () => {
+    const bitis = a.rewardAdFreeUntil(0);
+    expect(a.isAdFree(bitis, 23 * SAAT)).toBe(true);
+    expect(a.isAdFree(bitis, 24 * SAAT)).toBe(false);
+    expect(a.isAdFree(null, 0)).toBe(false);
+  });
+});

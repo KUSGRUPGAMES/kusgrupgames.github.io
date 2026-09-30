@@ -875,3 +875,16 @@ en hızlı ve yayını geciktirmeyen yol.
 **Yerinde bırakılanlar:** `lightTheme` tokenları ve `ThemeProvider`'ın `mode`
 API'si silinmedi (sınamalar ve ileride uyumlu bir açık tema için). Denetim
 taraması (`npm run preview`) artık yalnız koyu geçişlerle çalışıyor.
+
+### D33 devamı — reklam yerleşimi (kullanıcı kararı, 2026-10-01)
+
+- **Şerit reklam sekme çubuğunun üstünde sabit** (anchored adaptive). Sayfa
+  sonundaki şerit çoğu zaman görünmüyordu; Google görünmeyen reklama çok
+  az ödüyor. Okuyucu, kıble, zikir, namaz rehberi sekme değil, orada yok.
+- **Açılış reklamı (App Open):** açılışta ya da 30 sn'den uzun arka plandan
+  dönüşte; en sık 4 saatte bir; ilk 3 açılışta yok; 4 sn içinde yüklenemezse
+  o açılışta gösterilmez (Google: yükleme ekranında gösterilmeli, kullanıcı
+  içeriği okurken değil); vakit penceresi ve Pro kuralları geçerli.
+- **Ödüllü reklam:** kullanıcı kendi isteğiyle izler, karşılığında 24 saat
+  hiç reklam yok (Ayarlar ve Pro ekranı). Süre yenilenir, üst üste eklenmez.
+- İki yeni birim: `EXPO_PUBLIC_ADMOB_APPOPEN_*`, `EXPO_PUBLIC_ADMOB_REWARDED_*`.

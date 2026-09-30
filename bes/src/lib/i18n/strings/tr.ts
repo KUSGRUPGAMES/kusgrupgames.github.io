@@ -998,6 +998,12 @@ export const tr = {
   'permnudge.liveActivityBody': 'Canlı Etkinlikler kapalı. Açarsan sıradaki vakte geri sayım kilit ekranında ve Dinamik Ada’da görünür. Ayarlar → BEŞ → Canlı Etkinlikler.',
   'permnudge.allow': 'İzin ver',
   'permnudge.later': 'Şimdi değil',
+  'reward.title': 'Reklam izle, 24 saat reklamsız kullan',
+  'reward.body': 'Kısa bir reklamı sonuna kadar izle, bir gün boyunca hiç reklam görme.',
+  'reward.activeTitle': 'Reklamsız kullanıyorsun',
+  'reward.activeBody': 'Yaklaşık {n} saat kaldı.',
+  'reward.cancelled': 'Reklam yarıda kaldı; reklamsız süre verilmedi.',
+  'reward.failed': 'Şu an reklam yok. Biraz sonra tekrar dene.',
 } as const;
 
 export type StringKey = keyof typeof tr;

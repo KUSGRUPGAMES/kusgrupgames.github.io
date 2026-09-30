@@ -726,4 +726,10 @@ export const ar: Partial<Record<StringKey, string>> = {
   'permnudge.liveActivityBody': 'الأنشطة المباشرة معطّلة. فعّلها لترى العدّ التنازلي للصلاة القادمة على شاشة القفل وفي الجزيرة الديناميكية. الإعدادات ← BEŞ ← الأنشطة المباشرة.',
   'permnudge.allow': 'السماح',
   'permnudge.later': 'ليس الآن',
+  'reward.title': 'شاهد إعلانًا واستخدم التطبيق بلا إعلانات 24 ساعة',
+  'reward.body': 'شاهد إعلانًا قصيرًا حتى نهايته ولن ترى أي إعلان طوال يوم كامل.',
+  'reward.activeTitle': 'أنت الآن بلا إعلانات',
+  'reward.activeBody': 'بقي نحو {n} ساعة.',
+  'reward.cancelled': 'أُغلق الإعلان قبل نهايته، فلم تُمنح مدة بلا إعلانات.',
+  'reward.failed': 'لا يتوفر إعلان الآن. حاول بعد قليل.',
 } as const;
