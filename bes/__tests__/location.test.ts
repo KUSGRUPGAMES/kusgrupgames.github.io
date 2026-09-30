@@ -126,3 +126,63 @@ describe('arama ve en yakın şehir', () => {
     expect(gebze?.name).not.toBe('Yalova');
   });
 });
+
+describe('konumun kendiliğinden güncellenmesi', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { konumKarari } = require('@/features/location/autoUpdate') as typeof import('@/features/location/autoUpdate');
+  const yer = (id: string, latitude: number, longitude: number) =>
+    ({ id, name: id, country: 'Türkiye', countryCode: 'TR', timezone: 'Europe/Istanbul', latitude, longitude });
+  const kayit = (p: ReturnType<typeof yer>, origin: 'gps' | 'manual') =>
+    ({ ...p, label: p.name, isPrimary: true, origin, savedAt: 0 });
+  const istanbul = yer('tr-34', 41.0082, 28.9784);
+  const kocaeli = yer('tr-41', 40.7654, 29.9408);
+  const ankara = yer('tr-06', 39.9334, 32.8597);
+  const beyoglu = yer('tr-34b', 41.0369, 28.9850); // aynı ilde, birkaç km
+
+  it('GPS kökenli konumda başka şehre gidince yeni şehre geçer', () => {
+    expect(konumKarari(kayit(istanbul, 'gps'), ankara)).toEqual({ kind: 'tasindi', yeni: ankara });
+  });
+
+  it('elle seçilmiş konuma dokunmaz, uyarır', () => {
+    expect(konumKarari(kayit(istanbul, 'manual'), ankara)).toEqual({ kind: 'uyusmuyor', burada: ankara });
+  });
+
+  it('aynı il içindeki hareket vakti değiştirmez', () => {
+    expect(konumKarari(kayit(istanbul, 'gps'), beyoglu)).toEqual({ kind: 'ayni' });
+  });
+
+  it('komşu il (≈90 km) ayrı şehir sayılır', () => {
+    expect(konumKarari(kayit(istanbul, 'gps'), kocaeli).kind).toBe('tasindi');
+  });
+
+  it('konum okunamazsa hiçbir şey değişmez; kayıtlı konum yoksa bulunan yer alınır', () => {
+    expect(konumKarari(kayit(istanbul, 'gps'), null)).toEqual({ kind: 'ayni' });
+    expect(konumKarari(null, ankara)).toEqual({ kind: 'tasindi', yeni: ankara });
+  });
+});
+
+describe('izin hatırlatmaları', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const n = require('@/features/permissions/nudge') as typeof import('@/features/permissions/nudge');
+  const GUN = 24 * 60 * 60 * 1000;
+
+  it('öncelik: konum > bildirim > canlı etkinlik; hepsi verildiyse hiçbiri', () => {
+    expect(n.siradakiHatirlatma({ konum: false, bildirim: false, canliEtkinlik: false }, {}, 0)).toBe('konum');
+    expect(n.siradakiHatirlatma({ konum: true, bildirim: false, canliEtkinlik: false }, {}, 0)).toBe('bildirim');
+    expect(n.siradakiHatirlatma({ konum: true, bildirim: true, canliEtkinlik: false }, {}, 0)).toBe('canliEtkinlik');
+    expect(n.siradakiHatirlatma({ konum: true, bildirim: true, canliEtkinlik: null }, {}, 0)).toBeNull();
+  });
+
+  it('en sık 3 günde bir, toplam en çok 5 kez', () => {
+    let k = n.kaydet({}, 'konum', 0);
+    expect(n.hatirlatilabilir(k.konum, 2 * GUN)).toBe(false);
+    expect(n.hatirlatilabilir(k.konum, 3 * GUN)).toBe(true);
+    for (let i = 1; i < n.EN_COK_HATIRLATMA; i += 1) k = n.kaydet(k, 'konum', i * 3 * GUN);
+    expect(n.hatirlatilabilir(k.konum, 100 * GUN)).toBe(false);
+  });
+
+  it('beklemedeki izin sırayı bir sonrakine bırakır', () => {
+    const k = n.kaydet({}, 'konum', 0);
+    expect(n.siradakiHatirlatma({ konum: false, bildirim: false, canliEtkinlik: null }, k, GUN)).toBe('bildirim');
+  });
+});

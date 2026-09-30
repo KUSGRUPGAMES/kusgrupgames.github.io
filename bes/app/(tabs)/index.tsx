@@ -37,6 +37,7 @@ import {
   ReligiousDayCard, MoonCard, FridayCard, RamadanCard, type DailyContext,
 } from '@/features/daily/components/DailyCards';
 import { AdBanner } from '@/features/pro/AdBanner';
+import { HomeNotices } from '@/features/permissions/HomeNotices';
 
 const HIZLI = [
   { href: '/qibla', icon: 'compass', label: 'qibla.title' },
@@ -204,6 +205,9 @@ export default function HomeScreen() {
         <Text variant="bodyStrong" lines={1} style={{ flex: 1 }}>{`${konum.label}, ${konum.country}`}</Text>
         <Icon name="chevronDown" size={18} color={theme.colors.textSubtle} />
       </Pressable>
+
+      {/* Konum kendiliğinden güncellendi / başka şehirdesin / izin hatırlatması. */}
+      <HomeNotices />
 
       <View style={{ alignItems: 'center', marginBottom: theme.spacing.sm }}>{kart('nextPrayer')}</View>
       {vakitlerAcik ? <View style={{ marginBottom: theme.spacing.sm }}>{kart('todayTimes')}</View> : null}

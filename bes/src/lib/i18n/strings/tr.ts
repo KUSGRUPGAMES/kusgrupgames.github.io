@@ -983,6 +983,21 @@ export const tr = {
   'pro.duaLimit': 'Bugünkü dua isteği hakkını kullandın. Pro ile günde 5 istek paylaşabilirsin.',
   'pro.seePlans': 'Pro’yu incele',
   'ads.privacyOptions': 'Reklam gizlilik seçenekleri',
+  'locauto.movedTitle': 'Konumun {city} olarak güncellendi',
+  'locauto.movedBody': '{from} yerine artık bulunduğun şehrin vakitleri, imsakiyesi ve bildirimleri geçerli.',
+  'locauto.movedBodyShort': 'Vakitler, imsakiye ve bildirimler bulunduğun şehre göre ayarlandı.',
+  'locauto.mismatchTitle': 'Şu an {city} civarındasın',
+  'locauto.mismatchBody': 'Seçili şehir {active}. Vakitler şehirden şehre dakikalarca değişir; namazını bulunduğun yerin vaktine göre kılmalısın.',
+  'locauto.switchTo': '{city} vakitlerine geç',
+  'locauto.keep': '{city} kalsın',
+  'permnudge.locationTitle': 'Vakitler bulunduğun yere göre olsun',
+  'permnudge.locationBody': 'Konum izni verirsen başka bir şehre gittiğinde vakitler, imsakiye ve ezan bildirimleri kendiliğinden o şehre göre güncellenir. Konumun telefonundan çıkmaz.',
+  'permnudge.notificationTitle': 'Ezan vaktini kaçırma',
+  'permnudge.notificationBody': 'Bildirim izni verirsen her vakitte ezan sesiyle haber veririz; uygulama kapalıyken de.',
+  'permnudge.liveActivityTitle': 'Kilit ekranında geri sayım',
+  'permnudge.liveActivityBody': 'Canlı Etkinlikler kapalı. Açarsan sıradaki vakte geri sayım kilit ekranında ve Dinamik Ada’da görünür. Ayarlar → BEŞ → Canlı Etkinlikler.',
+  'permnudge.allow': 'İzin ver',
+  'permnudge.later': 'Şimdi değil',
 } as const;
 
 export type StringKey = keyof typeof tr;

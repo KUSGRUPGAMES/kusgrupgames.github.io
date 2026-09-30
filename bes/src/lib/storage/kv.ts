@@ -79,6 +79,8 @@ export const KEYS = {
   crashes: 'crashes',
   learning: 'learning',
   directionReloadAt: 'directionReloadAt',
+  permissionNudges: 'permissionNudges',
+  locationNoticeDismissed: 'locationNoticeDismissed',
 } as const;
 
 export type StorageKey = (typeof KEYS)[keyof typeof KEYS];

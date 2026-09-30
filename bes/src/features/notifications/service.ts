@@ -293,3 +293,12 @@ export async function pendingCount(): Promise<number> {
     return 0;
   }
 }
+
+/** İzin penceresi yeniden açılabilir mi (iOS'ta bir kez reddedilince hayır; Ayarlar'dan verilir). */
+export async function notificationCanAskAgain(): Promise<boolean> {
+  try {
+    return (await Notifications.getPermissionsAsync()).canAskAgain;
+  } catch {
+    return false;
+  }
+}

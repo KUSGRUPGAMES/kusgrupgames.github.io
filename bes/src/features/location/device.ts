@@ -1,9 +1,10 @@
 /**
  * Cihaz konumu — şartname §13, §81.
  *
- * Pil kuralı: konum **sürekli izlenmez**. Tek seferlik okuma yapılır, sonuç
- * en yakın yerleşik şehre eşlenir ve kaydedilir. Kullanıcı şehir değiştirene
- * kadar GPS'e bir daha dokunulmaz.
+ * Pil kuralı: konum **arka planda sürekli izlenmez**. Okuma, sonuç en yakın
+ * yerleşik şehre eşlenerek yapılır. Uygulama öne geldikçe (en sık 20 dakikada
+ * bir) izin varsa sessizce yeniden bakılır; başka şehre geçildiyse konum
+ * güncellenir (`autoUpdate.ts`, `permissions/HomeNotices.tsx`).
  */
 import * as Location from 'expo-location';
 import { logger } from '@/lib/log';
@@ -53,5 +54,33 @@ export async function locationPermissionStatus(): Promise<'granted' | 'denied' |
     return 'undetermined';
   } catch {
     return 'undetermined';
+  }
+}
+
+/**
+ * İzin **istemeden** konumu okur (konumun kendiliğinden güncellenmesi için).
+ * İzin yoksa, konum kapalıysa ya da okunamazsa null — hiçbir pencere açılmaz.
+ * Önce son bilinen konuma bakılır (anında, pil harcamaz); yoksa düşük
+ * doğrulukla tek okuma yapılır: şehir bulmak için kilometre düzeyi yeter.
+ */
+export async function readDeviceLocationSilently(): Promise<Place | null> {
+  try {
+    const { status } = await Location.getForegroundPermissionsAsync();
+    if (status !== 'granted') return null;
+    const son = await Location.getLastKnownPositionAsync({ maxAge: 15 * 60 * 1000, requiredAccuracy: 5000 });
+    const konum = son ?? await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
+    return nearestPlace({ latitude: konum.coords.latitude, longitude: konum.coords.longitude });
+  } catch (e) {
+    log.info('sessiz konum okunamadı', { error: e });
+    return null;
+  }
+}
+
+/** İzin penceresi yeniden açılabilir mi, yoksa yalnız Ayarlar'dan mı verilebilir. */
+export async function locationCanAskAgain(): Promise<boolean> {
+  try {
+    return (await Location.getForegroundPermissionsAsync()).canAskAgain;
+  } catch {
+    return false;
   }
 }
