@@ -157,7 +157,10 @@ describe('reklam birimi seçimi (AdMob politikası)', () => {
     const kod = readFileSync(require.resolve('../src/features/pro/adsRuntime.ts'), 'utf8');
     const govde = kod.slice(kod.indexOf('function birim('), kod.indexOf('export const BANNER_UNIT'));
     // İlk karar __DEV__: gerçek kimliğe bakılmadan test birimi döner.
-    expect(govde.indexOf('if (__DEV__) return test;')).toBeGreaterThan(-1);
-    expect(govde.indexOf('if (__DEV__) return test;')).toBeLessThan(govde.indexOf('const gercek'));
+    const karar = 'if (__DEV__ || !MAGAZA_DERLEMESI) return test;';
+    expect(govde.indexOf(karar)).toBeGreaterThan(-1);
+    expect(govde.indexOf(karar)).toBeLessThan(govde.indexOf('const gercek'));
+    // Bağımsız geliştirme derlemesinde __DEV__ false; varyant ayrıca bakılmalı.
+    expect(kod).toMatch(/variant === 'production'/);
   });
 });

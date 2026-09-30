@@ -14,6 +14,7 @@
  * hiç reklam gösterilmez (test reklamı yayına çıkmaz).
  */
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 import mobileAds, {
   AdEventType, AdsConsent, AdsConsentPrivacyOptionsRequirementStatus, InterstitialAd, MaxAdContentRating, TestIds,
 } from 'react-native-google-mobile-ads';
@@ -28,6 +29,9 @@ import { useProStore } from './purchases';
 
 const log = logger('reklam');
 
+/** app.config.ts → `extra.variant`; yalnız mağaza derlemesi 'production'. */
+const MAGAZA_DERLEMESI = (Constants.expoConfig?.extra as { variant?: string } | undefined)?.variant === 'production';
+
 /**
  * Geliştirme derlemesi gerçek birim tanımlı olsa bile **her zaman** Google'ın
  * test birimini kullanır: geliştiricinin kendi cihazında gerçek reklam
@@ -35,7 +39,11 @@ const log = logger('reklam');
  * kapatılma sebebidir.
  */
 function birim(ios: string | undefined, android: string | undefined, test: string): string | null {
-  if (__DEV__) return test;
+  // Mağaza varyantı (production) dışındaki her derleme test birimi kullanır —
+  // Mac'e bağlı olmadan çalışan bağımsız geliştirme derlemesinde `__DEV__`
+  // false olur; yalnız ona bakılsaydı geliştiricinin telefonu gerçek reklam
+  // isterdi.
+  if (__DEV__ || !MAGAZA_DERLEMESI) return test;
   const gercek = Platform.OS === 'ios' ? ios : Platform.OS === 'android' ? android : undefined;
   return gercek ?? null;
 }
