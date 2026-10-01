@@ -35,7 +35,7 @@ Prayer times calculated on your phone — no connection needed. The full Quran w
 BEŞ brings prayer times, the qibla direction and the complete Holy Quran together in one calm app. Prayer times are calculated on your phone from the position of the sun — no server, no internet needed. It works on a plane, abroad, anywhere without signal.
 
 YOUR WORSHIP RECORDS STAY WITH YOU
-Prayer times, qibla, the Quran, dhikr, missed-prayer (qada) tracking and the worship log need no account. Your location, records, notes and dhikr counts never leave your phone.
+Prayer times, qibla, the Quran, dhikr, missed-prayer (qada) tracking and the worship log need no account. Everything works without signing in, and your records stay on your phone. Sign in with Google or Apple and they sync with your account, so they follow you to a new phone. Your location is never sent.
 
 OPTIONAL COMMUNITY
 Ask for prayers on the prayer board and pray for others, talk in topic-based chat rooms, and share the 30 juz of a khatm with friends. Sign in with Google or Apple to join; other people only see the nickname you choose. You can delete your account from inside the app at any time.

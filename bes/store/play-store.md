@@ -41,7 +41,7 @@ kıble ve zikri ekler. Play iki alanı da taradığı için hepsi kazanılır.
 BEŞ; ezan vakitlerini, kıble yönünü ve Kur’an-ı Kerim’in tamamını tek bir sade uygulamada toplar. Namaz vakitleri telefonunda güneşin konumundan hesaplanır — bir sunucuya sorulmaz, internet gerektirmez. Uçakta, yurt dışında, hattın çekmediği yerde de doğru çalışır.
 
 ★ İBADET KAYITLARIN SENDE
-Vakitler, kıble, Kur’an, zikir, kaza ve ibadet defteri hesap istemez. Konumunuz, ibadet kayıtlarınız, notlarınız ve zikir sayılarınız telefonunuzdan çıkmaz.
+Vakitler, kıble, Kur’an, zikir, kaza ve ibadet defteri hesap istemez. Giriş yapmadan da her şey çalışır; kayıtların telefonunda kalır. Google ya da Apple ile giriş yaparsan kayıtların hesabınla eşitlenir, yeni telefonunda da seninle olur. Konumun hiçbir zaman gönderilmez.
 
 ★ İSTEĞE BAĞLI TOPLULUK
 Dua panosu, sohbet odaları ve birlikte hatim. Google ya da Apple ile giriş yapılır; başkaları yalnız takma adını görür. Hesabını uygulamadan silebilirsin.

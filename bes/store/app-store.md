@@ -67,7 +67,7 @@ Ezan ve namaz vakitleri telefonunda hesaplanır, internet gerektirmez. Kur’an�
 BEŞ; ezan vakitlerini, kıble yönünü ve Kur’an-ı Kerim’in tamamını tek bir sade uygulamada toplar. Vakitler telefonunda güneşin konumundan hesaplanır — bir sunucuya sorulmaz, internet gerektirmez. Uçakta, yurt dışında, hattın çekmediği yerde de doğru çalışır.
 
 İBADET KAYITLARIN SENDE
-Vakitler, kıble, Kur’an, zikir, kaza ve ibadet defteri hesap istemez. Konumunuz, ibadet kayıtlarınız, notlarınız ve zikir sayılarınız telefonunuzdan çıkmaz.
+Vakitler, kıble, Kur’an, zikir, kaza ve ibadet defteri hesap istemez. Giriş yapmadan da her şey çalışır; kayıtların telefonunda kalır. Google ya da Apple ile giriş yaparsan kayıtların hesabınla eşitlenir, yeni telefonunda da seninle olur. Konumun hiçbir zaman gönderilmez.
 
 İSTEĞE BAĞLI TOPLULUK
 Dua panosunda dua iste ve başkalarına dua et, konu başlıklı sohbet odalarında konuş, arkadaşlarınla hatim grubu kurup 30 cüzü paylaş. Katılmak için Google ya da Apple ile giriş yeterli; diğer kullanıcılar yalnız seçtiğin takma adı görür. Hesabını uygulama içinden istediğin an silebilirsin.
@@ -97,7 +97,7 @@ ZİKİRMATİK
 Sekiz hazır zikir, altı hedef, kendi zikrinizi ekleme, her dokunuşta titreşim. Günlük, haftalık, aylık istatistik ve seri takibi.
 
 İBADET TAKİBİ
-Kaza namazı sayaçları, gün gün ibadet defteri, oruç takibi, hatim ve mukabele planı. Hepsi telefonunuzda kalır.
+Kaza namazı sayaçları, gün gün ibadet defteri, oruç takibi, hatim ve mukabele planı. Giriş yaparsan hepsi hesabınla eşitlenir.
 
 RAMAZAN
 İmsak ve iftar geri sayımı, ay boyu imsakiye, oruç kaydı.
