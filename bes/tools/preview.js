@@ -72,7 +72,7 @@ const ISTANBUL = {
 
 const EKRANLAR = [
   ['10-ana-sayfa', '/'], ['11-kuran', '/quran'], ['12-ibadet', '/worship'],
-  ['13-ogren', '/learn'], ['14-ayarlar', '/profile'], ['19-topluluk-sekme', '/community'],
+  ['13-ogren', '/learn'], ['14-ayarlar', '/profile'], ['19-topluluk-sekme', '/community'], ['64-pro', '/pro'],
   ['15-ders-harf', '/lesson?id=harf-1'], ['16-ders-hece', '/lesson?id=ustun'], ['17-ders-sure', '/lesson?id=sure-112'],
   ['18-elifba', '/alphabet'],
   ['20-okuyucu', '/reader?surah=1'], ['21-kuran-arama', '/quran-search'],
