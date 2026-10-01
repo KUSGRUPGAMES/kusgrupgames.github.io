@@ -37,12 +37,13 @@ import {
   ReligiousDayCard, MoonCard, FridayCard, RamadanCard, type DailyContext,
 } from '@/features/daily/components/DailyCards';
 import { HomeNotices } from '@/features/permissions/HomeNotices';
+import { TabTour } from '@/features/tour/TabTour';
 
 const HIZLI = [
   { href: '/qibla', icon: 'compass', label: 'qibla.title' },
   { href: '/dhikr', icon: 'beads', label: 'worship.dhikr' },
   { href: '/(tabs)/quran', icon: 'book', label: 'nav.quran' },
-  { href: '/(tabs)/learn', icon: 'sparkle', label: 'nav.learn' },
+  { href: '/learn', icon: 'sparkle', label: 'nav.learn' },
 ] as const satisfies readonly { href: string; icon: IconName; label: StringKey }[];
 
 export default function HomeScreen() {
@@ -84,6 +85,7 @@ export default function HomeScreen() {
   if (!konum || !ctx) {
     return (
       <Screen motif="marka">
+      <TabTour tab="index" />
         <EmptyState
           icon="location"
           title={t('location.empty')}
@@ -162,6 +164,7 @@ export default function HomeScreen() {
 
   return (
     <Screen scroll motif="marka" padding="none">
+      <TabTour tab="index" />
       <View style={{ paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.sm }}>
       <Row align="center" justify="space-between" style={{ marginBottom: theme.spacing.sm }}>
         <IconButton

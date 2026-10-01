@@ -70,7 +70,10 @@ export function usePostDua(userId: string | null) {
         .insert({ author_id: userId, category, body: body.trim() });
       if (error) throw error;
     },
-    onSuccess: () => { void qc.invalidateQueries({ queryKey: ['dua-feed'] }); },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['dua-feed'] });
+      void qc.invalidateQueries({ queryKey: ['dua-mine'] });
+    },
     onError: (e) => log.warn('dua isteği gönderilemedi', { error: e }),
   });
 }
@@ -98,7 +101,10 @@ export function usePrayFor(userId: string | null) {
       // sessizce yok sayılır — kullanıcıya hata göstermeye gerek yok.
       if (error && error.code !== '23505') throw error;
     },
-    onSuccess: () => { void qc.invalidateQueries({ queryKey: ['dua-feed'] }); },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['dua-feed'] });
+      void qc.invalidateQueries({ queryKey: ['dua-mine'] });
+    },
     onError: (e) => log.warn('dua ettim işaretlenemedi', { error: e }),
   });
 }
@@ -137,6 +143,24 @@ export function useBlockedIds(userId: string | null) {
       const { data, error } = await supabase.from('blocks').select('blocked_id').eq('blocker_id', userId);
       if (error) throw error;
       return new Set((data ?? []).map((r: { blocked_id: string }) => r.blocked_id));
+    },
+  });
+}
+
+/**
+ * Kullanıcının bütün dua istekleri (akıştaki son 100 sınırı yok) — "İsteklerim"
+ * görünümü. Aynı hesapla başka telefonda giriş yapınca da aynı geçmiş gelir.
+ */
+export function useMyDuaRequests(userId: string | null) {
+  return useQuery({
+    queryKey: ['dua-mine', userId],
+    enabled: Boolean(supabase && userId),
+    queryFn: async (): Promise<DuaRequest[]> => {
+      if (!supabase || !userId) return [];
+      const { data, error } = await supabase
+        .from('dua_requests').select('*').eq('author_id', userId).order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data as Row[]).map((r) => fromRow(r, userId));
     },
   });
 }

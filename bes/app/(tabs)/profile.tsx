@@ -4,7 +4,7 @@
  * Eskiden "Profil" adındaydı ve vakit ayarları üç ayrı sekmeye dağılmıştı.
  * Artık bütün ayarlar burada, konuya göre gruplu (DECISIONS D25).
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import { router } from 'expo-router';
 import { Screen, SectionHeader, Card, ListItem, Icon, PageHeader } from '@/ui';
@@ -15,8 +15,10 @@ import { Brand } from '@/config/brand';
 import { openLegalPage } from '@/lib/legal';
 import { showAdPrivacyOptions, useAdsStore } from '@/features/pro/adsRuntime';
 import { RewardedAdFreeItem } from '@/features/pro/RewardedAdFreeItem';
+import { TabTour, resetTour } from '@/features/tour/TabTour';
 
 export default function SettingsScreen() {
+  const [turSifirlandi, setTurSifirlandi] = useState(false);
   const reklamGizlilik = useAdsStore((s) => s.privacyOptions);
   const t = useT();
   const theme = useTheme();
@@ -25,6 +27,7 @@ export default function SettingsScreen() {
 
   return (
     <Screen scroll>
+      <TabTour tab="profile" />
       <PageHeader title={t('settings.title')} icon="settings" />
 
       <Card padding="sm">
@@ -55,6 +58,8 @@ export default function SettingsScreen() {
       <Card padding="md">
         <ListItem title={t('home.customize')} subtitle={t('home.customizeHint')} icon="settings"
           onPress={() => router.push('/home-layout')} />
+        <ListItem title={t('tour.reset')} subtitle={turSifirlandi ? t('tour.resetDone') : undefined} icon="info"
+          chevron={false} onPress={() => { void resetTour().then(() => setTurSifirlandi(true)); }} />
       </Card>
 
       <SectionHeader title={t('settings.language')} subtitle={t('settings.languageRestart')} />
@@ -75,12 +80,6 @@ export default function SettingsScreen() {
         <ListItem title={t('account.title')} subtitle={t('profile.guest')} icon="user" onPress={() => router.push('/account')} />
       </Card>
 
-      <SectionHeader title={t('community.title')} subtitle={t('community.sectionHint')} />
-      <Card padding="md">
-        <ListItem title={t('community.title')} subtitle={t('community.tagline')} icon="users" onPress={() => router.push('/community')} />
-        <ListItem title={t('community.chatRooms')} subtitle={t('community.chatRoomsHint')} icon="message" onPress={() => router.push('/chat-rooms')} />
-        <ListItem title={t('community.khatmCircles')} subtitle={t('community.khatmCirclesHint')} icon="book" onPress={() => router.push('/khatm-circles')} />
-      </Card>
 
       <SectionHeader title={t('settings.about')} />
       <Card padding="md">

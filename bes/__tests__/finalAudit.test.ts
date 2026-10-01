@@ -121,7 +121,8 @@ describe('yönlendirme bütünlüğü', () => {
   });
 
   it('sekme ekranları eksiksiz', () => {
-    for (const ad of ['index', 'quran', 'learn', 'worship', 'profile']) {
+    // 1 Ekim: Öğren Kur'an sekmesinin içinde (app/learn.tsx), Topluluk sekme.
+    for (const ad of ['index', 'quran', 'worship', 'community', 'profile']) {
       expect({ ad, var: existsSync(join(ROOT, 'app', '(tabs)', `${ad}.tsx`)) })
         .toEqual({ ad, var: true });
     }

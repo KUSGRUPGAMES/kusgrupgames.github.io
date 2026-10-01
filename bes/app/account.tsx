@@ -14,7 +14,7 @@
 import React, { useState } from 'react';
 import { router, Stack } from 'expo-router';
 import {
-  Screen, SectionHeader, Card, Column, Row, Text, Banner, ListItem, Divider, Button, Sheet,
+  Screen, SectionHeader, Card, Column, Row, Text, Banner, ListItem, Divider, Button, Sheet, Toggle,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -32,6 +32,7 @@ import { communityAvailable } from '@/features/community/client';
 import { useOturum, cikisYap, hesabiSil } from '@/features/community/auth';
 import { SignInButtons } from '@/features/community/SignInButtons';
 import { useSettingsStore } from '@/store/settings';
+import { forgetSyncBase, syncNow, useCloudSyncStore } from '@/features/sync/useCloudSync';
 
 export default function AccountScreen() {
   const t = useT();
@@ -51,7 +52,15 @@ export default function AccountScreen() {
 
   const toplulugaKapat = () => ayarGuncelle({ community: { ...ayarlar.community, enabled: false } });
 
+  const esitleme = useCloudSyncStore();
+  const tarihSaat = useDateFormat({ dateStyle: 'medium', timeStyle: 'short' });
+
   const cik = async () => {
+    // Son değişiklikler hesaba yazılsın; sonra bu hesabın eşitleme izi silinir.
+    if (oturum.girisli && oturum.session && ayarlar.cloudSync) {
+      await syncNow(oturum.session.user.id);
+      await forgetSyncBase(oturum.session.user.id);
+    }
     await cikisYap();
     toplulugaKapat();
     setOturumSonuc(null);
@@ -143,6 +152,24 @@ export default function AccountScreen() {
                 icon="user"
                 chevron={false}
               />
+              <Divider />
+              <Toggle
+                title={t('cloudsync.title')}
+                subtitle={ayarlar.cloudSync
+                  ? (esitleme.durum === 'calisiyor' ? t('cloudsync.running')
+                    : esitleme.durum === 'hata' ? t('cloudsync.failed')
+                      : esitleme.sonEsitleme ? t('cloudsync.last', { when: tarihSaat.format(new Date(esitleme.sonEsitleme)) })
+                        : t('cloudsync.on'))
+                  : t('cloudsync.off')}
+                icon="refresh"
+                value={ayarlar.cloudSync}
+                onChange={(v) => ayarGuncelle({ cloudSync: v })}
+              />
+              {ayarlar.cloudSync && oturum.session ? (
+                <ListItem title={t('cloudsync.now')} icon="refresh" chevron={false}
+                  disabled={esitleme.durum === 'calisiyor'}
+                  onPress={() => { if (oturum.session) void syncNow(oturum.session.user.id); }} />
+              ) : null}
               <Divider />
               <ListItem title={t('auth.signOut')} icon="close" chevron={false} onPress={() => { void cik(); }} />
               <Divider />

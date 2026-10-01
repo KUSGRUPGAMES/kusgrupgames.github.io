@@ -895,3 +895,30 @@ taraması (`npm run preview`) artık yalnız koyu geçişlerle çalışıyor.
   "kıble, zikir ve namaz rehberinde reklam yok" vaadi gizlilik sayfaları,
   destek sayfaları ve mağaza metinlerinden kaldırıldı; vaat artık "Kur'an
   okuyucuda reklam yok". Şerit reklam yine yalnız sekme ekranlarında.
+
+## D35 — Hesapla eşitleme, sekme düzeni ve ilk kullanım tanıtımı (2026-10-01)
+
+**Hesapla eşitleme.** Giriş yapan kullanıcının kişisel kayıtları (yedek
+dosyasıyla aynı kapsam: Kur'an konumu ve yer imleri, ibadet defteri, zikir,
+kaza, hatim, oruç, hatırlatıcılar, favoriler, kurs, ayarlar, kayıtlı
+şehirler) `user_data` tablosunda tek satır JSON olarak tutulur (migration
+0004, RLS: yalnız sahibi; canlı veritabanında A/B kullanıcısıyla denendi).
+Birleştirme istemcide, **üç yönlü** (`src/features/sync/cloud.ts`): base =
+bu cihazın son eşitlediği hâl. Silmeler yayılır, kaza sayaçlarında iki
+cihazın farkı toplanır, ilk eşitlemede (base yok) hiçbir kayıt silinmez.
+Etkin konum cihaza özeldir. Ayarlar → Hesap'ta kapatılabilir (varsayılan
+açık, yalnız girişliyken). GPS koordinatı gönderilmez; kayıtlı şehirler
+katalogdaki şehir merkezidir.
+
+Topluluk verisi (dua istekleri, aldığı dualar, sohbet, hatim grupları)
+zaten sunucuda ve hesaba bağlı; dua panosuna "İsteklerim" görünümü eklendi
+(akışın 100 sınırı olmadan bütün geçmiş + toplam alınan dua).
+
+**Sekme düzeni.** Vakitler · Kur'an · İbadet · Topluluk · Ayarlar. Apple'ın
+beş sekme önerisi korundu: Öğren Kur'an sekmesinin içine taşındı
+(`app/learn.tsx`, Kur'an sekmesinin başında kart; ana sayfa hızlı erişimde
+de var), Topluluk sekme oldu.
+
+**İlk kullanım tanıtımı.** Her sekme ilk açıldığında 3–4 adımlık kart
+(`src/features/tour`); her adımda "Tanıtımı atla" — basılınca hiçbir
+sekmede tekrar gösterilmez; Ayarlar'dan yeniden gösterilebilir.

@@ -141,6 +141,8 @@ async function tohumla(ctx, { tema = 'light', dil = 'tr', vitrin = false } = {})
     localStorage.setItem('bes.locations', JSON.stringify({ locations: [veri.yer], activeId: veri.yer.id }));
     localStorage.setItem('bes.themeMode', JSON.stringify(veri.tema));
     localStorage.setItem('bes.settings', JSON.stringify({ language: veri.dil }));
+    // Sekme tanıtımı (ilk kullanım öğreticisi) taramada ekranı kapatmasın.
+    localStorage.setItem('bes.tour', JSON.stringify({ seen: [], skipped: true }));
     if (!veri.vitrin) return;
     // --- Vitrin: mağaza kareleri için üç haftalık örnek kullanım. Yalnız
     // `vitrin` geçişinde; denetim geçişleri boş ekranları da sınasın diye

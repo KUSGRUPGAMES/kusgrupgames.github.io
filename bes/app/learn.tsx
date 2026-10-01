@@ -7,9 +7,9 @@
  */
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
-import { router } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import {
-  Screen, SectionHeader, Card, ListItem, PageHeader, Text, Button, ProgressBar, Column, Row, Icon,
+  Screen, SectionHeader, Card, ListItem, Text, Button, ProgressBar, Column, Row, Icon,
   SourceNote, FeatureTile,
 } from '@/ui';
 import { useT } from '@/lib/i18n';
@@ -39,8 +39,10 @@ export default function LearnScreen() {
   };
 
   return (
-    <Screen scroll motif="arch">
-      <PageHeader title={t('learn.title')} icon="book" subtitle={t('learn.subtitle')} />
+    <Screen scroll motif="arch" topInset={false}>
+      {/* Sekme değil; Kur'an sekmesinden açılır (1 Ekim: beş sekme sınırı). */}
+      <Stack.Screen options={{ headerShown: true, title: t('learn.title') }} />
+      <Text variant="callout" tone="muted" style={{ marginBottom: theme.spacing.md }}>{t('learn.subtitle')}</Text>
 
       <Card accent padding="lg">
         <Column gap="md">

@@ -1,6 +1,7 @@
 /**
  * Sekme düzeni — şartname §11.
- * Beş sekme: Vakitler · Kur'an · Öğren · İbadet · Ayarlar (DECISIONS D25).
+ * Beş sekme: Vakitler · Kur'an · İbadet · Topluluk · Ayarlar (D25, 1 Ekim
+ * revizyonu: Öğren Kur'an sekmesinin içine taşındı, Topluluk sekme oldu).
  * Sekme adları çeviriden gelir; ikonlar kendi SVG setimizden.
  */
 import React from 'react';
@@ -16,7 +17,7 @@ import type { AdSurface } from '@/features/pro/ads';
 
 /** Sekme → reklam yüzeyi (ads.ts kuralları yüzeye göre). */
 const YUZEY: Record<string, AdSurface> = {
-  index: 'home', quran: 'quranList', learn: 'learn', worship: 'explore', profile: 'profile',
+  index: 'home', quran: 'quranList', worship: 'explore', community: 'explore', profile: 'profile',
 };
 
 export default function TabsLayout() {
@@ -81,12 +82,12 @@ export default function TabsLayout() {
           options={{ title: t('nav.quran'), tabBarIcon: ikon('book'), tabBarLabel: etiket('nav.quran') }}
         />
         <Tabs.Screen
-          name="learn"
-          options={{ title: t('nav.learn'), tabBarIcon: ikon('sparkle'), tabBarLabel: etiket('nav.learn') }}
-        />
-        <Tabs.Screen
           name="worship"
           options={{ title: t('nav.worship'), tabBarIcon: ikon('beads'), tabBarLabel: etiket('nav.worship') }}
+        />
+        <Tabs.Screen
+          name="community"
+          options={{ title: t('nav.community'), tabBarIcon: ikon('users'), tabBarLabel: etiket('nav.community') }}
         />
         <Tabs.Screen
           name="profile"

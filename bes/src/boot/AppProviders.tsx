@@ -31,6 +31,7 @@ import splashLogo from '../../assets/splash-icon.png';
 import splashLogoLight from '../../assets/brand/splash-icon-light.png';
 import { initPurchases } from '@/features/pro/purchases';
 import { initAds } from '@/features/pro/adsRuntime';
+import { useCloudSync } from '@/features/sync/useCloudSync';
 
 // Üretimde debug/info günlüğe yazılmaz (§83).
 configureLogging({ minLevel: __DEV__ ? 'debug' : 'warn' });
@@ -243,6 +244,8 @@ function AcilisPerdesi() {
 function BildirimEsitleyici() {
   useNotificationSync();
   useWidgetSync();
+  // Hesapla eşitleme (D35): giriş yoksa ya da kapalıysa hiçbir şey yapmaz.
+  useCloudSync();
   return null;
 }
 

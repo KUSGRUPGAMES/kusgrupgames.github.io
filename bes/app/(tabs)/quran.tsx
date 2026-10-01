@@ -16,6 +16,7 @@ import { useT } from '@/lib/i18n';
 import { getSurahs, getJuzStarts, getSource, type SurahMeta } from '@/features/quran/data';
 import { useSurahName } from '@/features/quran/names';
 import { useReadingStore, type Bookmark } from '@/store/reading';
+import { TabTour } from '@/features/tour/TabTour';
 
 type Sekme = 'surahs' | 'juz' | 'bookmarks';
 
@@ -85,6 +86,11 @@ export default function QuranScreen() {
     <Column gap="md" style={{ paddingBottom: theme.spacing.md }}>
       <PageHeader title={t('quran.title')} icon="book" />
 
+      {/* Öğren artık burada: amaç Kur'an okumayı öğrenmek (1 Ekim). */}
+      <Card padding="sm" onPress={() => router.push('/learn')} accessibilityLabel={t('learn.title')}>
+        <ListItem title={t('learn.title')} subtitle={t('learn.subtitle')} icon="sparkle" onPress={() => router.push('/learn')} />
+      </Card>
+
       {position ? (
         <Card
           accent
@@ -149,6 +155,7 @@ export default function QuranScreen() {
 
   return (
     <Screen motif="girih" padding="lg">
+      <TabTour tab="quran" />
       <View style={{ flex: 1 }}>
         {sekme === 'surahs' ? (
           <VirtualList

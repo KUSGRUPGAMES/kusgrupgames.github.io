@@ -11,9 +11,9 @@
  */
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { router, Stack } from 'expo-router';
+import { router } from 'expo-router';
 import {
-  Screen, SectionHeader, Card, ListItem, Text, Column, Button, Field, Banner, EmptyState, Icon,
+  Screen, SectionHeader, Card, ListItem, Text, Column, Button, Field, Banner, EmptyState, Icon, PageHeader,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -22,6 +22,7 @@ import { communityAvailable } from '@/features/community/client';
 import { useCommunitySession, suggestNickname } from '@/features/community/session';
 import { isValidNickname } from '@/features/community/nickname';
 import { SignInButtons } from '@/features/community/SignInButtons';
+import { TabTour } from '@/features/tour/TabTour';
 
 export default function CommunityScreen() {
   const t = useT();
@@ -39,8 +40,9 @@ export default function CommunityScreen() {
 
   if (!communityAvailable) {
     return (
-      <Screen topInset={false} scroll>
-        <Stack.Screen options={{ headerShown: true, title: t('community.title') }} />
+      <Screen scroll motif="arch">
+      <TabTour tab="community" />
+        <PageHeader title={t('community.title')} icon="users" />
         <EmptyState icon="users" title={t('community.notReadyTitle')} description={t('community.notReadyBody')} />
       </Screen>
     );
@@ -60,8 +62,9 @@ export default function CommunityScreen() {
   };
 
   return (
-    <Screen topInset={false} scroll>
-      <Stack.Screen options={{ headerShown: true, title: t('community.title') }} />
+    <Screen scroll motif="arch">
+      <TabTour tab="community" />
+      <PageHeader title={t('community.title')} icon="users" />
       <Text variant="callout" tone="muted">{t('community.intro')}</Text>
 
       {!katildi ? (

@@ -19,7 +19,7 @@ import { useSettingsStore } from '@/store/settings';
 import { useCommunitySession } from '@/features/community/session';
 import {
   DUA_CATEGORIES, MAX_DUA_BODY, type DuaCategory, type DuaRequest,
-  useDuaFeed, usePostDua, usePrayFor, usePrayedFor, useReportContent, useBlockUser, useBlockedIds,
+  useDuaFeed, useMyDuaRequests, usePostDua, usePrayFor, usePrayedFor, useReportContent, useBlockUser, useBlockedIds,
 } from '@/features/community/duaBoard';
 import { containsBannedWord } from '@/features/community/wordFilter';
 import { usePro } from '@/features/pro/purchases';
@@ -44,6 +44,8 @@ export default function DuaBoardScreen() {
   const [kategori, setKategori] = useState<DuaCategory>('genel');
   const [metin, setMetin] = useState('');
   const [formAcik, setFormAcik] = useState(false);
+  const [yalnizBenim, setYalnizBenim] = useState(false);
+  const benim = useMyDuaRequests(yalnizBenim ? userId : null);
 
   if (!settings.community.enabled || !userId) {
     return (
@@ -55,7 +57,11 @@ export default function DuaBoardScreen() {
     );
   }
 
-  const gorunurler = (feed.data ?? []).filter((r) => !blocked.data?.has(r.authorId));
+  const gorunurler = yalnizBenim
+    ? (benim.data ?? [])
+    : (feed.data ?? []).filter((r) => !blocked.data?.has(r.authorId));
+  const aldigimDua = (benim.data ?? []).reduce((top, r) => top + r.prayerCount, 0);
+  const yukleniyor = yalnizBenim ? benim.isLoading : feed.isLoading;
   // Günlük istek hakkı: ücretsizde 1, Pro'da 5 (sunucunun üst sınırı) — D33.
   const bugunkuIstek = countInLast24h((feed.data ?? []).filter((r) => r.benimMi).map((r) => r.createdAt));
   const hakBitti = bugunkuIstek >= communityLimits(pro).duaRequestsPerDay;
@@ -72,9 +78,18 @@ export default function DuaBoardScreen() {
             <Button label={t('pro.seePlans')} icon="star" size="sm" variant="secondary" onPress={() => router.push('/pro')} />
           </Column>
         ) : null}
+        <Row gap="sm" style={{ marginTop: theme.spacing.md }}>
+          <Chip label={t('community.allRequests')} selected={!yalnizBenim} onPress={() => setYalnizBenim(false)} />
+          <Chip label={t('community.myRequests')} selected={yalnizBenim} onPress={() => setYalnizBenim(true)} />
+        </Row>
+        {yalnizBenim && benim.data ? (
+          <Text variant="caption" tone="muted" style={{ marginTop: theme.spacing.sm }}>
+            {t('community.myRequestsSummary', { n: benim.data.length, p: aldigimDua })}
+          </Text>
+        ) : null}
       </View>
 
-      {feed.isLoading ? (
+      {yukleniyor ? (
         <Column gap="sm" style={{ padding: theme.spacing.lg }}>
           <Skeleton height={90} /><Skeleton height={90} /><Skeleton height={90} />
         </Column>

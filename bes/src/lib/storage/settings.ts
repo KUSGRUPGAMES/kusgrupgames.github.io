@@ -60,6 +60,12 @@ export const settingsSchema = z.object({
     /** Takma ad — gerçek ad/e-posta asla kullanılmaz. */
     nickname: z.string().max(24).default(''),
   }).default({}),
+  /**
+   * Hesapla eşitleme (D35): giriş yapılmışken kişisel kayıtlar hesaba
+   * bağlanır, aynı hesapla giriş yapılan her telefonda görünür. Giriş
+   * yapılmadıkça hiçbir şey gönderilmez; Hesap ekranından kapatılabilir.
+   */
+  cloudSync: z.boolean().default(true),
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
