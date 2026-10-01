@@ -788,4 +788,10 @@ export const de: Partial<Record<StringKey, string>> = {
   'tour.profile3.body': 'Keine Werbung, der ganze Lernkurs und Extras in der Gemeinschaft. Du kannst auch eine Werbung ansehen und 24 Stunden werbefrei nutzen.',
   'community.adminWarning': 'Hinweis der Moderation',
   'community.warningAck': 'Verstanden',
+  'pro.launchBody': 'Zum Start: Pro-Funktionen sind vorerst für alle kostenlos. Mit einer Krone markierte Bereiche sind Pro-Bereiche und erfordern später eine Pro-Mitgliedschaft.',
+  'pro.launchShort': 'Pro-Funktion · vorerst kostenlos',
+  'pro.trialPitch': 'Melde dich mit Google oder Apple an und nutze Pro-Funktionen 14 Tage kostenlos.',
+  'pro.trialCta': 'Anmelden, 14 Tage testen',
+  'pro.trialActive': 'Pro-Test: noch {n} Tage',
+  'pro.trialAdsNote': 'Der Test schaltet Pro-Funktionen frei; werbefrei wird es nur mit Pro-Mitgliedschaft.',
 } as const;

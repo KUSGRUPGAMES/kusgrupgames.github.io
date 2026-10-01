@@ -788,4 +788,10 @@ export const ar: Partial<Record<StringKey, string>> = {
   'tour.profile3.body': 'بلا إعلانات، والدورة كاملة، ومزايا إضافية في المجتمع. ويمكنك أيضًا مشاهدة إعلان لتستخدم التطبيق بلا إعلانات 24 ساعة.',
   'community.adminWarning': 'تنبيه من الإدارة',
   'community.warningAck': 'قرأت',
+  'pro.launchBody': 'عرض الإطلاق: مزايا Pro مجانية للجميع حاليًا. الأقسام المعلَّمة بالتاج هي أقسام Pro وستتطلب اشتراك Pro لاحقًا.',
+  'pro.launchShort': 'ميزة Pro · مجانية حاليًا',
+  'pro.trialPitch': 'سجّل الدخول بحساب Google أو Apple واستخدم مزايا Pro مجانًا لمدة 14 يومًا.',
+  'pro.trialCta': 'سجّل الدخول وجرّب 14 يومًا',
+  'pro.trialActive': 'تجربة Pro: بقي {n} يومًا',
+  'pro.trialAdsNote': 'تفتح التجربة مزايا Pro؛ أما إزالة الإعلانات فتتطلب اشتراك Pro.',
 } as const;

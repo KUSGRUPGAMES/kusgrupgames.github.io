@@ -9,14 +9,14 @@ import React, { useMemo } from 'react';
 import { View } from 'react-native';
 import { router, Stack } from 'expo-router';
 import {
-  Screen, SectionHeader, Card, ListItem, Text, Button, ProgressBar, Column, Row, Icon,
+  Screen, SectionHeader, Card, ListItem, Text, Button, ProgressBar, Column, Row, Icon, ProBadge,
   SourceNote, FeatureTile,
 } from '@/ui';
 import { useT } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useLearningStore } from '@/store/learning';
 import { LESSONS, UNITS, nextLesson } from '@/features/learn/course';
-import { usePro } from '@/features/pro/purchases';
+import { useProAccess } from '@/features/pro/useProAccess';
 import { isLessonFree } from '@/features/pro/gates';
 
 export default function LearnScreen() {
@@ -29,8 +29,8 @@ export default function LearnScreen() {
   const sirada = nextLesson(biten);
   const tamam = LESSONS.filter((l) => biten.has(l.id)).length;
 
-  const pro = usePro();
-  const kilitli = (unit: number) => !pro && !isLessonFree(unit);
+  const erisim = useProAccess();
+  const kilitli = (unit: number) => !erisim.has && !isLessonFree(unit);
   // Kilitli ders Pro sayfasını açar (D33); ilk üç ünite herkese açık.
   const ac = (id: string) => {
     const m = LESSONS.find((l) => l.id === id);
@@ -84,7 +84,8 @@ export default function LearnScreen() {
 
       {UNITS.map((u) => (
         <View key={u.no}>
-          <SectionHeader title={`${t('learn.unit', { n: u.no })} · ${u.title}`} subtitle={u.description} />
+          <SectionHeader title={`${t('learn.unit', { n: u.no })} · ${u.title}`} subtitle={u.description}
+            badge={isLessonFree(u.no) ? undefined : <ProBadge />} />
           <Card padding="md">
             {LESSONS.filter((l) => l.unit === u.no).map((l) => {
               const s = yildiz.get(l.id);

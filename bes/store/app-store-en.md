@@ -76,8 +76,8 @@ The whole interface is available in Turkish, English, Arabic, German and French;
 WORSHIP IS ALWAYS FREE
 Prayer times, qibla, the Quran and translation, supplications, dhikr and qada tracking are always free. The free version shows ads — but never in the Quran reader, and never just before or right after a prayer time.
 
-BEŞ PRO
-Monthly, yearly or lifetime. Removes all ads and unlocks every lesson of the Learn course plus community extras (writing in chat rooms, creating khatm groups, 5 prayer requests a day). Subscriptions renew automatically unless cancelled at least 24 hours before the end of the period; manage or cancel them in your App Store account settings.
+PRO FEATURES FREE AT LAUNCH
+The Pro sections marked with a crown (every lesson of the Learn course, writing in chat rooms, creating khatm groups, 5 prayer requests a day) are free for everyone during the launch period. You can also watch one ad to use the app ad-free for 24 hours.
 
 AN HONEST NOTE
 Prayer times depend on the method, location and elevation and may differ from official announcements by a minute or two. The Hijri date is arithmetic and may be a day off from a sighting-based announcement. We say so on the relevant screens. BEŞ is a helper tool; it does not issue religious rulings.
@@ -90,4 +90,11 @@ Privacy Policy: https://kusgrupgames.github.io/bes/privacy.html
 
 ```
 First release.
+```
+
+## 1.0.1 (when Pro sales open) — replaces the launch paragraph in the description
+
+```
+BEŞ PRO
+Monthly, yearly or lifetime. Removes all ads and unlocks every lesson of the Learn course plus community extras (writing in chat rooms, creating khatm groups, 5 prayer requests a day). Subscriptions renew automatically unless cancelled at least 24 hours before the end of the period; manage or cancel them in your App Store account settings.
 ```

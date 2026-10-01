@@ -16,6 +16,7 @@ import { openLegalPage } from '@/lib/legal';
 import { showAdPrivacyOptions, useAdsStore } from '@/features/pro/adsRuntime';
 import { RewardedAdFreeItem } from '@/features/pro/RewardedAdFreeItem';
 import { TabTour, resetTour } from '@/features/tour/TabTour';
+import { PRO_SALES_ENABLED } from '@/features/pro/useProAccess';
 
 export default function SettingsScreen() {
   const [turSifirlandi, setTurSifirlandi] = useState(false);
@@ -31,7 +32,7 @@ export default function SettingsScreen() {
       <PageHeader title={t('settings.title')} icon="settings" />
 
       <Card padding="sm">
-        <ListItem title={t('pro.title')} subtitle={t('pro.settingsHint')} icon="star" onPress={() => router.push('/pro')} />
+        <ListItem title={t('pro.title')} subtitle={PRO_SALES_ENABLED ? t('pro.settingsHint') : t('pro.launchShort')} icon="crown" onPress={() => router.push('/pro')} />
         <RewardedAdFreeItem />
       </Card>
 

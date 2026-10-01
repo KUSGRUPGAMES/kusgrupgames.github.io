@@ -33,6 +33,7 @@ import { initPurchases } from '@/features/pro/purchases';
 import { initAds } from '@/features/pro/adsRuntime';
 import { useCloudSync } from '@/features/sync/useCloudSync';
 import { refreshRemoteContent, startRemoteContent } from '@/features/content/remoteRuntime';
+import { useProTrialSync } from '@/features/pro/useProAccess';
 
 // Üretimde debug/info günlüğe yazılmaz (§83).
 configureLogging({ minLevel: __DEV__ ? 'debug' : 'warn' });
@@ -247,6 +248,8 @@ function BildirimEsitleyici() {
   useWidgetSync();
   // Hesapla eşitleme (D35): giriş yoksa ya da kapalıysa hiçbir şey yapmaz.
   useCloudSync();
+  // Pro denemesi (yalnız satış açıkken, giriş yapmış kullanıcıya bir kez).
+  useProTrialSync();
   // Panelden yönetilen içerik (D36): açılışta ve öne gelişte, dil değişince hemen.
   const { language } = useI18n();
   const dilRef = useRef(language);

@@ -209,3 +209,32 @@ describe('ekran geçişinde tam ekran reklam (1 Ekim)', () => {
     expect(a.AD_FREE_SURFACES).not.toContain('navigation');
   });
 });
+
+describe('Pro erişimi — lansman, deneme, satın alma (1 Ekim)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { proAccess } = require('@/features/pro/access') as typeof import('@/features/pro/access');
+  const now = Date.parse('2026-10-20T12:00:00Z');
+  const gun = 86400000;
+  it('satış kapalıyken (1.0) herkes Pro özelliklerine erişir', () => {
+    expect(proAccess({ purchased: false, salesEnabled: false, trialEndsAt: null, now })).toMatchObject({ has: true, reason: 'launch' });
+  });
+  it('satış açıkken deneme sürüyorsa erişim var, kalan gün yukarı yuvarlanır', () => {
+    expect(proAccess({ purchased: false, salesEnabled: true, trialEndsAt: now + 13.2 * gun, now })).toMatchObject({ has: true, reason: 'trial', trialDaysLeft: 14 });
+  });
+  it('deneme bitince kilitlenir ve bir daha önerilmez', () => {
+    expect(proAccess({ purchased: false, salesEnabled: true, trialEndsAt: now - 1, now })).toMatchObject({ has: false, reason: 'none', trialUsed: true });
+  });
+  it('giriş yok, deneme hiç başlamamış: kilitli ama deneme hakkı duruyor', () => {
+    expect(proAccess({ purchased: false, salesEnabled: true, trialEndsAt: null, now })).toMatchObject({ has: false, trialUsed: false });
+  });
+  it('satın alan her durumda erişir', () => {
+    expect(proAccess({ purchased: true, salesEnabled: true, trialEndsAt: now - gun, now })).toMatchObject({ has: true, reason: 'purchased' });
+  });
+  it('deneme reklamı kaldırmaz: reklam kararı yalnız satın almaya (usePro) bakar', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { readFileSync } = require('node:fs') as typeof import('node:fs');
+    const banner = readFileSync(require.resolve('@/features/pro/AdBanner.tsx'), 'utf8');
+    expect(banner).toMatch(/usePro\(\)/);
+    expect(banner).not.toMatch(/useProAccess/);
+  });
+});

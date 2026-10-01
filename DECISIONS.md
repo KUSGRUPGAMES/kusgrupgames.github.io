@@ -935,3 +935,18 @@ kurulurken 0007 ile kritik bir yetki yükseltme açığı (profil eklerken
 bilgi, kart, duyuru, yerleşik gizleme) bütün kullanıcılara gider; topluluğa
 katılmak gerekmez, istek hesapsızdır (gizlilik §7). Ayrıntı ve işletim:
 `bes/ADMIN_PANEL.md`.
+
+## D37 — Lansman dönemi: Pro ücretsiz + rozet, 1.0.1'de satış ve 14 gün deneme (2026-10-02)
+
+Banka/ücretli uygulama sözleşmesi beklenirken yayına çıkmak için (kullanıcı
+kararı): 1.0'da satış kapalı (`extra.proSales` false), Pro özellikleri
+herkese açık ve taç/PRO rozetiyle işaretli; satın alma ekranı, fiyat ve
+geri yükleme gösterilmez; reklam ve "reklam izle, 24 saat reklamsız" var.
+Sözleşme etkin olunca 1.0.1 `BES_PRO_SALES=1` ile derlenir: satış açılır ve
+giriş yapmış kullanıcıya sunucuda bir kez 14 günlük deneme başlar
+(`pro_trials`, `start_pro_trial()`, 0008). Deneme saati satış açılınca
+başlar — önce başlasaydı süre satın alma düğmesi yokken bitebilirdi.
+Deneme Pro özelliklerini açar, reklamı kaldırmaz (reklam yalnız
+satın almaya bakar). Kilitlenen yalnız Pro özellikleridir; ibadet kayıtları
+hiçbir zaman (ALWAYS_FREE). Mağaza açıklamasının 1.0.1 paragrafı
+`store/app-store*.md` sonunda hazır.

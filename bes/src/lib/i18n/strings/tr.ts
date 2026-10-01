@@ -1060,6 +1060,12 @@ export const tr = {
   'tour.profile3.body': 'Reklamsız kullanım, Öğren kursunun tamamı ve toplulukta ek özellikler. Dilersen bir reklam izleyip 24 saat reklamsız da kullanabilirsin.',
   'community.adminWarning': 'Yönetici uyarısı',
   'community.warningAck': 'Okudum',
+  'pro.launchBody': 'Lansmana özel: Pro özellikleri şimdilik herkese ücretsiz. Taç işaretli bölümler Pro bölümleridir; ileride Pro üyelikle kullanılacak.',
+  'pro.launchShort': 'Pro özelliği · şimdilik ücretsiz',
+  'pro.trialPitch': 'Google ya da Apple ile giriş yap, Pro özelliklerini 14 gün ücretsiz kullan.',
+  'pro.trialCta': 'Giriş yap, 14 gün dene',
+  'pro.trialActive': 'Pro denemen: {n} gün kaldı',
+  'pro.trialAdsNote': 'Deneme Pro özelliklerini açar; reklamları kaldırmak için Pro üyelik gerekir.',
 } as const;
 
 export type StringKey = keyof typeof tr;

@@ -22,7 +22,7 @@ import {
   useDuaFeed, useMyDuaRequests, usePostDua, usePrayFor, usePrayedFor, useReportContent, useBlockUser, useBlockedIds,
 } from '@/features/community/duaBoard';
 import { containsBannedWord } from '@/features/community/wordFilter';
-import { usePro } from '@/features/pro/purchases';
+import { useProAccess } from '@/features/pro/useProAccess';
 import { communityLimits, countInLast24h } from '@/features/pro/gates';
 
 const KATEGORI_ADI: Record<DuaCategory, StringKey> = {
@@ -39,7 +39,7 @@ export default function DuaBoardScreen() {
   const feed = useDuaFeed(userId);
   const gonder = usePostDua(userId);
   const blocked = useBlockedIds(userId);
-  const pro = usePro();
+  const pro = useProAccess().has;
 
   const [kategori, setKategori] = useState<DuaCategory>('genel');
   const [metin, setMetin] = useState('');

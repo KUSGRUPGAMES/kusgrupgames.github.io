@@ -8,9 +8,9 @@
  */
 import React, { useEffect, useState } from 'react';
 import { Linking, Platform, Pressable } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import {
-  Screen, Card, Column, Row, Text, Button, Banner, EmptyState, Icon, ListItem, Skeleton,
+  Screen, Card, Column, Row, Text, Button, Banner, EmptyState, Icon, ListItem, Skeleton, ProBadge,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -20,6 +20,8 @@ import {
 } from '@/features/pro/purchases';
 import type { IconName } from '@/ui/Icon';
 import { RewardedAdFreeItem } from '@/features/pro/RewardedAdFreeItem';
+import { PRO_SALES_ENABLED, useProAccess } from '@/features/pro/useProAccess';
+import { useOturum } from '@/features/community/auth';
 
 const YONETIM = Platform.OS === 'ios'
   ? 'https://apps.apple.com/account/subscriptions'
@@ -35,8 +37,11 @@ export default function ProScreen() {
   const [calisiyor, setCalisiyor] = useState(false);
   const [sonuc, setSonuc] = useState<{ tone: 'success' | 'warning'; title: string } | null>(null);
 
+  const erisim = useProAccess();
+  const { girisli } = useOturum();
+
   useEffect(() => {
-    if (!purchasesAvailable) return;
+    if (!purchasesAvailable || !PRO_SALES_ENABLED) return;
     let alive = true;
     loadPlans()
       .then((p) => { if (!alive) return; setPlanlar(p); setSecili(p[0]?.kind ?? null); })
@@ -45,6 +50,30 @@ export default function ProScreen() {
   }, []);
 
   const baslik = <Stack.Screen options={{ headerShown: true, title: t('pro.title') }} />;
+
+  // Lansman dönemi (1.0): satış kapalı, Pro özellikleri herkese ücretsiz.
+  // Satın alma düğmesi, fiyat, geri yükleme gösterilmez (sözleşme etkin değil).
+  if (!PRO_SALES_ENABLED) {
+    return (
+      <Screen topInset={false} scroll motif="marka">
+        {baslik}
+        <Card accent>
+          <Column gap="xs">
+            <ProBadge />
+            <Text variant="title2" tone="onAccent">{t('pro.title')}</Text>
+            <Text variant="body" tone="onAccent">{t('pro.launchBody')}</Text>
+          </Column>
+        </Card>
+        <Card padding="sm" style={{ marginTop: theme.spacing.md }}>
+          <ListItem title={t('pro.benefitLearn')} subtitle={t('pro.benefitLearnHint')} icon="book" chevron={false} />
+          <ListItem title={t('pro.benefitCommunity')} subtitle={t('pro.benefitCommunityHint')} icon="users" chevron={false} />
+        </Card>
+        <Text variant="caption" tone="muted" style={{ marginTop: theme.spacing.sm }}>{t('pro.alwaysFree')}</Text>
+        <RewardedAdFreeItem kart />
+        <Column style={{ height: theme.spacing.xxl }} />
+      </Screen>
+    );
+  }
 
   if (!purchasesAvailable) {
     return (
@@ -96,6 +125,14 @@ export default function ProScreen() {
         {fayda('users', t('pro.benefitCommunity'), t('pro.benefitCommunityHint'))}
       </Card>
       <Text variant="caption" tone="muted" style={{ marginTop: theme.spacing.sm }}>{t('pro.alwaysFree')}</Text>
+
+      {!pro && erisim.reason === 'trial' ? (
+        <Banner tone="success" title={t('pro.trialActive', { n: erisim.trialDaysLeft ?? 0 })} description={t('pro.trialAdsNote')} style={{ marginTop: theme.spacing.md }} />
+      ) : null}
+      {!pro && !girisli && !erisim.trialUsed ? (
+        <Banner tone="info" title={t('pro.trialPitch')} actionLabel={t('pro.trialCta')}
+          onAction={() => router.push('/account')} style={{ marginTop: theme.spacing.md }} />
+      ) : null}
 
       {pro ? (
         <Column gap="md" style={{ marginTop: theme.spacing.lg }}>

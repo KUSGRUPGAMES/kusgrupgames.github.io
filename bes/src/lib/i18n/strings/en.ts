@@ -788,4 +788,10 @@ export const en: Partial<Record<StringKey, string>> = {
   'tour.profile3.body': 'No ads, the full Learn course and community extras. You can also watch one ad to go ad-free for 24 hours.',
   'community.adminWarning': 'Moderator warning',
   'community.warningAck': 'I understand',
+  'pro.launchBody': 'Launch offer: Pro features are free for everyone for now. Sections marked with a crown are Pro sections and will require Pro membership later.',
+  'pro.launchShort': 'Pro feature · free for now',
+  'pro.trialPitch': 'Sign in with Google or Apple and use Pro features free for 14 days.',
+  'pro.trialCta': 'Sign in, try 14 days',
+  'pro.trialActive': 'Pro trial: {n} days left',
+  'pro.trialAdsNote': 'The trial unlocks Pro features; removing ads requires Pro membership.',
 } as const;

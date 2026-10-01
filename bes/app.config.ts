@@ -248,7 +248,10 @@ const config: ExpoConfig = {
     ['expo-font', { fonts: ['./assets/fonts/Amiri-Regular.ttf', './assets/fonts/AmiriQuran-Regular.ttf'] }],
   ],
   experiments: { typedRoutes: true },
-  extra: { variant, appGroup: APP_GROUP },
+  // proSales: Pro satışı açık mı (1 Ekim kararı). 1.0'da kapalı — banka/ücretli
+  // uygulama sözleşmesi bekleniyor, Pro özellikleri herkese ücretsiz. Sözleşme
+  // etkin olunca 1.0.1 `BES_PRO_SALES=1` ile derlenir: satış ve 14 günlük deneme açılır.
+  extra: { variant, appGroup: APP_GROUP, proSales: process.env.BES_PRO_SALES === '1' },
 };
 
 export default config;

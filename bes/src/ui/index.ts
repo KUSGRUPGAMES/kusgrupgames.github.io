@@ -25,6 +25,7 @@ export { Skeleton, type SkeletonProps } from './Skeleton';
 export { Sheet, type SheetProps } from './Sheet';
 export { Banner, type BannerProps, type BannerTone } from './Banner';
 export { ProLock, type ProLockProps } from './ProLock';
+export { ProBadge } from './ProBadge';
 export { ArabicText, type ArabicTextProps } from './ArabicText';
 export { SourceNote, type SourceNoteProps } from './SourceNote';
 export { VirtualList, type VirtualListProps } from './VirtualList';

@@ -13,7 +13,7 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { router } from 'expo-router';
 import {
-  Screen, SectionHeader, Card, ListItem, Text, Column, Button, Field, Banner, EmptyState, Icon, PageHeader,
+  Screen, SectionHeader, Card, ListItem, Text, Column, Button, Field, Banner, EmptyState, Icon, PageHeader, ProBadge,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
@@ -131,9 +131,9 @@ export default function CommunityScreen() {
             <ListItem title={t('community.duaBoard')} subtitle={t('community.duaBoardHint')} icon="heart"
               onPress={() => router.push('/dua-board')} />
             <ListItem title={t('community.chatRooms')} subtitle={t('community.chatRoomsHint')} icon="message"
-              onPress={() => router.push('/chat-rooms')} />
+              right={<ProBadge />} onPress={() => router.push('/chat-rooms')} />
             <ListItem title={t('community.khatmCircles')} subtitle={t('community.khatmCirclesHint')} icon="book"
-              onPress={() => router.push('/khatm-circles')} />
+              right={<ProBadge />} onPress={() => router.push('/khatm-circles')} />
             <ListItem title={t('community.myRecords')} subtitle={t('community.myRecordsHint')} icon="chart"
               onPress={() => router.push('/khatm-history')} />
             <ListItem title={t('community.announcements')} icon="bell" onPress={() => router.push('/announcements')} />

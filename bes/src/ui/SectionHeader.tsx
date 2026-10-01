@@ -10,15 +10,18 @@ export interface SectionHeaderProps {
   subtitle?: string;
   actionLabel?: string;
   onAction?: () => void;
+  /** Başlığın üstünde küçük işaret (ör. PRO rozeti). */
+  badge?: React.ReactNode;
 }
 
-export function SectionHeader({ title, subtitle, actionLabel, onAction }: SectionHeaderProps) {
+export function SectionHeader({ title, subtitle, actionLabel, onAction, badge }: SectionHeaderProps) {
   const theme = useTheme();
   return (
     <Row align="center" gap="md" style={{ marginTop: theme.spacing.xxl, marginBottom: theme.spacing.md }}>
       <View style={{ width: 3, height: 24, borderRadius: theme.radius.pill,
         backgroundColor: theme.colors.highlight }} />
       <Column flex={1} gap="xxs">
+        {badge ?? null}
         <Text variant="title2" accessibilityRole="header">{title}</Text>
         {subtitle ? <Text variant="caption" tone="muted">{subtitle}</Text> : null}
       </Column>

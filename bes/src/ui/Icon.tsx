@@ -18,7 +18,7 @@ export type IconName =
   | 'moon' | 'sun' | 'location' | 'calendar' | 'user' | 'users'
   | 'sparkle' | 'play' | 'pause' | 'bookmark' | 'info' | 'alert' | 'refresh' | 'star' | 'copy'
   | 'crescentStar' | 'coins' | 'kaaba'
-  | 'sunrise' | 'sunHigh' | 'sunLow' | 'sunset' | 'crescent' | 'mosque' | 'chart' | 'message';
+  | 'sunrise' | 'sunHigh' | 'sunLow' | 'sunset' | 'crescent' | 'mosque' | 'chart' | 'message' | 'crown';
 
 export interface IconProps {
   name: IconName;
@@ -79,6 +79,7 @@ function render(name: IconName, p: P): React.ReactNode {
     case 'chevronDown': return <Polyline points="5,9 12,16 19,9" {...p} />;
     case 'chevronUp': return <Polyline points="5,15 12,8 19,15" {...p} />;
     case 'check': return <Polyline points="4,12.5 9.5,18 20,6.5" {...p} />;
+    case 'crown': return <><Path d="M4 17 3 7.5l5 4 4-6.5 4 6.5 5-4L20 17Z" {...p} /><Path d="M4.5 20h15" {...p} /></>;
     case 'close': return <Path d="M6 6l12 12M18 6L6 18" {...p} />;
     case 'bell':
       return <><Path d="M6 17V11a6 6 0 1 1 12 0v6l1.5 2.5h-15Z" {...p} /><Path d="M10 21h4" {...p} /></>;

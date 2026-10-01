@@ -24,7 +24,8 @@ import { surahWords, type QuranWord } from '@/features/learn/words';
 import { useLearnAudio, type LearnAudio } from '@/features/learn/useLearnAudio';
 import { useLearningStore } from '@/store/learning';
 import { getSurah } from '@/features/quran/data';
-import { usePro } from '@/features/pro/purchases';
+import { PRO_SALES_ENABLED, useProAccess } from '@/features/pro/useProAccess';
+import { useOturum } from '@/features/community/auth';
 import { isLessonFree } from '@/features/pro/gates';
 import { maybeShowInterstitial } from '@/features/pro/adsRuntime';
 
@@ -45,7 +46,8 @@ export default function LessonScreen() {
   const ses = useLearnAudio();
   const tamamla = useLearningStore((s) => s.complete);
   const sonuclar = useLearningStore((s) => s.results);
-  const pro = usePro();
+  const erisim = useProAccess();
+  const { girisli } = useOturum();
 
   // Ders değişince (Sonraki ders) baştan başla.
   useEffect(() => {
@@ -75,12 +77,14 @@ export default function LessonScreen() {
   const baslik = meta?.title ?? t('learn.title');
 
   // "Sonraki ders" ya da bir bağlantıyla kilitli derse gelinirse (D33).
-  if (meta && !pro && !isLessonFree(meta.unit)) {
+  if (meta && !erisim.has && !isLessonFree(meta.unit)) {
+    // Satış açık, giriş yok, deneme kullanılmamış: önce 14 günlük denemeyi öner.
+    const deneme = PRO_SALES_ENABLED && !girisli && !erisim.trialUsed;
     return (
       <Screen topInset={false}>
         <Stack.Screen options={{ headerShown: true, title: baslik }} />
-        <EmptyState icon="lock" title={t('pro.locked')} description={t('pro.learnLocked')}
-          actionLabel={t('pro.seePlans')} onAction={() => router.replace('/pro')} />
+        <EmptyState icon="lock" title={t('pro.locked')} description={deneme ? t('pro.trialPitch') : t('pro.learnLocked')}
+          actionLabel={deneme ? t('pro.trialCta') : t('pro.seePlans')} onAction={() => router.replace(deneme ? '/account' : '/pro')} />
       </Screen>
     );
   }
