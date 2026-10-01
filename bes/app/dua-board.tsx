@@ -158,20 +158,25 @@ function DuaCard({ item, userId, zamanBicimi }: { item: DuaRequest; userId: stri
         <Row align="center" gap="sm">
           <Badge label={t(KATEGORI_ADI[item.category])} tone="accent" />
           <Text variant="micro" tone="subtle" style={{ flex: 1, textAlign: 'right' }}>{zamanBicimi(item.createdAt)}</Text>
-          <Pressable accessibilityRole="button" accessibilityLabel={t('community.moreOptions')} onPress={() => setMenuAcik(true)} hitSlop={8}>
-            <Icon name="info" size={18} color={theme.colors.textSubtle} />
-          </Pressable>
+          {!item.benimMi ? (
+            <Pressable accessibilityRole="button" accessibilityLabel={t('community.moreOptions')} onPress={() => setMenuAcik(true)} hitSlop={8}>
+              <Icon name="info" size={18} color={theme.colors.textSubtle} />
+            </Pressable>
+          ) : null}
         </Row>
         <Text variant="body">{item.body}</Text>
         <Row align="center" gap="sm">
-          <Button
-            label={ettim ? t('community.prayed') : t('community.prayForThis')}
-            icon="heart"
-            variant={ettim ? 'secondary' : 'primary'}
-            size="sm"
-            disabled={ettim || dua.isPending}
-            onPress={() => dua.mutate(item.id)}
-          />
+          {/* Kendi isteğine "Dua ettim" denmez: sayaç başkalarının duasını gösterir. */}
+          {!item.benimMi ? (
+            <Button
+              label={ettim ? t('community.prayed') : t('community.prayForThis')}
+              icon="heart"
+              variant={ettim ? 'secondary' : 'primary'}
+              size="sm"
+              disabled={ettim || dua.isPending}
+              onPress={() => dua.mutate(item.id)}
+            />
+          ) : <Icon name="heart" size={16} color={theme.colors.highlight} />}
           <Text variant="caption" tone="muted">
             {item.benimMi
               ? t('community.prayedForYouCount', { n: item.prayerCount })
@@ -182,7 +187,9 @@ function DuaCard({ item, userId, zamanBicimi }: { item: DuaRequest; userId: stri
 
       <Sheet visible={menuAcik} onClose={() => setMenuAcik(false)} title={t('community.moreOptions')}>
         <Column gap="sm" style={{ paddingBottom: theme.spacing.lg }}>
-          <Button label={t('community.report')} variant="secondary" onPress={() => { setMenuAcik(false); setRaporAcik(true); }} />
+          {!item.benimMi ? (
+            <Button label={t('community.report')} variant="secondary" onPress={() => { setMenuAcik(false); setRaporAcik(true); }} />
+          ) : null}
           {!item.benimMi ? (
             <Button label={t('community.block')} variant="danger" onPress={() => {
               engelle.mutate({ blockerId: userId, blockedId: item.authorId });

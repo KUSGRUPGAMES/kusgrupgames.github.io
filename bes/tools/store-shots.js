@@ -63,7 +63,7 @@ const KARELER = [
   { dosya: 'vitrin/31-zikir.png', dosya2: 'vitrin/32-zikir-istatistik.png', baslik: 'Zikirmatik ve istatistik', alt: 'Hedef belirle, seriyi sürdür, gelişimini gör', etiket: 'ZİKİR' },
   { dosya: 'vitrin/13-ogren.png', dosya2: 'vitrin/18-elifba.png', baslik: 'Kur’an okumayı öğren', alt: 'Elifbâdan kısa surelere 31 sesli ders', etiket: 'ÖĞREN' },
   { dosya: 'vitrin/51-ibadet-gunlugu.png', dosya2: 'vitrin/57-ibadet-istatistik.png', baslik: 'İbadet defteri ve istatistik', alt: 'Namaz, Kur’an, oruç ve kaza tek yerde', etiket: 'TAKİP' },
-  { dosya: 'vitrin/53-hatim.png', dosya2: 'vitrin/63-topluluk.png', baslik: 'Hatim ve topluluk', alt: 'Hatmini takip et, dua panosunda buluş', etiket: 'TOPLULUK' },
+  { dosya: 'vitrin/53-hatim.png', dosya2: 'vitrin/19-topluluk-sekme.png', baslik: 'Hatim ve topluluk', alt: 'Hatmini takip et, dua panosunda buluş', etiket: 'TOPLULUK' },
   { dosya: 'vitrin/43-hatirlatici.png', dosya2: 'vitrin/44-bildirim-merkezi.png', baslik: 'Özel hatırlatıcılar', alt: 'Kur’an okuma ve vakit bildirimleri, ezan sesiyle', etiket: 'BİLDİRİMLER' },
 ];
 

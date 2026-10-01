@@ -107,18 +107,20 @@ doğrula (yönetici paneli girişi için gerekiyor; varsayılan zaten açık).
 
 ## Adım 3 — Veritabanı şemasını uygula
 
-`SQL Editor` → `New query`. Aşağıdaki üç dosyayı **sırayla**, olduğu gibi
+`SQL Editor` → `New query`. Aşağıdaki beş dosyayı **sırayla**, olduğu gibi
 yapıştırıp **Run**'a bas:
 
 1. `bes/supabase/migrations/0001_community.sql`
 2. `bes/supabase/migrations/0002_moderation_admin_content.sql`
 3. `bes/supabase/migrations/0003_account_deletion.sql` — uygulama içinden
    hesap silme (Apple bunu zorunlu tutuyor)
+4. `bes/supabase/migrations/0004_user_data_sync.sql` — hesapla eşitleme (D35)
+5. `bes/supabase/migrations/0005_no_self_prayer.sql` — kendi isteğine dua işaretlenemez
 
 Hepsi tekrar çalıştırılabilir şekilde yazıldı (`create table if not
 exists`, `drop trigger if exists` — hata almadan yeniden basabilirsin).
 
-**Ne görmelisin:** Üçü de "Success. No rows returned" ya da benzeri yeşil
+**Ne görmelisin:** Hepsi "Success. No rows returned" ya da benzeri yeşil
 bir sonuç. Hata alırsan tam metnini bana gönder.
 
 ## Adım 4 — Proje bilgilerini topla

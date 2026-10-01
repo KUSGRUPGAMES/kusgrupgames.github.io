@@ -130,3 +130,14 @@ describe('topluluk — giriş ve hesap silme', () => {
     expect(oku('src/features/community/session.ts')).not.toMatch(/signInAnonymously\(/);
   });
 });
+
+describe('topluluk — kendi isteğine dua (1 Ekim)', () => {
+  const { readFileSync } = jest.requireActual<typeof import('node:fs')>('node:fs');
+  const { join } = jest.requireActual<typeof import('node:path')>('node:path');
+  const oku = (p: string) => readFileSync(join(__dirname, '..', p), 'utf8');
+  it('istemci düğmeyi göstermiyor, sunucu da reddediyor; akış kullanıcıya göre önbelleklenir', () => {
+    expect(oku('app/dua-board.tsx')).toMatch(/\{!item\.benimMi \? \(\s*<Button\s+label=\{ettim/);
+    expect(oku('supabase/migrations/0005_no_self_prayer.sql')).toMatch(/r\.author_id = new\.user_id/);
+    expect(oku('src/features/community/duaBoard.ts')).toMatch(/queryKey: \['dua-feed', userId\]/);
+  });
+});

@@ -48,7 +48,11 @@ function fromRow(r: Row, benId: string | null): DuaRequest {
 
 export function useDuaFeed(userId: string | null) {
   return useQuery({
-    queryKey: ['dua-feed'],
+    // Kullanıcı kimliği anahtarda: oturum gelmeden yüklenen akış, istekleri
+    // "benim değil" diye işaretleyip önbellekte kalıyordu — kişi kendi
+    // isteğine "Dua ettim" diyebiliyor, "X kişi senin için dua etti"yi
+    // göremiyordu (1 Ekim, mağaza karesinde fark edildi).
+    queryKey: ['dua-feed', userId],
     enabled: Boolean(supabase),
     queryFn: async (): Promise<DuaRequest[]> => {
       if (!supabase) return [];

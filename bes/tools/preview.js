@@ -72,7 +72,7 @@ const ISTANBUL = {
 
 const EKRANLAR = [
   ['10-ana-sayfa', '/'], ['11-kuran', '/quran'], ['12-ibadet', '/worship'],
-  ['13-ogren', '/learn'], ['14-ayarlar', '/profile'],
+  ['13-ogren', '/learn'], ['14-ayarlar', '/profile'], ['19-topluluk-sekme', '/community'],
   ['15-ders-harf', '/lesson?id=harf-1'], ['16-ders-hece', '/lesson?id=ustun'], ['17-ders-sure', '/lesson?id=sure-112'],
   ['18-elifba', '/alphabet'],
   ['20-okuyucu', '/reader?surah=1'], ['21-kuran-arama', '/quran-search'],
@@ -85,7 +85,7 @@ const EKRANLAR = [
   ['50-namaz-rehberi', '/prayer-guide'], ['51-ibadet-gunlugu', '/worship-log'],
   ['52-kaza', '/qada'], ['53-hatim', '/khatm'], ['54-ramazan', '/ramadan'],
   ['55-zekat', '/zakat'], ['56-hac-umre', '/hajj'],
-  ['57-ibadet-istatistik', '/worship-stats'], ['63-topluluk', '/community'], ['64-hatim-gruplari', '/khatm-circles'],
+  ['57-ibadet-istatistik', '/worship-stats'], ['64-hatim-gruplari', '/khatm-circles'],
   ['60-bilgi', '/knowledge'], ['61-hicri-takvim', '/hijri'], ['62-paylasim-karti', '/share-card'],
   ['70-ana-sayfa-duzeni', '/home-layout'], ['71-hesap', '/account'], ['72-tani', '/diagnostics'],
 ];
