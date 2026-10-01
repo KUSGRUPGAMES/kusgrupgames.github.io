@@ -63,8 +63,9 @@ const KARELER = [
   { dosya: 'vitrin/31-zikir.png', dosya2: 'vitrin/32-zikir-istatistik.png', baslik: 'Zikirmatik ve istatistik', alt: 'Hedef belirle, seriyi sürdür, gelişimini gör', etiket: 'ZİKİR' },
   { dosya: 'vitrin/13-ogren.png', dosya2: 'vitrin/18-elifba.png', baslik: 'Kur’an okumayı öğren', alt: 'Elifbâdan kısa surelere 31 sesli ders', etiket: 'ÖĞREN' },
   { dosya: 'vitrin/51-ibadet-gunlugu.png', dosya2: 'vitrin/57-ibadet-istatistik.png', baslik: 'İbadet defteri ve istatistik', alt: 'Namaz, Kur’an, oruç ve kaza tek yerde', etiket: 'TAKİP' },
-  { dosya: 'vitrin/53-hatim.png', dosya2: 'vitrin/19-topluluk-sekme.png', baslik: 'Hatim ve topluluk', alt: 'Hatmini takip et, dua panosunda buluş', etiket: 'TOPLULUK' },
-  { dosya: 'vitrin/43-hatirlatici.png', dosya2: 'vitrin/44-bildirim-merkezi.png', baslik: 'Özel hatırlatıcılar', alt: 'Kur’an okuma ve vakit bildirimleri, ezan sesiyle', etiket: 'BİLDİRİMLER' },
+  // Topluluk kareleri demo hesapla çekilir (gerçek kullanıcı içeriği girmez); bkz. RELEASE_CHECKLIST.
+  { dosya: 'vitrin/82-hatim-grubu.png', dosya2: 'vitrin/81-dua-panosu.png', baslik: 'Topluluk ve hatim grubu', alt: 'Dua panosu, sohbet odaları, birlikte hatim', etiket: 'TOPLULUK' },
+  { dosya: 'vitrin/43-hatirlatici.png', dosya2: 'vitrin/44-bildirim-merkezi.png', baslik: 'Özel bildirimler', alt: 'Kur’an okuma ve vakit hatırlatıcıları, ezan sesiyle', etiket: 'BİLDİRİMLER' },
 ];
 
 const HEDEFLER = [
