@@ -56,7 +56,7 @@ Hepsi bir kez yapılır; kimlikler GitHub secret'ı olarak girilir
 - [ ] Secret'lar: `ADMOB_IOS_APP_ID`, `ADMOB_ANDROID_APP_ID`,
       `EXPO_PUBLIC_ADMOB_BANNER_IOS/_ANDROID`, `EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS/_ANDROID`,
       `EXPO_PUBLIC_ADMOB_APPOPEN_IOS/_ANDROID`, `EXPO_PUBLIC_ADMOB_REWARDED_IOS/_ANDROID`.
-      Mağaza iş akışı (`BES_STORE_RELEASE=1`) gerçek kimlik yoksa derlemeyi durdurur.
+      Mağaza derlemesi (`BES_STORE_RELEASE=ios|android`) o platformun gerçek kimliği yoksa durur.
 - [ ] **App Store Connect:** Ücretli Uygulamalar Sözleşmesi, banka ve vergi
       formları; abonelik grubu "BEŞ Pro" içinde aylık ve yıllık otomatik
       yenilenen ürün + tüketilmeyen "ömür boyu" ürün.

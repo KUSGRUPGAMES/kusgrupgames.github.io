@@ -53,7 +53,7 @@ const bundleIos = Brand.bundleId.ios + suffix[variant];
 /**
  * AdMob uygulama kimlikleri (D33). Gerçek kimlikler derleme ortamından gelir.
  * Yoksa geliştirmede Google'ın herkese açık test kimlikleri kullanılır;
- * mağazaya yükleme iş akışı (`BES_STORE_RELEASE=1`) test kimliğiyle
+ * mağazaya yükleme iş akışı (`BES_STORE_RELEASE`) test kimliğiyle
  * **derlenmez** — test kimliğiyle yayına çıkan uygulama hiç gelir getirmez ve
  * bunu kimse fark etmez. CI'daki doğrulama derlemeleri bayraksız çalışır.
  */
@@ -62,8 +62,14 @@ const ADMOB = {
   ios: process.env.ADMOB_IOS_APP_ID ?? ADMOB_TEST.ios,
   android: process.env.ADMOB_ANDROID_APP_ID ?? ADMOB_TEST.android,
 };
-if (process.env.BES_STORE_RELEASE === '1' && (ADMOB.ios === ADMOB_TEST.ios || ADMOB.android === ADMOB_TEST.android)) {
-  throw new Error('Mağaza derlemesi için ADMOB_IOS_APP_ID ve ADMOB_ANDROID_APP_ID gerekli (D33).');
+// `BES_STORE_RELEASE`: 'ios' | 'android' | '1' (ikisi). Yalnız yayınlanan
+// platformun gerçek kimliği istenir: iOS önce yayınlanıyor, Android sonra.
+const MAGAZA = process.env.BES_STORE_RELEASE;
+if ((MAGAZA === 'ios' || MAGAZA === '1') && ADMOB.ios === ADMOB_TEST.ios) {
+  throw new Error('iOS mağaza derlemesi için ADMOB_IOS_APP_ID gerekli (D33).');
+}
+if ((MAGAZA === 'android' || MAGAZA === '1') && ADMOB.android === ADMOB_TEST.android) {
+  throw new Error('Android mağaza derlemesi için ADMOB_ANDROID_APP_ID gerekli (D33).');
 }
 /**
  * Uygulama ile widget eklentisinin paylaştığı alan (D30). Varyant başına

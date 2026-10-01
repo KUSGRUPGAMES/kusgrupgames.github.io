@@ -141,7 +141,9 @@ describe('gizlilik', () => {
 
   it('reklam içeriği G derecesinde; mağaza derlemesi test kimliğiyle çıkmaz', () => {
     expect(oku(join(ROOT, 'src', 'features', 'pro', 'adsRuntime.ts'))).toMatch(/maxAdContentRating:\s*MaxAdContentRating\.G/);
-    expect(oku(join(ROOT, 'app.config.ts'))).toMatch(/BES_STORE_RELEASE === '1'[\s\S]*?throw new Error/);
+    const cfg = oku(join(ROOT, 'app.config.ts'));
+    expect(cfg).toMatch(/MAGAZA === 'ios'[\s\S]*?ADMOB_TEST\.ios\)[\s\S]*?throw new Error/);
+    expect(cfg).toMatch(/MAGAZA === 'android'[\s\S]*?ADMOB_TEST\.android\)[\s\S]*?throw new Error/);
   });
 
   it('mağaza metinleri reklam ve abonelik konusunda doğruyu söylüyor (D33)', () => {
