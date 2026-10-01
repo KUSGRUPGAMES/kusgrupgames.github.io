@@ -888,3 +888,10 @@ taraması (`npm run preview`) artık yalnız koyu geçişlerle çalışıyor.
 - **Ödüllü reklam:** kullanıcı kendi isteğiyle izler, karşılığında 24 saat
   hiç reklam yok (Ayarlar ve Pro ekranı). Süre yenilenir, üst üste eklenmez.
 - İki yeni birim: `EXPO_PUBLIC_ADMOB_APPOPEN_*`, `EXPO_PUBLIC_ADMOB_REWARDED_*`.
+- **Ekran geçişlerinde tam ekran reklam** (kullanıcı kararı, 2026-10-01):
+  Kur'an okuyucu hariç; ekranın ortasında değil yol değişiminde çıkar (zikir
+  sayarken, kıbleye bakarken ekran kapanmaz); en az 4 geçişte bir, en sık 3
+  dakikada bir; vakit penceresi, Pro ve reklamsız süre geçerli. Bu yüzden
+  "kıble, zikir ve namaz rehberinde reklam yok" vaadi gizlilik sayfaları,
+  destek sayfaları ve mağaza metinlerinden kaldırıldı; vaat artık "Kur'an
+  okuyucuda reklam yok". Şerit reklam yine yalnız sekme ekranlarında.

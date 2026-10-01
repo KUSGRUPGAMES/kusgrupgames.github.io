@@ -109,7 +109,7 @@ BEŞ DİL
 Arayüzün tamamı Türkçe, İngilizce, Arapça, Almanca ve Fransızca. Arapça seçildiğinde yazı yönü sağdan sola döner. Kur’an meali (Elmalılı) ve bilgi yazıları Türkçedir.
 
 İBADET HER ZAMAN ÜCRETSİZ
-Namaz vakitleri, kıble, Kur’an ve meal, dualar, zikir ve kaza takibi her zaman ücretsizdir. Ücretsiz sürümde reklam gösterilir; ama Kur’an okuyucu, kıble, zikir ve namaz rehberinde hiç reklam yoktur, vaktin girmesine yakın ve girdikten hemen sonra da reklam gösterilmez.
+Namaz vakitleri, kıble, Kur’an ve meal, dualar, zikir ve kaza takibi her zaman ücretsizdir. Ücretsiz sürümde reklam gösterilir; ama Kur’an okuyucuda hiç reklam yoktur, vaktin girmesine yakın ve girdikten hemen sonra da reklam gösterilmez.
 
 BEŞ PRO
 Aylık, yıllık ya da ömür boyu. Reklamları tamamen kaldırır, Öğren kursunun bütün derslerini ve toplulukta ek özellikleri (sohbete yazma, hatim grubu kurma, günde 5 dua isteği) açar. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse kendiliğinden yenilenir; iptal mağaza hesabı ayarlarından yapılır.

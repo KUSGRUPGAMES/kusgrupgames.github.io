@@ -27,7 +27,8 @@ import { useSettingsStore } from '@/store/settings';
 import { prayerWindow, scheduleInputFrom } from '@/features/prayer/window';
 import { kv } from '@/boot/storage';
 import {
-  canShowInterstitial, isAdFree, rewardAdFreeUntil, shouldShowAd, shouldShowAppOpen, type AdSurface,
+  canShowInterstitial, isAdFree, isNavAdExcluded, navInterstitialDue, rewardAdFreeUntil, shouldShowAd,
+  shouldShowAppOpen, type AdSurface,
 } from './ads';
 import { useProStore } from './purchases';
 
@@ -257,4 +258,21 @@ export function watchRewardedForAdFree(): Promise<OdulSonucu> {
     const temizle = () => abonelikler.forEach((kaldir) => kaldir());
     reklam.load();
   });
+}
+
+// --- Ekran geçişlerinde tam ekran reklam
+
+let gecisSayisi = 0;
+
+/**
+ * Kök düzen her yol değişiminde çağırır. 4 geçişte bir, 3 dakikada en çok bir
+ * kez; Kur'an okuyucuya girerken asla. Diğer kurallar (Pro, reklamsız süre,
+ * vakit penceresi) `maybeShowInterstitial` içinde.
+ */
+export function noteNavigation(path: string): void {
+  gecisSayisi += 1;
+  if (isNavAdExcluded(path) || !navInterstitialDue(gecisSayisi)) return;
+  const once = sonGosterim;
+  maybeShowInterstitial('navigation');
+  if (sonGosterim !== once) gecisSayisi = 0;
 }

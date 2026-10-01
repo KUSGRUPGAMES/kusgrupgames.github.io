@@ -14,7 +14,9 @@
 
 export type AdSurface =
   | 'home' | 'explore' | 'profile' | 'quranList' | 'settings'
-  | 'reader' | 'qibla' | 'dhikr' | 'prayerGuide' | 'ramadan' | 'learn';
+  | 'reader' | 'qibla' | 'dhikr' | 'prayerGuide' | 'ramadan' | 'learn'
+  /** Ekranlar arası geçişte tam ekran reklam (1 Ekim kararı). */
+  | 'navigation';
 
 /** Reklam **hiçbir koşulda** gösterilmeyen ekranlar. */
 export const AD_FREE_SURFACES: readonly AdSurface[] = [
@@ -115,4 +117,22 @@ export function rewardAdFreeUntil(now: number): number {
 
 export function isAdFree(adFreeUntil: number | null, now: number): boolean {
   return adFreeUntil !== null && now < adFreeUntil;
+}
+
+// --- Ekran geçişlerinde tam ekran reklam (kullanıcı kararı, 1 Ekim)
+
+/** En az bu kadar ekran geçişinde bir. */
+export const NAV_INTERSTITIAL_EVERY = 4;
+
+/**
+ * Kur'an okuyucuya girerken tam ekran reklam yok. Reklam ekranın ortasında
+ * değil geçiş anında çıkar: zikir sayarken ya da kıbleye bakarken ekran
+ * kapanmaz.
+ */
+export function isNavAdExcluded(path: string): boolean {
+  return path === '/reader' || path.startsWith('/reader?') || path.startsWith('/reader/');
+}
+
+export function navInterstitialDue(changesSinceLast: number): boolean {
+  return changesSinceLast >= NAV_INTERSTITIAL_EVERY;
 }

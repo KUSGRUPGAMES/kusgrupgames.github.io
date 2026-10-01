@@ -1,12 +1,13 @@
 /** Kök düzen — şartname §11. Tüm sağlayıcılar burada kurulur. */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { I18nManager, Pressable } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { AppProviders } from '@/boot/AppProviders';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
 import { Icon } from '@/ui';
+import { noteNavigation } from '@/features/pro/adsRuntime';
 
 export default function RootLayout() {
   return (
@@ -19,6 +20,9 @@ export default function RootLayout() {
 function RootStack() {
   const theme = useTheme();
   const t = useT();
+  // Ekran geçişlerinde ara sıra tam ekran reklam (Kur'an okuyucu hariç; kurallar ads.ts).
+  const yol = usePathname();
+  useEffect(() => { noteNavigation(yol); }, [yol]);
   // Buradan **asla** erken dönülmez. Kök düzen bir gezinme kabı çizmezse
   // yönlendirme asılacak bağlam bulamaz ve ekran bomboş kalır; ilk açılış
   // beyaz ekranla başlıyordu, sebebi buydu. Onboarding kapısı artık

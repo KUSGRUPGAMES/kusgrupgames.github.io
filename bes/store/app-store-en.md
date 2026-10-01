@@ -74,7 +74,7 @@ FIVE LANGUAGES
 The whole interface is available in Turkish, English, Arabic, German and French; Arabic switches the layout to right-to-left. The Quran translation (Elmalılı) and long-form articles are in Turkish.
 
 WORSHIP IS ALWAYS FREE
-Prayer times, qibla, the Quran and translation, supplications, dhikr and qada tracking are always free. The free version shows ads — but never in the Quran reader, qibla, dhikr or prayer guide, and never just before or right after a prayer time.
+Prayer times, qibla, the Quran and translation, supplications, dhikr and qada tracking are always free. The free version shows ads — but never in the Quran reader, and never just before or right after a prayer time.
 
 BEŞ PRO
 Monthly, yearly or lifetime. Removes all ads and unlocks every lesson of the Learn course plus community extras (writing in chat rooms, creating khatm groups, 5 prayer requests a day). Subscriptions renew automatically unless cancelled at least 24 hours before the end of the period; manage or cancel them in your App Store account settings.

@@ -16,3 +16,4 @@ export async function showAdPrivacyOptions(): Promise<void> { /* web: reklam yok
 export async function initAds(): Promise<void> { /* web: reklam yok */ }
 export function adAllowedNow(_surface: AdSurface): boolean { return false; }
 export function maybeShowInterstitial(_surface: AdSurface): void { /* web: reklam yok */ }
+export function noteNavigation(_path: string): void { /* web: reklam yok */ }

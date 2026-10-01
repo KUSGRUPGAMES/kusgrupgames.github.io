@@ -82,7 +82,7 @@ Zekât hesaplama (altın veya gümüş nisabı seçmeli, metodoloji ekranda yaz�
 Arayüzün tamamı Türkçe, İngilizce, Arapça, Almanca ve Fransızca. Arapça seçildiğinde yazı yönü sağdan sola döner. Kur’an meali (Elmalılı) ve bilgi yazıları Türkçedir.
 
 ★ İBADET HER ZAMAN ÜCRETSİZ
-Vakitler, kıble, Kur’an ve meal, dualar, zikir ve kaza takibi her zaman ücretsiz. Ücretsiz sürümde reklam vardır; Kur’an okuyucu, kıble, zikir ve namaz rehberinde ve vakit girişine yakın reklam yoktur.
+Vakitler, kıble, Kur’an ve meal, dualar, zikir ve kaza takibi her zaman ücretsiz. Ücretsiz sürümde reklam vardır; Kur’an okuyucuda ve vakit girişine yakın reklam yoktur.
 
 ★ BEŞ PRO
 Aylık, yıllık ya da ömür boyu: reklamsız kullanım, Öğren kursunun tamamı, toplulukta ek özellikler. Abonelik, dönem bitmeden 24 saat önce iptal edilmezse kendiliğinden yenilenir.

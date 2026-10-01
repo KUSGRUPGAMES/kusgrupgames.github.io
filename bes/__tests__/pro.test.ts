@@ -193,3 +193,19 @@ describe('açılış reklamı ve ödüllü reklam (D33 devamı)', () => {
     expect(a.isAdFree(null, 0)).toBe(false);
   });
 });
+
+describe('ekran geçişinde tam ekran reklam (1 Ekim)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const a = require('@/features/pro/ads') as typeof import('@/features/pro/ads');
+  it('Kur’an okuyucuya girerken asla', () => {
+    expect(a.isNavAdExcluded('/reader')).toBe(true);
+    expect(a.isNavAdExcluded('/reader?surah=2&ayah=255')).toBe(true);
+    expect(a.isNavAdExcluded('/qibla')).toBe(false);
+    expect(a.isNavAdExcluded('/recitation')).toBe(false);
+  });
+  it('en az dört geçişte bir; geçiş yüzeyi reklamsız yüzeylerden değil', () => {
+    expect(a.navInterstitialDue(3)).toBe(false);
+    expect(a.navInterstitialDue(4)).toBe(true);
+    expect(a.AD_FREE_SURFACES).not.toContain('navigation');
+  });
+});
