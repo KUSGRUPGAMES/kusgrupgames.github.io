@@ -922,3 +922,16 @@ de var), Topluluk sekme oldu.
 **İlk kullanım tanıtımı.** Her sekme ilk açıldığında 3–4 adımlık kart
 (`src/features/tour`); her adımda "Tanıtımı atla" — basılınca hiçbir
 sekmede tekrar gösterilmez; Ayarlar'dan yeniden gösterilebilir.
+
+## D36 — Yönetici paneli (2026-10-01)
+
+Statik tek sayfa (GitHub Pages, `docs/yonetim-…/`), Supabase'e anon anahtar +
+yöneticinin Google oturumuyla bağlanır; yetki RLS ve `is_admin` denetimli
+`security definer` işlevlerde. Gizli anahtarlar (RevenueCat, App Store
+Connect) yalnız Edge Function `admin-metrics`'te. Kullanıcı içeriği panelde
+yalnız textContent ile basılır (XSS), CSP yalnız kendi dosyaları. Panel
+kurulurken 0007 ile kritik bir yetki yükseltme açığı (profil eklerken
+`is_admin`) ve beş ufak açık kapatıldı. Panel içeriği (dua, âyet havuzu,
+bilgi, kart, duyuru, yerleşik gizleme) bütün kullanıcılara gider; topluluğa
+katılmak gerekmez, istek hesapsızdır (gizlilik §7). Ayrıntı ve işletim:
+`bes/ADMIN_PANEL.md`.

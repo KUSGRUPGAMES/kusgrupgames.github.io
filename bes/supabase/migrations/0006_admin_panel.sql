@@ -212,3 +212,21 @@ drop policy if exists "yönetici ayarları yönetir" on public.admin_settings;
 create policy "yönetici ayarları yönetir" on public.admin_settings
   for all to authenticated using (public.is_admin(auth.uid())) with check (public.is_admin(auth.uid()));
 grant select, insert, update, delete on public.admin_settings to authenticated;
+
+-- ── yönetici işlem günlüğü: kim, neyi, ne zaman ─────────────────────────
+create table if not exists public.admin_audit (
+  id bigint generated always as identity primary key,
+  admin_id uuid references auth.users (id) on delete set null,
+  action text not null,
+  target text,
+  detail jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+alter table public.admin_audit enable row level security;
+drop policy if exists "yönetici günlüğü görür" on public.admin_audit;
+create policy "yönetici günlüğü görür" on public.admin_audit
+  for select to authenticated using (public.is_admin(auth.uid()));
+drop policy if exists "yönetici günlüğe yazar" on public.admin_audit;
+create policy "yönetici günlüğe yazar" on public.admin_audit
+  for insert to authenticated with check (public.is_admin(auth.uid()) and admin_id = auth.uid());
+grant select, insert on public.admin_audit to authenticated;
