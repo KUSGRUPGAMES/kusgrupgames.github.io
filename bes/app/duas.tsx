@@ -9,7 +9,7 @@ import { Screen, SectionHeader, Card, Chip, Row, Column, Text, IconButton, Banne
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
 import { DUA_CATEGORIES, type DuaCategory } from '@/content/duas';
-import { allDuas } from '@/features/duas/pool';
+import { useAllDuas } from '@/features/duas/pool';
 import { DuaText } from '@/features/duas/DuaText';
 import { useFavoriteStore } from '@/store/favorites';
 
@@ -20,9 +20,10 @@ export default function DuasScreen() {
   const [yalnizKuran, setYalnizKuran] = useState(false);
   const fav = useFavoriteStore();
 
+  const duaListesi = useAllDuas();
   const liste = useMemo(
-    () => allDuas().filter((d) => (!kategori || d.category === kategori) && (!yalnizKuran || d.kind === 'quran')),
-    [kategori, yalnizKuran],
+    () => duaListesi.filter((d) => (!kategori || d.category === kategori) && (!yalnizKuran || d.kind === 'quran')),
+    [kategori, yalnizKuran, duaListesi],
   );
 
   return (

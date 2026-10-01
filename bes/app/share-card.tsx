@@ -17,11 +17,9 @@ import { ShareCard, type CardStyle } from '@/features/share/ShareCard';
 import { shareCard } from '@/features/share/capture';
 import type { CardContent, CardFormat } from '@/features/share/card';
 import { resolveTemplate } from '@/features/share/templates';
-import { CARD_TEMPLATES, TEMPLATE_CATEGORIES, type TemplateCategory } from '@/content/cardTemplates';
+import { TEMPLATE_CATEGORIES, type TemplateCategory } from '@/content/cardTemplates';
 import { Brand } from '@/config/brand';
-import { useI18n } from '@/lib/i18n';
-import { useSettingsStore } from '@/store/settings';
-import { useContentItems } from '@/features/community/content';
+import { useCardTemplates, useRemoteOfType } from '@/features/content/pools';
 import { maybeShowInterstitial } from '@/features/pro/adsRuntime';
 
 const KATEGORI_ADI: Record<TemplateCategory, StringKey> = {
@@ -40,9 +38,8 @@ type Secim = 'own' | TemplateCategory | 'community';
 export default function ShareCardScreen() {
   const t = useT();
   const theme = useTheme();
-  const { language } = useI18n();
-  const settings = useSettingsStore((s) => s.settings);
-  const toplulukIcerik = useContentItems('share_card', language, settings.community.enabled);
+  const toplulukIcerik = useRemoteOfType('share_card');
+  const sablonKatalogu = useCardTemplates();
   const { width: ekran } = useWindowDimensions();
   const params = useLocalSearchParams<{
     body?: string; arabic?: string; reference?: string; source?: string;
@@ -73,15 +70,15 @@ export default function ShareCardScreen() {
   }), [t]);
 
   const sablonlar = useMemo(
-    () => (secim === 'own' || secim === 'community' ? [] : CARD_TEMPLATES
+    () => (secim === 'own' || secim === 'community' ? [] : sablonKatalogu
       .filter((s) => s.category === secim)
       .map((s) => ({ id: s.id, icerik: resolveTemplate(s, etiketler) }))
       .filter((x): x is { id: string; icerik: CardContent } => x.icerik !== null)),
-    [secim, etiketler],
+    [secim, etiketler, sablonKatalogu],
   );
 
   const toplulukKartlari = useMemo(
-    () => (toplulukIcerik.data ?? []).map((c): { id: string; icerik: CardContent } => ({
+    () => toplulukIcerik.map((c): { id: string; icerik: CardContent } => ({
       id: c.id,
       icerik: {
         body: c.body,
@@ -91,7 +88,7 @@ export default function ShareCardScreen() {
         brand: Brand.appName,
       },
     })),
-    [toplulukIcerik.data],
+    [toplulukIcerik],
   );
 
   const listelenenler = secim === 'community' ? toplulukKartlari : sablonlar;
@@ -116,7 +113,7 @@ export default function ShareCardScreen() {
           <Chip key={k} label={t(KATEGORI_ADI[k])} selected={secim === k}
             onPress={() => { setSecim(k); setSablonId(null); }} />
         ))}
-        {settings.community.enabled ? (
+        {toplulukIcerik.length ? (
           <Chip label={t('share.catCommunity')} selected={secim === 'community'}
             onPress={() => { setSecim('community'); setSablonId(null); }} />
         ) : null}

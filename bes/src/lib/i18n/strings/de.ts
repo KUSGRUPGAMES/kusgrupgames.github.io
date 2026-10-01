@@ -786,4 +786,6 @@ export const de: Partial<Record<StringKey, string>> = {
   'tour.profile2.body': 'Angemeldet werden deine Einträge mit deinem Konto synchronisiert; auf einem neuen Telefon ist nach der Anmeldung alles wieder da. Sicherungsdateien gibt es auch hier.',
   'tour.profile3.title': 'BEŞ Pro',
   'tour.profile3.body': 'Keine Werbung, der ganze Lernkurs und Extras in der Gemeinschaft. Du kannst auch eine Werbung ansehen und 24 Stunden werbefrei nutzen.',
+  'community.adminWarning': 'Hinweis der Moderation',
+  'community.warningAck': 'Verstanden',
 } as const;

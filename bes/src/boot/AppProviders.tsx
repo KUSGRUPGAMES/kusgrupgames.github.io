@@ -4,14 +4,14 @@
  * Sıralama önemlidir: hata sınırı en dışta durur ki sağlayıcılardan biri
  * patlarsa bile kullanıcı anlamlı bir ekran görsün.
  */
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Animated, Image, StyleSheet, View, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import * as Localization from 'expo-localization';
 import { ThemeProvider, type ThemeMode } from '@/theme/ThemeProvider';
-import { I18nProvider, useT, resolveLanguage, type Language } from '@/lib/i18n';
+import { I18nProvider, useI18n, useT, resolveLanguage, type Language } from '@/lib/i18n';
 import { FONT_ASSETS } from '@/lib/i18n/fonts';
 import { applyUiDirection } from '@/lib/i18n/rtl';
 import { ErrorBoundary } from '@/ui/ErrorBoundary';
@@ -32,6 +32,7 @@ import splashLogoLight from '../../assets/brand/splash-icon-light.png';
 import { initPurchases } from '@/features/pro/purchases';
 import { initAds } from '@/features/pro/adsRuntime';
 import { useCloudSync } from '@/features/sync/useCloudSync';
+import { refreshRemoteContent, startRemoteContent } from '@/features/content/remoteRuntime';
 
 // Üretimde debug/info günlüğe yazılmaz (§83).
 configureLogging({ minLevel: __DEV__ ? 'debug' : 'warn' });
@@ -246,6 +247,12 @@ function BildirimEsitleyici() {
   useWidgetSync();
   // Hesapla eşitleme (D35): giriş yoksa ya da kapalıysa hiçbir şey yapmaz.
   useCloudSync();
+  // Panelden yönetilen içerik (D36): açılışta ve öne gelişte, dil değişince hemen.
+  const { language } = useI18n();
+  const dilRef = useRef(language);
+  dilRef.current = language;
+  useEffect(() => startRemoteContent(() => dilRef.current), []);
+  useEffect(() => { void refreshRemoteContent(language); }, [language]);
   return null;
 }
 

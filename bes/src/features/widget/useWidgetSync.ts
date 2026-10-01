@@ -20,9 +20,10 @@ import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
 import type { MethodId, PrayerKey } from '@/features/prayer/methods';
 import { zonedNow } from '@/lib/time/zone';
 import { dateKey } from '@/features/dhikr/stats';
-import { dailyIndex, pickDaily } from '@/features/daily/pick';
-import { getAyahByIndex, getQuranIndexSize, getTranslationByIndex } from '@/features/quran/data';
+import { pickDaily } from '@/features/daily/pick';
 import { allDuas } from '@/features/duas/pool';
+import { currentVersePool } from '@/features/content/pools';
+import { pickDailyVerse } from '@/features/daily/verse';
 import { logger } from '@/lib/log';
 import { liveActivity } from '../../../modules/bes-live-activity';
 import { buildWidgetPayload, nextTwo, WIDGET_KEY, type WidgetDaily } from './payload';
@@ -58,15 +59,14 @@ export function useWidgetSync(): void {
     }, { year: z.year, month: z.month, day: z.day }, 4);
 
     // Günlük içerik: ana sayfadaki "Günün âyeti/duası" ile aynı seçim.
-    const toplam = getQuranIndexSize();
+    const havuz = currentVersePool();
     const daily: WidgetDaily[] = days.map((g) => {
-      const i = dailyIndex({ year: g.year, month: g.month, day: g.day, length: toplam, salt: 313 });
-      const ayet = i < 0 ? null : getAyahByIndex(i);
+      const ayet = pickDailyVerse(g, havuz);
       const dua = pickDaily(allDuas(), { year: g.year, month: g.month, day: g.day });
       return {
         d: dateKey(g.year, g.month, g.day),
         ar: ayet?.text ?? '',
-        tr: i < 0 ? '' : (getTranslationByIndex(i) ?? ''),
+        tr: ayet?.meal ?? '',
         ref: ayet ? `${ayet.surahName} ${ayet.ayah}` : '',
         duaTitle: dua?.title ?? '',
         dua: dua?.body ?? '',

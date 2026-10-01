@@ -23,6 +23,7 @@ import { useCommunitySession, suggestNickname } from '@/features/community/sessi
 import { isValidNickname } from '@/features/community/nickname';
 import { SignInButtons } from '@/features/community/SignInButtons';
 import { TabTour } from '@/features/tour/TabTour';
+import { useAckWarning, useMyWarnings } from '@/features/community/warnings';
 
 export default function CommunityScreen() {
   const t = useT();
@@ -37,6 +38,8 @@ export default function CommunityScreen() {
   const [hata, setHata] = useState(false);
 
   const katildi = settings.community.enabled && Boolean(userId) && Boolean(nickname);
+  const uyarilar = useMyWarnings(katildi ? userId : null);
+  const okundu = useAckWarning();
 
   if (!communityAvailable) {
     return (
@@ -65,6 +68,10 @@ export default function CommunityScreen() {
     <Screen scroll motif="arch">
       <TabTour tab="community" />
       <PageHeader title={t('community.title')} icon="users" />
+      {(uyarilar.data ?? []).map((w) => (
+        <Banner key={w.id} tone="warning" title={t('community.adminWarning')} description={w.message}
+          actionLabel={t('community.warningAck')} onAction={() => okundu.mutate(w.id)} />
+      ))}
       <Text variant="callout" tone="muted">{t('community.intro')}</Text>
 
       {!katildi ? (

@@ -786,4 +786,6 @@ export const en: Partial<Record<StringKey, string>> = {
   'tour.profile2.body': 'When signed in, your records sync with your account; sign in on a new phone and everything comes back. Backup files are here too.',
   'tour.profile3.title': 'BEŞ Pro',
   'tour.profile3.body': 'No ads, the full Learn course and community extras. You can also watch one ad to go ad-free for 24 hours.',
+  'community.adminWarning': 'Moderator warning',
+  'community.warningAck': 'I understand',
 } as const;

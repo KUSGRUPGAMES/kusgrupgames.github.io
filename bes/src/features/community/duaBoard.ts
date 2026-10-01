@@ -57,7 +57,7 @@ export function useDuaFeed(userId: string | null) {
     queryFn: async (): Promise<DuaRequest[]> => {
       if (!supabase) return [];
       const { data, error } = await supabase
-        .from('dua_requests').select('*').order('created_at', { ascending: false }).limit(100);
+        .from('dua_requests').select('*').eq('is_hidden', false).order('created_at', { ascending: false }).limit(100);
       if (error) throw error;
       return (data as Row[]).map((r) => fromRow(r, userId));
     },

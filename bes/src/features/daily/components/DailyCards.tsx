@@ -9,17 +9,17 @@ import { Card, Column, Row, Text, Badge, IconButton } from '@/ui';
 import { useT } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
 import { pickDaily } from '../pick';
-import { allDuas } from '@/features/duas/pool';
+import { useAllDuas } from '@/features/duas/pool';
+import { useAllKnowledge, useVersePool } from '@/features/content/pools';
+import { pickDailyVerse } from '../verse';
 import { DuaText } from '@/features/duas/DuaText';
-import { KNOWLEDGE } from '@/content/knowledge';
 import { DIVINE_NAMES } from '@/content/names';
 import { useFavoriteStore } from '@/store/favorites';
 import { toHijri, upcomingReligiousDays } from '@/features/hijri/calc';
 import { useHijriMonthName, useReligiousDayName } from '@/features/hijri/labels';
 import { moonState } from '@/features/moon/phase';
 import { isFriday, ramadanState, KAHF_SURAH } from '@/features/ramadan/calc';
-import { getQuranIndexSize, getAyahByIndex, getTranslationByIndex, getTranslationInfo } from '@/features/quran/data';
-import { dailyIndex } from '../pick';
+import { getTranslationInfo } from '@/features/quran/data';
 import { ArabicText, SourceNote } from '@/ui';
 
 export interface DailyContext {
@@ -34,7 +34,7 @@ export interface DailyContext {
 export function DailyDuaCard({ ctx }: { ctx: DailyContext }) {
   const t = useT();
   const fav = useFavoriteStore();
-  const dua = pickDaily(allDuas(), ctx);
+  const dua = pickDaily(useAllDuas(), ctx);
   if (!dua) return null;
   const secili = fav.has('dua', dua.id);
   return (
@@ -58,7 +58,7 @@ export function DailyDuaCard({ ctx }: { ctx: DailyContext }) {
 
 export function DailyKnowledgeCard({ ctx }: { ctx: DailyContext }) {
   const t = useT();
-  const item = pickDaily(KNOWLEDGE, { ...ctx, salt: 101 });
+  const item = pickDaily(useAllKnowledge(), { ...ctx, salt: 101 });
   if (!item) return null;
   return (
     <Card onPress={() => router.push('/knowledge')} accessibilityLabel={t('knowledge.ofDay')}>
@@ -174,11 +174,10 @@ export function MoonCard({ ctx }: { ctx: DailyContext }) {
 export function DailyAyahCard({ ctx }: { ctx: DailyContext }) {
   const t = useT();
   const fav = useFavoriteStore();
-  const toplam = getQuranIndexSize();
-  const i = dailyIndex({ year: ctx.year, month: ctx.month, day: ctx.day, length: toplam, salt: 313 });
-  const ayet = i < 0 ? null : getAyahByIndex(i);
+  const havuz = useVersePool();
+  const ayet = pickDailyVerse(ctx, havuz);
   if (!ayet) return null;
-  const meal = getTranslationByIndex(i);
+  const meal = ayet.meal;
   const kunye = getTranslationInfo();
   const kimlik = `${ayet.surah}:${ayet.ayah}`;
   const secili = fav.has('ayah', kimlik);

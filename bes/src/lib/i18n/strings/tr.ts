@@ -1058,6 +1058,8 @@ export const tr = {
   'tour.profile2.body': 'Giriş yaparsan kayıtların hesabınla eşitlenir; yeni telefonda giriş yapınca hepsi gelir. Yedek dosyası da buradan alınır.',
   'tour.profile3.title': 'BEŞ Pro',
   'tour.profile3.body': 'Reklamsız kullanım, Öğren kursunun tamamı ve toplulukta ek özellikler. Dilersen bir reklam izleyip 24 saat reklamsız da kullanabilirsin.',
+  'community.adminWarning': 'Yönetici uyarısı',
+  'community.warningAck': 'Okudum',
 } as const;
 
 export type StringKey = keyof typeof tr;

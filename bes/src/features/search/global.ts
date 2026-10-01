@@ -16,7 +16,8 @@ function containsArabicQuery(text: string): boolean {
 }
 import { DUA_CATEGORIES } from '@/content/duas';
 import { allDuas } from '@/features/duas/pool';
-import { KNOWLEDGE, KNOWLEDGE_TOPICS } from '@/content/knowledge';
+import { KNOWLEDGE_TOPICS } from '@/content/knowledge';
+import { allKnowledge } from '@/features/content/pools';
 import { DIVINE_NAMES } from '@/content/names';
 
 export type ResultKind = 'ayahRef' | 'surah' | 'ayahText' | 'translation' | 'dua' | 'name' | 'knowledge';
@@ -150,7 +151,7 @@ export function globalSearch(query: string, deps: GlobalSearchDeps, limit = 30):
 
   // 5. Bilgi maddeleri — konu adı da aranır.
   const bilgiKonu = new Map(KNOWLEDGE_TOPICS.map((c) => [c.id, c.label]));
-  for (const k of KNOWLEDGE) {
+  for (const k of allKnowledge()) {
     const puan = Math.max(
       matchScore(k.title, ham),
       matchScore(bilgiKonu.get(k.topic) ?? '', ham),

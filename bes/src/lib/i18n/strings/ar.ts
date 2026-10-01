@@ -786,4 +786,6 @@ export const ar: Partial<Record<StringKey, string>> = {
   'tour.profile2.body': 'عند تسجيل الدخول تُزامَن سجلاتك مع حسابك؛ وعلى هاتف جديد يعود كل شيء بعد الدخول. وملفات النسخ الاحتياطي هنا أيضًا.',
   'tour.profile3.title': 'BEŞ Pro',
   'tour.profile3.body': 'بلا إعلانات، والدورة كاملة، ومزايا إضافية في المجتمع. ويمكنك أيضًا مشاهدة إعلان لتستخدم التطبيق بلا إعلانات 24 ساعة.',
+  'community.adminWarning': 'تنبيه من الإدارة',
+  'community.warningAck': 'قرأت',
 } as const;
