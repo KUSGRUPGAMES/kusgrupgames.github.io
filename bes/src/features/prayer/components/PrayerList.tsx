@@ -56,6 +56,7 @@ export function PrayerList({ day, highlight, branded = false, compact = false, o
   compact?: boolean; onPrayerPress?: (key: PrayerKey) => void;
 }) {
   const theme = useTheme();
+  const t = useT();
   const label = usePrayerLabel();
   return (
     <View>
@@ -93,6 +94,13 @@ export function PrayerList({ day, highlight, branded = false, compact = false, o
                   style={branded && aktif ? { color: theme.colors.onAccentHighlight } : undefined}>
                   {label(key)}
                 </Text>
+                {/* Vurgu "şu anki vakit"tir (sıradaki değil); geri sayım
+                    sıradakini gösterdiği için etiketsiz vurgu karışıyordu. */}
+                {aktif ? (
+                  <Text variant="micro" style={{ color: branded ? theme.colors.onAccentHighlight : theme.colors.highlight, letterSpacing: 0.8 }}>
+                    {t('prayer.nowTag')}
+                  </Text>
+                ) : null}
               </Row>
               <Row align="center" gap="xs">
                 <Text variant={aktif ? 'bodyStrong' : 'body'} tone={branded ? 'onAccent' : aktif ? 'accent' : 'muted'}

@@ -796,4 +796,5 @@ export const ar: Partial<Record<StringKey, string>> = {
   'pro.trialAdsNote': 'تفتح التجربة مزايا Pro؛ أما إزالة الإعلانات فتتطلب اشتراك Pro.',
   'alarm.exactTitle': 'الأذان في وقته تمامًا',
   'alarm.exactBody': 'قد يؤخر أندرويد الإشعارات بضع دقائق أثناء سكون الهاتف ما لم يكن للتطبيق إذن «المنبهات والتذكيرات». فعّله لتطبيق BEŞ من الإعدادات.',
+  'prayer.nowTag': 'الآن',
 } as const;

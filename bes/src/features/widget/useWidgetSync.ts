@@ -124,10 +124,21 @@ export function useWidgetSync(): void {
         upcoming,
       });
     };
-    kur();
-    const sub = AppState.addEventListener('change', (durum) => { if (durum !== 'active') kur(); });
-    // Açıkken vakit girdiğinde sıradakine geç.
+    // Vakit girdiği saniyede sıradakine geç (60 sn'lik yoklama, kilit ekranını
+    // bir dakikaya kadar "0:00"da bırakıyordu).
+    let tam: ReturnType<typeof setTimeout> | null = null;
+    const planla = () => {
+      if (tam) clearTimeout(tam);
+      const v = veriRef.current;
+      const simdi = Date.now() / 1000;
+      const sonraki = v?.times.find((x) => x.t > simdi);
+      if (sonraki) tam = setTimeout(() => { kur(); planla(); }, Math.min((sonraki.t - simdi) * 1000 + 1500, 2 ** 31 - 1));
+    };
+    kur(); planla();
+    // Öne gelişte de hemen güncelle: önceden yalnız arka plana geçerken
+    // güncelleniyordu; uygulama açılınca kilit ekranı bir dakika eski kalıyordu.
+    const sub = AppState.addEventListener('change', () => { kur(); planla(); });
     const zamanlayici = setInterval(kur, 60_000);
-    return () => { sub.remove(); clearInterval(zamanlayici); };
+    return () => { sub.remove(); clearInterval(zamanlayici); if (tam) clearTimeout(tam); };
   }, [acik, veri, t]);
 }

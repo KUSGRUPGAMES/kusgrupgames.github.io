@@ -1068,6 +1068,7 @@ export const tr = {
   'pro.trialAdsNote': 'Deneme Pro özelliklerini açar; reklamları kaldırmak için Pro üyelik gerekir.',
   'alarm.exactTitle': 'Ezan tam vaktinde gelsin',
   'alarm.exactBody': 'Android, “Alarmlar ve hatırlatıcılar” izni olmayan uygulamaların bildirimlerini telefon uykudayken birkaç dakika geciktirebilir. Ayarlarda BEŞ için bu izni aç.',
+  'prayer.nowTag': 'ŞU AN',
 } as const;
 
 export type StringKey = keyof typeof tr;

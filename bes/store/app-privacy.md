@@ -34,6 +34,7 @@ ya da kullanılan SDK'nın yayımlanmış beyanında karşılığı vardır.
 | Reklam | Google AdMob | Cihaz bilgisi, IP → kaba konum, reklam etkileşimi, izin varsa reklam kimliği, SDK teşhis verisi | Yalnız ücretsiz sürümde, onboarding'den sonra |
 | Pro | Apple/Google (ödeme), RevenueCat (doğrulama) | Rastgele uygulama kullanıcı kimliği, satın alma geçmişi | Pro ekranı açılınca / satın alınca |
 | Topluluk | Supabase (AB, İrlanda) | Hesap kimliği, e-posta, takma ad, dua istekleri, mesajlar, hatim katılımı, şikâyet/engelleme | Yalnız kullanıcı girişi yapıp katılırsa |
+| Canlı etkinlik push (2 Ekim) | Supabase (AB) + Apple APNs | APNs jetonu, rastgele cihaz kimliği, şehir adı, önümüzdeki vakit ad/saatleri (konum YOK, kimliğe bağlı değil) | Yalnız Dinamik Ada açıkken; kapatınca silinir |
 | Hesapla eşitleme (D35) | Supabase (AB, İrlanda) | Kişisel kayıtlar: Kur'an konumu, yer imleri/notlar, ibadet defteri, zikir, kaza, hatim, oruç, hatırlatıcılar, favoriler, kurs, ayarlar, kayıtlı şehirler (GPS yok) | Yalnız giriş yapılmışsa; Hesap ekranından kapatılabilir |
 
 Analitik, izleme pikseli ve uzak çökme raporlama **yok** (sınamaya bağlı:

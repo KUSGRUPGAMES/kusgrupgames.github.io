@@ -9,8 +9,11 @@
 //  2. Arka plan yenilemesi (BGAppRefreshTask) uyandırdığında bu dosya,
 //     JavaScript'e gerek kalmadan listedeki sıradaki vakte geçer ve bir
 //     sonraki uyanmayı o vaktin hemen sonrasına ister.
-// Tam kesinlik (her vakitte anında) yalnız sunucudan push ile mümkün; bu,
-// sunucusuz yapılabilecek en iyisi.
+//  3. (2 Ekim) Asıl güvence push: etkinlik `pushType: .token` ile başlar,
+//     jeton JS'e (onPushToken) verilir, JS onu önümüzdeki vakitlerle birlikte
+//     sunucuya kaydeder; sunucu her vakit girdiğinde APNs ile sıradaki vakte
+//     geçirir (supabase/functions/live-activity-push). 1 ve 2 cihazda yetersiz
+//     kaldı: kilit ekranı öğleden 39 dk sonra hâlâ "Öğle 0:00" gösteriyordu.
 import ActivityKit
 import BackgroundTasks
 import ExpoModulesCore
@@ -97,6 +100,10 @@ public class BesLiveActivityModule: Module {
   public func definition() -> ModuleDefinition {
     Name("BesLiveActivity")
 
+    OnCreate {
+      if #available(iOS 16.2, *) { BesVakitPush.basla() }
+    }
+
     Function("isSupported") { () -> Bool in
       if #available(iOS 16.2, *) {
         return ActivityAuthorizationInfo().areActivitiesEnabled
@@ -111,16 +118,23 @@ public class BesLiveActivityModule: Module {
         slots = [BesVakitSlot(n: p.name, t: Date(timeIntervalSince1970: p.target), hm: p.hm)]
       }
       guard let icerik = BesVakitIcerik.kur(slots) else { return false }
+      // Push'suz başlatılmış eski etkinlik (2 Ekim öncesi) jeton vermez: bir kez yenile.
+      let d = UserDefaults.standard
+      let pushluSurum = d.bool(forKey: "bes.etkinlik.push")
       let mevcut = Activity<BesVakitAttributes>.activities
       var sonuc = true
-      if let ilk = mevcut.first, ilk.attributes.city == p.city {
+      if pushluSurum, let ilk = mevcut.first, ilk.attributes.city == p.city {
         await ilk.update(icerik)
+        BesVakitPush.dinle(ilk)
+        await BesVakitPush.listeyiGuncelle(ilk)
         for fazla in mevcut.dropFirst() { await fazla.end(nil, dismissalPolicy: .immediate) }
       } else {
         for eski in mevcut { await eski.end(nil, dismissalPolicy: .immediate) }
         do {
-          _ = try Activity.request(
-            attributes: BesVakitAttributes(city: p.city, title: p.title), content: icerik, pushType: nil)
+          let yeni = try Activity.request(
+            attributes: BesVakitAttributes(city: p.city, title: p.title), content: icerik, pushType: .token)
+          BesVakitPush.dinle(yeni)
+          d.set(true, forKey: "bes.etkinlik.push")
         } catch {
           sonuc = false
         }
@@ -133,6 +147,7 @@ public class BesLiveActivityModule: Module {
       guard #available(iOS 16.2, *) else { return }
       for a in Activity<BesVakitAttributes>.activities { await a.end(nil, dismissalPolicy: .immediate) }
       BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: BesVakitYenileme.kimlik)
+      await BesVakitPush.kapat()
     }
   }
 }
@@ -172,6 +187,106 @@ public class BesLiveActivityAppDelegate: ExpoAppDelegateSubscriber {
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
     BesVakitYenileme.kaydet()
+    // Sunucunun başlattığı etkinliğin jetonu için iOS uygulamayı arka planda
+    // uyandırır; JS yüklenmeden jetonu kaydetmek gerekir.
+    if #available(iOS 16.2, *) { BesVakitPush.basla() }
     return true
+  }
+}
+
+
+/// Push kaydı (2 Ekim). Etkinlik ve "push ile başlat" jetonlarını, önümüzdeki
+/// vakitlerle (ad + saat; konum YOK) Supabase'e yazar. Sunucu
+/// (supabase/functions/live-activity-push) her vakit girdiğinde etkinliği
+/// sıradakine geçirir; iOS'un 8 saat sınırında etkinliği yenisiyle değiştirir.
+/// JS'e bağlı değildir: sunucunun başlattığı etkinlikte iOS uygulamayı arka
+/// planda kısa süre uyandırır, o anda JS çalışmıyor olabilir.
+@available(iOS 16.2, *)
+enum BesVakitPush {
+  private static var basladi = false
+  private static var dinlenen = Set<String>()
+  private static let kilit = NSLock()
+
+  private static var ayar: (url: String, anahtar: String, topic: String, env: String)? {
+    let b = Bundle.main
+    guard let url = b.object(forInfoDictionaryKey: "BESSupabaseURL") as? String, !url.isEmpty,
+          let anahtar = b.object(forInfoDictionaryKey: "BESSupabaseAnonKey") as? String, !anahtar.isEmpty,
+          let env = b.object(forInfoDictionaryKey: "BESApnsEnv") as? String,
+          let topic = b.bundleIdentifier else { return nil }
+    return (url, anahtar, topic, env)
+  }
+
+  static var cihaz: String {
+    let d = UserDefaults.standard
+    if let v = d.string(forKey: "bes.cihaz") { return v }
+    let v = UUID().uuidString.lowercased()
+    d.set(v, forKey: "bes.cihaz")
+    return v
+  }
+
+  static func basla() {
+    kilit.lock(); defer { kilit.unlock() }
+    if basladi { return }
+    basladi = true
+    for a in Activity<BesVakitAttributes>.activities { dinle(a) }
+    Task { for await a in Activity<BesVakitAttributes>.activityUpdates { dinle(a) } }
+    if #available(iOS 17.2, *) {
+      Task {
+        for await veri in Activity<BesVakitAttributes>.pushToStartTokenUpdates {
+          await gonder("set_live_activity_start_token", ["p_device": cihaz, "p_token": hex(veri)])
+        }
+      }
+    }
+  }
+
+  static func dinle(_ a: Activity<BesVakitAttributes>) {
+    kilit.lock()
+    let yeni = dinlenen.insert(a.id).inserted
+    kilit.unlock()
+    if !yeni { return }
+    Task {
+      for await veri in a.pushTokenUpdates {
+        let slots = a.content.state.upcoming.map {
+          ["n": $0.n, "t": $0.t.timeIntervalSince1970, "hm": $0.hm] as [String: Any]
+        }
+        await gonder("register_live_activity", [
+          "p_device": cihaz, "p_token": hex(veri), "p_city": a.attributes.city,
+          "p_title": a.attributes.title, "p_slots": slots,
+        ])
+      }
+    }
+  }
+
+  /// Uygulama yeni vakit listesi verdiğinde (startOrUpdate) sunucudaki listeyi tazeler.
+  static func listeyiGuncelle(_ a: Activity<BesVakitAttributes>) async {
+    guard let veri = a.pushToken else { return }
+    let slots = a.content.state.upcoming.map {
+      ["n": $0.n, "t": $0.t.timeIntervalSince1970, "hm": $0.hm] as [String: Any]
+    }
+    await gonder("register_live_activity", [
+      "p_device": cihaz, "p_token": hex(veri), "p_city": a.attributes.city,
+      "p_title": a.attributes.title, "p_slots": slots,
+    ])
+  }
+
+  static func kapat() async {
+    await gonder("unregister_live_activity", ["p_device": cihaz])
+  }
+
+  private static func hex(_ d: Data) -> String { d.map { String(format: "%02x", $0) }.joined() }
+
+  private static func gonder(_ islev: String, _ govde: [String: Any]) async {
+    guard let a = ayar, let url = URL(string: "\(a.url)/rest/v1/rpc/\(islev)") else { return }
+    var g = govde
+    if islev == "register_live_activity" || islev == "set_live_activity_start_token" {
+      g["p_topic"] = a.topic; g["p_env"] = a.env
+    }
+    var istek = URLRequest(url: url)
+    istek.httpMethod = "POST"
+    istek.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    istek.setValue(a.anahtar, forHTTPHeaderField: "apikey")
+    istek.setValue("Bearer \(a.anahtar)", forHTTPHeaderField: "Authorization")
+    istek.httpBody = try? JSONSerialization.data(withJSONObject: g)
+    _ = try? await URLSession.shared.data(for: istek)
   }
 }

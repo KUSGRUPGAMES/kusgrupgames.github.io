@@ -116,6 +116,12 @@ const config: ExpoConfig = {
     icon: './assets/icon.png',
     buildNumber: BUILD,
     infoPlist: {
+      // Canlı etkinlik push kaydı (modules/bes-live-activity, 2 Ekim). Değerler
+      // herkese açık istemci anahtarıdır (uygulama JS'inde de var).
+      BESSupabaseURL: process.env.EXPO_PUBLIC_SUPABASE_URL ?? '',
+      BESSupabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '',
+      // Geliştirme imzası APNs sandbox'a, App Store imzası production'a bağlanır.
+      BESApnsEnv: variant === 'production' ? 'production' : 'sandbox',
       // Kıraat arka planda sürsün ve kilit ekranından yönetilebilsin (§32).
       UIBackgroundModes: ['audio', 'fetch'],
       // Canlı etkinliği uygulama uyurken sıradaki vakte geçiren arka plan
