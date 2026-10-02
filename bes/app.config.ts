@@ -107,6 +107,9 @@ const config: ExpoConfig = {
     // uygulaması Apple girişini de sunmak zorunda. Bu anahtar
     // `com.apple.developer.applesignin` yetkisini ekler.
     usesAppleSignIn: true,
+    // Yalnız standart HTTPS: ihracat kontrolünden muaf. Yazılmazsa App Store
+    // Connect her derlemede şifreleme sorusunu elle sorar ve derleme bekler.
+    config: { usesNonExemptEncryption: false },
     // App Store ikonu saydamlık kabul etmez; icon.png zeminli üretilir.
     icon: './assets/icon.png',
     buildNumber: BUILD,
