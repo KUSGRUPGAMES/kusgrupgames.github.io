@@ -38,11 +38,24 @@ struct BesVakitAttributes: ActivityAttributes {
     init(from decoder: Decoder) throws {
       let c = try decoder.container(keyedBy: CodingKeys.self)
       name = try c.decode(String.self, forKey: .name)
-      target = try c.decode(Date.self, forKey: .target)
+      // Tarihler Unix saniyesi (1970) olarak taşınır: sunucunun push'u da aynı
+      // biçimi yazar; Swift'in varsayılan 2001 tabanı belirsizlik yaratıyordu.
+      target = Date(timeIntervalSince1970: try c.decode(Double.self, forKey: .target))
       hm = try c.decode(String.self, forKey: .hm)
       following = try c.decode(String.self, forKey: .following)
       upcoming = try c.decodeIfPresent([BesVakitSlot].self, forKey: .upcoming) ?? []
     }
+
+    func encode(to encoder: Encoder) throws {
+      var c = encoder.container(keyedBy: CodingKeys.self)
+      try c.encode(name, forKey: .name)
+      try c.encode(target.timeIntervalSince1970, forKey: .target)
+      try c.encode(hm, forKey: .hm)
+      try c.encode(following, forKey: .following)
+      try c.encode(upcoming, forKey: .upcoming)
+    }
+
+    enum CodingKeys: String, CodingKey { case name, target, hm, following, upcoming }
   }
   var city: String
   var title: String
@@ -52,6 +65,24 @@ struct BesVakitSlot: Codable, Hashable {
   var n: String
   var t: Date
   var hm: String
+
+  init(n: String, t: Date, hm: String) { self.n = n; self.t = t; self.hm = hm }
+
+  init(from decoder: Decoder) throws {
+    let c = try decoder.container(keyedBy: CodingKeys.self)
+    n = try c.decode(String.self, forKey: .n)
+    t = Date(timeIntervalSince1970: try c.decode(Double.self, forKey: .t))
+    hm = try c.decode(String.self, forKey: .hm)
+  }
+
+  func encode(to encoder: Encoder) throws {
+    var c = encoder.container(keyedBy: CodingKeys.self)
+    try c.encode(n, forKey: .n)
+    try c.encode(t.timeIntervalSince1970, forKey: .t)
+    try c.encode(hm, forKey: .hm)
+  }
+
+  enum CodingKeys: String, CodingKey { case n, t, hm }
 }
 
 struct VakitSlotu: Record {

@@ -7,7 +7,7 @@
  *    eskisini bitirir, sıradaki vakitle yenisini başlatır (iOS 8 saat sınırı);
  *  - değilse: etkinliği sıradaki vakte günceller.
  * İçerik biçimi VakitAktivitesi.swift'teki ContentState ile birebir: tarihler
- * Swift'in varsayılan Codable biçiminde (2001-01-01'den beri saniye).
+ * Unix saniyesi (ContentState özel Codable ile böyle okur).
  *
  * Gizli değişkenler: APNS_KEY_ID, APNS_KEY (.p8 içeriği), APPLE_TEAM_ID, CRON_SECRET.
  */
@@ -18,7 +18,6 @@ const KEY_ID = Deno.env.get('APNS_KEY_ID') ?? '';
 const TEAM = Deno.env.get('APPLE_TEAM_ID') ?? '';
 const PEM = Deno.env.get('APNS_KEY') ?? '';
 const CRON = Deno.env.get('CRON_SECRET') ?? '';
-const REF = 978307200; // 2001-01-01 (Swift Date referansı), unix saniye
 const YENILE_SN = 6 * 3600;
 
 type Slot = { n: string; t: number; hm: string };
@@ -69,8 +68,8 @@ export function icerik(slots: Slot[], simdi: number) {
   return {
     hedef: s.t,
     state: {
-      name: s.n, target: s.t - REF, hm: s.hm, following: sonra ? `${sonra.n} ${sonra.hm}` : '',
-      upcoming: slots.slice(i).map((x) => ({ n: x.n, t: x.t - REF, hm: x.hm })),
+      name: s.n, target: s.t, hm: s.hm, following: sonra ? `${sonra.n} ${sonra.hm}` : '',
+      upcoming: slots.slice(i).map((x) => ({ n: x.n, t: x.t, hm: x.hm })),
     },
   };
 }
