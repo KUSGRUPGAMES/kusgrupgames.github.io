@@ -95,6 +95,16 @@ export default function AlarmsScreen() {
           actionLabel={t('qibla.openSettings')} onAction={() => { void Linking.openSettings(); }} />
       ) : null}
 
+      {/* Android 12+: "Alarmlar ve hatırlatıcılar" izni yoksa sistem bildirimi
+          uykuda dakikalarca geciktirir (expo-notifications kesin alarmı yalnız
+          bu izinle kurar). Android 14+'da varsayılan kapalı; buradan açılır. */}
+      {Platform.OS === 'android' && Number(Platform.Version) >= 31 && n.enabled ? (
+        <Banner tone="info" title={t('alarm.exactTitle')} description={t('alarm.exactBody')} style={{ marginTop: theme.spacing.md }}
+          actionLabel={t('qibla.openSettings')} onAction={() => {
+            void Linking.sendIntent('android.settings.REQUEST_SCHEDULE_EXACT_ALARM').catch(() => Linking.openSettings());
+          }} />
+      ) : null}
+
       <Card padding="sm" style={{ marginTop: theme.spacing.md }}>
         <Toggle title={t('alarm.prayerAlerts')} value={n.enabled} onChange={(v) => ayarla({ enabled: v })} icon="bell" />
         <Toggle title={t('settings.sound')} value={n.sound} onChange={(v) => ayarla({ sound: v })} />

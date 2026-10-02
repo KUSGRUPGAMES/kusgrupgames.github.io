@@ -794,4 +794,6 @@ export const en: Partial<Record<StringKey, string>> = {
   'pro.trialCta': 'Sign in, try 14 days',
   'pro.trialActive': 'Pro trial: {n} days left',
   'pro.trialAdsNote': 'The trial unlocks Pro features; removing ads requires Pro membership.',
+  'alarm.exactTitle': 'Get the adhan right on time',
+  'alarm.exactBody': 'Android may delay notifications by several minutes while the phone sleeps unless the app has the “Alarms & reminders” permission. Turn it on for BEŞ in Settings.',
 } as const;

@@ -794,4 +794,6 @@ export const de: Partial<Record<StringKey, string>> = {
   'pro.trialCta': 'Anmelden, 14 Tage testen',
   'pro.trialActive': 'Pro-Test: noch {n} Tage',
   'pro.trialAdsNote': 'Der Test schaltet Pro-Funktionen frei; werbefrei wird es nur mit Pro-Mitgliedschaft.',
+  'alarm.exactTitle': 'Adhan pünktlich erhalten',
+  'alarm.exactBody': 'Android kann Benachrichtigungen im Ruhezustand um einige Minuten verzögern, wenn die App keine Berechtigung „Wecker und Erinnerungen“ hat. Aktiviere sie in den Einstellungen für BEŞ.',
 } as const;

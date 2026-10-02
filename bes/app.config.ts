@@ -137,7 +137,9 @@ const config: ExpoConfig = {
       monochromeImage: './assets/adaptive-icon-mono.png',
       backgroundColor: ZEMIN,
     },
-    permissions: ['ACCESS_COARSE_LOCATION', 'ACCESS_FINE_LOCATION'],
+    // SCHEDULE_EXACT_ALARM: ezan bildirimi tam vaktinde (uykuda geciktirilmeden).
+    // Kullanıcının açtığı izindir; USE_EXACT_ALARM (Play beyanı ister) kullanılmaz.
+    permissions: ['ACCESS_COARSE_LOCATION', 'ACCESS_FINE_LOCATION', 'SCHEDULE_EXACT_ALARM'],
     // Kütüphaneler kendi manifest'lerinde izin bildirir ve birleştirici
     // bunları uygulamaya taşır. Uygulama **mikrofon kullanmıyor** — kıraat
     // yalnız çalınır, hiçbir yerde kayıt yok; Play mikrofon iznini gerekçe
@@ -147,6 +149,11 @@ const config: ExpoConfig = {
       'android.permission.SYSTEM_ALERT_WINDOW',
       'android.permission.READ_EXTERNAL_STORAGE',
       'android.permission.WRITE_EXTERNAL_STORAGE',
+      // Güvenli depolama kütüphanesi biyometri izinlerini ekliyor; uygulama
+      // parmak izi/yüz tanıma kullanmıyor (requireAuthentication yok).
+      'android.permission.USE_BIOMETRIC',
+      'android.permission.USE_FINGERPRINT',
+      'android.permission.DUMP',
       // AD_ID artık engellenmiyor (D33): AdMob reklam kimliğini kullanır ve
       // Play Console'daki reklam kimliği beyanı "evet" olarak doldurulur.
     ],

@@ -84,8 +84,8 @@ Arayüzün tamamı Türkçe, İngilizce, Arapça, Almanca ve Fransızca. Arapça
 ★ İBADET HER ZAMAN ÜCRETSİZ
 Vakitler, kıble, Kur’an ve meal, dualar, zikir ve kaza takibi her zaman ücretsiz. Ücretsiz sürümde reklam vardır; Kur’an okuyucuda ve vakit girişine yakın reklam yoktur.
 
-★ BEŞ PRO
-Aylık, yıllık ya da ömür boyu: reklamsız kullanım, Öğren kursunun tamamı, toplulukta ek özellikler. Abonelik, dönem bitmeden 24 saat önce iptal edilmezse kendiliğinden yenilenir.
+★ PRO ÖZELLİKLERİ LANSMANA ÖZEL ÜCRETSİZ
+Taç işaretli Pro bölümleri (Öğren kursunun bütün dersleri, sohbete yazma, hatim grubu kurma, günde 5 dua isteği) lansman döneminde herkese ücretsiz. Dilersen bir reklam izleyip 24 saat reklamsız kullanabilirsin.
 
 ★ DÜRÜSTLÜK NOTU
 Vakit hesabı yönteme ve konuma bağlıdır; resmî ilanla bir iki dakika fark olabilir. Hicrî tarih aritmetiktir, ilandan bir gün sapabilir. BEŞ bir yardımcı araçtır; dinî hüküm (fetva) vermez.```
@@ -97,7 +97,8 @@ Uygulamalar → Yaşam Tarzı
 ## İçerik derecelendirmesi
 
 IARC anketinde: kullanıcılar etkileşimde bulunabilir (**evet** — Topluluk,
-moderasyonlu), uygulama içi satın alma (**evet** — Pro), reklam (**evet** —
+moderasyonlu), uygulama içi satın alma (1.0'da **hayır**; 1.0.1'de Pro satışı
+açılınca **evet** olarak güncellenir), reklam (**evet** —
 G derecesi, hassas kategoriler engelli). Derece bu cevaplara göre çıkar.
 
 ## Veri güvenliği formu
@@ -105,3 +106,10 @@ G derecesi, hassas kategoriler engelli). Derece bu cevaplara göre çıkar.
 **"Veri toplanmıyor" artık doğru değil (D32, D33).** Reklam, Pro ve isteğe
 bağlı Topluluk veri işliyor; konum, ibadet kayıtları ve notlar hâlâ cihazdan
 çıkmıyor. Konsoldaki her kutunun yanıtı `app-privacy.md` içinde yazılıdır.
+
+## 1.0.1 (Pro satışı açılınca) — tam açıklamadaki lansman paragrafının yerine
+
+```
+★ BEŞ PRO
+Aylık, yıllık ya da ömür boyu: reklamsız kullanım, Öğren kursunun tamamı, toplulukta ek özellikler. Abonelik, dönem bitmeden 24 saat önce iptal edilmezse kendiliğinden yenilenir.
+```

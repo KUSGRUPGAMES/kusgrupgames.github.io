@@ -22,7 +22,8 @@
     "probe:reciters": "node tools/probe-reciters.js",
     "test:logic": "jest --selectProjects mantik",
     "test:ui": "jest --selectProjects bilesen",
-    "store:shots": "node tools/store-shots.js"
+    "store:shots": "node tools/store-shots.js",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@bacons/apple-targets": "5.0.0",

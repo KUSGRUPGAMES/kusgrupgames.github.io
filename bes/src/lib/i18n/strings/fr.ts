@@ -794,4 +794,6 @@ export const fr: Partial<Record<StringKey, string>> = {
   'pro.trialCta': 'Se connecter, essayer 14 jours',
   'pro.trialActive': 'Essai Pro : {n} jours restants',
   'pro.trialAdsNote': 'L’essai débloque les fonctions Pro ; supprimer les publicités nécessite l’abonnement Pro.',
+  'alarm.exactTitle': 'Recevoir l’adhan à l’heure',
+  'alarm.exactBody': 'Android peut retarder les notifications de plusieurs minutes pendant la veille si l’app n’a pas l’autorisation « Alarmes et rappels ». Active-la pour BEŞ dans les Réglages.',
 } as const;
