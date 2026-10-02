@@ -225,9 +225,13 @@ enum BesVakitPush {
   }
 
   static func basla() {
-    kilit.lock(); defer { kilit.unlock() }
-    if basladi { return }
+    // Kilit yalnız bayrak için: dinle() da aynı kilidi alır; kilit tutulurken
+    // çağrılırsa açılışta kilitlenip iOS'un bekçisi uygulamayı öldürüyordu.
+    kilit.lock()
+    let ilk = !basladi
     basladi = true
+    kilit.unlock()
+    if !ilk { return }
     for a in Activity<BesVakitAttributes>.activities { dinle(a) }
     Task { for await a in Activity<BesVakitAttributes>.activityUpdates { dinle(a) } }
     if #available(iOS 17.2, *) {
