@@ -11,7 +11,7 @@ import { create } from 'zustand';
 import { supabase } from '@/features/community/client';
 import { useOturum } from '@/features/community/auth';
 import { logger } from '@/lib/log';
-import { usePro } from './purchases';
+import { identifyPurchases, usePro } from './purchases';
 import { proAccess, type Access } from './access';
 
 const log = logger('pro-deneme');
@@ -35,6 +35,8 @@ export function useProTrialSync(): void {
   const purchased = usePro();
   const { girisli, session } = useOturum();
   const uid = girisli ? session?.user.id ?? null : null;
+  // Pro kaydı hesaba bağlı: panelden verilen Pro her telefonda geçerli olur.
+  useEffect(() => { void identifyPurchases(uid); }, [uid]);
   useEffect(() => {
     if (!PRO_SALES_ENABLED || !uid || purchased || !supabase) {
       if (!uid) useTrialStore.setState({ uid: null, endsAt: null });

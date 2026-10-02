@@ -62,6 +62,7 @@ export function initPurchases(): void {
     });
     Purchases.configure({ apiKey: API_KEY as string });
     Purchases.addCustomerInfoUpdateListener(uygula);
+    if (bekleyenKimlik !== undefined) { const k = bekleyenKimlik; bekleyenKimlik = undefined; void identifyPurchases(k); }
     Purchases.getCustomerInfo().then(uygula).catch((e: unknown) => {
       log.warn('abonelik durumu okunamadı', { error: e });
       useProStore.setState({ ready: true });
@@ -69,6 +70,35 @@ export function initPurchases(): void {
   } catch (e) {
     log.warn('RevenueCat başlatılamadı', { error: e });
     useProStore.setState({ ready: true });
+  }
+}
+
+let bagliKimlik: string | null = null;
+/** Başlatmadan önce gelen bağlama isteği; başlatınca uygulanır. */
+let bekleyenKimlik: string | null | undefined;
+
+/**
+ * Pro kaydını giriş yapılan hesaba bağlar (çıkışta ayırır).
+ *
+ * RevenueCat kimliği = Supabase kullanıcı kimliği. Böylece satın alınan ya da
+ * yönetici panelinden verilen Pro (promosyon hakkı) aynı hesapla giriş
+ * yapılan her telefonda geçerli olur. Girişten önce telefonda yapılmış bir
+ * satın alma, RevenueCat tarafından hesaba aktarılır.
+ */
+export async function identifyPurchases(uid: string | null): Promise<void> {
+  if (!purchasesAvailable) return;
+  if (!kuruldu) { bekleyenKimlik = uid; return; }
+  if (uid === bagliKimlik) return;
+  try {
+    if (uid) {
+      const { customerInfo } = await Purchases.logIn(uid);
+      uygula(customerInfo);
+    } else if (bagliKimlik) {
+      uygula(await Purchases.logOut());
+    }
+    bagliKimlik = uid;
+  } catch (e) {
+    log.warn('Pro kaydı hesaba bağlanamadı', { error: e });
   }
 }
 

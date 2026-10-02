@@ -506,6 +506,7 @@ async function userDetail(uid) {
         await must(sb.rpc('admin_delete_user', { uid }), 'Hesap silme'); await audit('delete_user', uid, { email: u.email, nickname: u.nickname });
         clear($('#modal-root')); state.users.delete(uid); if (state.view === 'users') go('users');
       }, { typeToConfirm: 'SİL' }) }, 'Hesabı sil')),
+    proKutusu(uid),
     h('h3', null, `Uyarılar (${uyarilar.length})`),
     uyarilar.length ? uyarilar.map((w) => h('div', { class: 'row card', style: { padding: '8px 12px' } }, h('div', { class: 'grow body' }, w.message),
       h('span', { class: 'subtle' }, `${fmtDate(w.created_at)} · ${w.seen_at ? 'okundu' : 'okunmadı'}`),
@@ -519,6 +520,33 @@ async function userDetail(uid) {
     h('h3', null, `Yaptığı şikâyetler (${sikayetEttigi.length})`),
     sikayetEttigi.length ? sikayetEttigi.map((r) => h('div', { class: 'subtle' }, `#${r.id} · ${r.status} · ${short(r.reason, 80)}`)) : h('div', { class: 'subtle' }, 'Yok'));
   modal(`Kullanıcı: ${u.nickname || u.email || uid.slice(0, 8)}`, body);
+}
+
+// ── ücretsiz Pro (RevenueCat promosyon hakkı, sunucu işlevi admin-pro) ────
+function proKutusu(uid) {
+  const kutu = h('div', { class: 'card col' }, h('h3', null, 'Pro'), h('div', { class: 'subtle' }, 'Durum okunuyor…'));
+  const cagir = async (body) => {
+    const r = await sb.functions.invoke('admin-pro', { body: { uid, ...body } });
+    if (r.error) {
+      let mesaj = r.error.message;
+      try { const j = await r.error.context.json(); if (j && j.error) mesaj = j.error; } catch (_) { /* gövde yok */ }
+      throw new Error(mesaj);
+    }
+    return r.data;
+  };
+  const ciz = (d) => {
+    const bitis = d.active ? (d.expiresAt > Date.now() + 50 * 365 * 86400000 ? 'süresiz' : `bitiş: ${fmtDate(new Date(d.expiresAt).toISOString())}`) : null;
+    const ver = (sure, ad) => h('button', { class: 'btn sm', onclick: () => act(async () => { ciz(await cagir({ action: 'grant', duration: sure })); }) }, ad);
+    clear(kutu).append(
+      h('h3', null, 'Pro'),
+      h('div', null, d.active ? h('span', { class: 'badge gold' }, `Pro etkin — ${bitis}`) : h('span', { class: 'badge' }, 'Pro yok'),
+        d.linked ? null : h('span', { class: 'subtle', style: { marginLeft: '8px' } }, 'Kullanıcı Pro destekli sürümle (1.0.1+) henüz giriş yapmamış; verilen Pro ilk girişte geçerli olur.')),
+      h('div', { class: 'subtle' }, 'Verilen Pro, satın alınmış gibi çalışır: reklamsız + bütün Pro özellikleri, aynı hesapla giriş yapılan her telefonda. Süre dolunca kendiliğinden biter. (Uygulamanın 1.0.1 ve sonrası sürümlerinde.)'),
+      h('div', { class: 'row' }, h('span', { class: 'subtle' }, 'Ücretsiz Pro ver:'), ver('week', '1 hafta'), ver('month', '1 ay'), ver('year', '1 yıl'), ver('lifetime', 'Süresiz'),
+        d.active ? h('button', { class: 'btn sm bad', onclick: () => confirmBox('Pro\'yu geri al', 'Panelden verilen Pro hemen kalkar. (Kullanıcının kendi satın aldığı abonelik etkilenmez.)', 'Geri al', async () => { ciz(await cagir({ action: 'revoke' })); }) }, 'Geri al') : null));
+  };
+  cagir({ action: 'status' }).then(ciz).catch((e) => { clear(kutu).append(h('h3', null, 'Pro'), h('div', { class: 'badge bad', style: { whiteSpace: 'normal' } }, `Pro durumu okunamadı: ${e.message}`)); });
+  return kutu;
 }
 
 function contentList(items, after) {

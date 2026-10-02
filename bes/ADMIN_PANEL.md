@@ -12,7 +12,7 @@ Masaüstündeki `BES-Yonetim-Paneli-GIZLI.txt` dosyasında.
 |---|---|
 | **Pano** | Hesap sayısı, günlük/7/30 gün aktif, eşitleyenler, topluluk etkinliği, açık şikâyet; RevenueCat geliri (MRR, 28 günlük gelir, abonelik, deneme); App Store indirme/satış grafikleri (satıcı numarası girilince). 7/30/90 gün. |
 | **Şikâyetler** | Açık / sonuçlanan / reddedilen kuyruk. Kim şikâyet etti, neden, içeriğin tamamı, sohbetteki bağlamı, yazarın geçmişi (kaç şikâyet, uyarı, susturma). Buradan: içeriği gizle/sil, yazarı **uyar**, **sustur** (1 sa–30 gün), **yasakla**, şikâyeti reddet/kapat. |
-| **Kullanıcılar** | Bütün hesaplar (e-posta, giriş yöntemi, kayıt/son giriş, içerik sayıları, durum). Ayrıntı: dua istekleri, mesajlar, uyarılar, hatim grupları, şikâyetleri; uyar, sustur, yasakla/kaldır, takma ad değiştir, yönetici yap/kaldır, eşitleme kaydını sil, **hesabı tamamen sil**. |
+| **Kullanıcılar** | Bütün hesaplar (e-posta, giriş yöntemi, kayıt/son giriş, içerik sayıları, durum). Ayrıntı: dua istekleri, mesajlar, uyarılar, hatim grupları, şikâyetleri; uyar, sustur, yasakla/kaldır, takma ad değiştir, yönetici yap/kaldır, eşitleme kaydını sil, **hesabı tamamen sil**, **ücretsiz Pro ver/geri al** (1 hafta, 1 ay, 1 yıl, süresiz — uygulamanın 1.0.1+ sürümünde geçerli; kendine de verebilirsin). |
 | **Dua istekleri** | Hepsi (gizliler dahil), arama/süzgeç; düzenle, gizle/göster, sil. |
 | **Sohbet** | Odaları ekle/düzenle/sil; oda mesajlarında ara, gizle/göster, sil. |
 | **Hatim grupları** | Düzenle (başlık, amaç, herkese açık), sil; 30 cüzün durumu, cüzü boşalt / okundu işaretle. |
@@ -74,6 +74,7 @@ ya da uygulama yeniden açılınca yenilenir.
 | `supabase/migrations/0006_admin_panel.sql` | Yönetici işlevleri ve tabloları |
 | `supabase/migrations/0007_security_hardening.sql` | Güvenlik sağlamlaştırması |
 | `supabase/functions/admin-metrics/` | Dış metrikler (RevenueCat, App Store) |
+| `supabase/functions/admin-pro/` | Panelden ücretsiz Pro verme/geri alma (RevenueCat promosyon hakkı) |
 | `src/features/content/` | Uygulamada panel içeriğinin okunması ve birleştirilmesi |
 
 ---

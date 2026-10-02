@@ -950,3 +950,13 @@ Deneme Pro özelliklerini açar, reklamı kaldırmaz (reklam yalnız
 satın almaya bakar). Kilitlenen yalnız Pro özellikleridir; ibadet kayıtları
 hiçbir zaman (ALWAYS_FREE). Mağaza açıklamasının 1.0.1 paragrafı
 `store/app-store*.md` sonunda hazır.
+
+## D38 — Panelden ücretsiz Pro verme (2026-10-02)
+
+Yönetici, kullanıcı ayrıntısından 1 hafta / 1 ay / 1 yıl / süresiz Pro verir
+ya da geri alır. RevenueCat promosyon hakkı (`grant_entitlement`) kullanılır:
+satın alınmış Pro gibi çalışır (reklamsız + Pro özellikleri), süre dolunca
+kendiliğinden biter, kullanıcının kendi aboneliğine dokunmaz. Bunun için
+uygulama girişte RevenueCat kimliğini Supabase kullanıcı kimliğine bağlar
+(`Purchases.logIn(uid)`, çıkışta `logOut`); 1.0.1'den itibaren geçerli.
+Sunucu işlevi `admin-pro` (yalnız yönetici; işlem günlüğüne yazar).
