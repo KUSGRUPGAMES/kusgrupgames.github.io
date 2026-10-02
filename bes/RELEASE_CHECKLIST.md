@@ -57,6 +57,9 @@ Hepsi bir kez yapılır; kimlikler GitHub secret'ı olarak girilir
       `EXPO_PUBLIC_ADMOB_BANNER_IOS/_ANDROID`, `EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS/_ANDROID`,
       `EXPO_PUBLIC_ADMOB_APPOPEN_IOS/_ANDROID`, `EXPO_PUBLIC_ADMOB_REWARDED_IOS/_ANDROID`.
       Mağaza derlemesi (`BES_STORE_RELEASE=ios|android`) o platformun gerçek kimliği yoksa durur.
+      **Yüklemeden önce:** `bash tools/check-store-ads.sh android|ios <aab|ipa>` — dört gerçek
+      birimin pakete gömüldüğünü doğrular. Kimlik değiştiyse önce `rm -rf "$TMPDIR"/metro-cache`
+      (Metro eski çeviriyi saklar; 2 Ekim'de Android paketi bu yüzden test reklamıyla çıkacaktı).
 - [ ] **App Store Connect:** Ücretli Uygulamalar Sözleşmesi, banka ve vergi
       formları; abonelik grubu "BEŞ Pro" içinde aylık ve yıllık otomatik
       yenilenen ürün + tüketilmeyen "ömür boyu" ürün.
