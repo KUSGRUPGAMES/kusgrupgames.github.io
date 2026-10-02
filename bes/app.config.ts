@@ -102,7 +102,9 @@ const config: ExpoConfig = {
       // ve içerikte `interruptionLevel: 'timeSensitive'`i gerektirir.
       'com.apple.developer.usernotifications.time-sensitive': true,
     },
-    supportsTablet: true,
+    // Yalnız iPhone: arayüz iPad için tasarlanmadı/denenmedi; iPad destekli
+    // uygulamayı Apple iPad'de de inceler. iPad'e yine kurulur (iPhone görünümü).
+    supportsTablet: false,
     // Topluluk girişi (D32). App Review 4.8: Google girişi sunan iOS
     // uygulaması Apple girişini de sunmak zorunda. Bu anahtar
     // `com.apple.developer.applesignin` yetkisini ekler.
