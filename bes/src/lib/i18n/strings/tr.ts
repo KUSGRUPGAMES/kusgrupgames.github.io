@@ -999,7 +999,7 @@ export const tr = {
   'permnudge.allow': 'İzin ver',
   'permnudge.later': 'Şimdi değil',
   'reward.title': 'Reklam izle, 4 saat reklamsız kullan',
-  'reward.body': 'Kısa bir reklamı sonuna kadar izle, bir gün boyunca hiç reklam görme.',
+  'reward.body': 'Kısa bir reklamı sonuna kadar izle, 4 saat boyunca hiç reklam görme.',
   'reward.activeTitle': 'Reklamsız kullanıyorsun',
   'reward.activeBody': 'Yaklaşık {n} saat kaldı.',
   'reward.cancelled': 'Reklam yarıda kaldı; reklamsız süre verilmedi.',

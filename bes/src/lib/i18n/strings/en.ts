@@ -727,7 +727,7 @@ export const en: Partial<Record<StringKey, string>> = {
   'permnudge.allow': 'Allow',
   'permnudge.later': 'Not now',
   'reward.title': 'Watch an ad, go ad-free for 4 hours',
-  'reward.body': 'Watch one short ad to the end and see no ads for a whole day.',
+  'reward.body': 'Watch one short ad to the end and see no ads for 4 hours.',
   'reward.activeTitle': 'You’re ad-free',
   'reward.activeBody': 'About {n} hours left.',
   'reward.cancelled': 'The ad was closed early, so no ad-free time was granted.',

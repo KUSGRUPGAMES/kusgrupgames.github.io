@@ -238,3 +238,19 @@ describe('Pro erişimi — lansman, deneme, satın alma (1 Ekim)', () => {
     expect(banner).not.toMatch(/useProAccess/);
   });
 });
+
+describe('ödüllü reklam metinleri süreyle aynı (5 Ekim: alt yazı "bir gün" kalmıştı)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { REWARD_AD_FREE_MS } = require('@/features/pro/ads') as typeof import('@/features/pro/ads');
+  const saat = String(REWARD_AD_FREE_MS / 3600000);
+  for (const dil of ['tr', 'en', 'de', 'fr', 'ar']) {
+    it(`${dil}: başlık, açıklama ve tanıtım süreyi (${saat} saat) söylüyor`, () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const m = require(`@/lib/i18n/strings/${dil}`) as Record<string, Record<string, string>>;
+      const s = Object.values(m).find((v) => v && typeof v === 'object' && 'reward.body' in v)!;
+      for (const k of ['reward.title', 'reward.body', 'tour.profile3.body']) {
+        expect({ k, ok: new RegExp(`(^|[^0-9])${saat}([^0-9]|$)`).test(s[k]!) }).toEqual({ k, ok: true });
+      }
+    });
+  }
+});

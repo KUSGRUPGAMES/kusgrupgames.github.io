@@ -727,7 +727,7 @@ export const ar: Partial<Record<StringKey, string>> = {
   'permnudge.allow': 'السماح',
   'permnudge.later': 'ليس الآن',
   'reward.title': 'شاهد إعلانًا واستخدم التطبيق بلا إعلانات 4 ساعات',
-  'reward.body': 'شاهد إعلانًا قصيرًا حتى نهايته ولن ترى أي إعلان طوال يوم كامل.',
+  'reward.body': 'شاهد إعلانًا قصيرًا حتى نهايته ولن ترى أي إعلان لمدة 4 ساعات.',
   'reward.activeTitle': 'أنت الآن بلا إعلانات',
   'reward.activeBody': 'بقي نحو {n} ساعة.',
   'reward.cancelled': 'أُغلق الإعلان قبل نهايته، فلم تُمنح مدة بلا إعلانات.',

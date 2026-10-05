@@ -727,7 +727,7 @@ export const de: Partial<Record<StringKey, string>> = {
   'permnudge.allow': 'Erlauben',
   'permnudge.later': 'Nicht jetzt',
   'reward.title': 'Werbung ansehen, 4 Stunden werbefrei',
-  'reward.body': 'Sieh dir eine kurze Werbung bis zum Ende an und sieh einen ganzen Tag keine Werbung.',
+  'reward.body': 'Sieh dir eine kurze Werbung bis zum Ende an und sieh 4 Stunden lang keine Werbung.',
   'reward.activeTitle': 'Du bist werbefrei',
   'reward.activeBody': 'Noch etwa {n} Stunden.',
   'reward.cancelled': 'Die Werbung wurde vorzeitig geschlossen; keine werbefreie Zeit.',

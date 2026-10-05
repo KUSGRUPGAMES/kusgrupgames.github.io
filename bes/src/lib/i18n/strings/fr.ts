@@ -727,7 +727,7 @@ export const fr: Partial<Record<StringKey, string>> = {
   'permnudge.allow': 'Autoriser',
   'permnudge.later': 'Plus tard',
   'reward.title': 'Regarder une pub, 4 h sans publicité',
-  'reward.body': 'Regarde une courte publicité jusqu’au bout et ne vois plus aucune pub pendant une journée.',
+  'reward.body': 'Regarde une courte publicité jusqu’au bout et ne vois plus aucune pub pendant 4 heures.',
   'reward.activeTitle': 'Tu es sans publicité',
   'reward.activeBody': 'Environ {n} heures restantes.',
   'reward.cancelled': 'La publicité a été fermée trop tôt ; aucune période sans pub accordée.',
