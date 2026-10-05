@@ -1,6 +1,6 @@
 /**
- * "Reklam izle, 24 saat reklamsız kullan" — ödüllü reklam (1 Ekim kararı).
- * Kullanıcı kendi isteğiyle başlatır; reklamı sonuna kadar izlerse 24 saat
+ * "Reklam izle, 4 saat reklamsız kullan" — ödüllü reklam (1 Ekim kararı).
+ * Kullanıcı kendi isteğiyle başlatır; reklamı sonuna kadar izlerse 4 saat
  * hiçbir reklam görmez. Pro'da, reklam hazır değilken ya da birim yokken
  * görünmez; reklamsız süre sürerken kalan süreyi gösterir.
  */

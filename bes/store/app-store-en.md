@@ -77,7 +77,7 @@ WORSHIP IS ALWAYS FREE
 Prayer times, qibla, the Quran and translation, supplications, dhikr and qada tracking are always free. The free version shows ads — but never in the Quran reader, and never just before or right after a prayer time.
 
 PRO FEATURES FREE AT LAUNCH
-The Pro sections marked with a crown (every lesson of the Learn course, writing in chat rooms, creating khatm groups, 5 prayer requests a day) are free for everyone during the launch period. You can also watch one ad to use the app ad-free for 24 hours.
+The Pro sections marked with a crown (every lesson of the Learn course, writing in chat rooms, creating khatm groups, 5 prayer requests a day) are free for everyone during the launch period. You can also watch one ad to use the app ad-free for 4 hours.
 
 AN HONEST NOTE
 Prayer times depend on the method, location and elevation and may differ from official announcements by a minute or two. The Hijri date is arithmetic and may be a day off from a sighting-based announcement. We say so on the relevant screens. BEŞ is a helper tool; it does not issue religious rulings.

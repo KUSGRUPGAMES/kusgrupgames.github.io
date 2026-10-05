@@ -885,7 +885,7 @@ taraması (`npm run preview`) artık yalnız koyu geçişlerle çalışıyor.
   dönüşte; en sık 4 saatte bir; ilk 3 açılışta yok; 4 sn içinde yüklenemezse
   o açılışta gösterilmez (Google: yükleme ekranında gösterilmeli, kullanıcı
   içeriği okurken değil); vakit penceresi ve Pro kuralları geçerli.
-- **Ödüllü reklam:** kullanıcı kendi isteğiyle izler, karşılığında 24 saat
+- **Ödüllü reklam:** kullanıcı kendi isteğiyle izler, karşılığında 24 saat (D39 ile 4 saat)
   hiç reklam yok (Ayarlar ve Pro ekranı). Süre yenilenir, üst üste eklenmez.
 - İki yeni birim: `EXPO_PUBLIC_ADMOB_APPOPEN_*`, `EXPO_PUBLIC_ADMOB_REWARDED_*`.
 - **Ekran geçişlerinde tam ekran reklam** (kullanıcı kararı, 2026-10-01):
@@ -941,7 +941,7 @@ katılmak gerekmez, istek hesapsızdır (gizlilik §7). Ayrıntı ve işletim:
 Banka/ücretli uygulama sözleşmesi beklenirken yayına çıkmak için (kullanıcı
 kararı): 1.0'da satış kapalı (`extra.proSales` false), Pro özellikleri
 herkese açık ve taç/PRO rozetiyle işaretli; satın alma ekranı, fiyat ve
-geri yükleme gösterilmez; reklam ve "reklam izle, 24 saat reklamsız" var.
+geri yükleme gösterilmez; reklam ve "reklam izle, 4 saat reklamsız" var (D39).
 Sözleşme etkin olunca 1.0.1 `BES_PRO_SALES=1` ile derlenir: satış açılır ve
 giriş yapmış kullanıcıya sunucuda bir kez 14 günlük deneme başlar
 (`pro_trials`, `start_pro_trial()`, 0008). Deneme saati satış açılınca
@@ -960,3 +960,12 @@ kendiliğinden biter, kullanıcının kendi aboneliğine dokunmaz. Bunun için
 uygulama girişte RevenueCat kimliğini Supabase kullanıcı kimliğine bağlar
 (`Purchases.logIn(uid)`, çıkışta `logOut`); 1.0.1'den itibaren geçerli.
 Sunucu işlevi `admin-pro` (yalnız yönetici; işlem günlüğüne yazar).
+
+## D39 — Ödüllü reklamın reklamsız süresi 24 saatten 4 saate (2026-10-05)
+
+Bir ödüllü reklam izleyen kullanıcı 24 saat boyunca hiç reklam görmüyordu;
+günlük kullanıcının neredeyse bütün reklam gösterimi tek ödüllü reklama
+düşüyordu ve gelir çok azdı (kullanıcının gözlemi). Süre 4 saat
+(`REWARD_AD_FREE_MS`). Eski 24 saatlik ödüller kayıtlı bitiş anına göre
+kendiliğinden biter. Uygulama metinleri (5 dil), mağaza metinleri ve
+destek sayfaları birlikte değişti.

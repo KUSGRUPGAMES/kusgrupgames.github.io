@@ -186,10 +186,10 @@ describe('açılış reklamı ve ödüllü reklam (D33 devamı)', () => {
     expect(a.shouldShowAppOpen({ ...temel, allowed: false })).toBe(false);
   });
 
-  it('ödül 24 saat reklamsızlık verir, süre dolunca biter', () => {
+  it('ödül 4 saat reklamsızlık verir, süre dolunca biter (5 Ekim: 24 → 4 saat)', () => {
     const bitis = a.rewardAdFreeUntil(0);
-    expect(a.isAdFree(bitis, 23 * SAAT)).toBe(true);
-    expect(a.isAdFree(bitis, 24 * SAAT)).toBe(false);
+    expect(a.isAdFree(bitis, 3.9 * SAAT)).toBe(true);
+    expect(a.isAdFree(bitis, 4 * SAAT)).toBe(false);
     expect(a.isAdFree(null, 0)).toBe(false);
   });
 });

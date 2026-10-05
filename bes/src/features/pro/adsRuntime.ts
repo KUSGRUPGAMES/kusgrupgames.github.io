@@ -231,11 +231,11 @@ function acilisReklamiKur(): void {
   });
 }
 
-// --- Ödüllü reklam: izleyene 24 saat reklamsız
+// --- Ödüllü reklam: izleyene 4 saat reklamsız
 
 export type OdulSonucu = 'kazanildi' | 'vazgecildi' | 'hata';
 
-/** Kullanıcı kendi isteğiyle başlatır; reklamı sonuna kadar izlerse 24 saat reklam yok. */
+/** Kullanıcı kendi isteğiyle başlatır; reklamı sonuna kadar izlerse 4 saat reklam yok. */
 export function watchRewardedForAdFree(): Promise<OdulSonucu> {
   return new Promise((resolve) => {
     if (!REWARDED_UNIT || !useAdsStore.getState().ready) { resolve('hata'); return; }

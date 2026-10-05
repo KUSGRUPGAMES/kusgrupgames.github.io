@@ -85,7 +85,7 @@ Arayüzün tamamı Türkçe, İngilizce, Arapça, Almanca ve Fransızca. Arapça
 Vakitler, kıble, Kur’an ve meal, dualar, zikir ve kaza takibi her zaman ücretsiz. Ücretsiz sürümde reklam vardır; Kur’an okuyucuda ve vakit girişine yakın reklam yoktur.
 
 ★ PRO ÖZELLİKLERİ LANSMANA ÖZEL ÜCRETSİZ
-Taç işaretli Pro bölümleri (Öğren kursunun bütün dersleri, sohbete yazma, hatim grubu kurma, günde 5 dua isteği) lansman döneminde herkese ücretsiz. Dilersen bir reklam izleyip 24 saat reklamsız kullanabilirsin.
+Taç işaretli Pro bölümleri (Öğren kursunun bütün dersleri, sohbete yazma, hatim grubu kurma, günde 5 dua isteği) lansman döneminde herkese ücretsiz. Dilersen bir reklam izleyip 4 saat reklamsız kullanabilirsin.
 
 ★ DÜRÜSTLÜK NOTU
 Vakit hesabı yönteme ve konuma bağlıdır; resmî ilanla bir iki dakika fark olabilir. Hicrî tarih aritmetiktir, ilandan bir gün sapabilir. BEŞ bir yardımcı araçtır; dinî hüküm (fetva) vermez.```

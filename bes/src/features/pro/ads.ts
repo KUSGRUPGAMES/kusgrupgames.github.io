@@ -106,9 +106,10 @@ export function shouldShowAppOpen(c: AppOpenContext): boolean {
   return c.lastShownAt === null || c.now - c.lastShownAt >= APP_OPEN_GAP_MS;
 }
 
-// --- Ödüllü reklam: izleyene 24 saat reklamsız
+// --- Ödüllü reklam: izleyene 4 saat reklamsız
 
-export const REWARD_AD_FREE_MS = 24 * 60 * 60 * 1000;
+// 5 Ekim: 24 saatten 4 saate indirildi — 24 saat reklam gelirini çok düşürüyordu.
+export const REWARD_AD_FREE_MS = 4 * 60 * 60 * 1000;
 
 /** Ödül alındı: reklamsızlık bitişi. Süre üst üste eklenmez, yenilenir. */
 export function rewardAdFreeUntil(now: number): number {
