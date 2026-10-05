@@ -11,7 +11,7 @@ export interface PrayerWindow {
   secondsSincePrayer: number | null;
 }
 
-interface KonumLike { latitude: number; longitude: number; timezone: string; elevation?: number | undefined }
+interface KonumLike { latitude: number; longitude: number; timezone: string; elevation?: number | undefined; diyanetId?: string | undefined }
 interface AyarLike { method: string; asrShadow: ScheduleInput['options']['asrShadow']; adjustments: unknown }
 
 /** Ana sayfa ile aynı girdi; ikisi ayrışırsa reklam kuralı yanlış vakte bakar. */
@@ -20,6 +20,7 @@ export function scheduleInputFrom(konum: KonumLike, settings: AyarLike): Schedul
     latitude: konum.latitude,
     longitude: konum.longitude,
     timezone: konum.timezone,
+    ...(konum.diyanetId ? { diyanetId: konum.diyanetId } : {}),
     options: {
       method: settings.method as MethodId,
       asrShadow: settings.asrShadow,

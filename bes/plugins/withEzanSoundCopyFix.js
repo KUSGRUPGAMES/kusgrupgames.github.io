@@ -26,7 +26,8 @@
  */
 const { withXcodeProject, IOSConfig } = require('expo/config-plugins');
 
-const SES_DOSYASI = 'ezan.caf';
+// iOS bildirim sesleri (5 Ekim: kısa = ilk tekbir, uzun = 29,5 sn — iOS sınırı 30 sn).
+const SES_DOSYALARI = ['ezankisa.caf', 'ezanuzun.caf'];
 
 function withEzanSoundCopyFix(config) {
   return withXcodeProject(config, (config) => {
@@ -39,11 +40,11 @@ function withEzanSoundCopyFix(config) {
 
     const shellScript =
       `set -e\n` +
-      `SRC="\${SRCROOT}/${projectName}/${SES_DOSYASI}"\n` +
       `DEST_DIR="\${TARGET_BUILD_DIR}/\${UNLOCALIZED_RESOURCES_FOLDER_PATH}"\n` +
       `mkdir -p "$DEST_DIR"\n` +
-      `cp -f "$SRC" "$DEST_DIR/${SES_DOSYASI}"\n` +
-      `echo "ezan sesi elle kopyalandı: $DEST_DIR/${SES_DOSYASI}"\n`;
+      SES_DOSYALARI.map((f) =>
+        `cp -f "\${SRCROOT}/${projectName}/${f}" "$DEST_DIR/${f}"\n` +
+        `echo "ezan sesi elle kopyalandı: $DEST_DIR/${f}"\n`).join('');
 
     // `inputPaths`/`outputPaths` BİLEREK boş bırakılıyor: `${VAR}` ya da
     // `$(VAR)` içeren değerler `xcode` paketinin pbxproj yazıcısında

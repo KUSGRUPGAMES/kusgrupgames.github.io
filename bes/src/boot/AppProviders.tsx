@@ -34,6 +34,7 @@ import { initAds } from '@/features/pro/adsRuntime';
 import { useCloudSync } from '@/features/sync/useCloudSync';
 import { refreshRemoteContent, startRemoteContent } from '@/features/content/remoteRuntime';
 import { useProTrialSync } from '@/features/pro/useProAccess';
+import { useOfficialTimesSync } from '@/features/prayer/officialRuntime';
 
 // Üretimde debug/info günlüğe yazılmaz (§83).
 configureLogging({ minLevel: __DEV__ ? 'debug' : 'warn' });
@@ -250,6 +251,8 @@ function BildirimEsitleyici() {
   useCloudSync();
   // Pro denemesi (yalnız satış açıkken, giriş yapmış kullanıcıya bir kez).
   useProTrialSync();
+  // Diyanet'in resmî ilçe vakitleri (5 Ekim).
+  useOfficialTimesSync();
   // Panelden yönetilen içerik (D36): açılışta ve öne gelişte, dil değişince hemen.
   const { language } = useI18n();
   const dilRef = useRef(language);

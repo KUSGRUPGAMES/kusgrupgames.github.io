@@ -14,7 +14,8 @@ import { toHijri } from '@/features/hijri/calc';
 import { daySchedule } from '@/features/prayer/schedule';
 import { formatHM, formatCountdown } from '@/features/prayer/calc';
 import { useLiveView } from '@/features/prayer/useSchedule';
-import type { MethodId, PrayerKey } from '@/features/prayer/methods';
+import { scheduleInputFrom } from '@/features/prayer/window';
+import { useOfficialVersion } from '@/features/prayer/officialRuntime';
 
 export default function RamadanScreen() {
   const t = useT();
@@ -22,19 +23,12 @@ export default function RamadanScreen() {
   const konum = useLocationStore((s) => s.active());
   const settings = useSettingsStore((s) => s.settings);
 
+  const resmiSurum = useOfficialVersion();
   const input = useMemo(() => {
     if (!konum) return null;
-    return {
-      latitude: konum.latitude,
-      longitude: konum.longitude,
-      timezone: konum.timezone,
-      options: {
-        method: settings.method as MethodId,
-        asrShadow: settings.asrShadow,
-        adjustments: settings.adjustments as Partial<Record<PrayerKey, number>>,
-      },
-    };
-  }, [konum, settings]);
+    void resmiSurum;
+    return { ...scheduleInputFrom(konum, settings) };
+  }, [konum, settings, resmiSurum]);
 
   const uzunTarih = useDateFormat({ dateStyle: 'long' });
   const gunAy = useDateFormat({ day: '2-digit', month: 'short' });

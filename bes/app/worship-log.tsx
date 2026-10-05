@@ -13,6 +13,7 @@ import { useLocationStore } from '@/store/locations';
 import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
 import { dateKey } from '@/features/dhikr/stats';
 import { zonedNow } from '@/lib/time/zone';
+import { FastingSettingsCard } from '@/features/notifications/FastingSettingsCard';
 
 type NamazSlot = Exclude<QadaSlot, 'witr'>;
 const NAMAZLAR: NamazSlot[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
@@ -210,10 +211,14 @@ export default function WorshipLogScreen() {
       </Card>
 
       <Button label={t('log.save')} icon="check" block onPress={kaydet} style={{ marginTop: theme.spacing.lg }} />
+
       {kaydedildi ? (
         <Banner tone="success" title={t('log.saved')} style={{ marginTop: theme.spacing.md }}
           actionLabel={t('log.stats')} onAction={() => router.push('/worship-stats')} />
       ) : null}
+
+      {/* Oruç tutacaksan sahur/imsak/iftar bildirimlerini buradan da açabilirsin (5 Ekim). */}
+      <FastingSettingsCard />
 
       <Banner tone="info" title={t('settings.privacy')} description={t('log.privateNote')} />
     </Screen>

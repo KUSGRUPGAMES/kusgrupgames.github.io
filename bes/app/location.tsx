@@ -1,6 +1,6 @@
 /** Konum seçimi ve kayıtlı konumlar — şartname §13. */
 import React, { useMemo, useState } from 'react';
-import { FlatList, View } from 'react-native';
+import { View } from 'react-native';
 import { router, Stack } from 'expo-router';
 import {
   Screen, SectionHeader, Card, ListItem, Field, Button, EmptyState, Banner, Row, IconButton,
@@ -74,18 +74,16 @@ export default function LocationScreen() {
       {sorgu.trim() ? (
         sonuclar.length > 0 ? (
           <Card padding="sm" style={{ marginTop: theme.spacing.md }}>
-            <FlatList
-              data={sonuclar}
-              scrollEnabled={false}
-              keyExtractor={(p) => p.id}
-              renderItem={({ item }) => (
-                <ListItem
-                  title={item.name}
-                  subtitle={item.country}
-                  onPress={() => { ekle(item, { origin: 'manual' }); setSorgu(''); }}
-                />
-              )}
-            />
+            {/* Düz liste: kaydırma görünümünün içinde iç içe FlatList, her harfte
+                yeniden kurulup odağı ve sayfayı düşürüyordu (5 Ekim). */}
+            {sonuclar.map((item) => (
+              <ListItem
+                key={item.id}
+                title={item.name}
+                subtitle={item.province && item.province !== item.name ? `${item.province}, ${item.country}` : item.country}
+                onPress={() => { ekle(item, { origin: 'manual' }); setSorgu(''); }}
+              />
+            ))}
           </Card>
         ) : (
           <View style={{ marginTop: theme.spacing.md }}>

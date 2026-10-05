@@ -45,7 +45,12 @@ import { coverageDays, type NotificationSettings } from './plan';
 import { reminderCoverageDays } from './reminders';
 import { birlesikPlan, planImzasi, type KurulacakBildirim } from './coordinator';
 import { syncNotifications, type EsitlemeSonucu } from './service';
-import type { MethodId, PrayerKey } from '@/features/prayer/methods';
+import type { PrayerKey } from '@/features/prayer/methods';
+import { planFasting } from './fasting';
+import type { DaySchedule } from '@/features/prayer/schedule';
+import { ramadanState } from '@/features/ramadan/calc';
+import { scheduleInputFrom } from '@/features/prayer/window';
+import { useOfficialVersion } from '@/features/prayer/officialRuntime';
 
 /**
  * Gün değişimi ve arka plandan dönüş algılayıcı.
@@ -107,6 +112,7 @@ export function useNotificationSync(): NotificationSyncDurumu {
   const settings = useSettingsStore((s) => s.settings);
   const konum = useLocationStore((s) => s.active());
   const reminders = useWorshipStore((s) => s.reminders);
+  const fasts = useWorshipStore((s) => s.fasts);
   const [sonSonuc, setSonSonuc] = useState<EsitlemeSonucu | null>(null);
 
   const bildirimAyari: NotificationSettings = useMemo(() => ({
@@ -118,6 +124,7 @@ export function useNotificationSync(): NotificationSyncDurumu {
   }), [settings.notifications]);
 
   const gunTetik = useGunYenileyici(konum?.timezone ?? null);
+  const resmiSurum = useOfficialVersion();
 
   const gunler = useMemo(() => {
     if (!konum) return [];
@@ -129,28 +136,35 @@ export function useNotificationSync(): NotificationSyncDurumu {
     // gelecek gün bırakmıyordu — bkz. `reminderCoverageDays`.
     const gunSayisi = Math.max(coverageDays(bildirimAyari), reminderCoverageDays(reminders)) + 1;
     return rangeSchedule(
-      {
-        latitude: konum.latitude,
-        longitude: konum.longitude,
-        timezone: konum.timezone,
-        options: {
-          method: settings.method as MethodId,
-          asrShadow: settings.asrShadow,
-          adjustments: settings.adjustments as Partial<Record<PrayerKey, number>>,
-        },
-      },
+      scheduleInputFrom(konum, settings),
       { year: z.year, month: z.month, day: z.day },
       gunSayisi,
     );
     // `gunTetik` yalnız zamanın ilerlediğini fark etmek için bağımlılıkta:
     // kendi değeri gövdede kullanılmaz, yalnız değişimi `zonedNow()`u tazeler.
-  }, [konum, settings, bildirimAyari, reminders, gunTetik]);
+  }, [konum, settings, bildirimAyari, reminders, gunTetik, resmiSurum]);
+
+  const orucPlani = useMemo(() => {
+    const f = settings.fasting;
+    if (f.mode === 'off') return [];
+    const ramazanMi = (d: DaySchedule) => ramadanState(new Date(Date.UTC(d.year, d.month, d.day, 12)), settings.hijriOffset).active;
+    return planFasting(gunler, f, ramazanMi, new Set(Object.keys(fasts ?? {})));
+  }, [gunler, settings.fasting, settings.hijriOffset, fasts]);
 
   const plan = useMemo(() => birlesikPlan({
     gunler,
+    oruc: {
+      plan: orucPlani,
+      metin: (o) => o.event === 'sahur'
+        ? { title: t('fasting.notify.sahurTitle'), body: t('fasting.notify.sahurBody', { min: o.minutes }) }
+        : o.event === 'imsak'
+          ? { title: t('fasting.notify.imsakTitle'), body: t('fasting.notify.imsakBody') }
+          : { title: t('fasting.notify.iftarTitle'), body: t('fasting.notify.iftarBody') },
+    },
     bildirimAyari,
     hatirlaticilar: reminders,
-    ezan: settings.notifications.ezan,
+    ezan: settings.notifications.ezan && (settings.notifications.ezanInApp !== 'off' || settings.notifications.ezanOutside !== 'off'),
+    ezanDisari: settings.notifications.ezanOutside,
     metin: {
       // Metin vakte özeldir: "Vaktin geldi" her vakit için aynı ve anlamsız
       // bir cümleydi; imsak ve güneş namaz değil, kendi anlamları var.
@@ -161,7 +175,7 @@ export function useNotificationSync(): NotificationSyncDurumu {
         ? t(key === 'sunrise' ? 'notify.beforeBodySunrise' : 'notify.beforeBody')
         : t(`notify.body.${key}` as StringKey)),
     },
-  }), [gunler, bildirimAyari, reminders, t, label, settings.notifications.ezan]);
+  }), [gunler, bildirimAyari, reminders, t, label, settings.notifications.ezan, settings.notifications.ezanInApp, settings.notifications.ezanOutside, orucPlani]);
 
   const ses = settings.notifications.sound;
 

@@ -1,5 +1,5 @@
 import { normalizeSearch, matchScore } from '@/features/location/normalize';
-import { searchPlaces, nearestPlace, distanceKm } from '@/features/location/search';
+import { searchPlaces, nearestPlace, distanceKm, matchDistrict } from '@/features/location/search';
 import { TURKEY_PROVINCES, TURKEY_DISTRICTS, WORLD_CITIES, ALL_PLACES, findPlace } from '@/features/location/places';
 import { isValidCoordinates } from '@/features/location/types';
 
@@ -125,6 +125,34 @@ describe('arama ve en yakın şehir', () => {
     expect(gebze?.name).toBe('Gebze');
     expect(gebze?.name).not.toBe('Yalova');
   });
+  it('Diyanet ilçe listesi: 81 il, tekil kimlikler, hepsi Türkiye sınırında', () => {
+    const tr = ALL_PLACES.filter((p) => p.diyanetId);
+    expect(tr.length).toBeGreaterThan(850);
+    expect(new Set(tr.map((p) => p.diyanetId)).size).toBe(tr.length);
+    expect(new Set(tr.map((p) => p.province)).size).toBe(81);
+    for (const p of tr) {
+      expect(p.latitude).toBeGreaterThan(35.5); expect(p.latitude).toBeLessThan(42.5);
+      expect(p.longitude).toBeGreaterThan(25.5); expect(p.longitude).toBeLessThan(45);
+    }
+  });
+
+  it('ilçe adıyla ve il adıyla aranır; eski kimlikler bulunur', () => {
+    expect(searchPlaces('pendik')[0]).toMatchObject({ name: 'Pendik', province: 'İstanbul' });
+    expect(searchPlaces('kecioren').length).toBeGreaterThanOrEqual(0);
+    expect(searchPlaces('istanbul', { limit: 40 }).filter((p) => p.province === 'İstanbul').length).toBeGreaterThan(5);
+    expect(findPlace('tr-06')?.name).toBe('Ankara');
+    expect(findPlace('tr-gebze')?.name).toBe('Gebze');
+  });
+
+  it('GPS → Diyanet ilçesi: cihazın verdiği il/ilçe adıyla, yoksa en yakın ilçe', () => {
+    // Sabiha Gökçen (Pendik, İstanbul) — Gebze'ye 15 km; eskiden Gebze kalıyordu.
+    const sg = { latitude: 40.8986, longitude: 29.3092 };
+    expect(matchDistrict(sg, { il: 'İstanbul', ilce: 'Pendik' })).toMatchObject({ name: 'Pendik', province: 'İstanbul' });
+    expect(matchDistrict(sg, { il: 'Istanbul', ilce: 'Pendik' })?.name).toBe('Pendik');
+    // Diyanet'in ayrıca listelemediği merkez ilçe → il merkezi kaydı.
+    expect(matchDistrict({ latitude: 39.97, longitude: 32.86 }, { il: 'Ankara', ilce: 'Keçiören' })?.province).toBe('Ankara');
+    expect(matchDistrict({ latitude: 40.8025, longitude: 29.4306 })?.name).toBe('Gebze');
+  });
 });
 
 describe('konumun kendiliğinden güncellenmesi', () => {
@@ -153,6 +181,13 @@ describe('konumun kendiliğinden güncellenmesi', () => {
 
   it('komşu il (≈90 km) ayrı şehir sayılır', () => {
     expect(konumKarari(kayit(istanbul, 'gps'), kocaeli).kind).toBe('tasindi');
+  });
+
+  it('Türkiye: ilçe değişince (Gebze → Pendik, 15 km) yeni ilçeye geçer; aynı ilçede kalır', () => {
+    const gebze = { ...yer('tr-d-9651', 40.80, 29.43), diyanetId: '9651' };
+    const pendik = { ...yer('tr-d-9551', 40.88, 29.25), diyanetId: '9551' };
+    expect(konumKarari(kayit(gebze, 'gps'), pendik).kind).toBe('tasindi');
+    expect(konumKarari(kayit(gebze, 'gps'), { ...gebze, id: 'x', latitude: 40.85 }).kind).toBe('ayni');
   });
 
   it('konum okunamazsa hiçbir şey değişmez; kayıtlı konum yoksa bulunan yer alınır', () => {

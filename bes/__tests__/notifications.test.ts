@@ -334,7 +334,7 @@ describe('bildirim metinleri', () => {
         expect(tablo[`notify.body.${k}`]).toBeTruthy();
       }
     }
-    expect(diller[0]!['notify.title.fajr']).toBe('İmsak vakti girdi');
+    expect(diller[0]!['notify.title.fajr']).toBe('Sabah namazı vakti');
   });
 });
 

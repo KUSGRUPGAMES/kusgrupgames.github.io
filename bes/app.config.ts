@@ -219,7 +219,11 @@ const config: ExpoConfig = {
       color: VURGU,
       // Vakit girişinde ezan (D29). Bildirim sesi pakette olmak zorunda:
       // uygulama kapalıyken çalınır.
-      sounds: ['./assets/sounds/ezan.caf'],
+      // iOS: .caf (kısa/uzun, ≤30 sn). Android: kanal sesi; .caf çalmıyor, bu yüzden
+      // m4a (tam ezan Android'de bildirimden de okunabilir). Adlar Android
+      // res/raw kuralına uygun ve platformlar arası çakışmasız seçildi.
+      sounds: ['./assets/sounds/ezankisa.caf', './assets/sounds/ezanuzun.caf',
+        './assets/sounds/ezan_kisa.m4a', './assets/sounds/ezan_tam.m4a'],
     }],
     // expo-notifications yukarıdaki `sounds` dosyasını Xcode projesine
     // "Copy Bundle Resources" listesine ekliyor (ve diskte doğru yere

@@ -26,6 +26,7 @@ import { coverageDays, type NotificationSettings } from '@/features/notification
 import { requestPermission, cancelOwned, soundAllowed, scheduleTestEzan } from '@/features/notifications/service';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import { useEzanStore } from '@/features/ezan/ezanStore';
+import { FastingSettingsCard } from '@/features/notifications/FastingSettingsCard';
 
 const ONCEDEN = [0, 5, 10, 15, 20, 30, 45, 60] as const;
 /** Sınama bildirimi kaç saniye sonra çalsın — kilitlemeye yetecek kadar. */
@@ -111,6 +112,24 @@ export default function AlarmsScreen() {
         <Toggle title={t('ezan.setting')}
           subtitle={n.ezan && !n.sound ? t('ezan.soundToggleOff') : t('ezan.settingHint')} value={n.ezan}
           onChange={(v) => ayarla({ ezan: v })} icon="mosque" />
+        {n.ezan ? (
+          <Column gap="sm" style={{ paddingHorizontal: theme.spacing.md, paddingBottom: theme.spacing.md }}>
+            <Text variant="caption" tone="muted">{t('ezan.inApp')}</Text>
+            <Row gap="sm" wrap>
+              {(['off', 'short', 'full'] as const).map((m) => (
+                <Chip key={m} label={t(`ezan.mode.${m}`)} selected={n.ezanInApp === m} onPress={() => ayarla({ ezanInApp: m })} />
+              ))}
+            </Row>
+            <Text variant="caption" tone="muted">{t('ezan.outside')}</Text>
+            <Row gap="sm" wrap>
+              {(['off', 'short', 'long'] as const).map((m) => (
+                <Chip key={m} label={t(m === 'long' ? (Platform.OS === 'android' ? 'ezan.mode.full' : 'ezan.mode.long') : `ezan.mode.${m}`)}
+                  selected={n.ezanOutside === m} onPress={() => ayarla({ ezanOutside: m })} />
+              ))}
+            </Row>
+            <Text variant="micro" tone="subtle">{Platform.OS === 'ios' ? t('ezan.outsideHintIos') : t('ezan.outsideHintAndroid')}</Text>
+          </Column>
+        ) : null}
         {Platform.OS === 'ios' ? (
           <Toggle title={t('widget.liveActivity')} subtitle={t('widget.liveActivityHint')} value={n.liveActivity}
             onChange={(v) => ayarla({ liveActivity: v })} icon="clock" />
@@ -122,7 +141,7 @@ export default function AlarmsScreen() {
           subtitle={sinamaKuruldu ? t('ezan.testRealSent', { n: SINAMA_SANIYE }) : t('ezan.testRealHint')}
           icon="bell" chevron={false}
           onPress={() => {
-            void scheduleTestEzan(t('notify.title.fajr'), t('ezan.testRealBody'), SINAMA_SANIYE);
+            void scheduleTestEzan(t('notify.title.fajr'), t('ezan.testRealBody'), SINAMA_SANIYE, n.ezanOutside === 'short' ? 'short' : 'long');
             setSinamaKuruldu(true);
           }}
         />
@@ -162,6 +181,8 @@ export default function AlarmsScreen() {
           </Card>
         </>
       ) : null}
+
+      <FastingSettingsCard />
 
       <SectionHeader title={t('alarm.custom')} subtitle={t('alarm.customHint')} />
       <Card padding="sm">

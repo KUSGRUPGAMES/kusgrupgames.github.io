@@ -15,8 +15,12 @@ describe('ezanBildirimKarari', () => {
     });
   });
 
-  it('ezan ayarı kapalıysa ön planda olsa bile uygulama içinde çalmaz', () => {
+  it('"uygulama açıkken: kapalı" ise ön planda ezan da bildirim ezan sesi de çalmaz; arka planda çalar', () => {
     expect(ezanBildirimKarari(true, false, true)).toEqual({
+      uygulamaIcindeCal: false,
+      sistemSesiCalsin: false,
+    });
+    expect(ezanBildirimKarari(true, false, false)).toEqual({
       uygulamaIcindeCal: false,
       sistemSesiCalsin: true,
     });

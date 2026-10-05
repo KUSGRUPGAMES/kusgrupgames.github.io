@@ -39,6 +39,7 @@
 import type { DaySchedule } from '@/features/prayer/schedule';
 import { planNotifications, PLATFORM_LIMIT, type NotificationSettings } from './plan';
 import { planReminders, type Reminder } from './reminders';
+import type { PlannedFasting } from './fasting';
 import type { PrayerKey } from '@/features/prayer/methods';
 
 /** Koordinatörün yönettiği kimlik önekleri. Başka hiçbir kayda dokunulmaz. */
@@ -59,6 +60,8 @@ export interface KurulacakBildirim {
   body: string;
   /** Vakit girişinde ezan sesiyle çalınsın (D29). */
   ezan?: boolean;
+  /** Uygulama dışında/ekran kilitliyken çalacak ezan sesi (5 Ekim). Yoksa varsayılan bildirim sesi. */
+  ezanSes?: 'short' | 'long';
 }
 
 export interface PlanMetinleri {
@@ -73,6 +76,10 @@ export interface PlanGirdisi {
   metin: PlanMetinleri;
   /** Vakit girişi bildirimleri ezan sesiyle mi çalsın (Ayarlar). */
   ezan?: boolean;
+  /** Uygulama dışındaki ezan sesi: kapalı / kısa (ilk tekbir) / uzun. */
+  ezanDisari?: 'off' | 'short' | 'long';
+  /** Oruç bildirimleri (kullanıcı açtıysa; bkz. fasting.ts). */
+  oruc?: { plan: readonly PlannedFasting[]; metin: (e: PlannedFasting) => { title: string; body: string } };
 }
 
 /**
@@ -113,7 +120,9 @@ export function birlesikPlan(
       body: metin.vakitGovde(n.key, n.beforeMinutes),
       // Ezan yalnız namaz vaktinin **girişinde**: önceden uyarıda ve güneşte
       // (namaz vakti değil) okunmaz.
-      ...(girdi.ezan && n.beforeMinutes === 0 && n.key !== 'sunrise' ? { ezan: true } : {}),
+      ...(girdi.ezan && n.beforeMinutes === 0 && n.key !== 'sunrise'
+        ? { ezan: true, ...(girdi.ezanDisari && girdi.ezanDisari !== 'off' ? { ezanSes: girdi.ezanDisari } : {}) }
+        : {}),
     }));
 
   const hatirlatmalar: KurulacakBildirim[] = planReminders(hatirlaticilar, gunler, now, sinirsiz)
@@ -121,7 +130,11 @@ export function birlesikPlan(
       id: r.id, tur: 'reminder' as const, at: r.at, title: r.title, body: r.body,
     }));
 
-  return [...vakitler, ...hatirlatmalar]
+  const oruclar: KurulacakBildirim[] = (girdi.oruc?.plan ?? []).map((o) => ({
+    id: o.id, tur: 'reminder' as const, at: o.at, ...girdi.oruc!.metin(o),
+  }));
+
+  return [...vakitler, ...hatirlatmalar, ...oruclar]
     .sort((a, b) => a.at.getTime() - b.at.getTime())
     .slice(0, Math.max(0, limit));
 }
@@ -145,8 +158,9 @@ export function birlesikPlan(
  * sessizce atlanır, kullanıcı uygulamayı güncelledikten sonra bile eski
  * (odak modunu kıramayan) bildirimle kalırdı.
  */
-export function bildirimImzasi(n: { title: string; body: string; ezan?: boolean }, ses: boolean): string {
-  return `${n.title}\u001F${n.body}\u001F${ses ? (n.ezan ? 'T' : '1') : '0'}`;
+export function bildirimImzasi(n: { title: string; body: string; ezan?: boolean; ezanSes?: 'short' | 'long' }, ses: boolean): string {
+  // Ezan sesi türü de imzada: kısa/uzun değişince kayıt yeniden kurulur.
+  return `${n.title}\u001F${n.body}\u001F${ses ? (n.ezan ? `T${n.ezanSes ?? '-'}` : '1') : '0'}`;
 }
 
 /**

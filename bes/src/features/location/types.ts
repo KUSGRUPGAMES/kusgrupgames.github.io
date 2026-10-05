@@ -17,6 +17,10 @@ export interface Place extends Coordinates {
   timezone: string;
   /** Rakım (metre); ufuk düzeltmesinde kullanılır. */
   elevation?: number;
+  /** Diyanet ilçe kimliği (Türkiye): resmî vakitler bununla alınır. */
+  diyanetId?: string;
+  /** İl adı (Türkiye ilçeleri için; "Pendik, İstanbul" gösterimi). */
+  province?: string;
 }
 
 /** Kullanıcının kaydettiği konum: bir yer + ona özel hesap ayarları. */

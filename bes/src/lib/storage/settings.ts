@@ -24,8 +24,12 @@ export const settingsSchema = z.object({
     beforeMinutes: z.number().int().min(0).max(120).default(0),
     /** Önceden uyarı açıkken vakit girince de bildir (plan.ts `alsoAtTime`). */
     alsoAtTime: z.boolean().default(true),
-    /** Vakit girişinde ezan sesi (D29). */
+    /** Vakit girişinde ezan sesi (D29) — ana anahtar. */
     ezan: z.boolean().default(true),
+    /** Uygulama açıkken: kapalı / kısa (ilk tekbir) / tam ezan (5 Ekim). */
+    ezanInApp: z.enum(['off', 'short', 'full']).default('full'),
+    /** Uygulama kapalı ya da ekran kilitliyken: kapalı / kısa / uzun (iOS 30 sn, Android tam). */
+    ezanOutside: z.enum(['off', 'short', 'long']).default('long'),
     /** Dinamik Ada / kilit ekranında sıradaki vakte geri sayım (D30). */
     liveActivity: z.boolean().default(true),
     sound: z.boolean().default(true),
@@ -66,6 +70,13 @@ export const settingsSchema = z.object({
    * yapılmadıkça hiçbir şey gönderilmez; Hesap ekranından kapatılabilir.
    */
   cloudSync: z.boolean().default(true),
+  /** Oruç bildirimleri (5 Ekim): varsayılan kapalı; Ayarlar ya da İbadet → Oruç'tan açılır. */
+  fasting: z.object({
+    mode: z.enum(['off', 'ramadan', 'planned', 'everyday']).default('off'),
+    sahurMinutes: z.number().int().min(0).max(180).default(45),
+    atImsak: z.boolean().default(true),
+    iftar: z.boolean().default(true),
+  }).default({}),
 });
 
 export type Settings = z.infer<typeof settingsSchema>;

@@ -17,7 +17,6 @@ import { useSettingsStore } from '@/store/settings';
 import { useLocationStore } from '@/store/locations';
 import { rangeSchedule } from '@/features/prayer/schedule';
 import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
-import type { MethodId, PrayerKey } from '@/features/prayer/methods';
 import { zonedNow } from '@/lib/time/zone';
 import { dateKey } from '@/features/dhikr/stats';
 import { pickDaily } from '@/features/daily/pick';
@@ -27,6 +26,8 @@ import { pickDailyVerse } from '@/features/daily/verse';
 import { logger } from '@/lib/log';
 import { liveActivity } from '../../../modules/bes-live-activity';
 import { buildWidgetPayload, nextTwo, WIDGET_KEY, type WidgetDaily } from './payload';
+import { scheduleInputFrom } from '@/features/prayer/window';
+import { useOfficialVersion } from '@/features/prayer/officialRuntime';
 
 const log = logger('widget');
 
@@ -45,18 +46,12 @@ export function useWidgetSync(): void {
 
   const bugun = konum ? (() => { const z = zonedNow(konum.timezone); return dateKey(z.year, z.month, z.day); })() : '';
 
+  const resmiSurum = useOfficialVersion();
   const veri = useMemo(() => {
     if (!konum) return null;
+    void resmiSurum;
     const z = zonedNow(konum.timezone);
-    const days = rangeSchedule({
-      latitude: konum.latitude, longitude: konum.longitude, timezone: konum.timezone,
-      options: {
-        method: settings.method as MethodId,
-        asrShadow: settings.asrShadow,
-        adjustments: settings.adjustments as Partial<Record<PrayerKey, number>>,
-        ...(konum.elevation === undefined ? {} : { elevation: konum.elevation }),
-      },
-    }, { year: z.year, month: z.month, day: z.day }, 4);
+    const days = rangeSchedule(scheduleInputFrom(konum, settings), { year: z.year, month: z.month, day: z.day }, 4);
 
     // Günlük içerik: ana sayfadaki "Günün âyeti/duası" ile aynı seçim.
     const havuz = currentVersePool();
@@ -81,7 +76,7 @@ export function useWidgetSync(): void {
       },
     });
     // `bugun` yalnız gün değişince yeniden hesaplatmak için bağımlılıkta.
-  }, [konum, settings.method, settings.asrShadow, settings.adjustments, t, label, bugun]);
+  }, [konum, settings, t, label, bugun, resmiSurum]);
 
   // Widget verisi.
   useEffect(() => {

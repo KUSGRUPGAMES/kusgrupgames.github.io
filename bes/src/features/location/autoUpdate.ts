@@ -34,6 +34,10 @@ export function konumKarari(aktif: SavedLocation | null, burada: Place | null): 
   if (!burada) return { kind: 'ayni' };
   if (!aktif) return { kind: 'tasindi', yeni: burada };
   if (burada.id === aktif.id) return { kind: 'ayni' };
-  if (distanceKm(aktif, burada) < AYNI_YER_KM) return { kind: 'ayni' };
+  // Türkiye: ilçe değiştiyse (Diyanet kimliği farklı) mesafe ne olursa olsun
+  // yeni ilçe — vakitler ilçe ilçe ilan edilir (Gebze → Pendik 15 km).
+  if (aktif.diyanetId && burada.diyanetId) {
+    if (aktif.diyanetId === burada.diyanetId) return { kind: 'ayni' };
+  } else if (distanceKm(aktif, burada) < AYNI_YER_KM) return { kind: 'ayni' };
   return aktif.origin === 'gps' ? { kind: 'tasindi', yeni: burada } : { kind: 'uyusmuyor', burada };
 }

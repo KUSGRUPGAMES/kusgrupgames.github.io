@@ -15,6 +15,7 @@ import { kv } from '@/boot/storage';
 import { KEYS, type Codec } from '@/lib/storage/kv';
 import { useLocationStore } from '@/store/locations';
 import { useSettingsStore } from '@/store/settings';
+import { placeLabel } from '@/features/location/places';
 import { konumKarari, KONTROL_ARALIGI_MS, type KonumKarari } from '@/features/location/autoUpdate';
 import {
   locationCanAskAgain, locationPermissionStatus, readDeviceLocationSilently, requestDeviceLocation,
@@ -61,6 +62,8 @@ export function HomeNotices() {
     const karar = konumKarari(onceki, burada);
     if (karar.kind === 'tasindi') {
       ekle(karar.yeni, { origin: 'gps', makePrimary: onceki?.isPrimary ?? true });
+      // Eski GPS kaydı listede birikmesin (her ilçe değişiminde yeni kayıt açılıyordu).
+      if (onceki?.origin === 'gps' && onceki.id !== karar.yeni.id) useLocationStore.getState().remove(onceki.id);
       setEskiAd(onceki?.label ?? null);
       setKonumBilgisi(onceki ? karar : null);
     } else if (karar.kind === 'uyusmuyor') {
@@ -125,7 +128,7 @@ export function HomeNotices() {
     return sar(
       <Banner
         tone="success"
-        title={t('locauto.movedTitle', { city: konumBilgisi.yeni.name })}
+        title={t('locauto.movedTitle', { city: placeLabel(konumBilgisi.yeni) })}
         description={eskiAd ? t('locauto.movedBody', { from: eskiAd }) : t('locauto.movedBodyShort')}
         actionLabel={t('common.ok')}
         onAction={() => setKonumBilgisi(null)}

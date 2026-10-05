@@ -26,16 +26,22 @@ import { useSettingsStore } from '@/store/settings';
 import { logger } from '@/lib/log';
 import { useEzanStore } from './ezanStore';
 import { ezanBildirimKarari } from './presentation';
-import ezanTam from '../../../assets/sounds/ezan-tam.m4a';
+import ezanTam from '../../../assets/sounds/ezan_tam.m4a';
 
 const log = logger('ezan');
+/** Kısa ezanın süresi: ilk tekbir çifti (ses dosyalarındaki kesimle aynı). */
+const KISA_SANIYE = 16.5;
 
 export function EzanOkuyucu() {
   const t = useT();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { caliyor, vakit, istek, durdur, bitti } = useEzanStore();
-  const ezanAcik = useSettingsStore((s) => s.settings.notifications.ezan);
+  // Uygulama içinde: kapalı / kısa (ilk tekbir) / tam (5 Ekim).
+  const icMod = useSettingsStore((s) => (s.settings.notifications.ezan ? s.settings.notifications.ezanInApp : 'off'));
+  const ezanAcik = icMod !== 'off';
+  const icModRef = useRef(icMod);
+  icModRef.current = icMod;
   const oynatici = useRef<AudioPlayer | null>(null);
   const ezanAcikRef = useRef(ezanAcik);
   ezanAcikRef.current = ezanAcik;
@@ -52,7 +58,7 @@ export function EzanOkuyucu() {
   // sonuç: kullanıcı hiç ses duymuyordu ("sına'ya basıp ekranı hemen
   // kilitleyince ezan okumuyor" şikâyetinin kök nedeni). Artık yalnız
   // uygulama gerçekten ön plandaysa (`active`) sistem sesi susturulup
-  // içeride çalınıyor; aksi halde pakete gömülü `ezan.caf`ı sistem çalsın
+  // içeride çalınıyor; aksi halde pakete gömülü ezan sesini (ezankisa/ezanuzun.caf) sistem çalsın
   // diye dokunulmuyor.
   useEffect(() => {
     Notifications.setNotificationHandler({
@@ -82,11 +88,16 @@ export function EzanOkuyucu() {
     if (!caliyor) { oynatici.current?.pause(); return undefined; }
     let p = oynatici.current;
     if (!p) { p = createAudioPlayer(ezanTam); oynatici.current = p; }
-    const sub = p.addListener('playbackStatusUpdate', (s) => { if (s.didJustFinish) bitti(); });
+    const sub = p.addListener('playbackStatusUpdate', (s) => {
+      // Kısa ezan: ilk "Allahu ekber Allahu ekber"den sonra susar (önizleme hariç: vakit === null).
+      if (s.didJustFinish || (icModRef.current === 'short' && vakit !== null && s.currentTime >= KISA_SANIYE)) {
+        p?.pause(); bitti();
+      }
+    });
     void setAudioModeAsync({ playsInSilentMode: true }).catch(() => log.warn('ses kipi ayarlanamadı'));
     void p.seekTo(0).then(() => p!.play()).catch((e: unknown) => log.warn('ezan çalınamadı', { error: e }));
     return () => { sub.remove(); };
-  }, [caliyor, istek, bitti]);
+  }, [caliyor, istek, bitti, vakit]);
 
   useEffect(() => () => { oynatici.current?.remove(); oynatici.current = null; }, []);
 

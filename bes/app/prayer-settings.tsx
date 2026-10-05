@@ -20,7 +20,7 @@ export default function PrayerSettingsScreen() {
     <Screen topInset={false} scroll>
       <Stack.Screen options={{ headerShown: true, title: t('prayer.settings') }} />
 
-      <SectionHeader title={t('prayer.method')} />
+      <SectionHeader title={t('prayer.method')} subtitle={t('prayer.methodOfficial')} />
       <Card padding="sm">
         {Object.values(METHODS).map((m) => (
           <ListItem

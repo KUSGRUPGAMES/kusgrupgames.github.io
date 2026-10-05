@@ -4,8 +4,8 @@ import { METHODS, PRAYER_KEYS, OBLIGATORY_KEYS } from '@/features/prayer/methods
 const ISTANBUL = { lat: 41.0082, lon: 28.9784, tz: 3 };
 
 describe('namaz vakti hesabı', () => {
-  it('İstanbul 21 Haziran: vakitler bilinen değerlere oturur', () => {
-    const t = computeRaw(2026, 5, 21, ISTANBUL.lat, ISTANBUL.lon, ISTANBUL.tz);
+  it('İstanbul 21 Haziran: astronomik vakitler bilinen değerlere oturur (temkinsiz, MWL = aynı açılar)', () => {
+    const t = computeRaw(2026, 5, 21, ISTANBUL.lat, ISTANBUL.lon, ISTANBUL.tz, { method: 'mwl', asrShadow: 1 });
     expect(formatHM(t.fajr)).toBe('03:24');
     expect(formatHM(t.sunrise)).toBe('05:32');
     expect(formatHM(t.dhuhr)).toBe('13:06');
@@ -96,5 +96,36 @@ describe('biçimlendirme', () => {
   });
   it('24ü aşan saat sarmalanır', () => {
     expect(formatHM(27.5)).toBe('03:30');
+  });
+});
+
+describe('Diyanet uyumu (5 Ekim)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const resmi = require('./fixtures/diyanet-2026-10.json') as Record<string, Record<string, string[]>>;
+  const YER: Record<string, [number, number]> = { 9206: [39.9334, 32.8597], 9541: [41.0082, 28.9784], 9651: [40.8025, 29.4306] };
+  const dk = (s: string) => { const [h, m] = s.split(':').map(Number); return h! * 60 + m!; };
+  it('temkinli hesap Diyanet’in ilan ettiği vakitlere en çok 3 dk uzak (internet yokken yedek)', () => {
+    let enKotu = 0;
+    for (const [id, gunler] of Object.entries(resmi)) {
+      const [lat, lon] = YER[id]!;
+      for (const [gun, vakit] of Object.entries(gunler)) {
+        const [y, m, d] = gun.split('-').map(Number);
+        const t = computeTimes(y!, m! - 1, d!, lat, lon, 3, { method: 'diyanet', asrShadow: 1 });
+        PRAYER_KEYS.forEach((k, i) => { enKotu = Math.max(enKotu, Math.abs(dk(formatHM(t[k])) - dk(vakit[i]!))); });
+      }
+    }
+    expect(enKotu).toBeLessThanOrEqual(3);
+  });
+  it('resmî vakit varsa çizelge onu kullanır (kullanıcı düzeltmesi üstüne eklenir)', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { mergeOfficial } = require('@/features/prayer/official') as typeof import('@/features/prayer/official');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { daySchedule } = require('@/features/prayer/schedule') as typeof import('@/features/prayer/schedule');
+    mergeOfficial('9206', { '2026-10-05': ['05:19', '06:41', '12:42', '15:57', '18:33', '19:50'] }, '2026-10-05');
+    const g = daySchedule({ latitude: 39.93, longitude: 32.86, timezone: 'Europe/Istanbul', diyanetId: '9206', options: { method: 'diyanet', asrShadow: 1, adjustments: { maghrib: 2 } } }, 2026, 9, 5);
+    expect(formatHM(g.times.maghrib)).toBe('18:35');
+    expect(formatHM(g.times.fajr)).toBe('05:19');
+    const baska = daySchedule({ latitude: 39.93, longitude: 32.86, timezone: 'Europe/Istanbul', diyanetId: '9206', options: { method: 'mwl', asrShadow: 1 } }, 2026, 9, 5);
+    expect(formatHM(baska.times.maghrib)).not.toBe('18:33');
   });
 });

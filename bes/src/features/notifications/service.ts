@@ -69,12 +69,12 @@ export async function soundAllowed(): Promise<boolean | null> {
  * sesi) hiç sınamıyordu. Kullanıcı bunu kurup uygulamadan çıkarak ya da
  * kilitleyerek gerçek deneyimi duyabilir.
  */
-export async function scheduleTestEzan(title: string, body: string, afterSeconds = 12): Promise<void> {
+export async function scheduleTestEzan(title: string, body: string, afterSeconds = 12, tur: 'short' | 'long' = 'long'): Promise<void> {
   await kanallariKur();
   await Notifications.scheduleNotificationAsync({
     identifier: 'test-ezan',
     content: {
-      title, body, sound: EZAN_SESI,
+      title, body, sound: IOS_EZAN[tur],
       // Odak/Rahatsız Etmeyin modunu kırar (yalnız iOS, bkz. gercekSyncNotifications).
       interruptionLevel: 'timeSensitive',
       data: { at: Date.now() + afterSeconds * 1000, tur: 'reminder', imza: 'test', ezan: true },
@@ -83,7 +83,7 @@ export async function scheduleTestEzan(title: string, body: string, afterSeconds
       type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
       seconds: afterSeconds,
       repeats: false,
-      ...(Platform.OS === 'android' ? { channelId: KANAL_EZAN } : {}),
+      ...(Platform.OS === 'android' ? { channelId: ANDROID_EZAN_KANAL[tur] } : {}),
     },
   });
 }
@@ -126,9 +126,16 @@ export async function installedRecords(): Promise<KuruluKayit[]> {
   }
 }
 
-/** Pakete gömülü ezan bildirim sesinin dosya adı. */
-export const EZAN_SESI = 'ezan.caf';
 const KANAL_EZAN = 'ezan';
+/**
+ * Ezan sesleri (5 Ekim). iOS bildirim sesine en çok 30 sn izin verir: "uzun"
+ * 29,5 sn. Android kanalı dosyayı sonuna kadar çalar: "uzun" orada tam ezandır.
+ * Android .caf çalamıyor (eski `ezan` kanalı bu yüzden varsayılan sesle
+ * çalıyordu); Android'de wav/m4a kullanılır. Kanal sesi sonradan
+ * değişmediği için her ses ayrı kanal.
+ */
+const IOS_EZAN = { short: 'ezankisa.caf', long: 'ezanuzun.caf' } as const;
+const ANDROID_EZAN_KANAL = { short: 'ezan-kisa', long: 'ezan-tam' } as const;
 const KANAL_VAKIT = 'vakit';
 
 /**
@@ -138,8 +145,14 @@ const KANAL_VAKIT = 'vakit';
 async function kanallariKur(): Promise<void> {
   if (Platform.OS !== 'android') return;
   try {
-    await Notifications.setNotificationChannelAsync(KANAL_EZAN, {
-      name: 'Ezan', importance: Notifications.AndroidImportance.HIGH, sound: EZAN_SESI,
+    // Eski kanal (yanlış biçimli ses) kaldırılır; kullanıcı ayarlarda iki ezan kanalı görür.
+    await Notifications.deleteNotificationChannelAsync(KANAL_EZAN).catch(() => undefined);
+    await Notifications.setNotificationChannelAsync(ANDROID_EZAN_KANAL.short, {
+      name: 'Ezan (kısa)', importance: Notifications.AndroidImportance.HIGH, sound: 'ezan_kisa.m4a',
+      vibrationPattern: [0, 250, 250, 250],
+    });
+    await Notifications.setNotificationChannelAsync(ANDROID_EZAN_KANAL.long, {
+      name: 'Ezan (tam)', importance: Notifications.AndroidImportance.HIGH, sound: 'ezan_tam.m4a',
       vibrationPattern: [0, 250, 250, 250],
     });
     await Notifications.setNotificationChannelAsync(KANAL_VAKIT, {
@@ -196,12 +209,12 @@ async function gercekSyncNotifications(
           // "Failed to find sound" hatası veriyordu (expo/expo#40954'te
           // bilinen bir UNNotificationSound(named:) sorunu); CAF, Apple'ın
           // yerel/beklenen biçimi. Android'de ses kanaldan gelir (`kanallariKur`).
-          sound: options.sound ? (n.ezan ? EZAN_SESI : true) : false,
+          sound: options.sound ? (n.ezan && n.ezanSes ? IOS_EZAN[n.ezanSes] : true) : false,
           // Yalnız iOS: odak/Rahatsız Etmeyin modunda bildirim geliyor ama
           // sesi kesiliyordu (kullanıcı bunu "ezan okumuyor" diye yaşadı).
           // Ezan sesi taşıyan bildirim `timeSensitive` işaretlenince odak
           // modunu kırar; app.config'teki entitlement bunu gerektiriyor.
-          ...(n.ezan && options.sound ? { interruptionLevel: 'timeSensitive' as const } : {}),
+          ...(n.ezan && n.ezanSes && options.sound ? { interruptionLevel: 'timeSensitive' as const } : {}),
           // Fark almak için gereken alanlar. Tetikleyici okunamadığı için
           // zaman damgası ve içerik imzası bilerek içeriğe yazılır — imza
           // başlık/gövde/ses değişimini yakalar, yalnız zaman kıyaslamak
@@ -211,7 +224,7 @@ async function gercekSyncNotifications(
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.DATE,
           date: n.at,
-          ...(Platform.OS === 'android' ? { channelId: n.ezan && options.sound ? KANAL_EZAN : KANAL_VAKIT } : {}),
+          ...(Platform.OS === 'android' ? { channelId: n.ezan && n.ezanSes && options.sound ? ANDROID_EZAN_KANAL[n.ezanSes] : KANAL_VAKIT } : {}),
         },
       });
       kurulan += 1;

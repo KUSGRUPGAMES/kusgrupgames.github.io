@@ -38,6 +38,7 @@ import {
 } from '@/features/daily/components/DailyCards';
 import { HomeNotices } from '@/features/permissions/HomeNotices';
 import { TabTour } from '@/features/tour/TabTour';
+import { useOfficialVersion } from '@/features/prayer/officialRuntime';
 
 const HIZLI = [
   { href: '/qibla', icon: 'compass', label: 'qibla.title' },
@@ -57,10 +58,13 @@ export default function HomeScreen() {
   const digerKartlar = kartlar.filter((c) => c.visible && c.id !== 'nextPrayer' && c.id !== 'todayTimes');
   const vakitlerAcik = kartlar.find((c) => c.id === 'todayTimes')?.visible !== false;
 
+  // Diyanet'in resmî vakitleri inince (officialRuntime) çizelge yeniden hesaplanır.
+  const resmiSurum = useOfficialVersion();
   const input = useMemo<ScheduleInput | null>(() => {
     if (!konum) return null;
-    return scheduleInputFrom(konum, settings);
-  }, [konum, settings]);
+    void resmiSurum;
+    return { ...scheduleInputFrom(konum, settings) };
+  }, [konum, settings, resmiSurum]);
 
   const live = useLiveView(input);
   const bugunAnahtar = useMemo(() => {

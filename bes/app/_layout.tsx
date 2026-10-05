@@ -75,7 +75,9 @@ function RootStack() {
         <Stack.Screen name="pro" />
         {/* Google girişinin dönüş adresi; kullanıcı görmez, hemen geri döner (D32). */}
         <Stack.Screen name="auth-callback" options={{ animation: 'none' }} />
-        <Stack.Screen name="location" options={{ presentation: 'modal' }} />
+        {/* Kart sayfası (modal değil): iOS sayfa kipinde arama kutusuna yazınca
+            klavye/kaydırma hareketi sayfayı aşağı çekip kapatıyordu (5 Ekim). */}
+        <Stack.Screen name="location" />
         <Stack.Screen name="prayer-settings" />
         <Stack.Screen name="prayer-calendar" />
         <Stack.Screen name="home-layout" />

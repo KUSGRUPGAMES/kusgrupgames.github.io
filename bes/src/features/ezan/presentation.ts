@@ -7,7 +7,7 @@
  * işleyicisi (`handleNotification`) yine de tetiklenmiş olsa bile —
  * burada başlatılacak oynatıcının sesi duyulacağı garanti değildir (arka
  * planda sıfırdan yeni bir ses oturumu başlatmak iOS'ta kısıtlı); bu
- * yüzden sistemin kendi bildirim sesi (pakete gömülü ezan.caf) devrede
+ * yüzden sistemin kendi bildirim sesi (pakete gömülü ezankisa/ezanuzun.caf) devrede
  * kalmalı, yoksa kullanıcı hiç ses duymuyor.
  *
  * Bu, "sına'ya basıp hemen ekranı kilitleyince ezan çalmıyor" şikâyetinin
@@ -22,5 +22,8 @@ export function ezanBildirimKarari(
   onPlanda: boolean,
 ): { uygulamaIcindeCal: boolean; sistemSesiCalsin: boolean } {
   const icindeCal = ezanli && ezanAcik && onPlanda;
-  return { uygulamaIcindeCal: icindeCal, sistemSesiCalsin: !icindeCal };
+  // 5 Ekim: "uygulama açıkken: kapalı" seçildiyse bildirimin ezan sesi de
+  // ön planda çalmaz (yalnız afiş görünür).
+  const susturuldu = ezanli && !ezanAcik && onPlanda;
+  return { uygulamaIcindeCal: icindeCal, sistemSesiCalsin: !icindeCal && !susturuldu };
 }
