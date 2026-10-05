@@ -130,7 +130,12 @@ const config: ExpoConfig = {
       // Dinamik Ada ve kilit ekranında vakte geri sayım (D30).
       NSSupportsLiveActivities: true,
       NSMotionUsageDescription:
-        'Kıble pusulası, telefonun yönünü okumak için hareket algılayıcısını kullanır.',
+        'Kıble pusulası, telefonun yönünü okumak için hareket algılayıcısını kullanır.',      // İzin pencereleri uygulamanın diliyle aynı dilde olmalı (App Review
+      // 4. madde, 2 Ekim reddi: İngilizce cihazda izin metni Türkçe çıkıyordu).
+      // Çeviriler `locales/*.json`; desteklenmeyen dilde Türkçe (uygulamanın
+      // da varsayılanı) — bkz. resolveLanguage.
+      CFBundleDevelopmentRegion: 'tr',
+      CFBundleLocalizations: ['tr', 'en', 'de', 'fr', 'ar'],
     },
   },
   android: {
@@ -269,6 +274,7 @@ const config: ExpoConfig = {
     }],
     ['expo-font', { fonts: ['./assets/fonts/Amiri-Regular.ttf', './assets/fonts/AmiriQuran-Regular.ttf'] }],
   ],
+  locales: { tr: './locales/tr.json', en: './locales/en.json', de: './locales/de.json', fr: './locales/fr.json', ar: './locales/ar.json' },
   experiments: { typedRoutes: true },
   // proSales: Pro satışı açık mı (1 Ekim kararı). 1.0'da kapalı — banka/ücretli
   // uygulama sözleşmesi bekleniyor, Pro özellikleri herkese ücretsiz. Sözleşme

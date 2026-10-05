@@ -151,3 +151,34 @@ describe('ortam ayrımı', () => {
     expect(gelistirme.name).toContain('dev');
   });
 });
+
+describe('izin metinleri uygulamanın dillerinde (App Review 4. madde, 2 Ekim reddi)', () => {
+  const exp = URETIM as Cozulmus & { locales?: Record<string, string> };
+  const DILLER = ['tr', 'en', 'de', 'fr', 'ar'];
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const oku = (d: string) => (require(join(KOK, 'locales', `${d}.json`)) as { ios: Record<string, string> }).ios;
+  const plist = (exp.ios?.infoPlist ?? {}) as Record<string, unknown>;
+  const izinAnahtarlari = ['NSLocationWhenInUseUsageDescription', 'NSMotionUsageDescription', 'NSUserTrackingUsageDescription'];
+
+  it('her uygulama dili için çeviri dosyası bağlı ve iOS bu dilleri tanıyor', () => {
+    expect(Object.keys(exp.locales ?? {}).sort()).toEqual([...DILLER].sort());
+    expect([...(plist.CFBundleLocalizations as string[])].sort()).toEqual([...DILLER].sort());
+    expect(plist.CFBundleDevelopmentRegion).toBe('tr');
+  });
+
+  it('her dilde bütün izin metinleri var, boş değil, tırnak içermiyor', () => {
+    for (const d of DILLER) {
+      const m = oku(d);
+      for (const k of izinAnahtarlari) {
+        expect({ d, k, ok: typeof m[k] === 'string' && m[k]!.length > 30 && !m[k]!.includes('"') }).toEqual({ d, k, ok: true });
+      }
+    }
+    expect(oku('en').NSLocationWhenInUseUsageDescription).not.toBe(oku('tr').NSLocationWhenInUseUsageDescription);
+  });
+
+  it('Türkçe çeviri yapılandırmadaki varsayılanla aynı (iki yerde ayrı metin olmasın)', () => {
+    expect(oku('tr').NSMotionUsageDescription).toBe(plist.NSMotionUsageDescription);
+    expect(oku('tr').NSLocationWhenInUseUsageDescription).toBe(eklenti(exp, 'expo-location')?.locationWhenInUsePermission);
+    expect(oku('tr').NSUserTrackingUsageDescription).toBe(eklenti(exp, 'expo-tracking-transparency')?.userTrackingPermission);
+  });
+});
