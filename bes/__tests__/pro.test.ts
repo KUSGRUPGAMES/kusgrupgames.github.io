@@ -248,7 +248,7 @@ describe('ödüllü reklam metinleri süreyle aynı (5 Ekim: alt yazı "bir gün
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const m = require(`@/lib/i18n/strings/${dil}`) as Record<string, Record<string, string>>;
       const s = Object.values(m).find((v) => v && typeof v === 'object' && 'reward.body' in v)!;
-      for (const k of ['reward.title', 'reward.body', 'tour.profile3.body']) {
+      for (const k of ['reward.title', 'reward.body', 'reward.renewTitle', 'reward.renewBody', 'tour.profile3.body']) {
         expect({ k, ok: new RegExp(`(^|[^0-9])${saat}([^0-9]|$)`).test(s[k]!) }).toEqual({ k, ok: true });
       }
     });
