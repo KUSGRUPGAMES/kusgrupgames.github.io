@@ -540,8 +540,8 @@ function proKutusu(uid) {
     clear(kutu).append(
       h('h3', null, 'Pro'),
       h('div', null, d.active ? h('span', { class: 'badge gold' }, `Pro etkin — ${bitis}`) : h('span', { class: 'badge' }, 'Pro yok'),
-        d.linked ? null : h('span', { class: 'subtle', style: { marginLeft: '8px' } }, 'Kullanıcı Pro destekli sürümle (1.0.1+) henüz giriş yapmamış; verilen Pro ilk girişte geçerli olur.')),
-      h('div', { class: 'subtle' }, 'Verilen Pro, satın alınmış gibi çalışır: reklamsız + bütün Pro özellikleri, aynı hesapla giriş yapılan her telefonda. Süre dolunca kendiliğinden biter. (Uygulamanın 1.0.1 ve sonrası sürümlerinde.)'),
+        d.linked ? null : h('span', { class: 'subtle', style: { marginLeft: '8px' } }, 'Kullanıcı uygulamada bu hesapla henüz giriş yapmamış; verilen Pro ilk girişte geçerli olur.')),
+      h('div', { class: 'subtle' }, 'Verilen Pro, satın alınmış gibi çalışır: reklamsız + bütün Pro özellikleri, aynı hesapla giriş yapılan her telefonda. Süre dolunca kendiliğinden biter. (iPhone: yayındaki sürümde geçerli. Android: 1.0.0 (5) ve sonrası.)'),
       h('div', { class: 'row' }, h('span', { class: 'subtle' }, 'Ücretsiz Pro ver:'), ver('week', '1 hafta'), ver('month', '1 ay'), ver('year', '1 yıl'), ver('lifetime', 'Süresiz'),
         d.active ? h('button', { class: 'btn sm bad', onclick: () => confirmBox('Pro\'yu geri al', 'Panelden verilen Pro hemen kalkar. (Kullanıcının kendi satın aldığı abonelik etkilenmez.)', 'Geri al', async () => { ciz(await cagir({ action: 'revoke' })); }) }, 'Geri al') : null));
   };

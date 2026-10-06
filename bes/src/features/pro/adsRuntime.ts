@@ -27,8 +27,8 @@ import { useSettingsStore } from '@/store/settings';
 import { prayerWindow, scheduleInputFrom } from '@/features/prayer/window';
 import { kv } from '@/boot/storage';
 import {
-  canShowInterstitial, isAdFree, isNavAdExcluded, navInterstitialDue, rewardAdFreeUntil, shouldShowAd,
-  shouldShowAppOpen, type AdSurface,
+  canShowInterstitial, countAppOpen, isAdFree, isNavAdExcluded, localDayKey, navInterstitialDue, rewardAdFreeUntil,
+  shouldShowAd, shouldShowAppOpen, type AdSurface, type AppOpenStats,
 } from './ads';
 import { useProStore } from './purchases';
 
@@ -70,14 +70,16 @@ const K_REKLAMSIZ = 'adFreeUntil';
 const K_ACILIS = 'appOpenStats';
 const sayiVeyaNull = { parse: (r: unknown) => (typeof r === 'number' ? r : null), fallback: null as number | null };
 const acilisCodec = {
-  parse: (r: unknown) => {
-    const o = r as { sessions?: unknown; lastShownAt?: unknown } | null;
+  // Eski kayıt ({ sessions, lastShownAt }) okunduğunda alanlar boş gelir: sayaç bugünden başlar.
+  parse: (r: unknown): AppOpenStats => {
+    const o = r as { day?: unknown; opens?: unknown; shownDay?: unknown } | null;
     return {
-      sessions: typeof o?.sessions === 'number' ? o.sessions : 0,
-      lastShownAt: typeof o?.lastShownAt === 'number' ? o.lastShownAt : null,
+      day: typeof o?.day === 'string' ? o.day : null,
+      opens: typeof o?.opens === 'number' ? o.opens : 0,
+      shownDay: typeof o?.shownDay === 'string' ? o.shownDay : null,
     };
   },
-  fallback: { sessions: 0, lastShownAt: null as number | null },
+  fallback: { day: null, opens: 0, shownDay: null } as AppOpenStats,
 };
 
 interface AdsState {
@@ -181,7 +183,7 @@ export function maybeShowInterstitial(surface: AdSurface): void {
   tamEkran.show().catch((e: unknown) => log.info('tam ekran gösterilemedi', { error: e }));
 }
 
-// --- Açılış reklamı (App Open): açılışta, en sık 4 saatte bir, ilk 3 açılışta yok
+// --- Açılış reklamı (App Open): günde bir kez, günün ikinci açılışında (7 Ekim)
 
 /** Soğuk açılışın ya da arka plandan dönüşün başladığı an. */
 let acilisAni = Date.now();
@@ -197,11 +199,10 @@ async function acilisDene(): Promise<void> {
   const simdi = Date.now();
   const kayit = await kv.read(K_ACILIS, acilisCodec);
   const goster = shouldShowAppOpen({
-    sessions: kayit.sessions, lastShownAt: kayit.lastShownAt, now: simdi,
-    sinceLaunchMs: simdi - acilisAni, allowed: adAllowedNow('home', new Date(simdi)),
+    stats: kayit, now: simdi, sinceLaunchMs: simdi - acilisAni, allowed: adAllowedNow('home', new Date(simdi)),
   });
   if (!goster) return;
-  await kv.write(K_ACILIS, { ...kayit, lastShownAt: simdi });
+  await kv.write(K_ACILIS, { ...kayit, shownDay: localDayKey(simdi) });
   acilis.show().catch((e: unknown) => log.info('açılış reklamı gösterilemedi', { error: e }));
 }
 
@@ -209,7 +210,7 @@ async function yeniAcilis(): Promise<void> {
   acilisAni = Date.now();
   acilisDenendi = false;
   const kayit = await kv.read(K_ACILIS, acilisCodec);
-  await kv.write(K_ACILIS, { ...kayit, sessions: kayit.sessions + 1 });
+  await kv.write(K_ACILIS, countAppOpen(kayit, acilisAni));
   if (acilisYuklendi) void acilisDene();
 }
 

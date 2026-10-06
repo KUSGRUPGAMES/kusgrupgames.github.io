@@ -20,6 +20,9 @@ const YUZEY: Record<string, AdSurface> = {
   index: 'home', quran: 'quranList', worship: 'explore', community: 'explore', profile: 'profile',
 };
 
+/** Şerit reklamın göründüğü tek sekme (7 Ekim kararı). */
+const BANNER_SEKMESI = 'index';
+
 export default function TabsLayout() {
   const theme = useTheme();
   const t = useT();
@@ -59,7 +62,8 @@ export default function TabsLayout() {
         // Şerit reklam sekme çubuğunun hemen üstünde, sabit (1 Ekim kararı).
         tabBar={(props) => (
           <>
-            <AdBanner surface={YUZEY[props.state.routes[props.state.index]?.name ?? ''] ?? 'home'} sabit />
+            {/* 7 Ekim: şerit şimdilik yalnız ana sayfada. */}
+            {props.state.routes[props.state.index]?.name === BANNER_SEKMESI ? <AdBanner surface={YUZEY[BANNER_SEKMESI]!} sabit /> : null}
             <BottomTabBar {...props} />
           </>
         )}

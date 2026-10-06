@@ -75,12 +75,14 @@ export function canShowInterstitial(lastShownAt: number | null, now: number): bo
   return (now - lastShownAt) / 1000 >= MIN_INTERSTITIAL_GAP_SECONDS;
 }
 
-// --- Açılış reklamı (App Open) — D33 devamı, kullanıcı kararı 1 Ekim
+// --- Açılış reklamı (App Open) — D33 devamı; 7 Ekim kararı: günde bir
 
-/** Açılış reklamları arasında en az bu kadar süre. */
-export const APP_OPEN_GAP_MS = 4 * 60 * 60 * 1000;
-/** İlk bu kadar açılışta açılış reklamı yok: yeni kullanıcı uygulamayı önce tanısın. */
-export const APP_OPEN_GRACE_SESSIONS = 3;
+/**
+ * Açılış reklamı **günde en çok bir kez**, günün **ikinci** açılışında
+ * (7 Ekim, kullanıcı kararı: her girişte tam ekran reklam çok fazlaydı).
+ * Günün ilk açılışı reklamsızdır — kullanıcı vakte bakmak için açar.
+ */
+export const APP_OPEN_NTH_OPEN_OF_DAY = 2;
 /**
  * Reklam bu sürede yüklenemediyse o açılışta gösterilmez: kullanıcı vakitleri
  * okumaya başlamışken önüne çıkan reklam Google'ın açılış reklamı kuralına
@@ -88,22 +90,43 @@ export const APP_OPEN_GRACE_SESSIONS = 3;
  */
 export const APP_OPEN_MAX_WAIT_MS = 4000;
 
+/** Cihazın yerel takvim günü ('YYYY-MM-DD'): "gün" kullanıcının günüdür. */
+export function localDayKey(ms: number): string {
+  const d = new Date(ms);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/** Telefonda saklanan açılış sayacı. */
+export interface AppOpenStats {
+  /** Sayacın ait olduğu gün. */
+  day: string | null;
+  /** O gün kaçıncı açılış (bu açılış dahil). */
+  opens: number;
+  /** Açılış reklamının en son gösterildiği gün. */
+  shownDay: string | null;
+}
+
+/** Yeni bir açılış: gün değiştiyse sayaç sıfırdan başlar. */
+export function countAppOpen(s: AppOpenStats, now: number): AppOpenStats {
+  const bugun = localDayKey(now);
+  return { ...s, day: bugun, opens: s.day === bugun ? s.opens + 1 : 1 };
+}
+
 export interface AppOpenContext {
-  /** Bu açılış dahil toplam açılış sayısı. */
-  sessions: number;
-  lastShownAt: number | null;
+  stats: AppOpenStats;
   now: number;
   /** Açılışın başlangıcından bu yana geçen süre. */
   sinceLaunchMs: number;
-  /** `shouldShowAd({ surface: 'home', ... })` sonucu: Pro, vakit penceresi. */
+  /** `shouldShowAd({ surface: 'home', ... })` sonucu: Pro, vakit penceresi, ödüllü reklamsızlık. */
   allowed: boolean;
 }
 
 export function shouldShowAppOpen(c: AppOpenContext): boolean {
   if (!c.allowed) return false;
-  if (c.sessions <= APP_OPEN_GRACE_SESSIONS) return false;
   if (c.sinceLaunchMs > APP_OPEN_MAX_WAIT_MS) return false;
-  return c.lastShownAt === null || c.now - c.lastShownAt >= APP_OPEN_GAP_MS;
+  const bugun = localDayKey(c.now);
+  if (c.stats.shownDay === bugun) return false;
+  return c.stats.day === bugun && c.stats.opens >= APP_OPEN_NTH_OPEN_OF_DAY;
 }
 
 // --- Ödüllü reklam: izleyene 4 saat reklamsız

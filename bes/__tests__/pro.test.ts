@@ -169,19 +169,29 @@ describe('açılış reklamı ve ödüllü reklam (D33 devamı)', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const a = require('@/features/pro/ads') as typeof import('@/features/pro/ads');
   const SAAT = 60 * 60 * 1000;
-  const temel = { sessions: 10, lastShownAt: null, now: 100 * SAAT, sinceLaunchMs: 1000, allowed: true };
+  const simdi = new Date(2026, 9, 7, 14, 0).getTime();
+  const bugun = a.localDayKey(simdi);
+  const dun = a.localDayKey(simdi - 24 * SAAT);
+  const temel = { stats: { day: bugun, opens: 2, shownDay: null }, now: simdi, sinceLaunchMs: 1000, allowed: true };
 
-  it('ilk üç açılışta yok, sonra var', () => {
-    expect(a.shouldShowAppOpen({ ...temel, sessions: 3 })).toBe(false);
-    expect(a.shouldShowAppOpen({ ...temel, sessions: 4 })).toBe(true);
+  it('günün ilk açılışında yok, ikinci açılışında var (7 Ekim)', () => {
+    expect(a.shouldShowAppOpen({ ...temel, stats: { day: bugun, opens: 1, shownDay: null } })).toBe(false);
+    expect(a.shouldShowAppOpen(temel)).toBe(true);
   });
 
-  it('en sık dört saatte bir', () => {
-    expect(a.shouldShowAppOpen({ ...temel, lastShownAt: temel.now - 3 * SAAT })).toBe(false);
-    expect(a.shouldShowAppOpen({ ...temel, lastShownAt: temel.now - 4 * SAAT })).toBe(true);
+  it('günde en çok bir kez; ertesi gün yeniden ikinci açılışta', () => {
+    expect(a.shouldShowAppOpen({ ...temel, stats: { day: bugun, opens: 5, shownDay: bugun } })).toBe(false);
+    expect(a.shouldShowAppOpen({ ...temel, stats: { day: bugun, opens: 2, shownDay: dun } })).toBe(true);
   });
 
-  it('geç yüklenen reklam gösterilmez; Pro ya da vakit penceresi engeller', () => {
+  it('açılış sayacı gün değişince sıfırlanır; eski biçimli kayıt ilk açılış sayılır', () => {
+    const ilk = a.countAppOpen({ day: null, opens: 0, shownDay: null }, simdi);
+    expect(ilk).toEqual({ day: bugun, opens: 1, shownDay: null });
+    expect(a.countAppOpen(ilk, simdi + SAAT).opens).toBe(2);
+    expect(a.countAppOpen({ day: dun, opens: 7, shownDay: dun }, simdi)).toEqual({ day: bugun, opens: 1, shownDay: dun });
+  });
+
+  it('geç yüklenen reklam gösterilmez; Pro, vakit penceresi ya da ödüllü reklamsızlık engeller', () => {
     expect(a.shouldShowAppOpen({ ...temel, sinceLaunchMs: 5000 })).toBe(false);
     expect(a.shouldShowAppOpen({ ...temel, allowed: false })).toBe(false);
   });
@@ -253,4 +263,17 @@ describe('ödüllü reklam metinleri süreyle aynı (5 Ekim: alt yazı "bir gün
       }
     });
   }
+});
+
+describe('şerit reklam yerleşimi (7 Ekim)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { readFileSync } = require('node:fs') as typeof import('node:fs');
+  it('yalnız ana sayfa sekmesinde ve küçük (320×50) boyutta', () => {
+    const duzen = readFileSync(require.resolve('../app/(tabs)/_layout.tsx'), 'utf8');
+    expect(duzen).toMatch(/BANNER_SEKMESI = 'index'/);
+    expect(duzen).toMatch(/=== BANNER_SEKMESI \? <AdBanner/);
+    const banner = readFileSync(require.resolve('@/features/pro/AdBanner.tsx'), 'utf8');
+    expect(banner).toMatch(/size=\{BannerAdSize\.BANNER\}/);
+    expect(banner).not.toMatch(/ADAPTIVE/);
+  });
 });

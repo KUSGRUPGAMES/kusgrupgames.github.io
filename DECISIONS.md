@@ -969,3 +969,21 @@ düşüyordu ve gelir çok azdı (kullanıcının gözlemi). Süre 4 saat
 (`REWARD_AD_FREE_MS`). Eski 24 saatlik ödüller kayıtlı bitiş anına göre
 kendiliğinden biter. Uygulama metinleri (5 dil), mağaza metinleri ve
 destek sayfaları birlikte değişti.
+
+## D40 — Reklam yoğunluğu azaltıldı (2026-10-07)
+
+Kullanıcı (ürün sahibi) uygulamanın "aşırı reklam" gösterdiğini söyledi:
+- **Şerit:** yalnız ana sayfa sekmesinde (öteki sekmelerde yok) ve uyarlanır
+  boyut yerine standart 320×50 — uyarlanır şerit ekran genişliğinde, 60-90 pt
+  yüksekliğindeydi, çok göze batıyordu.
+- **Açılış reklamı:** her açılışta (4 saatte bir) değil, **günde bir kez,
+  günün ikinci açılışında**. Günün ilk açılışı reklamsız (vakte bakmak için
+  açılır). Gün = cihazın yerel takvim günü. Eski "ilk 3 açılışta yok" kuralı
+  kalktı.
+- **Ödüllü reklam** (4 saat reklamsız, geri sayımlı) aynen kalır.
+- Ekran geçişi tam ekran reklamı (D33/1 Ekim: 4 geçişte bir, 3 dakikada en
+  çok bir) bu kararda değişmedi.
+- Panelden verilen ücretsiz Pro (D38) Android'de de çalışsın diye
+  RevenueCat'e Android uygulaması eklendi (yalnız promosyon hakkı için; Play
+  satın alma bağlantısı Pro satışı açılınca kurulur).
+

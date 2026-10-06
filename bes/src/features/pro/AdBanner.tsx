@@ -6,7 +6,7 @@
  * kutu bırakılmaz.
  *
  * `sabit`: sekme çubuğunun hemen üstünde, kaydırmadan bağımsız (1 Ekim
- * kararı). Sayfa sonuna konan şerit çoğu zaman hiç görünmüyordu; Google
+ * kararı). 7 Ekim: yalnız ana sayfa sekmesinde ve 320×50 boyutunda. Sayfa sonuna konan şerit çoğu zaman hiç görünmüyordu; Google
  * görünmeyen reklama çok daha az ödüyor.
  */
 import React, { useEffect, useState } from 'react';
@@ -41,7 +41,9 @@ export function AdBanner({ surface, sabit = false }: { surface: AdSurface; sabit
     >
       <BannerAd
         unitId={BANNER_UNIT}
-        size={sabit ? BannerAdSize.ANCHORED_ADAPTIVE_BANNER : BannerAdSize.BANNER}
+        // 7 Ekim: uyarlanır şerit (ekran genişliği, ~60-90 pt) çok göze batıyordu;
+        // standart küçük şerit (320×50) her yerde.
+        size={BannerAdSize.BANNER}
         onAdFailedToLoad={() => setHata(true)}
       />
     </View>
