@@ -43,6 +43,34 @@ export function isAligned(qibla: number, heading: number): boolean {
 export type CompassAccuracy = 'high' | 'medium' | 'low' | 'unreliable';
 
 /** Pusula doğruluğunu kullanıcıya anlatılabilir bir seviyeye indirger. */
+/**
+ * expo-location'ın bildirdiği pusula doğruluğu **derece değil, 0–3 düzeyidir**
+ * (iOS'ta da Android ölçeğine çevrilir: 3 yüksek, 0 yok). Eskiden bu değer
+ * 15 ile çarpılıp derece sanılıyordu: en iyi okuma (3 → 45°) "güvenilmez",
+ * hiç okuma yok (0 → 0°) "yüksek" çıkıyordu.
+ */
+/**
+ * Açıların çember üzerindeki en geniş farkı (0–180). Düz `max − min`
+ * kuzeyde yanılıyordu: 358° ile 2° arası 4° iken 356° çıkıyor, kuzeye bakan
+ * her kullanıcıya "manyetik girişim var" uyarısı gösteriliyordu.
+ */
+export function circularSpread(angles: readonly number[]): number {
+  let enGenis = 0;
+  for (let i = 0; i < angles.length; i++) {
+    for (let j = i + 1; j < angles.length; j++) {
+      enGenis = Math.max(enGenis, Math.abs(headingDelta(angles[i]!, angles[j]!)));
+    }
+  }
+  return enGenis;
+}
+
+export function accuracyFromLevel(level: number | null | undefined): CompassAccuracy {
+  if (level === 3) return 'high';
+  if (level === 2) return 'medium';
+  if (level === 1) return 'low';
+  return 'unreliable';
+}
+
 export function classifyAccuracy(accuracyDegrees: number | null): CompassAccuracy {
   if (accuracyDegrees === null || accuracyDegrees < 0) return 'unreliable';
   if (accuracyDegrees <= 5) return 'high';

@@ -104,8 +104,8 @@ describe('şu an görünümü', () => {
 
   it('bilinen değerle karşılaştırma: İstanbul 21 Haziran öğle vakti', () => {
     const g = daySchedule(istanbul, 2026, 5, 21);
-    // Yaz gündönümünde İstanbul öğlesi 13:07 civarıdır (güneş geçişi + temkin yok).
-    expect(formatHM(g.times.dhuhr)).toMatch(/^13:0[4-9]$/);
+    // Yaz gündönümünde İstanbul'da güneş geçişi ~13:06; Diyanet öğleyi 5 dk temkinle ilan eder.
+    expect(formatHM(g.times.dhuhr)).toMatch(/^13:1[0-2]$/);
   });
 });
 

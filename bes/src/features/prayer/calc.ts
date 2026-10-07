@@ -50,7 +50,7 @@ export function computeRaw(
   const sunrise = haSun === null ? null : noon - haSun;
   const maghrib = haSun === null ? null : noon + haSun;
 
-  return {
+  const ham: PrayerTimes = {
     fajr: haFajr === null ? null : noon - haFajr,
     sunrise,
     dhuhr: noon,
@@ -60,6 +60,7 @@ export function computeRaw(
       ? (maghrib === null ? null : maghrib + method.ishaMinutes / 60)
       : (haIsha === null ? null : noon + haIsha),
   };
+  return method.temkin ? applyAdjustments(ham, method.temkin) : ham;
 }
 
 /** Ham vakitlere kullanıcının dakika düzeltmesini uygular. */

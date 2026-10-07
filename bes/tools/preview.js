@@ -25,8 +25,13 @@ const WEB = path.join(KOK_DIZIN, '.expo', 'web-build');
 const SHOTS = path.join(KOK_DIZIN, '.expo', 'shots');
 const VIDEO = path.join(KOK_DIZIN, '.expo', 'video');
 
-/** Playwright'ın indirdiği Chromium; sistemde başka tarayıcı yok. */
+/**
+ * Playwright'ın indirdiği Chromium (CI kapsayıcısı). Mac'te geliştirici
+ * makinesinde o dizin yok; kurulu Google Chrome kullanılır.
+ */
 function tarayiciYolu() {
+  const mac = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  if (!process.env.PLAYWRIGHT_BROWSERS_PATH && process.platform === 'darwin' && fs.existsSync(mac)) return mac;
   const taban = process.env.PLAYWRIGHT_BROWSERS_PATH || '/opt/pw-browsers';
   const dizin = fs.readdirSync(taban).find((d) => /^chromium-\d+$/.test(d));
   if (!dizin) throw new Error(`Chromium bulunamadı: ${taban}`);
@@ -67,17 +72,20 @@ const ISTANBUL = {
 
 const EKRANLAR = [
   ['10-ana-sayfa', '/'], ['11-kuran', '/quran'], ['12-ibadet', '/worship'],
-  ['13-kesfet', '/explore'], ['14-profil', '/profile'],
+  ['13-ogren', '/learn'], ['14-ayarlar', '/profile'], ['19-topluluk-sekme', '/community'], ['64-pro', '/pro'],
+  ['15-ders-harf', '/lesson?id=harf-1'], ['16-ders-hece', '/lesson?id=ustun'], ['17-ders-sure', '/lesson?id=sure-112'],
+  ['18-elifba', '/alphabet'],
   ['20-okuyucu', '/reader?surah=1'], ['21-kuran-arama', '/quran-search'],
   ['22-kiraat', '/recitation'], ['23-arama', '/search'],
   ['30-kible', '/qibla'], ['31-zikir', '/dhikr'], ['32-zikir-istatistik', '/dhikr-stats'],
   ['33-esma', '/names'], ['34-dualar', '/duas'],
   ['40-vakit-takvimi', '/prayer-calendar'], ['41-vakit-ayarlari', '/prayer-settings'],
-  ['42-konum', '/location'], ['43-hatirlatici', '/reminders'],
+  ['42-konum', '/location'], ['43-hatirlatici', '/reminders'], ['45-vakit-uyarilari', '/alarms'],
   ['44-bildirim-merkezi', '/notifications-center'],
   ['50-namaz-rehberi', '/prayer-guide'], ['51-ibadet-gunlugu', '/worship-log'],
   ['52-kaza', '/qada'], ['53-hatim', '/khatm'], ['54-ramazan', '/ramadan'],
   ['55-zekat', '/zakat'], ['56-hac-umre', '/hajj'],
+  ['57-ibadet-istatistik', '/worship-stats'], ['64-hatim-gruplari', '/khatm-circles'],
   ['60-bilgi', '/knowledge'], ['61-hicri-takvim', '/hijri'], ['62-paylasim-karti', '/share-card'],
   ['70-ana-sayfa-duzeni', '/home-layout'], ['71-hesap', '/account'], ['72-tani', '/diagnostics'],
 ];
@@ -90,12 +98,15 @@ const EKRANLAR = [
  * çubuğu, dar ekranda taşan geri sayım). Her geçiş bütün ekranları çizer.
  */
 const GECISLER = [
-  { ad: 'acik', klasor: 'acik', viewport: { width: 390, height: 844 }, tema: 'light' },
+  // D34: uygulama yalnız koyu temada; açık tema geçişi kaldırıldı.
   { ad: 'koyu', klasor: 'koyu', viewport: { width: 390, height: 844 }, tema: 'dark' },
   // iPhone SE genişliği: düzen kırılmaları önce burada görünür.
-  { ad: 'dar', klasor: 'dar', viewport: { width: 320, height: 568 }, tema: 'light' },
+  { ad: 'dar', klasor: 'dar', viewport: { width: 320, height: 568 }, tema: 'dark' },
   // Arapça arayüz: sağdan sola akış ve uzun kelimeler.
-  { ad: 'arapca', klasor: 'ar', viewport: { width: 390, height: 844 }, tema: 'light', dil: 'ar' },
+  { ad: 'arapca', klasor: 'ar', viewport: { width: 390, height: 844 }, tema: 'dark', dil: 'ar' },
+  // Mağaza kareleri: koyu tema + örnek kullanım verisi (tools/store-shots.js).
+  // Uzun ekran: mağaza karesinde telefon alttan taşar; kısa kare altta boşluk bırakıyordu.
+  { ad: 'vitrin', klasor: 'vitrin', viewport: { width: 390, height: 1120 }, tema: 'dark', vitrin: true },
 ];
 
 const bekle = (p, ms) => p.waitForTimeout(ms);
@@ -124,13 +135,60 @@ const BAGLAM = { viewport: { width: 390, height: 844 }, locale: 'tr-TR', timezon
  * Tema ve dil depodan okunuyor; arayüzden tıklayarak geçmek her ekranda
  * bir tur gezinme demekti ve bir kez de yanlış ekranda kaldı.
  */
-async function tohumla(ctx, { tema = 'light', dil = 'tr' } = {}) {
+async function tohumla(ctx, { tema = 'light', dil = 'tr', vitrin = false } = {}) {
   await ctx.addInitScript((veri) => {
     localStorage.setItem('bes.onboardingDone', 'true');
     localStorage.setItem('bes.locations', JSON.stringify({ locations: [veri.yer], activeId: veri.yer.id }));
     localStorage.setItem('bes.themeMode', JSON.stringify(veri.tema));
     localStorage.setItem('bes.settings', JSON.stringify({ language: veri.dil }));
-  }, { yer: ISTANBUL, tema, dil });
+    // Sekme tanıtımı (ilk kullanım öğreticisi) taramada ekranı kapatmasın.
+    localStorage.setItem('bes.tour', JSON.stringify({ seen: [], skipped: true }));
+    if (!veri.vitrin) return;
+    // --- Vitrin: mağaza kareleri için üç haftalık örnek kullanım. Yalnız
+    // `vitrin` geçişinde; denetim geçişleri boş ekranları da sınasın diye
+    // tohumsuz kalır. Rastgele değil, sabit örüntü: kareler her üretimde aynı.
+    const gun = (fark) => {
+      const d = new Date(); d.setDate(d.getDate() - fark);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    };
+    const ZIKIR = [['Sübhânallah', 33], ['Elhamdülillah', 33], ['Allâhu ekber', 34], ['Estağfirullah', 100], ['Salavât', 100]];
+    const sessions = [];
+    const days = {};
+    const VAKIT = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+    for (let f = 0; f < 21; f += 1) {
+      const t = gun(f);
+      const kac = f === 0 ? ZIKIR.length : 1 + ((f * 7) % 3);
+      for (let i = 0; i < kac; i += 1) {
+        const [ad, hedef] = ZIKIR[(f + i) % ZIKIR.length];
+        const tam = (f + i) % 4 !== 3;
+        sessions.push({ id: `z${f}-${i}`, title: ad, count: tam ? hedef : Math.round(hedef * 0.6), target: hedef, onDate: t, createdAt: Date.now() - f * 864e5 - i * 36e5 });
+      }
+      const prayers = {};
+      VAKIT.forEach((v, i) => {
+        if ((f + i) % 9 === 8) return;
+        prayers[v] = (f + i) % 3 === 0 ? 'jamaah' : 'alone';
+      });
+      days[t] = { date: t, prayers, quranMinutes: 10 + ((f * 13) % 35) };
+    }
+    const worship = {
+      sessions, days,
+      qada: { fajr: 12, dhuhr: 4, asr: 6, maghrib: 2, isha: 9, witr: 3 },
+      qadaHistory: [],
+      khatms: [{ id: 'h1', title: 'Ramazan hatmi', startedOn: gun(20), targetOn: gun(-18),
+        completedJuz: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], active: true }],
+      reminders: [
+        { id: 'r1', title: 'Kur’an okuma vakti', body: 'Bugünkü sayfanı oku', trigger: { kind: 'time', hour: 21, minute: 0 }, weekdays: [], enabled: true },
+        { id: 'r2', title: 'Sabah namazına hazırlan', trigger: { kind: 'prayer', slot: 'fajr', offsetMinutes: -20 }, weekdays: [], enabled: true },
+        { id: 'r3', title: 'Cuma — Kehf sûresi', trigger: { kind: 'time', hour: 10, minute: 0 }, weekdays: [5], enabled: true },
+        { id: 'r4', title: 'Akşam ezkârı', trigger: { kind: 'prayer', slot: 'maghrib', offsetMinutes: 15 }, weekdays: [], enabled: true },
+      ],
+      fasts: { [gun(1)]: { date: gun(1), kind: 'nafile', completed: true }, [gun(4)]: { date: gun(4), kind: 'nafile', completed: true } },
+    };
+    localStorage.setItem('bes.worship', JSON.stringify(worship));
+    const DERS = ['harf-1', 'harf-2', 'harf-3', 'harf-4', 'harf-5', 'harf-6', 'harf-7', 'harf-tekrar', 'bitisme', 'ustun', 'esre'];
+    localStorage.setItem('bes.learning', JSON.stringify(DERS.map((id, i) => ({ lessonId: id, stars: i % 4 === 3 ? 2 : 3, completedAt: Date.now() - (DERS.length - i) * 864e5 }))));
+    localStorage.setItem('bes.reading', JSON.stringify({ position: { surah: 18, ayah: 10, updatedAt: Date.now() }, bookmarks: [] }));
+  }, { yer: ISTANBUL, tema, dil, vitrin });
 }
 
 async function ekranlar(port) {
@@ -149,6 +207,11 @@ async function ekranlar(port) {
     page.on('pageerror', (e) => sorunlar.push({ gecis: 'acilis', ekran: 'onboarding', tur: 'hata', ayrinti: String(e).slice(0, 160) }));
     await page.goto(`${kok}/`, { waitUntil: 'load' });
     await bekle(page, 3000);
+    // Adım 0: dil seçimi. Tarayıcının dili ne olursa olsun Türkçe seçilir;
+    // sonraki adımların metinleri ona göre aranıyor.
+    await page.screenshot({ path: path.join(dizin, '0-dil.png') });
+    await yazi(page, 'Türkçe').first().click(); await bekle(page, 800);
+    await yazi(page, 'İleri').first().click(); await bekle(page, 1200);
     await page.screenshot({ path: path.join(dizin, '1-hosgeldin.png') });
 
     await yazi(page, 'Başla').first().click(); await bekle(page, 1200);
@@ -164,9 +227,16 @@ async function ekranlar(port) {
     await yazi(page, 'İleri').first().click(); await bekle(page, 1200);
     await page.screenshot({ path: path.join(dizin, '5-bildirim.png') });
     await yazi(page, 'Geç').first().click(); await bekle(page, 1200);
-    await page.screenshot({ path: path.join(dizin, '6-hazir.png') });
+    // Giriş adımı yalnız topluluk sunucusu yapılandırılmışsa var (D32).
+    let kare = 7;
+    if (await yazi(page, 'Google ile devam et').count()) {
+      await page.screenshot({ path: path.join(dizin, '6-giris.png') });
+      await yazi(page, 'Geç').first().click(); await bekle(page, 1200);
+      kare = 8;
+    }
+    await page.screenshot({ path: path.join(dizin, '7-hazir.png') });
     await ctx.close();
-    console.log('  . açılış akışı (6 kare)');
+    console.log(`  . açılış akışı (${kare} kare)`);
   }
 
   for (const gecis of GECISLER) {
@@ -176,7 +246,7 @@ async function ekranlar(port) {
       ...BAGLAM, viewport: gecis.viewport, deviceScaleFactor: 2,
       ...(gecis.dil === 'ar' ? { locale: 'ar' } : {}),
     });
-    await tohumla(ctx, { tema: gecis.tema, dil: gecis.dil ?? 'tr' });
+    await tohumla(ctx, { tema: gecis.tema, dil: gecis.dil ?? 'tr', vitrin: gecis.vitrin ?? false });
     const page = await ctx.newPage();
     let suAnki = '';
     page.on('pageerror', (e) => sorunlar.push({ gecis: gecis.ad, ekran: suAnki, tur: 'hata', ayrinti: String(e).slice(0, 160) }));
@@ -270,8 +340,9 @@ async function film(port) {
   await git('/prayer-guide', 1600);
   await kaydir(page, 700); await bekle(page, 1000);
 
-  // 5. Keşfet
-  await git('/explore', 1600);
+  // 5. Öğren
+  await git('/learn', 1600);
+  await git('/lesson?id=harf-1', 1600);
   await git('/names', 1600);
   await kaydir(page, 900); await bekle(page, 1000);
   await git('/zakat', 1800);
@@ -283,9 +354,8 @@ async function film(port) {
   await git('/prayer-calendar', 2000);
   await kaydir(page, 900); await bekle(page, 1200);
 
-  // 7. Koyu tema
+  // 7. Ayarlar ve ana sayfaya dönüş (D34: tema seçici yok, uygulama hep koyu)
   await git('/profile', 1800);
-  await tikla('Koyu', 1800);
   await kaydir(page, 600); await bekle(page, 1000);
   await git('/', 2200);
   await kaydir(page, 800); await bekle(page, 1000);

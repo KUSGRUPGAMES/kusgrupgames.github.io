@@ -2,17 +2,29 @@
  * Onboarding — şartname §12. Beş aşama:
  * hoş geldin → konum → hesaplama yöntemi → bildirimler → hazır.
  *
- * Kural: hiçbir aşama kullanıcıyı kilitlemez; konum dışında hepsi atlanabilir
- * ve sonradan ayarlardan değiştirilebilir.
+ * Topluluk sunucusu kuruluysa bildirimlerden sonra bir aşama daha gelir:
+ * Google / Apple ile giriş (D32). Atlanabilir — giriş yalnız Topluluk için
+ * gerekir; App Review 5.1.1(v) hesap gerektirmeyen özelliği girişe
+ * bağlamayı reddeder.
+ *
+ * Önce, sayaca dahil olmayan bir "adım 0" gelir: dil seçimi. Cihaz dili
+ * zaten desteklenen beş dilden biriyse otomatik seçili gelir, ama farklı
+ * bir dil konuşan biri geri kalan adımları anlayamadan ilerlemesin diye
+ * bu adım her zaman gösterilir ve atlanamaz.
+ *
+ * Kural: hiçbir aşama kullanıcıyı kilitlemez; konum ve dil dışında hepsi
+ * atlanabilir ve sonradan ayarlardan değiştirilebilir.
  */
 import React, { useMemo, useState } from 'react';
-import { Image, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 import { router, Stack } from 'expo-router';
 import {
-  Screen, Card, Column, Row, Text, Button, ListItem, ProgressBar, Banner, Field, EmptyState, Motif,
+  Screen, Card, Column, Row, Text, Button, ListItem, ProgressBar, Banner, Field, Icon,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
-import { useT } from '@/lib/i18n';
+import { palette } from '@/theme/tokens';
+import { BrandPattern } from '@/ui/BrandPattern';
+import { useT, useI18n, LANGUAGES, LANGUAGE_NAMES } from '@/lib/i18n';
 import { Brand } from '@/config/brand';
 import { searchPlaces } from '@/features/location/search';
 import { requestDeviceLocation } from '@/features/location/device';
@@ -22,16 +34,28 @@ import { useSettingsStore } from '@/store/settings';
 import { useMethodName } from '@/features/hijri/labels';
 import { METHODS } from '@/features/prayer/methods';
 import { markOnboardingDone } from '@/boot/persistence';
+import { useBoot } from '@/boot/AppProviders';
+import { communityAvailable } from '@/features/community/client';
+import { useOturum } from '@/features/community/auth';
+import { SignInButtons } from '@/features/community/SignInButtons';
 // Logo dosya olarak gelir, kodla çizilmez (D17).
 import logoSembol from '../assets/splash-icon.png';
 
-const TOPLAM = 5;
+/** Giriş aşaması yalnız sunucu kuruluysa var; yoksa giriş zaten yapılamaz. */
+const GIRIS_ADIMI = communityAvailable ? 5 : -1;
+const TOPLAM = communityAvailable ? 6 : 5;
 
 export default function OnboardingScreen() {
   const t = useT();
+  const { language, setLanguage } = useI18n();
   const yontemAdi = useMethodName();
   const theme = useTheme();
-  const [adim, setAdim] = useState(1);
+  const eylemStili = { backgroundColor: palette.emerald500, borderWidth: 1, borderColor: theme.colors.bezemeSolgun };
+  const { completeOnboarding } = useBoot();
+  const { girisli } = useOturum();
+  // Dil seçimi (adım 0) TOPLAM'a dahil değil: farklı dil konuşan biri
+  // geri kalan adımları anlayabilsin diye en başta, sayaçtan önce sorulur.
+  const [adim, setAdim] = useState(0);
   const [sorgu, setSorgu] = useState('');
   const [uyari, setUyari] = useState<string | null>(null);
   const [aliniyor, setAliniyor] = useState(false);
@@ -57,143 +81,235 @@ export default function OnboardingScreen() {
     if (adim === 2 && konumlar.length === 0) { setUyari(t('onboarding.locationNeeded')); return; }
     setUyari(null);
     if (adim < TOPLAM) { setAdim(adim + 1); return; }
-    void markOnboardingDone().then(() => router.replace('/'));
+    void markOnboardingDone().then(() => {
+      // Sıra önemli: kapı (`(tabs)/_layout.tsx`) `completeOnboarding()`
+      // sonrası güncellenen context değerine bakıyor. Önce çağrılmazsa
+      // yönlendirme, hâlâ `false` gören kapıya çarpıp onboarding'e geri döner.
+      completeOnboarding();
+      router.replace('/');
+    });
   };
 
   return (
-    <Screen scroll motif="rubElHizb">
+    <Screen scroll>
       <Stack.Screen options={{ headerShown: false }} />
-
-      <Column gap="sm" style={{ marginBottom: theme.spacing.xl }}>
-        <Text variant="micro" tone="subtle">
-          {t('onboarding.step', { current: adim, total: TOPLAM })}
-        </Text>
-        <ProgressBar value={adim / TOPLAM} accessibilityLabel={t('onboarding.step', { current: adim, total: TOPLAM })} />
-      </Column>
-
-      {/* Hoş geldin kartı dikeyde ortalanır: üstte ve altta eşit esnek boşluk. */}
-      {adim === 1 ? <View style={{ flex: 1 }} /> : null}
-
-      {adim === 1 ? (
-        <Card accent motif="starLattice" padding="xxl">
-          <Column gap="md" align="center">
-            {/* Altın sembol zümrüt kartın üstünde durduğu için saydam varyant. */}
-            <Image
-              source={logoSembol}
-              style={{ width: 96, height: 96 }}
-              resizeMode="contain"
-              accessibilityElementsHidden
-              importantForAccessibility="no"
-            />
-            <Text variant="display" tone="onAccent">{Brand.appName}</Text>
-            <Text variant="body" tone="onAccent" align="center">{t('onboarding.welcomeBody')}</Text>
+      <Card
+        accent
+        padding="xxl"
+        style={{
+          flexGrow: 1,
+          minHeight: 560,
+          borderWidth: 1,
+          borderColor: theme.colors.bezemeSolgun,
+        }}
+      >
+        <BrandPattern opacity={theme.opacity.motifEkran} />
+        {adim >= 1 ? (
+          <Column gap="sm" style={{ marginBottom: theme.spacing.xl }}>
+            <Text variant="micro" tone="onAccent">
+              {t('onboarding.step', { current: adim, total: TOPLAM })}
+            </Text>
+            <ProgressBar value={adim / TOPLAM} accessibilityLabel={t('onboarding.step', { current: adim, total: TOPLAM })} />
           </Column>
-        </Card>
-      ) : null}
+        ) : null}
 
-      {adim === 2 ? (
-        <Column gap="md">
-          <Text variant="title2">{t('onboarding.locationTitle')}</Text>
-          <Text variant="body" tone="muted">{t('location.permissionBody')}</Text>
-          <Button label={t('location.useGps')} icon="location" onPress={gpsKullan} loading={aliniyor} block />
-          <Field
-            label={t('location.search')}
-            hint={t('location.searchHint')}
-            value={sorgu}
-            onChangeText={setSorgu}
-            autoCorrect={false}
-          />
-          {sorgu.trim() && sonuclar.length === 0 ? <Banner tone="info" title={t('location.noResult')} /> : null}
-          {sonuclar.length > 0 ? (
-            <Card padding="sm">
-              {sonuclar.map((p) => (
+        {adim === 0 ? (
+          <Column gap="md">
+            <Text variant="title2" tone="onAccent">{t('onboarding.languageTitle')}</Text>
+            <Text variant="body" tone="onAccent">{t('onboarding.languageBody')}</Text>
+            <Card padding="sm" style={{ backgroundColor: theme.colors.kat3, borderColor: theme.colors.onAccentBorder }}>
+              {LANGUAGES.map((l) => (
                 <ListItem
-                  key={p.id}
-                  title={p.name}
-                  subtitle={p.country}
-                  onPress={() => { ekle(p, { origin: 'manual' }); setSorgu(''); }}
+                  key={l}
+                  title={LANGUAGE_NAMES[l]}
+                  chevron={false}
+                  selected={l === language}
+                  {...(l === language ? { right: <Icon name="check" size={18} /> } : {})}
+                  onPress={() => setLanguage(l)}
                 />
               ))}
             </Card>
-          ) : null}
-          {aktif ? (
-            <Banner tone="success" title={aktif.label} description={`${aktif.country} · ${aktif.timezone}`} />
-          ) : null}
-        </Column>
-      ) : null}
+          </Column>
+        ) : null}
 
-      {adim === 3 ? (
-        <Column gap="md">
-          <Text variant="title2">{t('onboarding.methodTitle')}</Text>
-          <Text variant="body" tone="muted">{t('onboarding.methodBody')}</Text>
-          <Card padding="sm">
-            {Object.values(METHODS).map((m) => (
-              <ListItem
-                key={m.id}
-                title={yontemAdi(m.id)}
-                chevron={false}
-                // Seçili satır bir noktayla işaretleniyordu: küçük, soluk ve
-                // ekran okuyucuya hiçbir şey söylemiyordu. Onay imi hem
-                // görülüyor hem `accessibilityState` ile duyuruluyor.
-                selected={settings.method === m.id}
-                onPress={() => update({ method: m.id })}
+        {adim === 1 ? (
+          <View style={{ flexGrow: 1, justifyContent: 'center', minHeight: 352, paddingVertical: theme.spacing.xxl }}>
+            <Column gap="lg" align="center">
+              <Image
+                source={logoSembol}
+                style={{ width: 136, height: 136 }}
+                resizeMode="contain"
+                accessibilityElementsHidden
+                importantForAccessibility="no"
               />
-            ))}
-          </Card>
-        </Column>
-      ) : null}
-
-      {adim === 4 ? (
-        <Column gap="md">
-          <Text variant="title2">{t('onboarding.notificationTitle')}</Text>
-          <Text variant="body" tone="muted">{t('onboarding.notificationBody')}</Text>
-          <Button
-            label={t('onboarding.notificationAllow')}
-            icon="bell"
-            onPress={() => { void requestPermission(); }}
-            block
-          />
-          <Text variant="caption" tone="subtle">{t('notification.coverageNote')}</Text>
-        </Column>
-      ) : null}
-
-      {adim === 5 ? (
-        <View>
-          <Motif name="girih" />
-          <EmptyState
-            icon="check"
-            title={t('onboarding.readyTitle')}
-            description={t('onboarding.readyBody')}
-          />
-        </View>
-      ) : null}
-
-      {uyari ? (
-        <View style={{ marginTop: theme.spacing.lg }}>
-          <Banner tone="warning" title={uyari} />
-        </View>
-      ) : null}
-
-      {/* Hoş geldin adımı ekranın üçte birini kullanıp altını boş bırakıyordu;
-          esnek boşluk gezinme satırını alta indirir. */}
-      <View style={{ flex: 1, minHeight: theme.spacing.xxl }} />
-
-      <Row gap="md" align="center">
-        {adim > 1 ? (
-          <Button label={t('nav.back')} variant="ghost" onPress={() => { setUyari(null); setAdim(adim - 1); }} />
+              <Text variant="display" tone="onAccent" align="center">{Brand.appName}</Text>
+              <Row gap="md" align="center" style={{ marginVertical: theme.spacing.xs }}>
+                <View style={{ width: 40, height: 1, backgroundColor: theme.colors.bezemeSolgun }} />
+                <View style={{ width: 8, height: 8, transform: [{ rotate: '45deg' }], backgroundColor: theme.colors.onAccentHighlight }} />
+                <View style={{ width: 40, height: 1, backgroundColor: theme.colors.bezemeSolgun }} />
+              </Row>
+              <Text variant="body" tone="onAccent" align="center">{t('onboarding.welcomeBody')}</Text>
+            </Column>
+          </View>
         ) : null}
-        <View style={{ flex: 1 }} />
-        {/* Konum adımı (2) atlanamaz: "Geç" doğrudan `setAdim` çağırdığı için
-            `ilerle()` içindeki konum kontrolünü deliyordu ve kullanıcı
-            konumsuz ana sayfaya düşüyordu. */}
-        {adim > 2 && adim < TOPLAM ? (
-          <Button label={t('common.skip')} variant="ghost" onPress={() => setAdim(adim + 1)} />
+
+        {adim === 2 ? (
+          <Column gap="md">
+            <Text variant="title2" tone="onAccent">{t('onboarding.locationTitle')}</Text>
+            <Text variant="body" tone="onAccent">{t('location.permissionBody')}</Text>
+            <Button label={t('location.useGps')} icon="location" onPress={gpsKullan} loading={aliniyor} block
+              style={eylemStili} />
+            <Card padding="sm" style={{ backgroundColor: theme.colors.kat3, borderColor: theme.colors.onAccentBorder }}>
+              <Field
+                label={t('location.search')}
+                hint={t('location.searchHint')}
+                value={sorgu}
+                onChangeText={setSorgu}
+                autoCorrect={false}
+                inputStyle={{ backgroundColor: theme.colors.kat2 }}
+              />
+            </Card>
+            {sorgu.trim() && sonuclar.length === 0 ? <Banner tone="info" title={t('location.noResult')} /> : null}
+            {sonuclar.length > 0 ? (
+              <Card padding="sm" style={{ backgroundColor: theme.colors.kat3, borderColor: theme.colors.onAccentBorder }}>
+                {sonuclar.map((p) => (
+                  <ListItem
+                    key={p.id}
+                    title={p.name}
+                    subtitle={p.country}
+                    onPress={() => { ekle(p, { origin: 'manual' }); setSorgu(''); }}
+                  />
+                ))}
+              </Card>
+            ) : null}
+            {aktif ? (
+              <Banner
+                tone="success"
+                title={aktif.label}
+                description={`${aktif.country} · ${aktif.timezone}`}
+                style={{ backgroundColor: theme.colors.kat3, borderWidth: 1, borderColor: theme.colors.onAccentBorder }}
+              />
+            ) : null}
+          </Column>
         ) : null}
-        <Button
-          label={adim === 1 ? t('onboarding.start') : adim === TOPLAM ? t('onboarding.finish') : t('common.next')}
-          onPress={ilerle}
-        />
-      </Row>
+
+        {adim === 3 ? (
+          <Column gap="md">
+            <Text variant="title2" tone="onAccent">{t('onboarding.methodTitle')}</Text>
+            <Text variant="body" tone="onAccent">{t('onboarding.methodBody')}</Text>
+            <Card padding="sm" style={{ backgroundColor: theme.colors.kat3, borderColor: theme.colors.onAccentBorder }}>
+              {Object.values(METHODS).map((m) => (
+                <ListItem
+                  key={m.id}
+                  title={yontemAdi(m.id)}
+                  chevron={false}
+                  // Seçili satır bir noktayla işaretleniyordu: küçük, soluk ve
+                  // ekran okuyucuya hiçbir şey söylemiyordu. Onay imi hem
+                  // görülüyor hem `accessibilityState` ile duyuruluyor.
+                  selected={settings.method === m.id}
+                  onPress={() => update({ method: m.id })}
+                />
+              ))}
+            </Card>
+          </Column>
+        ) : null}
+
+        {adim === 4 ? (
+          <Column gap="md">
+            <Text variant="title2" tone="onAccent">{t('onboarding.notificationTitle')}</Text>
+            <Text variant="body" tone="onAccent">{t('onboarding.notificationBody')}</Text>
+            <Button
+              label={t('onboarding.notificationAllow')}
+              icon="bell"
+              onPress={() => { void requestPermission(); }}
+              block
+              style={eylemStili}
+            />
+            <Text variant="caption" tone="onAccent">{t('notification.coverageNote')}</Text>
+          </Column>
+        ) : null}
+
+        {adim === GIRIS_ADIMI ? (
+          <Column gap="md">
+            <Text variant="title2" tone="onAccent">{t('auth.onboardingTitle')}</Text>
+            <Text variant="body" tone="onAccent">{t('auth.onboardingBody')}</Text>
+            {girisli ? (
+              <Banner
+                tone="success"
+                title={t('auth.signedIn')}
+                style={{ backgroundColor: theme.colors.kat3, borderWidth: 1, borderColor: theme.colors.onAccentBorder }}
+              />
+            ) : (
+              <SignInButtons onAccent onSignedIn={() => setAdim(TOPLAM)} />
+            )}
+            <Text variant="caption" tone="onAccent">{t('auth.optionalNote')}</Text>
+          </Column>
+        ) : null}
+
+        {adim === TOPLAM ? (
+          <View style={{ flexGrow: 1, justifyContent: 'center', minHeight: 352 }}>
+            <Column gap="lg" align="center">
+              <Icon name="check" size={48} color={theme.colors.onAccentHighlight} />
+              <Text variant="title2" tone="onAccent" align="center">{t('onboarding.readyTitle')}</Text>
+              <Text variant="body" tone="onAccent" align="center">{t('onboarding.readyBody')}</Text>
+            </Column>
+          </View>
+        ) : null}
+
+        {uyari ? (
+          <View style={{ marginTop: theme.spacing.lg }}>
+            <Banner tone="warning" title={uyari} />
+          </View>
+        ) : null}
+
+        {adim > 1 && adim < TOPLAM ? <View style={{ flexGrow: 1, minHeight: theme.spacing.xxl }} /> : null}
+
+        {adim === 0 ? (
+          <Button label={t('common.next')} size="lg" block onPress={() => setAdim(1)}
+            style={eylemStili} />
+        ) : adim === 1 ? (
+          <Column gap="md">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('nav.back')}
+              onPress={() => setAdim(0)}
+              style={{ alignSelf: 'flex-start', minHeight: 48, justifyContent: 'center', paddingHorizontal: theme.spacing.xs }}
+            >
+              <Text variant="bodyStrong" tone="onAccent">{t('nav.back')}</Text>
+            </Pressable>
+            <Button label={t('onboarding.start')} size="lg" block onPress={ilerle}
+              style={eylemStili} />
+          </Column>
+        ) : (
+          <Row gap="md" align="center">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('nav.back')}
+              onPress={() => { setUyari(null); setAdim(adim - 1); }}
+              style={{ minHeight: 48, justifyContent: 'center', paddingHorizontal: theme.spacing.xs }}
+            >
+              <Text variant="bodyStrong" tone="onAccent">{t('nav.back')}</Text>
+            </Pressable>
+            <View style={{ flex: 1 }} />
+            {/* Konum adımı (2) atlanamaz: "Geç" konum kontrolünü delmemeli. */}
+            {adim > 2 && adim < TOPLAM ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('common.skip')}
+                onPress={() => setAdim(adim + 1)}
+                style={{ minHeight: 48, justifyContent: 'center', paddingHorizontal: theme.spacing.xs }}
+              >
+                <Text variant="bodyStrong" tone="onAccent">{t('common.skip')}</Text>
+              </Pressable>
+            ) : null}
+            <Button
+              label={adim === TOPLAM ? t('onboarding.finish') : t('common.next')}
+              onPress={ilerle}
+              style={eylemStili}
+            />
+          </Row>
+        )}
+      </Card>
     </Screen>
   );
 }

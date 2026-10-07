@@ -24,24 +24,32 @@ export interface ListItemProps {
    */
   selected?: boolean;
   style?: StyleProp<ViewStyle>;
+  /** Alt ayırıcı çizgi. Kart son satırda kendisi kapatır. */
+  divider?: boolean;
 }
 
 export function ListItem({
-  title, subtitle, value, icon, right, onPress, disabled = false, chevron, selected, style,
+  title, subtitle, value, icon, right, onPress, disabled = false, chevron, selected, style, divider = true,
 }: ListItemProps) {
   const theme = useTheme();
   const showChevron = chevron ?? (!!onPress && !right && !selected);
   const body = (
-    <Row gap="md" align="center" style={{ minHeight: 52, paddingVertical: theme.spacing.sm }}>
-      {icon ? <Icon name={icon} color={theme.colors.accent} /> : null}
+    <Row gap="md" align="center" style={{ minHeight: 52, paddingVertical: theme.spacing.sm,
+      borderBottomWidth: divider ? 1 : 0, borderBottomColor: theme.colors.bezemeSolgun }}>
+      {icon ? (
+        <View style={{ width: 38, height: 38, alignItems: 'center', justifyContent: 'center',
+          borderRadius: theme.radius.md, backgroundColor: theme.colors.surfaceRaised }}>
+          <Icon name={icon} size={21} color={theme.colors.highlight} />
+        </View>
+      ) : null}
       <Column flex={1} gap="xxs">
         <Text variant="bodyStrong">{title}</Text>
         {subtitle ? <Text variant="caption" tone="muted">{subtitle}</Text> : null}
       </Column>
       {value ? <Text variant="callout" tone="muted">{value}</Text> : null}
       {right}
-      {selected ? <Icon name="check" size={20} color={theme.colors.accent} /> : null}
-      {showChevron ? <Icon name="chevronRight" size={18} color={theme.colors.textSubtle} /> : null}
+      {selected ? <Icon name="check" size={20} color={theme.colors.highlight} /> : null}
+      {showChevron ? <Icon name="chevronRight" size={18} color={theme.colors.highlight} /> : null}
     </Row>
   );
   if (!onPress) return <View style={style}>{body}</View>;

@@ -22,6 +22,12 @@ export interface NotificationSettings {
   beforeMinutes: number;
   /** Güneş doğuşu için bildirim — varsayılan kapalı, namaz vakti değildir. */
   includeSunrise: boolean;
+  /**
+   * Önceden uyarı açıkken vakit girince de ayrıca bildirilsin mi. Eskiden
+   * "15 dk önce" seçilince tek bildirim öne kayıyor, vakit girişi hiç
+   * bildirilmiyordu. Belirtilmezse açık sayılır.
+   */
+  alsoAtTime?: boolean;
 }
 
 export const defaultNotificationSettings: NotificationSettings = {
@@ -29,6 +35,7 @@ export const defaultNotificationSettings: NotificationSettings = {
   perPrayer: {},
   beforeMinutes: 0,
   includeSunrise: false,
+  alsoAtTime: true,
 };
 
 export interface PlannedNotification {
@@ -55,6 +62,11 @@ function idFor(day: DaySchedule, key: PrayerKey): string {
   return `prayer-${day.year}${ay}${gun}-${key}`;
 }
 
+/** Günde vakit başına kaç bildirim kurulur (önceden uyarı + vaktin kendisi). */
+function ciftBildirim(settings: NotificationSettings): boolean {
+  return settings.beforeMinutes > 0 && settings.alsoAtTime !== false;
+}
+
 /**
  * Verilen günlerden bildirim planı üretir.
  * @param now Şu an; bundan önceki hiçbir an planlanmaz.
@@ -76,8 +88,14 @@ export function planNotifications(
       // Kutupta oluşmayan vakit için bildirim kurulmaz.
       if (!entry?.at) continue;
       const at = new Date(entry.at.getTime() - before * 60000);
-      if (at.getTime() <= now.getTime()) continue;
-      out.push({ id: idFor(day, key), key, at, prayerAt: entry.at, beforeMinutes: before });
+      if (at.getTime() > now.getTime()) {
+        out.push({ id: idFor(day, key), key, at, prayerAt: entry.at, beforeMinutes: before });
+      }
+      // Önceden uyarının yanında vaktin kendisi. Kimlik ayrı: iki bildirim
+      // birbirini ezmesin.
+      if (before > 0 && ciftBildirim(settings) && entry.at.getTime() > now.getTime()) {
+        out.push({ id: `${idFor(day, key)}-vakit`, key, at: entry.at, prayerAt: entry.at, beforeMinutes: 0 });
+      }
     }
   }
 
@@ -93,5 +111,5 @@ export function coverageDays(settings: NotificationSettings, limit: number = PLA
   const gunluk = OBLIGATORY_KEYS.filter((k) => enabledFor(settings, k)).length
     + (enabledFor(settings, 'sunrise') ? 1 : 0);
   if (gunluk === 0) return 0;
-  return Math.floor(limit / gunluk);
+  return Math.floor(limit / (gunluk * (ciftBildirim(settings) ? 2 : 1)));
 }

@@ -26,6 +26,10 @@ yazılır**; sessizce geçilmez.
 - [x] `CHANGELOG.md` 1.0.0 maddesi yazıldı
 - [ ] Git etiketi atıldı *(dal `main`'e birleştikten sonra `v1.0.0`)*
 
+- [ ] **App Group kaydı (bir kez):** Mac'te `cd ~/bes-repo/bes && bash tools/ios-uretim-kaydi.sh`.
+  Yayın akışının API anahtarı App Group oluşturamaz; kayıt yoksa imza
+  "Authentication failed / No profiles" ile düşer (D30).
+
 ## 4. Mağaza
 
 - [x] `npm run store:shots` çalıştırıldı; `store/screenshots/` güncel
@@ -40,6 +44,37 @@ yazılır**; sessizce geçilmez.
       (ikisinde de **veri toplanmıyor**) — **sende**: yanıtlar hazır, konsola girilecek
 - [ ] Yaş derecesi 4+ / Herkes; reklam sorusu yok (reklam gösterilmiyor) — **sende**
 - [ ] EU DSA tüccar beyanı dolduruldu — **sende**
+
+## 4a. Reklam, Pro ve Topluluk hesapları (D32, D33)
+
+Hepsi bir kez yapılır; kimlikler GitHub secret'ı olarak girilir
+(`.github/workflows/bes-*.yml` hepsini okur, `bes/.env.example` listesi).
+
+- [ ] **AdMob:** uygulama (iOS + Android) açıldı; banner ve tam ekran birimleri
+      oluşturuldu; hassas kategoriler engellendi, en yüksek derece **G**;
+      GDPR onay mesajı yayınlandı (`store/app-privacy.md` → "AdMob konsolunda").
+- [ ] Secret'lar: `ADMOB_IOS_APP_ID`, `ADMOB_ANDROID_APP_ID`,
+      `EXPO_PUBLIC_ADMOB_BANNER_IOS/_ANDROID`, `EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS/_ANDROID`,
+      `EXPO_PUBLIC_ADMOB_APPOPEN_IOS/_ANDROID`, `EXPO_PUBLIC_ADMOB_REWARDED_IOS/_ANDROID`.
+      Mağaza derlemesi (`BES_STORE_RELEASE=ios|android`) o platformun gerçek kimliği yoksa durur.
+      **Yüklemeden önce:** `bash tools/check-store-ads.sh android|ios <aab|ipa>` — dört gerçek
+      birimin pakete gömüldüğünü doğrular. Kimlik değiştiyse önce `rm -rf "$TMPDIR"/metro-cache`
+      (Metro eski çeviriyi saklar; 2 Ekim'de Android paketi bu yüzden test reklamıyla çıkacaktı).
+- [ ] **App Store Connect:** Ücretli Uygulamalar Sözleşmesi, banka ve vergi
+      formları; abonelik grubu "BEŞ Pro" içinde aylık ve yıllık otomatik
+      yenilenen ürün + tüketilmeyen "ömür boyu" ürün.
+- [ ] **Play Console:** ödeme profili; aylık/yıllık abonelik ve tek seferlik
+      ömür boyu ürün.
+- [ ] **RevenueCat:** iki mağaza bağlandı; `pro` hakkı (entitlement) ve
+      `default` teklifi (monthly, annual, lifetime paketleri) tanımlı.
+      Secret'lar: `EXPO_PUBLIC_REVENUECAT_IOS_KEY`, `_ANDROID_KEY`.
+- [ ] **Supabase:** Google ve Apple girişi açık, `bes://auth-callback`
+      yönlendirmede, migration 0001–0003 uygulandı (`COMMUNITY_SETUP.md`).
+      Secret'lar: `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`.
+- [ ] Gizlilik formları `store/app-privacy.md`'ye göre dolduruldu; Play'de
+      reklam kimliği ve "reklam içerir" beyanı "evet".
+- [ ] Cihazda: satın al → Pro etkin → reklam kayboldu → uygulamayı sil,
+      kur → "Satın alımları geri yükle" Pro'yu geri getiriyor (sandbox hesabıyla).
 
 ## 5. Elle sınama — beş kullanıcı yolculuğu (§102)
 

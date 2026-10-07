@@ -123,7 +123,7 @@
 ## FAZ 10 — Hesap ve eşitleme
 
 - [x] Misafir kullanım (§57) — hesap yok; Hesap ekranı verinin nerede durduğunu anlatıyor (D12)
-- [ ] Sign in with Apple / Google / Email (§57)  ⛔B5
+- [x] Sign in with Apple / Google (§57) — kod hazır, atlanabilir, hesap silme dahil (D32); sunucu kurulumu bekliyor ⛔B5
 - [~] Cloud sync **v2'ye alındı** (D12): birleştirme motoru hazır ve sınandı, taşıma katmanı v2'de ⛔B5
 - [x] Yerine **yerel yedek** geldi (D19): dışa aktar / geri yükle, iki kip, 16 sınama
 - [x] Çevrimdışı öncelikli birleştirme ve çakışma çözümü (§58) — mezar taşı, kararlı çözüm, sayaç birleştirme; 17 sınama

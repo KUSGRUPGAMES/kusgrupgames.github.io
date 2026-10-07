@@ -49,8 +49,12 @@ export function ThemeProvider({ children, initialMode = 'system', onModeChange }
   }, [onModeChange]);
 
   const value = useMemo<ThemeContextValue>(() => {
-    const resolved = mode === 'system' ? (systemScheme === 'dark' ? 'dark' : 'light') : mode;
-    const base = resolved === 'dark' ? darkTheme : lightTheme;
+    // D34: uygulama yalnız koyu temada çalışır. Açık tema krem zeminde koyu
+    // yeşil bloklar ve beyaz kartlarla parça parça duruyordu (kullanıcı
+    // değerlendirmesi, 30 Eylül). `mode` ve `lightTheme` API/sınamalar için
+    // yerinde; seçici Ayarlar'dan kaldırıldı.
+    void mode; void systemScheme; void lightTheme;
+    const base = darkTheme;
     const theme: Theme = reduceMotion
       ? { ...base, duration: { instant: 0, fast: 0, normal: 0, slow: 0, deliberate: 0 } }
       : base;

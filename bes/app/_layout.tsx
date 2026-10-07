@@ -1,9 +1,13 @@
 /** Kök düzen — şartname §11. Tüm sağlayıcılar burada kurulur. */
-import React from 'react';
-import { Stack } from 'expo-router';
+import React, { useEffect } from 'react';
+import { I18nManager, Pressable } from 'react-native';
+import { Stack, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { AppProviders } from '@/boot/AppProviders';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/lib/i18n';
+import { Icon } from '@/ui';
+import { noteNavigation } from '@/features/pro/adsRuntime';
 
 export default function RootLayout() {
   return (
@@ -15,6 +19,10 @@ export default function RootLayout() {
 
 function RootStack() {
   const theme = useTheme();
+  const t = useT();
+  // Ekran geçişlerinde ara sıra tam ekran reklam (Kur'an okuyucu hariç; kurallar ads.ts).
+  const yol = usePathname();
+  useEffect(() => { noteNavigation(yol); }, [yol]);
   // Buradan **asla** erken dönülmez. Kök düzen bir gezinme kabı çizmezse
   // yönlendirme asılacak bağlam bulamaz ve ekran bomboş kalır; ilk açılış
   // beyaz ekranla başlıyordu, sebebi buydu. Onboarding kapısı artık
@@ -23,7 +31,7 @@ function RootStack() {
     <>
       <StatusBar style={theme.name === 'dark' ? 'light' : 'dark'} />
       <Stack
-        screenOptions={{
+        screenOptions={({ navigation }) => ({
           headerShown: false,
           contentStyle: { backgroundColor: theme.colors.background },
           // Yirmi beş ekran kendi başlığını açıyor (`headerShown: true`).
@@ -35,11 +43,41 @@ function RootStack() {
           headerTintColor: theme.colors.text,
           headerTitleStyle: { color: theme.colors.text },
           headerShadowVisible: false,
-        }}
+          // Geri düğmesi varsayılan olarak bir önceki ekranın rota adını
+          // metin olarak gösteriyor; kök yığındaki önceki ekran "(tabs)"
+          // Stack.Screen'i olduğu ve hiç `title` almadığı için düğmede ham
+          // rota adı "(tabs)" görünüyordu. Yalnız ok gösterilir.
+          headerBackButtonDisplayMode: 'minimal',
+          // Geri düğmesi **bizim**: react-native-screens 4.16'da iOS 26'da
+          // yerleşik geri düğmesi, başlığı gizli bir ekrandan (burada
+          // sekmeler) gelinen yığında birkaç gidiş-dönüşten sonra dokunmaya
+          // yanıt vermez hâle geliyor; kaydırarak geri dönmek çalışmaya devam
+          // ediyor (software-mansion/react-native-screens#3294, düzeltme
+          // 4.18'de; Expo SDK 54 4.16'ya sabit). Kendi düğmemiz bu yoldan
+          // geçmediği için her zaman çalışır.
+          headerLeft: ({ canGoBack, tintColor }) => (canGoBack ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('nav.back')}
+              hitSlop={12}
+              onPress={() => navigation.goBack()}
+              style={{ paddingVertical: 6, paddingEnd: 8 }}
+            >
+              <Icon name={I18nManager.isRTL ? 'chevronRight' : 'chevronLeft'} size={26}
+                color={tintColor ?? theme.colors.text} />
+            </Pressable>
+          ) : null),
+        })}
       >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
-        <Stack.Screen name="location" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="learn" />
+        <Stack.Screen name="pro" />
+        {/* Google girişinin dönüş adresi; kullanıcı görmez, hemen geri döner (D32). */}
+        <Stack.Screen name="auth-callback" options={{ animation: 'none' }} />
+        {/* Kart sayfası (modal değil): iOS sayfa kipinde arama kutusuna yazınca
+            klavye/kaydırma hareketi sayfayı aşağı çekip kapatıyordu (5 Ekim). */}
+        <Stack.Screen name="location" />
         <Stack.Screen name="prayer-settings" />
         <Stack.Screen name="prayer-calendar" />
         <Stack.Screen name="home-layout" />
@@ -48,12 +86,15 @@ function RootStack() {
         <Stack.Screen name="knowledge" />
         <Stack.Screen name="hijri" />
         <Stack.Screen name="reader" />
+        <Stack.Screen name="lesson" />
+        <Stack.Screen name="alphabet" />
         <Stack.Screen name="quran-search" />
         <Stack.Screen name="qibla" />
         <Stack.Screen name="dhikr" />
         <Stack.Screen name="dhikr-stats" />
         <Stack.Screen name="qada" />
         <Stack.Screen name="worship-log" />
+        <Stack.Screen name="worship-stats" />
         <Stack.Screen name="prayer-guide" />
         <Stack.Screen name="zakat" />
         <Stack.Screen name="ramadan" />
@@ -61,11 +102,21 @@ function RootStack() {
         <Stack.Screen name="hajj" />
         <Stack.Screen name="search" />
         <Stack.Screen name="reminders" />
+        <Stack.Screen name="alarms" />
         <Stack.Screen name="recitation" />
         <Stack.Screen name="share-card" />
         <Stack.Screen name="notifications-center" />
         <Stack.Screen name="diagnostics" />
         <Stack.Screen name="account" />
+        <Stack.Screen name="community-guidelines" />
+        <Stack.Screen name="community-info" />
+        <Stack.Screen name="dua-board" />
+        <Stack.Screen name="chat-rooms" />
+        <Stack.Screen name="chat-room" />
+        <Stack.Screen name="khatm-circles" />
+        <Stack.Screen name="khatm-circle" />
+        <Stack.Screen name="khatm-history" />
+        <Stack.Screen name="announcements" />
       </Stack>
     </>
   );

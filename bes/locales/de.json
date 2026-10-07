@@ -1,0 +1,7 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "Gebetszeiten und Qibla-Richtung werden für deinen Standort berechnet. Wenn du es nicht erlaubst, kannst du deine Stadt manuell wählen.",
+    "NSMotionUsageDescription": "Der Qibla-Kompass nutzt den Bewegungssensor, um die Ausrichtung deines Telefons zu lesen.",
+    "NSUserTrackingUsageDescription": "Diese Berechtigung wird nur genutzt, um Werbung passender für dich zu machen. Ohne sie wird trotzdem Werbung gezeigt und keine Funktion der App eingeschränkt."
+  }
+}

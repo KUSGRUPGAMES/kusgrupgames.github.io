@@ -1,4 +1,4 @@
-import { qiblaBearing, distanceToKaaba, headingDelta, isAligned, classifyAccuracy } from '@/features/qibla/calc';
+import { qiblaBearing, distanceToKaaba, headingDelta, isAligned, classifyAccuracy, accuracyFromLevel, circularSpread } from '@/features/qibla/calc';
 
 describe('kıble', () => {
   it('bilinen şehirlerde açı doğru', () => {
@@ -34,5 +34,19 @@ describe('kıble', () => {
     expect(classifyAccuracy(12)).toBe('medium');
     expect(classifyAccuracy(25)).toBe('low');
     expect(classifyAccuracy(null)).toBe('unreliable');
+  });
+
+  it('expo-location doğruluk düzeyi (0–3) doğru yöne çevrilir', () => {
+    // 3 en iyi okumadır; ters çevrilirse kalibrasyon uyarısı hiç kalkmaz.
+    expect(accuracyFromLevel(3)).toBe('high');
+    expect(accuracyFromLevel(2)).toBe('medium');
+    expect(accuracyFromLevel(1)).toBe('low');
+    expect(accuracyFromLevel(0)).toBe('unreliable');
+    expect(accuracyFromLevel(-1)).toBe('unreliable');
+  });
+
+  it('kuzey çevresindeki okumalar girişim sayılmaz', () => {
+    expect(circularSpread([358, 1, 3, 359])).toBeCloseTo(5, 6);
+    expect(circularSpread([10, 100])).toBeCloseTo(90, 6);
   });
 });

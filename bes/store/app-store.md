@@ -57,17 +57,20 @@ sunduğumuz şeyi arıyor ve o aramada rekabet seyrek.
 ## Tanıtım metni (170 karakter sınırı)
 
 ```
-Ezan ve namaz vakitleri telefonunda hesaplanır — internet, hesap, sunucu yok. Kur’an’ın tamamı Elmalılı meali ve 18 okuyucunun kıraatiyle birlikte cebinde.
+Ezan ve namaz vakitleri telefonunda hesaplanır, internet gerektirmez. Kur’an’ın tamamı Elmalılı meali ve 18 okuyucunun kıraatiyle birlikte cebinde.
 ```
-(152 karakter)
+(147 karakter)
 
 ## Açıklama (4000 karakter sınırı)
 
 ```
 BEŞ; ezan vakitlerini, kıble yönünü ve Kur’an-ı Kerim’in tamamını tek bir sade uygulamada toplar. Vakitler telefonunda güneşin konumundan hesaplanır — bir sunucuya sorulmaz, internet gerektirmez. Uçakta, yurt dışında, hattın çekmediği yerde de doğru çalışır.
 
-HESAP YOK, SUNUCU YOK
-Adınızı, e-postanızı, telefon numaranızı sormuyoruz. Konumunuz, ayarlarınız, ibadet kayıtlarınız, notlarınız ve zikir sayılarınız telefonunuzdan hiç çıkmıyor — bize ulaşmıyor, çünkü onları alacak bir sunucumuz yok.
+İBADET KAYITLARIN SENDE
+Vakitler, kıble, Kur’an, zikir, kaza ve ibadet defteri hesap istemez. Giriş yapmadan da her şey çalışır; kayıtların telefonunda kalır. Google ya da Apple ile giriş yaparsan kayıtların hesabınla eşitlenir, yeni telefonunda da seninle olur. Konumun hiçbir zaman gönderilmez.
+
+İSTEĞE BAĞLI TOPLULUK
+Dua panosunda dua iste ve başkalarına dua et, konu başlıklı sohbet odalarında konuş, arkadaşlarınla hatim grubu kurup 30 cüzü paylaş. Katılmak için Google ya da Apple ile giriş yeterli; diğer kullanıcılar yalnız seçtiğin takma adı görür. Hesabını uygulama içinden istediğin an silebilirsin.
 
 YEDEK SİZDE
 Bütün kayıtlarınızı tek bir dosyaya aktarıp yeni telefonunuza taşıyabilirsiniz. Dosya sizde kalır; uygulama onu hiçbir yere göndermez.
@@ -94,22 +97,28 @@ ZİKİRMATİK
 Sekiz hazır zikir, altı hedef, kendi zikrinizi ekleme, her dokunuşta titreşim. Günlük, haftalık, aylık istatistik ve seri takibi.
 
 İBADET TAKİBİ
-Kaza namazı sayaçları, gün gün ibadet defteri, oruç takibi, hatim ve mukabele planı. Hepsi telefonunuzda kalır.
+Kaza namazı sayaçları, gün gün ibadet defteri, oruç takibi, hatim ve mukabele planı. Giriş yaparsan hepsi hesabınla eşitlenir.
 
 RAMAZAN
 İmsak ve iftar geri sayımı, ay boyu imsakiye, oruç kaydı.
 
 AYRICA
-Zekât hesaplama (nisap ölçüsü seçmeli, metodoloji ekranda yazılı), Esmâü'l-Hüsnâ, 14 kategoride dua, namaz rehberi, hicrî takvim ve yaklaşan dinî günler, Hac ve Umre rehberi, 43 maddelik İslami bilgi kütüphanesi.
+Zekât hesaplama (nisap ölçüsü seçmeli, metodoloji ekranda yazılı), Esmâü'l-Hüsnâ, Kur’an’daki 64 dua dahil 98 dua, namaz rehberi, hicrî takvim ve yaklaşan dinî günler, Hac ve Umre rehberi, 43 maddelik İslami bilgi kütüphanesi.
 
 BEŞ DİL
 Arayüzün tamamı Türkçe, İngilizce, Arapça, Almanca ve Fransızca. Arapça seçildiğinde yazı yönü sağdan sola döner. Kur’an meali (Elmalılı) ve bilgi yazıları Türkçedir.
 
-TAMAMEN ÜCRETSİZ, REKLAMSIZ
-Abonelik yok, uygulama içi satın alma yok, reklam yok. Hiçbir özellik kilitli değil. Reklam kimliğiniz okunmuyor; uygulamada izleyici, piksel ya da analitik kütüphanesi bulunmuyor.
+İBADET HER ZAMAN ÜCRETSİZ
+Namaz vakitleri, kıble, Kur’an ve meal, dualar, zikir ve kaza takibi her zaman ücretsizdir. Ücretsiz sürümde reklam gösterilir; ama Kur’an okuyucuda hiç reklam yoktur, vaktin girmesine yakın ve girdikten hemen sonra da reklam gösterilmez.
+
+PRO ÖZELLİKLERİ LANSMANA ÖZEL ÜCRETSİZ
+Taç işaretli Pro bölümleri (Öğren kursunun bütün dersleri, sohbete yazma, hatim grubu kurma, günde 5 dua isteği) lansman döneminde herkese ücretsiz. Dilersen bir reklam izleyip 4 saat reklamsız kullanabilirsin.
 
 DÜRÜSTLÜK NOTU
 Vakit hesabı yönteme, konuma ve rakıma bağlıdır; resmî ilanla bir iki dakika farklılık gösterebilir. Hicrî tarih aritmetiktir ve rüyete dayalı ilandan bir gün sapabilir. Bunları gizlemiyor, ilgili ekranda yazıyoruz. BEŞ bir yardımcı araçtır; dinî hüküm vermez.
+
+Kullanım Koşulları: https://kusgrupgames.github.io/bes/kosullar.html
+Gizlilik Politikası: https://kusgrupgames.github.io/bes/gizlilik.html
 ```
 
 ## Sürüm notları (4000 karakter sınırı)
@@ -124,15 +133,18 @@ Birincil: Yaşam Tarzı · İkincil: Referans
 
 ## Yaş sınırı
 
-4+ — şiddet, müstehcenlik, kumar ögesi yok. Reklam gösterilmediği için
-reklam derecelendirmesi sorusu doğmuyor.
+Yaş anketinde: şiddet, müstehcenlik, kumar ögesi **yok**; kullanıcı üretimi
+içerik ve mesajlaşma (Topluluk) **var** — moderasyonlu: şikâyet, engelleme,
+yasaklı kelime süzgeci, yönetici paneli. Reklamlar G derecesiyle sınırlı.
+Apple dereceyi bu cevaplara göre verir (muhtemelen 4+ yerine daha yüksek);
+dürüst cevap verilir, derece düşük çıksın diye Topluluk gizlenmez.
 
 ## Gizlilik etiketleri (App Privacy)
 
-**"Veri Toplanmıyor" (Data Not Collected)** — üç kutunun da hiçbiri
-işaretlenmez. Konum, ibadet kayıtları, notlar ve zikir sayıları cihazdan
-çıkmaz; hesap yoktur, reklam SDK'sı yoktur, analitik yoktur. Konsolda
-verilecek yanıtların tamamı `app-privacy.md` içinde yazılıdır.
+**"Veri Toplanmıyor" artık doğru değil (D32, D33).** Reklam (AdMob),
+Pro (RevenueCat) ve isteğe bağlı Topluluk (Supabase) veri işliyor; konum,
+ibadet kayıtları ve notlar hâlâ cihazdan çıkmıyor. Konsoldaki her kutunun
+yanıtı `app-privacy.md` içinde yazılıdır.
 
 ## Ekran görüntüsü hikâyesi
 
@@ -168,3 +180,10 @@ Kare düzeni: üstte altın etiket, başlık, altın çizgi ve alt başlık; alt
 cihaz. **Cihaz karenin alt kenarından taşar** — App Store'un standart kalıbı
 budur, uygulamanın kaydırılabilir olduğunu anlatır ve telefonun içinde
 yarıda kalan bir satır bırakmaz.
+
+## 1.0.1 (Pro satışı açılınca) — açıklamadaki lansman paragrafının yerine
+
+```
+BEŞ PRO
+Aylık, yıllık ya da ömür boyu. Reklamları tamamen kaldırır, Öğren kursunun bütün derslerini ve toplulukta ek özellikleri (sohbete yazma, hatim grubu kurma, günde 5 dua isteği) açar. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse kendiliğinden yenilenir; iptal mağaza hesabı ayarlarından yapılır.
+```

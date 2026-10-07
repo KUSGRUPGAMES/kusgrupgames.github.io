@@ -16,10 +16,21 @@ export interface CalculationMethod {
   ishaAngle?: number;
   /** Ümmü'l-Kurâ yatsıyı açıyla değil, akşamdan N dakika sonra hesaplar. */
   ishaMinutes?: number;
+  /**
+   * Temkin (dakika): yöntemin ilan ettiği vakitle astronomik an arasındaki
+   * sabit pay. Diyanet ilçenin en uç noktasını da gözeterek vakitleri bu
+   * paylarla ilan eder; payı bilmeyen hesap Ankara'da akşamı 7–8 dk erken
+   * veriyordu (5 Ekim). Değerler Diyanet'in yayımladığı vakitlerle 5 ilde,
+   * 160 gün üzerinden ölçülen ortanca farklardır.
+   */
+  temkin?: Partial<Record<PrayerKey, number>>;
 }
 
 export const METHODS: Record<MethodId, CalculationMethod> = {
-  diyanet: { id: 'diyanet', label: 'Diyanet (Türkiye)', fajrAngle: 18, ishaAngle: 17 },
+  diyanet: {
+    id: 'diyanet', label: 'Diyanet (Türkiye)', fajrAngle: 18, ishaAngle: 17,
+    temkin: { fajr: -0.3, sunrise: -7.4, dhuhr: 5, asr: 4.6, maghrib: 7.6, isha: 0.6 },
+  },
   mwl: { id: 'mwl', label: 'Müslüman Dünya Birliği', fajrAngle: 18, ishaAngle: 17 },
   isna: { id: 'isna', label: 'ISNA (Kuzey Amerika)', fajrAngle: 15, ishaAngle: 15 },
   egypt: { id: 'egypt', label: 'Mısır Genel Araştırma', fajrAngle: 19.5, ishaAngle: 17.5 },

@@ -14,7 +14,8 @@ import { toHijri } from '@/features/hijri/calc';
 import { daySchedule } from '@/features/prayer/schedule';
 import { formatHM, formatCountdown } from '@/features/prayer/calc';
 import { useLiveView } from '@/features/prayer/useSchedule';
-import type { MethodId, PrayerKey } from '@/features/prayer/methods';
+import { scheduleInputFrom } from '@/features/prayer/window';
+import { useOfficialVersion } from '@/features/prayer/officialRuntime';
 
 export default function RamadanScreen() {
   const t = useT();
@@ -22,19 +23,12 @@ export default function RamadanScreen() {
   const konum = useLocationStore((s) => s.active());
   const settings = useSettingsStore((s) => s.settings);
 
+  const resmiSurum = useOfficialVersion();
   const input = useMemo(() => {
     if (!konum) return null;
-    return {
-      latitude: konum.latitude,
-      longitude: konum.longitude,
-      timezone: konum.timezone,
-      options: {
-        method: settings.method as MethodId,
-        asrShadow: settings.asrShadow,
-        adjustments: settings.adjustments as Partial<Record<PrayerKey, number>>,
-      },
-    };
-  }, [konum, settings]);
+    void resmiSurum;
+    return { ...scheduleInputFrom(konum, settings) };
+  }, [konum, settings, resmiSurum]);
 
   const uzunTarih = useDateFormat({ dateStyle: 'long' });
   const gunAy = useDateFormat({ day: '2-digit', month: 'short' });
@@ -54,7 +48,7 @@ export default function RamadanScreen() {
 
   if (!konum || !input) {
     return (
-      <Screen>
+      <Screen topInset={false}>
         <Stack.Screen options={{ headerShown: true, title: t('ramadan.title') }} />
         <EmptyState icon="location" title={t('location.empty')} description={t('location.searchHint')} />
       </Screen>
@@ -70,10 +64,10 @@ export default function RamadanScreen() {
   const iftarGecti = iftaraKalan === 0;
 
   return (
-    <Screen scroll motif="arch">
+    <Screen topInset={false} scroll motif="arch">
       <Stack.Screen options={{ headerShown: true, title: t('ramadan.title') }} />
 
-      <Card accent motif="starLattice">
+      <Card accent>
         <Column gap="lg" align="center">
           <Text variant="callout" tone="onAccent">
             {durum.active
@@ -91,7 +85,7 @@ export default function RamadanScreen() {
               // Marka kartının üstündeki halka logonun eşleşmesini taşır:
               // altın ilerleme, fildişi-saydam yatak (D18).
               color={theme.colors.onAccentHighlight}
-              trackColor={theme.colors.onAccentBorder}
+              trackColor={theme.colors.onAccentTrack}
             >
               <Column align="center" gap="xxs">
                 <Text variant="caption" tone="onAccent">

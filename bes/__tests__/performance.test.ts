@@ -51,8 +51,10 @@ describe('uzun listeler sanallaştırılmış', () => {
   it('okuyucu ekranı âyetleri sanal listeyle çiziyor', () => {
     const s = oku(join(ROOT, 'app', 'reader.tsx'));
     expect(s).toContain('FlatList');
-    // 286 âyetlik Bakara için ölçüm atlanabilsin diye satır yüksekliği veriliyor.
-    expect(s).toContain('getItemLayout');
+    // Âyet kartları font ölçeği ve meal nedeniyle farklı yükseklikte olabilir.
+    // Yer imine giderken ölçülmemiş satır için yaklaşık kaydırma yapılır.
+    expect(s).toContain('onScrollToIndexFailed');
+    expect(s).toContain('scrollToOffset');
   });
 });
 
@@ -96,17 +98,22 @@ describe('veri boyutları', () => {
     expect(boyut).toBeLessThan(2 * 1024 * 1024);
   });
 
-  it('ses paketle dağıtılmıyor', () => {
+  it('ses paketle dağıtılmıyor — yalnız ezan (D29)', () => {
+    // Kıraat akıştan gelir, pakete girmez. Tek istisna ezan: bildirim sesi
+    // cihazda olmak zorunda (uygulama kapalıyken çalınır). İki dosya, toplam
+    // boyut sınırlı.
     const varlik = join(ROOT, 'assets');
-    const sesler: string[] = [];
+    const sesler: { ad: string; boyut: number }[] = [];
     const tara = (d: string) => {
       for (const e of readdirSync(d)) {
         const f = join(d, e);
         if (statSync(f).isDirectory()) tara(f);
-        else if (/\.(mp3|m4a|wav|aac|ogg)$/i.test(e)) sesler.push(e);
+        else if (/\.(mp3|m4a|wav|aac|ogg|caf)$/i.test(e)) sesler.push({ ad: e, boyut: statSync(f).size });
       }
     };
     tara(varlik);
-    expect(sesler).toEqual([]);
+    // 5 Ekim: kısa/uzun ezan (iOS .caf), kısa Android .m4a + tam ezan (uygulama içi ve Android kanalı).
+    expect(sesler.map((x) => x.ad).sort()).toEqual(['ezan_kisa.m4a', 'ezan_tam.m4a', 'ezankisa.caf', 'ezanuzun.caf']);
+    expect(sesler.reduce((t, x) => t + x.boyut, 0)).toBeLessThan(3.5 * 1024 * 1024);
   });
 });

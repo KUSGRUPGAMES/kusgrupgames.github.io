@@ -1,0 +1,7 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "Les horaires de prière et la direction de la qibla sont calculés selon l’endroit où vous êtes. Sinon, vous pouvez choisir votre ville manuellement.",
+    "NSMotionUsageDescription": "La boussole de la qibla utilise le capteur de mouvement pour lire l’orientation de votre téléphone.",
+    "NSUserTrackingUsageDescription": "Cette autorisation sert uniquement à rendre les publicités plus pertinentes. Sans elle, les publicités restent affichées et aucune fonction de l’app n’est limitée."
+  }
+}

@@ -1,21 +1,59 @@
 /** İbadet defteri ve oruç takibi — şartname §42, §49. */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import {
   Screen, SectionHeader, Card, Column, Row, Text, Segmented, Stepper,
-  Field, Banner, IconButton, Divider, Chip,
+  Banner, IconButton, Button, Divider, ListItem, Icon,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT, useDateFormat } from '@/lib/i18n';
-import { useWorshipStore, type QadaSlot, type FastKind } from '@/store/worship';
+import { useWorshipStore, type QadaSlot, type FastKind, type WorshipDay, type FastDay } from '@/store/worship';
 import { useLocationStore } from '@/store/locations';
 import { usePrayerLabel } from '@/features/prayer/components/PrayerList';
 import { dateKey } from '@/features/dhikr/stats';
 import { zonedNow } from '@/lib/time/zone';
+import { FastingSettingsCard } from '@/features/notifications/FastingSettingsCard';
 
 type NamazSlot = Exclude<QadaSlot, 'witr'>;
 const NAMAZLAR: NamazSlot[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+
+/**
+ * Ekrandaki her değişiklik doğrudan depoya yazılıyordu: sayfalar arası
+ * gezinirken yanlışlıkla dokunulan bir alan hemen kaydediliyordu, "Kaydet"
+ * demeden önceki kaydı bozabiliyordu. Artık değişiklikler yalnız bu yerel
+ * taslakta tutulur; "Kaydet"e basılmadan depoya yazılmaz, tarihten
+ * uzaklaşınca da sessizce bırakılır — önceki kayıt her durumda korunur.
+ */
+/**
+ * Oruç tek bir sorunun cevabı olarak seçilir. Eskiden "Tutmadım / Ramazan /
+ * Kaza / Nafile" diye dört kısa etiket vardı ve Ramazan'da tutulamayan günü
+ * (kazaya kalan borç) girmenin yolu yoktu.
+ */
+type OrucSecimi = 'none' | 'ramadan' | 'ramadanMissed' | 'qada' | 'nafile' | 'kaffara';
+
+interface Taslak {
+  prayers: Partial<Record<NamazSlot, 'alone' | 'jamaah' | 'qada'>>;
+  quranMinutes: number;
+  /** Arayüzden kaldırıldı; eski kayıtlarda varsa korunur. */
+  note: string;
+  fast: OrucSecimi;
+}
+
+function orucSecimi(oruc: FastDay | undefined): OrucSecimi {
+  if (!oruc) return 'none';
+  if (oruc.kind === 'ramadan') return oruc.completed ? 'ramadan' : 'ramadanMissed';
+  return oruc.kind;
+}
+
+function taslakOlustur(gun: WorshipDay | undefined, oruc: FastDay | undefined): Taslak {
+  return {
+    prayers: { ...(gun?.prayers ?? {}) },
+    quranMinutes: gun?.quranMinutes ?? 0,
+    note: gun?.note ?? '',
+    fast: orucSecimi(oruc),
+  };
+}
 
 export default function WorshipLogScreen() {
   const tamTarih = useDateFormat({ dateStyle: 'full', timeZone: 'UTC' });
@@ -44,17 +82,57 @@ export default function WorshipLogScreen() {
   const setFast = useWorshipStore((s) => s.setFast);
   const clearFast = useWorshipStore((s) => s.clearFast);
 
+  const [taslak, setTaslak] = useState<Taslak>(() => taslakOlustur(gun, oruc));
+  const [kaydedildi, setKaydedildi] = useState(false);
+
+  // Tarih değişince taslak o günün kayıtlı hâline sıfırlanır — önceki
+  // tarihte kaydedilmemiş bir değişiklik varsa sessizce bırakılır, depoya
+  // hiç yazılmadığı için zaten bir kaydı bozmuyordu.
+  useEffect(() => {
+    setTaslak(taslakOlustur(gun, oruc));
+    setKaydedildi(false);
+  }, [tarih]);
+
+  const setTaslakPrayer = (slot: NamazSlot, value: 'alone' | 'jamaah' | 'qada' | null) => {
+    setTaslak((onceki) => {
+      const prayers = { ...onceki.prayers };
+      if (value === null) delete prayers[slot];
+      else prayers[slot] = value;
+      return { ...onceki, prayers };
+    });
+    setKaydedildi(false);
+  };
+
+  const kaydet = () => {
+    for (const slot of NAMAZLAR) setPrayer(tarih, slot, taslak.prayers[slot] ?? null);
+    setQuranMinutes(tarih, taslak.quranMinutes);
+    if (taslak.note) setDayNote(tarih, taslak.note);
+    if (taslak.fast === 'none') clearFast(tarih);
+    else if (taslak.fast === 'ramadanMissed') setFast(tarih, 'ramadan', false);
+    else setFast(tarih, taslak.fast as FastKind, true);
+    setKaydedildi(true);
+  };
+
+  const hepsiKilindi = () => {
+    setTaslak((onceki) => ({
+      ...onceki,
+      prayers: Object.fromEntries(NAMAZLAR.map((s) => [s, onceki.prayers[s] ?? 'alone'])),
+    }));
+    setKaydedildi(false);
+  };
+
   const gosterim = tamTarih.format(new Date(`${tarih}T12:00:00Z`));
 
-  const orucSecenekleri: { id: FastKind | 'none'; label: string }[] = [
-    { id: 'none', label: t('log.fastNone') },
-    { id: 'ramadan', label: t('log.fastRamadan') },
-    { id: 'qada', label: t('log.fastQada') },
-    { id: 'nafile', label: t('log.fastNafile') },
+  const orucSecenekleri: { id: OrucSecimi; label: string; hint?: string }[] = [
+    { id: 'none', label: t('log.fastOptNone') },
+    { id: 'ramadan', label: t('log.fastOptRamadan') },
+    { id: 'ramadanMissed', label: t('log.fastOptRamadanMissed'), hint: t('log.fastOptRamadanMissedHint') },
+    { id: 'qada', label: t('log.fastOptQada'), hint: t('log.fastOptQadaHint') },
+    { id: 'nafile', label: t('log.fastOptNafile') },
   ];
 
   return (
-    <Screen scroll motif="girih">
+    <Screen topInset={false} scroll motif="girih">
       <Stack.Screen options={{ headerShown: true, title: t('log.title') }} />
 
       <Row align="center" justify="space-between">
@@ -71,10 +149,15 @@ export default function WorshipLogScreen() {
         />
       </Row>
 
-      <SectionHeader title={t('log.subtitle')} />
+      <Card padding="sm" style={{ marginTop: theme.spacing.md }}>
+        <ListItem title={t('log.stats')} subtitle={t('log.statsHint')} icon="chart"
+          onPress={() => router.push('/worship-stats')} />
+      </Card>
+
+      <SectionHeader title={t('log.subtitle')} actionLabel={t('log.allPrayed')} onAction={hepsiKilindi} />
       <Card padding="sm">
         {NAMAZLAR.map((slot, i) => {
-          const deger = gun?.prayers[slot] ?? null;
+          const deger = taslak.prayers[slot] ?? null;
           return (
             <View key={slot}>
               {i > 0 ? <Divider /> : null}
@@ -90,7 +173,7 @@ export default function WorshipLogScreen() {
                     { value: 'qada', label: t('log.prayerQada'), short: t('log.prayerQadaShort') },
                   ]}
                   value={deger ?? 'none'}
-                  onChange={(v) => setPrayer(tarih, slot, v === 'none' ? null : (v as 'alone' | 'jamaah' | 'qada'))}
+                  onChange={(v) => setTaslakPrayer(slot, v === 'none' ? null : (v as 'alone' | 'jamaah' | 'qada'))}
                   accessibilityLabel={label(slot)}
                 />
               </Column>
@@ -103,35 +186,39 @@ export default function WorshipLogScreen() {
       <Card padding="sm">
         <Stepper
           title={t('log.quranMinutes')}
-          value={gun?.quranMinutes ?? 0}
+          value={taslak.quranMinutes}
           min={0}
           max={600}
           step={5}
           unit={t('notification.beforeUnit')}
-          onChange={(v) => setQuranMinutes(tarih, v)}
+          onChange={(v) => { setTaslak((onceki) => ({ ...onceki, quranMinutes: v })); setKaydedildi(false); }}
         />
       </Card>
 
-      <SectionHeader title={t('log.fasting')} />
-      <Row gap="sm" wrap>
+      <SectionHeader title={t('log.fasting')} subtitle={t('log.fastQuestion')} />
+      <Card padding="sm">
         {orucSecenekleri.map((o) => (
-          <Chip
+          <ListItem
             key={o.id}
-            label={o.label}
-            selected={(oruc?.kind ?? 'none') === o.id}
-            onPress={() => (o.id === 'none' ? clearFast(tarih) : setFast(tarih, o.id, true))}
+            title={o.label}
+            {...(o.hint ? { subtitle: o.hint } : {})}
+            chevron={false}
+            selected={taslak.fast === o.id}
+            {...(taslak.fast === o.id ? { right: <Icon name="check" size={18} color={theme.colors.accent} /> } : {})}
+            onPress={() => { setTaslak((onceki) => ({ ...onceki, fast: o.id })); setKaydedildi(false); }}
           />
         ))}
-      </Row>
+      </Card>
 
-      <SectionHeader title={t('log.note')} />
-      <Field
-        label={t('log.note')}
-        hint={t('log.noteHint')}
-        value={gun?.note ?? ''}
-        onChangeText={(v) => setDayNote(tarih, v)}
-        multiline
-      />
+      <Button label={t('log.save')} icon="check" block onPress={kaydet} style={{ marginTop: theme.spacing.lg }} />
+
+      {kaydedildi ? (
+        <Banner tone="success" title={t('log.saved')} style={{ marginTop: theme.spacing.md }}
+          actionLabel={t('log.stats')} onAction={() => router.push('/worship-stats')} />
+      ) : null}
+
+      {/* Oruç tutacaksan sahur/imsak/iftar bildirimlerini buradan da açabilirsin (5 Ekim). */}
+      <FastingSettingsCard />
 
       <Banner tone="info" title={t('settings.privacy')} description={t('log.privateNote')} />
     </Screen>

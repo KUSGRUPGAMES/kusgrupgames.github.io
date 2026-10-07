@@ -77,21 +77,24 @@ describe('geometrik motifler', () => {
   });
 
   it('rub’ül hizb yıldızı SEKİZ köşelidir — altı değil', () => {
-    // İki kare üst üste: eksenel kare + 45° döndürülmüşü. Sekiz köşenin
-    // **hepsi** ortak merkezden aynı uzaklıkta ve komşu köşeler arası açı tam
-    // 45° olmalı. Altı köşeli bir yıldızda bu açı 60° çıkar, sınama yanar.
-    const t = motifTile('rubElHizb', 96);
-    const kareler = t.paths.filter((d) => noktalar(d).length === 4).slice(0, 2);
-    expect(kareler).toHaveLength(2);
+    // Yıldız tek kapalı yol: 16 köşe, dönüşümlü dış/iç yarıçap. Dış köşeler
+    // arasındaki açı tam 45° olmalı. Altı köşeli bir yıldızda 60° çıkar ve
+    // sınama yanar — bu bir kez gerçekten oldu (D25).
+    const t = motifTile('rubElHizb', 128);
+    const on6 = t.paths.map(noktalar).filter((q) => q.length === 16);
+    expect(on6.length).toBeGreaterThan(0);
 
-    const koseler = kareler.flatMap(noktalar);
-    expect(koseler).toHaveLength(8);
-    const [cx, cy] = merkez(koseler);
+    const pts = on6[0] as Nokta[];
+    const [cx, cy] = merkez(pts);
+    const yaricap = pts.map(([x, y]) => Math.hypot(x - cx, y - cy));
+    const dis = yaricap.filter((_, i) => i % 2 === 0);
+    const ic = yaricap.filter((_, i) => i % 2 === 1);
+    expect(dis).toHaveLength(8);
+    for (const r of dis) expect(r).toBeCloseTo(dis[0] ?? 0, 1);
+    for (const r of ic) expect(r).toBeLessThan((dis[0] ?? 0) - 1e-6);
 
-    const yaricaplar = koseler.map(([x, y]) => Math.hypot(x - cx, y - cy));
-    for (const r of yaricaplar) expect(r).toBeCloseTo(yaricaplar[0] ?? 0, 1);
-
-    const acilar = koseler
+    const acilar = pts
+      .filter((_, i) => i % 2 === 0)
       .map(([x, y]) => ((Math.atan2(y - cy, x - cx) * 180) / Math.PI + 360) % 360)
       .sort((a, b) => a - b);
     for (let i = 0; i < acilar.length; i += 1) {
@@ -115,23 +118,28 @@ describe('geometrik motifler', () => {
   });
 
   it('örgü desenleri kenar eşlemelidir — karo sınırında kesilmez', () => {
-    // Motif merkeze **ve** dört köşeye konmalı; yalnız merkezde duran bir
-    // şekil "kareye damgalanmış" görünür, bezeme gibi okunmaz.
-    const size = 96;
-    for (const name of ['rubElHizb', 'starLattice'] as MotifName[]) {
-      const merkezler = motifTile(name, size).paths
-        .filter((d) => d.endsWith('Z'))
-        .map((d) => {
-          const [cx, cy] = merkez(noktalar(d));
-          return `${cx.toFixed(1)},${cy.toFixed(1)}`;
-        });
-      const tekil = new Set(merkezler);
-      expect(tekil.has('48.0,48.0')).toBe(true);     // merkez
-      expect(tekil.has('0.0,0.0')).toBe(true);        // sol üst köşe
-      expect(tekil.has('96.0,96.0')).toBe(true);      // sağ alt köşe
-      expect(tekil.size).toBe(5);
+    // Yıldız karonun merkezine **ve** dört köşesine konmalı; yalnız merkezde
+    // duran bir şekil "kareye damgalanmış" görünür, bezeme gibi okunmaz.
+    const size = 128;
+    for (const name of ['rubElHizb', 'starLattice', 'girih'] as MotifName[]) {
+      const merkezler = new Set(
+        motifTile(name, size).paths
+          .map(noktalar)
+          .filter((q) => q.length === 16)
+          .map((q) => {
+            const [cx, cy] = merkez(q);
+            // `toFixed(0)` çok küçük negatif sayıyı "-0" yazıyor ve köşe
+            // karşılaştırması tutmuyordu; `Math.round` eksi sıfırı "0" verir.
+            return `${Math.round(cx)},${Math.round(cy)}`;
+          }),
+      );
+      for (const beklenen of ['64,64', '0,0', '128,0', '0,128', '128,128']) {
+        expect(merkezler.has(beklenen)).toBe(true);
+      }
+      expect(merkezler.size).toBe(5);
     }
   });
+
 
   it('mihrap kemeri sivridir, yuvarlak değil', () => {
     // Bir kez yuvarlak çıktı: denetim noktası tepeyle aynı yükseklikteydi,
@@ -143,12 +151,14 @@ describe('geometrik motifler', () => {
     // M baslangic Q denetim tepe Q denetim bitis → nokta dizisi:
     // [0] omuz(sol), [1] sol denetim, [2] tepe, [3] sağ denetim, [4] omuz(sağ).
     const q = noktalar(kemer ?? '');
-    expect(q).toHaveLength(5);
+    expect(q).toHaveLength(7);
+    // [0] taban-sol, [1] omuz-sol, [2] sol denetim, [3] tepe,
+    // [4] sağ denetim, [5] omuz-sağ, [6] taban-sağ
     const y = (i: number) => q[i]?.[1] ?? 0;
-    expect(y(1)).toBeGreaterThan(y(2));                   // sol denetim tepenin ALTINDA
-    expect(y(3)).toBeGreaterThan(y(2));                   // sağ denetim tepenin ALTINDA
-    expect(q[2]?.[0] ?? 0).toBeCloseTo(50, 1);            // tepe tam ortada (s=100)
-    expect(y(0)).toBeGreaterThan(y(1));                   // omuz denetimin altında
+    expect(y(2)).toBeGreaterThan(y(3));            // sol denetim tepenin ALTINDA
+    expect(y(4)).toBeGreaterThan(y(3));            // sağ denetim tepenin ALTINDA
+    expect(q[3]?.[0] ?? 0).toBeCloseTo(50, 1);     // tepe tam ortada (s=100)
+    expect(y(1)).toBeGreaterThan(y(2));            // omuz denetimin altında
   });
 
   it('bilinmeyen ada karşı tip güvenliği: liste tam MotifName kümesidir', () => {

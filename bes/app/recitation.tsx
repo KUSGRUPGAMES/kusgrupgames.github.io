@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Stack } from 'expo-router';
+import NetInfo from '@react-native-community/netinfo';
 import {
   Screen, SectionHeader, Card, Column, Row, Text, ListItem, Segmented,
   Toggle, Button, Banner, ProgressBar, SourceNote, VirtualList,
@@ -21,6 +22,7 @@ export default function RecitationScreen() {
   const update = useSettingsStore((s) => s.update);
   const [kullanilan, setKullanilan] = useState(0);
   const [indirme, setIndirme] = useState<{ surah: number; done: number; total: number } | null>(null);
+  const [indirmeHatasi, setIndirmeHatasi] = useState<string | null>(null);
 
   const okuyucu = getReciter(settings.recitation.reciterId);
   const sureler = getSurahs();
@@ -30,17 +32,33 @@ export default function RecitationScreen() {
 
   const sureIndir = async (surah: number, ayahCount: number) => {
     const ilk = surahFirstGlobalAyah(surah);
-    if (!ilk || !okuyucu) return;
-    const bit = resolveBitrate(okuyucu, settings.recitation.bitrate);
-    setIndirme({ surah, done: 0, total: ayahCount });
-    await downloadSurah(okuyucu.id, bit, ilk, ayahCount, (p) =>
-      setIndirme({ surah, done: p.done, total: p.total }));
-    setIndirme(null);
-    void boyutOku();
+    if (!ilk || !okuyucu || indirme) return;
+    setIndirmeHatasi(null);
+    try {
+      const network = await NetInfo.fetch();
+      if (network.isConnected === false || network.isInternetReachable === false) {
+        setIndirmeHatasi(t('error.network'));
+        return;
+      }
+      if (settings.recitation.wifiOnlyDownload && network.type !== 'wifi') {
+        setIndirmeHatasi(t('audio.wifiOnly'));
+        return;
+      }
+      const bit = resolveBitrate(okuyucu, settings.recitation.bitrate);
+      setIndirme({ surah, done: 0, total: ayahCount });
+      const result = await downloadSurah(okuyucu.id, bit, ilk, ayahCount, (p) =>
+        setIndirme({ surah, done: p.done, total: p.total }));
+      if (result.failed > 0) setIndirmeHatasi(t('error.network'));
+      await boyutOku();
+    } catch {
+      setIndirmeHatasi(t('error.network'));
+    } finally {
+      setIndirme(null);
+    }
   };
 
   return (
-    <Screen scroll motif="girih">
+    <Screen topInset={false} scroll motif="girih">
       <Stack.Screen options={{ headerShown: true, title: t('audio.title') }} />
 
       <Banner tone="info" title={t('audio.title')} description={t('audio.sourceNote')} />
@@ -97,6 +115,7 @@ export default function RecitationScreen() {
       </Row>
 
       <SectionHeader title={t('audio.download')} />
+      {indirmeHatasi ? <Banner tone="warning" title={indirmeHatasi} style={{ marginBottom: theme.spacing.md }} /> : null}
       {indirme ? (
         <Column gap="sm" style={{ marginBottom: theme.spacing.md }}>
           <Text variant="caption" tone="muted">
@@ -110,7 +129,6 @@ export default function RecitationScreen() {
         <VirtualList
           data={sureler}
           keyExtractor={(s) => String(s.number)}
-          itemHeight={64}
           renderItem={(s) => (
             <ListItem
               title={`${s.number}. ${s.nameTr}`}

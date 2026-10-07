@@ -12,9 +12,10 @@ export interface ToggleProps {
   onChange: (value: boolean) => void;
   icon?: IconName;
   disabled?: boolean;
+  divider?: boolean;
 }
 
-export function Toggle({ title, subtitle, value, onChange, icon, disabled = false }: ToggleProps) {
+export function Toggle({ title, subtitle, value, onChange, icon, disabled = false, divider = true }: ToggleProps) {
   const theme = useTheme();
   return (
     <ListItem
@@ -22,6 +23,7 @@ export function Toggle({ title, subtitle, value, onChange, icon, disabled = fals
       {...(subtitle ? { subtitle } : {})}
       {...(icon ? { icon } : {})}
       chevron={false}
+      divider={divider}
       right={
         <Switch
           value={value}

@@ -60,7 +60,7 @@ const GUVENLI_ALAN = 0.66;
  * kenarındaki gerçek piksellerin ışınsal uzatılmasıyla yapılır; düz yama
  * koyu ikonun köşesinde desensiz bir leke bırakıyordu.
  */
-const KOSE = 0.24;
+const KOSE = 0.28;
 
 // ---------------------------------------------------------------- görüntü
 
@@ -187,7 +187,12 @@ function olcekle(im, sx, sy, sw, sh, boy) {
  * Master kutucuğunu tam kare, taşmalı ve köşeleri düzleştirilmiş olarak verir.
  * Kısa kenar doldurulur, uzun kenardan simetrik kırpılır — esnetme yok.
  */
-function ikonKutucugu(im, kutu, boy) {
+function ikonKutucugu(im, kutuHam, boy) {
+  // Kenardan 6 piksel içeri: kutucuğun parlak kenar hattı ikonun düz
+  // kenarlarında ince bir çizgi olarak kalıyordu. Kırpma dört yandan eşit,
+  // ölçek tekdüze — oran ve geometri değişmez.
+  const I = 6;
+  const kutu = { x0: kutuHam.x0 + I, y0: kutuHam.y0 + I, x1: kutuHam.x1 - I, y1: kutuHam.y1 - I };
   const kw = kutu.x1 - kutu.x0 + 1;
   const kh = kutu.y1 - kutu.y0 + 1;
   const kenar = Math.min(kw, kh);
@@ -195,8 +200,11 @@ function ikonKutucugu(im, kutu, boy) {
   const sy = kutu.y0 + (kh - kenar) / 2;
   const out = olcekle(im, sx, sy, kenar, kenar, boy);
 
-  // Köşeleri düzle: yayın dışındaki her piksel, yay üzerindeki en yakın
-  // pikselin kopyası olur. Logoya dokunulmaz — logo köşelere hiç girmiyor.
+  // Köşeleri düzle: yayın dışındaki her piksel, yayın **içindeki aynası**
+  // ile doldurulur (yaydan d−r kadar dışarıdaki piksel, r−(d−r) kadar
+  // içerideki pikselin kopyası). Eskiden yay üzerindeki tek piksel ışınsal
+  // uzatılıyordu; desenli zeminde köşelerde ışın gibi çizgiler bırakıyordu.
+  // Ayna, desenin dokusunu korur. Logoya dokunulmaz — logo köşelere girmiyor.
   const r = KOSE * boy;
   const kaynak = Buffer.from(out.d);
   const ornek = (fx, fy) => {
@@ -215,7 +223,8 @@ function ikonKutucugu(im, kutu, boy) {
         const vy = py + 0.5 - my;
         const d = Math.hypot(vx, vy);
         if (d <= r) continue;
-        const k = ornek(mx + (vx * (r - 1)) / d, my + (vy * (r - 1)) / d);
+        const ic = Math.max(r * 0.5, 2 * r - d - 1);
+        const k = ornek(mx + (vx * ic) / d, my + (vy * ic) / d);
         const i = (py * boy + px) * 4;
         out.d[i] = kaynak[k] ?? 0;
         out.d[i + 1] = kaynak[k + 1] ?? 0;
@@ -235,12 +244,12 @@ function ikonKutucugu(im, kutu, boy) {
  * kalmasın. Şekil masterın şeklidir — burada hiçbir şey yeniden çizilmez.
  */
 /** Piksel kutucuğun yuvarlatılmış köşesinin dışında mı? */
-function kosedeDisarida(kutu, x, y) {
+function kosedeDisarida(kutu, x, y, pay = 0) {
   const kenar = Math.min(kutu.x1 - kutu.x0 + 1, kutu.y1 - kutu.y0 + 1);
   const r = KOSE * kenar;
   const mx = x < kutu.x0 + r ? kutu.x0 + r : (x > kutu.x1 - r ? kutu.x1 - r : x);
   const my = y < kutu.y0 + r ? kutu.y0 + r : (y > kutu.y1 - r ? kutu.y1 - r : y);
-  return Math.hypot(x - mx, y - my) > r;
+  return Math.hypot(x - mx, y - my) > r - pay;
 }
 
 function alfaMaskesi(im, koyuZemin, kutu) {
@@ -256,12 +265,14 @@ function alfaMaskesi(im, koyuZemin, kutu) {
       // pikselleri eşiğin ortasına düşüyor ve şeffaf sembolün çevresinde
       // hayalet bir yuvarlak dikdörtgen çizgisi bırakıyordu. Logo kenara
       // 100 pikselden fazla uzakta, bu pay ona değmiyor.
-      const PAY = 10;
+      // 2026 masterında kutucuğun kenarında ince parlak bir hat var; 10
+      // piksel yetmedi, Android ikonunun köşelerinde silik yaylar kaldı.
+      const PAY = 24;
       if (x < kutu.x0 + PAY || x > kutu.x1 - PAY || y < kutu.y0 + PAY || y > kutu.y1 - PAY) continue;
       // Kutucuğun köşeleri yuvarlak: dikdörtgen maske köşelerde kâğıdı
       // içeride bırakıyor ve koyu masterda dört köşede beyaz lekeler
       // çıkıyordu. Yay da maskeye dâhil edilir.
-      if (kosedeDisarida(kutu, x, y)) continue;
+      if (kosedeDisarida(kutu, x, y, PAY)) continue;
       const L = parlaklik(im.d[i], im.d[i + 1], im.d[i + 2]);
       const t = Math.min(1, Math.max(0, (L - lo) / (hi - lo)));
       out.d[i + 3] = Math.round(t * 255);

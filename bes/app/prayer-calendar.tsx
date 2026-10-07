@@ -11,9 +11,11 @@ import { useLocationStore } from '@/store/locations';
 import { useSettingsStore } from '@/store/settings';
 import { monthSchedule } from '@/features/prayer/schedule';
 import { formatHM } from '@/features/prayer/calc';
-import { PRAYER_KEYS, type MethodId, type PrayerKey } from '@/features/prayer/methods';
+import { PRAYER_KEYS } from '@/features/prayer/methods';
 import { usePrayerShortLabel } from '@/features/prayer/components/PrayerList';
 import { zonedNow } from '@/lib/time/zone';
+import { scheduleInputFrom } from '@/features/prayer/window';
+import { useOfficialVersion } from '@/features/prayer/officialRuntime';
 
 export default function PrayerCalendarScreen() {
   const ayBicimi = useDateFormat({ month: 'long', year: 'numeric', timeZone: 'UTC' });
@@ -25,27 +27,20 @@ export default function PrayerCalendarScreen() {
   const bugun = useMemo(() => zonedNow(konum?.timezone ?? null), [konum]);
   const [ay, setAy] = useState({ year: bugun.year, month: bugun.month });
 
+  const resmiSurum = useOfficialVersion();
   const gunler = useMemo(() => {
     if (!konum) return [];
+    void resmiSurum;
     return monthSchedule(
-      {
-        latitude: konum.latitude,
-        longitude: konum.longitude,
-        timezone: konum.timezone,
-        options: {
-          method: settings.method as MethodId,
-          asrShadow: settings.asrShadow,
-          adjustments: settings.adjustments as Partial<Record<PrayerKey, number>>,
-        },
-      },
+      scheduleInputFrom(konum, settings),
       ay.year,
       ay.month,
     );
-  }, [konum, settings, ay]);
+  }, [resmiSurum, konum, settings, ay]);
 
   if (!konum) {
     return (
-      <Screen>
+      <Screen topInset={false}>
         <Stack.Screen options={{ headerShown: true, title: t('prayer.calendar') }} />
         <EmptyState icon="location" title={t('location.empty')} description={t('location.searchHint')} />
       </Screen>
@@ -60,7 +55,7 @@ export default function PrayerCalendarScreen() {
   };
 
   return (
-    <Screen scroll>
+    <Screen topInset={false} scroll>
       <Stack.Screen options={{ headerShown: true, title: t('prayer.calendar') }} />
 
       <Row align="center" justify="space-between">

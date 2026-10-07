@@ -4,14 +4,14 @@
  * Sıralama önemlidir: hata sınırı en dışta durur ki sağlayıcılardan biri
  * patlarsa bile kullanıcı anlamlı bir ekran görsün.
  */
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Animated, Image, StyleSheet, View, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import * as Localization from 'expo-localization';
 import { ThemeProvider, type ThemeMode } from '@/theme/ThemeProvider';
-import { I18nProvider, useT, resolveLanguage, type Language } from '@/lib/i18n';
+import { I18nProvider, useI18n, useT, resolveLanguage, type Language } from '@/lib/i18n';
 import { FONT_ASSETS } from '@/lib/i18n/fonts';
 import { applyUiDirection } from '@/lib/i18n/rtl';
 import { ErrorBoundary } from '@/ui/ErrorBoundary';
@@ -21,7 +21,20 @@ import { KEYS } from '@/lib/storage';
 import { hydrateAll } from './persistence';
 import { kv } from './storage';
 import { Brand } from '@/config/brand';
+import { useNotificationSync } from '@/features/notifications/useNotificationSync';
+import { EzanOkuyucu } from '@/features/ezan/EzanOkuyucu';
+import { useWidgetSync } from '@/features/widget/useWidgetSync';
 import Constants from 'expo-constants';
+import { reloadAppAsync } from 'expo';
+import { palette } from '@/theme/tokens';
+import splashLogo from '../../assets/splash-icon.png';
+import splashLogoLight from '../../assets/brand/splash-icon-light.png';
+import { initPurchases } from '@/features/pro/purchases';
+import { initAds } from '@/features/pro/adsRuntime';
+import { useCloudSync } from '@/features/sync/useCloudSync';
+import { refreshRemoteContent, startRemoteContent } from '@/features/content/remoteRuntime';
+import { useProTrialSync } from '@/features/pro/useProAccess';
+import { useOfficialTimesSync } from '@/features/prayer/officialRuntime';
 
 // Üretimde debug/info günlüğe yazılmaz (§83).
 configureLogging({ minLevel: __DEV__ ? 'debug' : 'warn' });
@@ -49,53 +62,117 @@ const themeModeCodec = {
   fallback: 'system' as ThemeMode,
 };
 
+const sayiCodec = {
+  parse: (raw: unknown): number => (typeof raw === 'number' && Number.isFinite(raw) ? raw : 0),
+  fallback: 0,
+};
+
 const languageCodec = {
   parse: (raw: unknown): Language => resolveLanguage(typeof raw === 'string' ? raw : null),
   fallback: null as Language | null,
 };
 
-/** Açılışta okunan, uygulama ömrü boyunca değişmeyen durum. */
-interface BootValue { onboardingDone: boolean }
-const BootContext = createContext<BootValue>({ onboardingDone: true });
+interface BootValue {
+  onboardingDone: boolean;
+  /**
+   * Onboarding bitince çağrılır. Yalnız diske yazmak (`markOnboardingDone`)
+   * yetmiyordu: `(tabs)/_layout.tsx`'teki kapı bu context'teki değere
+   * bakıyor, o da açılışta bir kez okunup hiç güncellenmiyordu — kullanıcı
+   * "Bitir"e bastığında diskteki değer `true` olsa bile kapı hâlâ eski
+   * `false`'u görüp onboarding'e geri atıyordu.
+   */
+  completeOnboarding: () => void;
+}
+const BootContext = createContext<BootValue>({ onboardingDone: true, completeOnboarding: () => {} });
 
 export function useBoot(): BootValue {
   return useContext(BootContext);
 }
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
-  const [fontsLoaded] = useFonts(FONT_ASSETS);
+  // `useFonts` hatayı ayrı döndürür (`[loaded, error]`); yalnız `loaded`
+  // alınırsa yükleme başarısız olduğunda `loaded` **sonsuza dek** `false`
+  // kalır ve aşağıdaki geçit uygulamayı temelli kilitler — hiçbir hata
+  // görünmeden. Arapça süsleme fontları dekoratiftir, ibadetin kendisi
+  // değildir; yüklenemezse uygulama yine de açılmalı.
+  const [fontsLoaded, fontsError] = useFonts(FONT_ASSETS);
   const [ready, setReady] = useState(false);
   const [themeMode, setThemeMode] = useState<ThemeMode>('system');
   const [language, setLanguage] = useState<Language | null>(null);
   const [onboardingDone, setOnboardingDone] = useState(true);
 
   useEffect(() => {
+    if (fontsError) recordCrash(fontsError, { phase: 'font-load' });
+  }, [fontsError]);
+
+  useEffect(() => {
     let alive = true;
     (async () => {
-      const [mode, lang, boot] = await Promise.all([
-        kv.read(KEYS.themeMode, themeModeCodec),
-        kv.read(KEYS.language, languageCodec),
-        hydrateAll(),
-      ]);
-      if (!alive) return;
-      setThemeMode(mode);
-      setLanguage(lang);
-      setOnboardingDone(boot.onboardingDone);
-      setReady(true);
+      try {
+        const [mode, lang, boot] = await Promise.all([
+          kv.read(KEYS.themeMode, themeModeCodec),
+          kv.read(KEYS.language, languageCodec),
+          hydrateAll(),
+        ]);
+        if (!alive) return;
+        // Yön uzlaştırması: kalıcı ayar dilden bağımsız kalmışsa (bkz.
+        // rtl.ts) burada düzeltilir ve uygulama bir kez yeniden yüklenir.
+        const etkinDil = lang ?? resolveLanguage(Localization.getLocales()[0]?.languageTag ?? null);
+        if (applyUiDirection(etkinDil)) {
+          const son = await kv.read(KEYS.directionReloadAt, sayiCodec);
+          // Döngü koruması: bir dakika içinde ikinci kez yeniden yüklenmez.
+          if (Date.now() - son > 60_000) {
+            await kv.write(KEYS.directionReloadAt, Date.now());
+            await reloadAppAsync('ui-direction');
+            return;
+          }
+        }
+        setThemeMode(mode);
+        setLanguage(lang);
+        setOnboardingDone(boot.onboardingDone);
+      } catch (error) {
+        // Aynı kilitlenme sınıfı: `hydrateAll()` içindeki herhangi bir
+        // mağaza `.hydrate()` çağrısı fırlatırsa `ready` hiç `true`
+        // olmuyordu, uygulama kalıcı olarak açılış ekranında kalıyordu.
+        // Şimdi varsayılanlarla devam ediyor, hatayı cihazda kaydediyor.
+        if (!alive) return;
+        recordCrash(error instanceof Error ? error : new Error(String(error)), { phase: 'boot-hydrate' });
+      } finally {
+        if (alive) setReady(true);
+      }
     })();
     return () => { alive = false; };
   }, []);
 
+  // Pro durumu açılışta sorulur (D33); cevap gelene kadar kilit ve reklam
+  // kararı verilmez (`useProStore.ready`).
+  useEffect(() => { initPurchases(); }, []);
+
+  // Reklam onayı ve iOS izleme izni onboarding'den SONRA sorulur: kullanıcı
+  // uygulamayı görmeden izin pencereleriyle karşılaşmasın.
+  useEffect(() => {
+    if (ready && onboardingDone) void initAds();
+  }, [ready, onboardingDone]);
+
+  const completeOnboarding = useCallback(() => setOnboardingDone(true), []);
+
   const saveThemeMode = useCallback((mode: ThemeMode) => { void kv.write(KEYS.themeMode, mode); }, []);
   const saveLanguage = useCallback((lang: Language) => {
-    void kv.write(KEYS.language, lang);
-    // Arapçaya geçişte düzen aynalanır; React Native bunu ancak yeniden
-    // başlatınca uygular, bu yüzden ayar ekranında not gösterilir (§61).
-    applyUiDirection(lang);
+    // Arapçaya (ya da Arapçadan) geçişte düzen aynalanır; React Native bunu
+    // ancak yeniden yüklemeyle uygular. Kullanıcıdan uygulamayı kapatıp
+    // açması beklenmez: dil kaydedilir, uygulama kendini yeniden yükler.
+    const yeniden = applyUiDirection(lang);
+    void kv.write(KEYS.language, lang).then(async () => {
+      if (!yeniden) return;
+      await kv.write(KEYS.directionReloadAt, Date.now());
+      await reloadAppAsync('ui-direction');
+    });
   }, []);
 
   // Tercihler okunmadan çizmek, temanın açıktan koyuya sıçramasına yol açar.
-  if (!ready || !fontsLoaded) return <View style={{ flex: 1 }} />;
+  // Font adımı yalnız `fontsError` set olmadan bekler — hata varsa (yukarıda
+  // kaydedildi) burada sonsuza dek beklemek yerine devam edilir.
+  if (!ready || (!fontsLoaded && !fontsError)) return <StartupScreen />;
 
   const deviceTag = Localization.getLocales()[0]?.languageTag ?? null;
 
@@ -108,14 +185,81 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
           onLanguageChange={saveLanguage}
         >
           <AppErrorBoundary>
-            <BootContext.Provider value={{ onboardingDone }}>
-              <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+            <BootContext.Provider value={{ onboardingDone, completeOnboarding }}>
+              <QueryClientProvider client={queryClient}>
+                <BildirimEsitleyici />
+                {children}
+                <EzanOkuyucu />
+              </QueryClientProvider>
             </BootContext.Provider>
           </AppErrorBoundary>
         </I18nProvider>
       </ThemeProvider>
+      <AcilisPerdesi />
     </SafeAreaProvider>
   );
+}
+
+/**
+ * Açılış ekranı — yerel açılış ekranının (app.config.ts, expo-splash-screen)
+ * **birebir devamı**: aynı düz zemin rengi, aynı logo, aynı boyut ve konum.
+ * Eskiden burada gradyan ve desen vardı; yerel ekrandan buraya geçerken zemin
+ * ve logo bir anda değişiyordu. Uygulama hazır olunca bu katman yumuşakça
+ * solar (`AcilisPerdesi`).
+ */
+function StartupScreen() {
+  const dark = useColorScheme() === 'dark';
+  return (
+    <View pointerEvents="none" style={[{ flex: 1, backgroundColor: dark ? palette.emerald900 : palette.ivory100,
+      justifyContent: 'center', alignItems: 'center' }]}>
+      <Image source={dark ? splashLogo : splashLogoLight} resizeMode="contain" style={{ width: 200, height: 200 }} />
+    </View>
+  );
+}
+
+/** Uygulama çizildikten sonra açılış ekranını 280 ms'de soldurur. */
+function AcilisPerdesi() {
+  const [bitti, setBitti] = useState(false);
+  const [saydamlik] = useState(() => new Animated.Value(1));
+  useEffect(() => {
+    Animated.timing(saydamlik, { toValue: 0, duration: 280, delay: 60, useNativeDriver: true })
+      .start(() => setBitti(true));
+  }, [saydamlik]);
+  if (bitti) return null;
+  return (
+    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, { opacity: saydamlik }]}>
+      <StartupScreen />
+    </Animated.View>
+  );
+}
+
+/**
+ * Bildirim eşitleyicisi — uygulama ağacında **bir kez** durur.
+ *
+ * Görünmez; tek işi açılışta ve girdiler değiştiğinde bildirim planını
+ * cihazla eşitlemek. Eskiden açılışta hiçbir yeniden planlama yoktu: plan
+ * yalnız ayarlar ekranından kuruluyordu, ayarlara girmeyen kullanıcının
+ * bildirimleri ~10-12 günde sessizce kesiliyordu.
+ *
+ * Sağlayıcıların **içinde** durmak zorunda: çeviri, tema ve mağazalara
+ * erişiyor. İzin istemez; izin yoksa sessizce hiçbir şey kurmaz.
+ */
+function BildirimEsitleyici() {
+  useNotificationSync();
+  useWidgetSync();
+  // Hesapla eşitleme (D35): giriş yoksa ya da kapalıysa hiçbir şey yapmaz.
+  useCloudSync();
+  // Pro denemesi (yalnız satış açıkken, giriş yapmış kullanıcıya bir kez).
+  useProTrialSync();
+  // Diyanet'in resmî ilçe vakitleri (5 Ekim).
+  useOfficialTimesSync();
+  // Panelden yönetilen içerik (D36): açılışta ve öne gelişte, dil değişince hemen.
+  const { language } = useI18n();
+  const dilRef = useRef(language);
+  dilRef.current = language;
+  useEffect(() => startRemoteContent(() => dilRef.current), []);
+  useEffect(() => { void refreshRemoteContent(language); }, [language]);
+  return null;
 }
 
 /** Hata metinlerini çeviriden alabilmek için I18nProvider'ın içinde durur. */

@@ -100,3 +100,180 @@ describe('reklam kuralları', () => {
     expect(MAX_AD_CONTENT_RATING).toBe('G');
   });
 });
+
+describe('Pro kapıları (D33)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const g = require('@/features/pro/gates') as typeof import('@/features/pro/gates');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { LESSONS } = require('@/features/learn/course') as typeof import('@/features/learn/course');
+
+  it('ilk üç ünite herkese açık, sonrası Pro', () => {
+    expect([1, 2, 3].every(g.isLessonFree)).toBe(true);
+    expect([4, 5, 6, 7].some(g.isLessonFree)).toBe(false);
+    // Harfleri öğrenmek hiçbir zaman ücretli değil.
+    expect(LESSONS.filter((l) => l.id.startsWith('harf-')).every((l) => g.isLessonFree(l.unit))).toBe(true);
+    expect(LESSONS.filter((l) => g.isLessonFree(l.unit)).length).toBeGreaterThanOrEqual(10);
+  });
+
+  it('toplulukta okumak/katılmak ücretsiz; yazmak, kurmak ve 5 istek Pro', () => {
+    expect(g.communityLimits(false)).toEqual({ duaRequestsPerDay: 1, canChat: false, canCreateKhatm: false });
+    expect(g.communityLimits(true)).toEqual({ duaRequestsPerDay: 5, canChat: true, canCreateKhatm: true });
+  });
+
+  it('dua isteği sayımı sunucuyla aynı: kayan 24 saat', () => {
+    const simdi = Date.parse('2026-09-30T12:00:00Z');
+    const kayitlar = ['2026-09-30T11:00:00Z', '2026-09-29T12:30:00Z', '2026-09-29T11:59:00Z'];
+    expect(g.countInLast24h(kayitlar, simdi)).toBe(2);
+  });
+});
+
+describe('vakit penceresi (reklam kuralı)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { prayerWindow, scheduleInputFrom } = require('@/features/prayer/window') as typeof import('@/features/prayer/window');
+  const istanbul = scheduleInputFrom(
+    { latitude: 41.0082, longitude: 28.9784, timezone: 'Europe/Istanbul' },
+    { method: 'diyanet', asrShadow: 1, adjustments: {} },
+  );
+
+  it('konum yoksa pencere bilinmez', () => {
+    expect(prayerWindow(null)).toEqual({ secondsToNextPrayer: null, secondsSincePrayer: null });
+  });
+
+  it('sıradaki vakte kalan ve içindeki vaktin geçen süresi hesaplanır', () => {
+    const w = prayerWindow(istanbul, new Date('2026-09-30T10:00:00Z')); // 13:00 İstanbul
+    expect(w.secondsToNextPrayer).not.toBeNull();
+    expect(w.secondsSincePrayer).not.toBeNull();
+    expect(w.secondsToNextPrayer!).toBeGreaterThan(0);
+    expect(w.secondsSincePrayer!).toBeGreaterThanOrEqual(0);
+    // Öğle 13:00 civarı: ya yeni girdi ya birazdan girecek — ikisinden biri 1 saatin altında.
+    expect(Math.min(w.secondsToNextPrayer!, w.secondsSincePrayer!)).toBeLessThan(3600);
+  });
+});
+
+describe('reklam birimi seçimi (AdMob politikası)', () => {
+  it('geliştirme derlemesi gerçek birim tanımlı olsa bile test birimini kullanır', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { readFileSync } = require('node:fs') as typeof import('node:fs');
+    const kod = readFileSync(require.resolve('../src/features/pro/adsRuntime.ts'), 'utf8');
+    const govde = kod.slice(kod.indexOf('function birim('), kod.indexOf('export const BANNER_UNIT'));
+    // İlk karar __DEV__: gerçek kimliğe bakılmadan test birimi döner.
+    const karar = 'if (__DEV__ || !MAGAZA_DERLEMESI) return test;';
+    expect(govde.indexOf(karar)).toBeGreaterThan(-1);
+    expect(govde.indexOf(karar)).toBeLessThan(govde.indexOf('const gercek'));
+    // Bağımsız geliştirme derlemesinde __DEV__ false; varyant ayrıca bakılmalı.
+    expect(kod).toMatch(/variant === 'production'/);
+  });
+});
+
+describe('açılış reklamı ve ödüllü reklam (D33 devamı)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const a = require('@/features/pro/ads') as typeof import('@/features/pro/ads');
+  const SAAT = 60 * 60 * 1000;
+  const simdi = new Date(2026, 9, 7, 14, 0).getTime();
+  const bugun = a.localDayKey(simdi);
+  const dun = a.localDayKey(simdi - 24 * SAAT);
+  const temel = { stats: { day: bugun, opens: 2, shownDay: null }, now: simdi, sinceLaunchMs: 1000, allowed: true };
+
+  it('günün ilk açılışında yok, ikinci açılışında var (7 Ekim)', () => {
+    expect(a.shouldShowAppOpen({ ...temel, stats: { day: bugun, opens: 1, shownDay: null } })).toBe(false);
+    expect(a.shouldShowAppOpen(temel)).toBe(true);
+  });
+
+  it('günde en çok bir kez; ertesi gün yeniden ikinci açılışta', () => {
+    expect(a.shouldShowAppOpen({ ...temel, stats: { day: bugun, opens: 5, shownDay: bugun } })).toBe(false);
+    expect(a.shouldShowAppOpen({ ...temel, stats: { day: bugun, opens: 2, shownDay: dun } })).toBe(true);
+  });
+
+  it('açılış sayacı gün değişince sıfırlanır; eski biçimli kayıt ilk açılış sayılır', () => {
+    const ilk = a.countAppOpen({ day: null, opens: 0, shownDay: null }, simdi);
+    expect(ilk).toEqual({ day: bugun, opens: 1, shownDay: null });
+    expect(a.countAppOpen(ilk, simdi + SAAT).opens).toBe(2);
+    expect(a.countAppOpen({ day: dun, opens: 7, shownDay: dun }, simdi)).toEqual({ day: bugun, opens: 1, shownDay: dun });
+  });
+
+  it('geç yüklenen reklam gösterilmez; Pro, vakit penceresi ya da ödüllü reklamsızlık engeller', () => {
+    expect(a.shouldShowAppOpen({ ...temel, sinceLaunchMs: 5000 })).toBe(false);
+    expect(a.shouldShowAppOpen({ ...temel, allowed: false })).toBe(false);
+  });
+
+  it('ödül 4 saat reklamsızlık verir, süre dolunca biter (5 Ekim: 24 → 4 saat)', () => {
+    const bitis = a.rewardAdFreeUntil(0);
+    expect(a.isAdFree(bitis, 3.9 * SAAT)).toBe(true);
+    expect(a.isAdFree(bitis, 4 * SAAT)).toBe(false);
+    expect(a.isAdFree(null, 0)).toBe(false);
+  });
+});
+
+describe('ekran geçişinde tam ekran reklam (1 Ekim)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const a = require('@/features/pro/ads') as typeof import('@/features/pro/ads');
+  it('Kur’an okuyucuya girerken asla', () => {
+    expect(a.isNavAdExcluded('/reader')).toBe(true);
+    expect(a.isNavAdExcluded('/reader?surah=2&ayah=255')).toBe(true);
+    expect(a.isNavAdExcluded('/qibla')).toBe(false);
+    expect(a.isNavAdExcluded('/recitation')).toBe(false);
+  });
+  it('en az dört geçişte bir; geçiş yüzeyi reklamsız yüzeylerden değil', () => {
+    expect(a.navInterstitialDue(3)).toBe(false);
+    expect(a.navInterstitialDue(4)).toBe(true);
+    expect(a.AD_FREE_SURFACES).not.toContain('navigation');
+  });
+});
+
+describe('Pro erişimi — lansman, deneme, satın alma (1 Ekim)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { proAccess } = require('@/features/pro/access') as typeof import('@/features/pro/access');
+  const now = Date.parse('2026-10-20T12:00:00Z');
+  const gun = 86400000;
+  it('satış kapalıyken (1.0) herkes Pro özelliklerine erişir', () => {
+    expect(proAccess({ purchased: false, salesEnabled: false, trialEndsAt: null, now })).toMatchObject({ has: true, reason: 'launch' });
+  });
+  it('satış açıkken deneme sürüyorsa erişim var, kalan gün yukarı yuvarlanır', () => {
+    expect(proAccess({ purchased: false, salesEnabled: true, trialEndsAt: now + 13.2 * gun, now })).toMatchObject({ has: true, reason: 'trial', trialDaysLeft: 14 });
+  });
+  it('deneme bitince kilitlenir ve bir daha önerilmez', () => {
+    expect(proAccess({ purchased: false, salesEnabled: true, trialEndsAt: now - 1, now })).toMatchObject({ has: false, reason: 'none', trialUsed: true });
+  });
+  it('giriş yok, deneme hiç başlamamış: kilitli ama deneme hakkı duruyor', () => {
+    expect(proAccess({ purchased: false, salesEnabled: true, trialEndsAt: null, now })).toMatchObject({ has: false, trialUsed: false });
+  });
+  it('satın alan her durumda erişir', () => {
+    expect(proAccess({ purchased: true, salesEnabled: true, trialEndsAt: now - gun, now })).toMatchObject({ has: true, reason: 'purchased' });
+  });
+  it('deneme reklamı kaldırmaz: reklam kararı yalnız satın almaya (usePro) bakar', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { readFileSync } = require('node:fs') as typeof import('node:fs');
+    const banner = readFileSync(require.resolve('@/features/pro/AdBanner.tsx'), 'utf8');
+    expect(banner).toMatch(/usePro\(\)/);
+    expect(banner).not.toMatch(/useProAccess/);
+  });
+});
+
+describe('ödüllü reklam metinleri süreyle aynı (5 Ekim: alt yazı "bir gün" kalmıştı)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { REWARD_AD_FREE_MS } = require('@/features/pro/ads') as typeof import('@/features/pro/ads');
+  const saat = String(REWARD_AD_FREE_MS / 3600000);
+  for (const dil of ['tr', 'en', 'de', 'fr', 'ar']) {
+    it(`${dil}: başlık, açıklama ve tanıtım süreyi (${saat} saat) söylüyor`, () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const m = require(`@/lib/i18n/strings/${dil}`) as Record<string, Record<string, string>>;
+      const s = Object.values(m).find((v) => v && typeof v === 'object' && 'reward.body' in v)!;
+      for (const k of ['reward.title', 'reward.body', 'reward.renewTitle', 'reward.renewBody', 'tour.profile3.body']) {
+        expect({ k, ok: new RegExp(`(^|[^0-9])${saat}([^0-9]|$)`).test(s[k]!) }).toEqual({ k, ok: true });
+      }
+    });
+  }
+});
+
+describe('şerit reklam yerleşimi (7 Ekim)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { readFileSync } = require('node:fs') as typeof import('node:fs');
+  it('yalnız ana sayfa sekmesinde ve küçük (320×50) boyutta', () => {
+    const duzen = readFileSync(require.resolve('../app/(tabs)/_layout.tsx'), 'utf8');
+    expect(duzen).toMatch(/BANNER_SEKMESI = 'index'/);
+    expect(duzen).toMatch(/=== BANNER_SEKMESI \? <AdBanner/);
+    const banner = readFileSync(require.resolve('@/features/pro/AdBanner.tsx'), 'utf8');
+    expect(banner).toMatch(/size=\{BannerAdSize\.BANNER\}/);
+    expect(banner).not.toMatch(/ADAPTIVE/);
+  });
+});

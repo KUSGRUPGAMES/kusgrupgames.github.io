@@ -1,0 +1,153 @@
+/**
+ * Vakitte ezan — D29.
+ *
+ * - **Uygulama ön planda değilken** (kapalı, arka planda ya da ekran
+ *   kilitliyken): vakit bildirimi pakete gömülü ezanın ilk ~16,1 saniyesini
+ *   çalar (iOS bildirim sesine en çok 30 sn izin verir). O sesi sistem
+ *   çalar; uygulama müdahale edemez — ve etmemeli: arka planda sıfırdan
+ *   bir ses oturumu başlatmak iOS'ta güvenilir değil (bkz. `presentation.ts`).
+ * - **Uygulama gerçekten ön plandayken** (`AppState === 'active'`):
+ *   bildirim sessiz gösterilir, ezanın **tamamı** burada çalınır. Üstte
+ *   "Durdur" çubuğu çıkar; telefonun ses tuşlarından birine basmak da
+ *   ezanı susturur (müsait olmayan kullanıcı için).
+ *
+ * Görünmez olduğunda hiçbir şey çizmez; uygulama ağacında bir kez durur.
+ */
+import React, { useEffect, useRef } from 'react';
+import { AppState, Pressable, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Notifications from 'expo-notifications';
+import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
+import type { VolumeManager as VolumeManagerType } from 'react-native-volume-manager';
+import { Icon, Text } from '@/ui';
+import { useTheme } from '@/theme/ThemeProvider';
+import { useT } from '@/lib/i18n';
+import { useSettingsStore } from '@/store/settings';
+import { logger } from '@/lib/log';
+import { useEzanStore } from './ezanStore';
+import { ezanBildirimKarari } from './presentation';
+import ezanTam from '../../../assets/sounds/ezan_tam.m4a';
+
+const log = logger('ezan');
+/** Kısa ezanın süresi: ilk tekbir çifti (ses dosyalarındaki kesimle aynı). */
+const KISA_SANIYE = 16.5;
+
+export function EzanOkuyucu() {
+  const t = useT();
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  const { caliyor, vakit, istek, durdur, bitti } = useEzanStore();
+  // Uygulama içinde: kapalı / kısa (ilk tekbir) / tam (5 Ekim).
+  const icMod = useSettingsStore((s) => (s.settings.notifications.ezan ? s.settings.notifications.ezanInApp : 'off'));
+  const ezanAcik = icMod !== 'off';
+  const icModRef = useRef(icMod);
+  icModRef.current = icMod;
+  const oynatici = useRef<AudioPlayer | null>(null);
+  const ezanAcikRef = useRef(ezanAcik);
+  ezanAcikRef.current = ezanAcik;
+
+  // Ön plandaki bildirim: ezanlıysa sessiz gösterilir ve tam ezan burada
+  // başlar; diğerleri kendi sesiyle gösterilir. Eskiden hiç işleyici yoktu
+  // ve uygulama açıkken gelen bildirim hiç görünmüyordu.
+  //
+  // `AppState.currentState` burada **şart**: bu işleyici uygulama arka
+  // planda (ekran kilitli ama süreç hâlâ bellekteyken) da tetiklenebiliyor.
+  // Yalnız `ezanli`ye bakan eski hâli o durumda da sistemin sesini
+  // susturup uygulama içi oynatıcıyı başlatmaya çalışıyordu — ama arka
+  // planda sıfırdan başlayan bir ses oturumu duyulacağı garanti değil,
+  // sonuç: kullanıcı hiç ses duymuyordu ("sına'ya basıp ekranı hemen
+  // kilitleyince ezan okumuyor" şikâyetinin kök nedeni). Artık yalnız
+  // uygulama gerçekten ön plandaysa (`active`) sistem sesi susturulup
+  // içeride çalınıyor; aksi halde pakete gömülü ezan sesini (ezankisa/ezanuzun.caf) sistem çalsın
+  // diye dokunulmuyor.
+  useEffect(() => {
+    Notifications.setNotificationHandler({
+      handleNotification: async (n) => {
+        const ezanli = (n.request.content.data as { ezan?: unknown } | undefined)?.ezan === true;
+        const onPlanda = AppState.currentState === 'active';
+        const { uygulamaIcindeCal, sistemSesiCalsin } = ezanBildirimKarari(ezanli, ezanAcikRef.current, onPlanda);
+        if (uygulamaIcindeCal) useEzanStore.getState().baslat(n.request.content.title ?? null);
+        return {
+          shouldShowBanner: true, shouldShowList: true,
+          shouldPlaySound: sistemSesiCalsin, shouldSetBadge: false,
+        };
+      },
+    });
+  }, []);
+
+  // Oynatıcı burada, ilk ezan gerçekten çalınacağı an kurulur — `caliyor`
+  // hep `false`yken (uygulamanın neredeyse tüm ömrü) `createAudioPlayer`
+  // hiç çağrılmaz. Eskiden ayrı bir effect uygulama her açıldığında,
+  // ezan çalıp çalmayacağına bakılmaksızın native oynatıcıyı kuruyordu;
+  // ses tuşu dinleyicisiyle aynı sınıftan bir hataydı (bkz. aşağıdaki not)
+  // ve açılışta zaman zaman aynı "TurboModuleManager" kilitlenmesine yol
+  // açıyordu — bazen kazanıp açılıyor, bazen kaybedip kırmızı ekran
+  // veriyordu. `istek` bağımlılığı sayesinde çalarken gelen ikinci bir
+  // "baslat" isteği oynatıcıyı yeniden kurmadan baştan başlatır.
+  useEffect(() => {
+    if (!caliyor) { oynatici.current?.pause(); return undefined; }
+    let p = oynatici.current;
+    if (!p) { p = createAudioPlayer(ezanTam); oynatici.current = p; }
+    const sub = p.addListener('playbackStatusUpdate', (s) => {
+      // Kısa ezan: ilk "Allahu ekber Allahu ekber"den sonra susar (önizleme hariç: vakit === null).
+      if (s.didJustFinish || (icModRef.current === 'short' && vakit !== null && s.currentTime >= KISA_SANIYE)) {
+        p?.pause(); bitti();
+      }
+    });
+    void setAudioModeAsync({ playsInSilentMode: true }).catch(() => log.warn('ses kipi ayarlanamadı'));
+    void p.seekTo(0).then(() => p!.play()).catch((e: unknown) => log.warn('ezan çalınamadı', { error: e }));
+    return () => { sub.remove(); };
+  }, [caliyor, istek, bitti, vakit]);
+
+  useEffect(() => () => { oynatici.current?.remove(); oynatici.current = null; }, []);
+
+  // Ses tuşları: çalarken herhangi bir ses değişimi ezanı durdurur.
+  //
+  // `react-native-volume-manager` modülü, dosyasının en üstünde
+  // `NativeModules.VolumeManager`'a dokunuyor (bkz. kütüphanenin
+  // `module.ts` dosyası); bu da native tarafta gizli bir `MPVolumeView`
+  // oluşturup pencereye ekliyor. Dosya en üstte `import` edilseydi bu,
+  // uygulama daha açılırken (pencere hazır olmadan, ana ekran
+  // render olmadan) tetiklenir ve Yeni Mimari'de köprü kurulumunu kilitleyip
+  // "TurboModuleManager: Timed out waiting for modules to be invalidated"
+  // ile açılışta kırmızı ekrana yol açardı (bu bir kez yaşandı). Modülü
+  // yalnızca ezan gerçekten çalarken, burada, gecikmeli (`import()`) ile
+  // yüklemek bunu önlüyor.
+  useEffect(() => {
+    if (!caliyor) return undefined;
+    let iptal = false;
+    let sub: { remove: () => void } | null = null;
+    void import('react-native-volume-manager').then(({ VolumeManager }: { VolumeManager: typeof VolumeManagerType }) => {
+      if (iptal) return;
+      try {
+        sub = VolumeManager.addVolumeListener(() => useEzanStore.getState().durdur());
+      } catch (e) {
+        log.warn('ses tuşu dinlenemiyor', { error: e });
+      }
+    }).catch((e: unknown) => log.warn('ses tuşu modülü yüklenemedi', { error: e }));
+    return () => { iptal = true; try { sub?.remove(); } catch { /* yok */ } };
+  }, [caliyor]);
+
+  if (!caliyor) return null;
+  return (
+    <View pointerEvents="box-none" style={{ position: 'absolute', top: insets.top + 8, left: 12, right: 12 }}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t('ezan.stop')}
+        onPress={durdur}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 18,
+          backgroundColor: theme.colors.accentSurface, borderWidth: 1, borderColor: theme.colors.onAccentHighlight,
+          shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 8 }}
+      >
+        <Icon name="mosque" size={26} color={theme.colors.onAccentHighlight} />
+        <View style={{ flex: 1 }}>
+          <Text variant="bodyStrong" tone="onAccent" lines={1}>{vakit ?? t('ezan.playing')}</Text>
+          <Text variant="caption" tone="onAccent" lines={1}>{t('ezan.stopHint')}</Text>
+        </View>
+        <View style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, backgroundColor: theme.colors.onAccentHighlight }}>
+          <Text variant="bodyStrong" style={{ color: theme.colors.accentSurface }}>{t('ezan.stop')}</Text>
+        </View>
+      </Pressable>
+    </View>
+  );
+}

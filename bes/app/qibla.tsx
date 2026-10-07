@@ -1,5 +1,6 @@
 /** Kıble ekranı — şartname §36, §79, §81. */
 import React, { useEffect, useMemo, useRef } from 'react';
+import { Linking } from 'react-native';
 import { router, Stack } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import {
@@ -43,7 +44,7 @@ export default function QiblaScreen() {
 
   if (!konum) {
     return (
-      <Screen>
+      <Screen topInset={false}>
         <Stack.Screen options={{ headerShown: true, title: t('qibla.title') }} />
         <EmptyState
           icon="compass"
@@ -62,7 +63,7 @@ export default function QiblaScreen() {
       : t('qibla.accuracyLow');
 
   return (
-    <Screen scroll motif="octagonGrid">
+    <Screen topInset={false} scroll motif="octagonGrid">
       <Stack.Screen options={{ headerShown: true, title: t('qibla.title') }} />
 
       <SectionHeader title={konum.label} subtitle={konum.country} />
@@ -111,7 +112,10 @@ export default function QiblaScreen() {
       </Card>
 
       <Column gap="md" style={{ marginTop: theme.spacing.lg }}>
-        {!compass.available ? (
+        {compass.permissionDenied ? (
+          <Banner tone="warning" title={t('qibla.permissionTitle')} description={t('qibla.permissionBody')}
+            actionLabel={t('qibla.openSettings')} onAction={() => { void Linking.openSettings(); }} />
+        ) : !compass.available ? (
           <Banner tone="warning" title={t('qibla.title')} description={t('qibla.noCompass')} />
         ) : null}
         {compass.interference ? (

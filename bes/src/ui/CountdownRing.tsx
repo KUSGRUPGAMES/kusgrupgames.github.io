@@ -13,7 +13,7 @@ export interface CountdownRingProps {
   size?: number;
   thickness?: number;
   color?: string;
-  /** Halkanın yatağı. Marka kartının üstünde `onAccentBorder` verilir. */
+  /** Halkanın yatağı. Marka kartının üstünde `onAccentTrack` verilir (altın tonlu). */
   trackColor?: string;
   children?: React.ReactNode;
   accessibilityLabel?: string;

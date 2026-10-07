@@ -6,6 +6,8 @@
  */
 import { create } from 'zustand';
 import type { Place, SavedLocation } from '@/features/location/types';
+import { matchDistrict } from '@/features/location/search';
+import { placeLabel } from '@/features/location/places';
 
 interface LocationState {
   locations: SavedLocation[];
@@ -34,7 +36,9 @@ export const useLocationStore = create<LocationState>((set, get) => ({
   hydrated: false,
 
   hydrate: (locations, activeId) => set({
-    locations: normalizePrimary(locations),
+    // Eski kayıtlar (5 Ekim öncesi, Diyanet kimliksiz Türkiye konumları) en
+    // yakın Diyanet ilçesine bağlanır; ad ve koordinat korunur.
+    locations: normalizePrimary(locations.map(diyanetKimligiEkle)),
     activeId: activeId ?? locations.find((l) => l.isPrimary)?.id ?? locations[0]?.id ?? null,
     hydrated: true,
   }),
@@ -43,7 +47,7 @@ export const useLocationStore = create<LocationState>((set, get) => ({
     const mevcut = get().locations;
     const kayit: SavedLocation = {
       ...place,
-      label: options.label ?? place.name,
+      label: options.label ?? placeLabel(place),
       origin: options.origin ?? 'manual',
       isPrimary: options.makePrimary ?? mevcut.length === 0,
       savedAt: Date.now(),
@@ -83,3 +87,9 @@ export const useLocationStore = create<LocationState>((set, get) => ({
       ?? null;
   },
 }));
+
+function diyanetKimligiEkle(l: SavedLocation): SavedLocation {
+  if (l.diyanetId || l.countryCode !== 'TR') return l;
+  const ilce = matchDistrict(l);
+  return ilce?.diyanetId ? { ...l, diyanetId: ilce.diyanetId, ...(ilce.province ? { province: ilce.province } : {}) } : l;
+}

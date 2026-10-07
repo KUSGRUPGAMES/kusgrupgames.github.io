@@ -42,6 +42,9 @@ const FILDISI = '#FBF6EC';
 const ALTIN = '#D3B685';
 
 function tarayiciYolu() {
+  // Mac'te Playwright dizini yok; kurulu Google Chrome kullanılır.
+  const mac = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  if (!process.env.PLAYWRIGHT_BROWSERS_PATH && process.platform === 'darwin' && fs.existsSync(mac)) return mac;
   const taban = process.env.PLAYWRIGHT_BROWSERS_PATH || '/opt/pw-browsers';
   const dizin = fs.readdirSync(taban).find((d) => /^chromium-\d+$/.test(d));
   if (!dizin) throw new Error(`Chromium bulunamadı: ${taban}`);
@@ -53,16 +56,16 @@ function tarayiciYolu() {
  * mağazada kaydırmadan görünür; en güçlü iki ekran oraya konur.
  */
 const KARELER = [
-  { dosya: 'acik/10-ana-sayfa.png', baslik: 'Vakti hiç kaçırma', alt: 'Beş vakit, saniye saniye geri sayım', etiket: 'NAMAZ VAKİTLERİ' },
-  { dosya: 'acik/20-okuyucu.png', baslik: 'Kur’an-ı Kerim', alt: '6.236 âyet, Elmalılı meali, 18 okuyucu', etiket: 'KUR’AN' },
-  // Kıble ekranı bilerek seçilmedi: tarayıcıda pusula olmadığı için kare
-  // "Pusula okunamıyor" uyarısıyla çıkıyor ve mağazada kusur gibi duruyor.
-  // Özellik açıklamada anlatılıyor; gerçek cihazda kare çekilince eklenir.
-  { dosya: 'acik/40-vakit-takvimi.png', baslik: 'Ay boyu takvim', alt: 'Otuz günün vakitleri tek ekranda', etiket: 'TAKVİM' },
-  { dosya: 'acik/31-zikir.png', baslik: 'Zikirmatik', alt: 'Hedef belirle, seriyi sürdür', etiket: 'ZİKİR' },
-  { dosya: 'koyu/10-ana-sayfa.png', baslik: 'Koyu tema', alt: 'Gece okumak için dinlendirici', etiket: 'GÖRÜNÜM' },
-  { dosya: 'acik/54-ramazan.png', baslik: 'Ramazan', alt: 'İmsaktan iftara, ay boyu imsakiye', etiket: 'RAMAZAN' },
-  { dosya: 'acik/51-ibadet-gunlugu.png', baslik: 'İbadet defteri', alt: 'Kaza, oruç ve hatim tek yerde', etiket: 'TAKİP' },
+  // Hepsi `vitrin` geçişinden: koyu tema + üç haftalık örnek kullanım
+  // (tools/preview.js → tohumla). Açık temanın kareleri mağazaya konmaz.
+  { dosya: 'vitrin/10-ana-sayfa.png', baslik: 'Vakti hiç kaçırma', alt: 'Beş vakit, saniye saniye geri sayım, Dinamik Ada', etiket: 'NAMAZ VAKİTLERİ' },
+  { dosya: 'vitrin/20-okuyucu.png', baslik: 'Kur’an-ı Kerim', alt: '6.236 âyet, Elmalılı meali, 18 okuyucu', etiket: 'KUR’AN' },
+  { dosya: 'vitrin/31-zikir.png', dosya2: 'vitrin/32-zikir-istatistik.png', baslik: 'Zikirmatik ve istatistik', alt: 'Hedef belirle, seriyi sürdür, gelişimini gör', etiket: 'ZİKİR' },
+  { dosya: 'vitrin/13-ogren.png', dosya2: 'vitrin/18-elifba.png', baslik: 'Kur’an okumayı öğren', alt: 'Elifbâdan kısa surelere 31 sesli ders', etiket: 'ÖĞREN' },
+  { dosya: 'vitrin/51-ibadet-gunlugu.png', dosya2: 'vitrin/57-ibadet-istatistik.png', baslik: 'İbadet defteri ve istatistik', alt: 'Namaz, Kur’an, oruç ve kaza tek yerde', etiket: 'TAKİP' },
+  // Topluluk kareleri demo hesapla çekilir (gerçek kullanıcı içeriği girmez); bkz. RELEASE_CHECKLIST.
+  { dosya: 'vitrin/82-hatim-grubu.png', dosya2: 'vitrin/81-dua-panosu.png', baslik: 'Topluluk ve hatim grubu', alt: 'Dua panosu, sohbet odaları, birlikte hatim', etiket: 'TOPLULUK' },
+  { dosya: 'vitrin/43-hatirlatici.png', dosya2: 'vitrin/44-bildirim-merkezi.png', baslik: 'Özel bildirimler', alt: 'Kur’an okuma ve vakit hatırlatıcıları, ezan sesiyle', etiket: 'BİLDİRİMLER' },
 ];
 
 const HEDEFLER = [
@@ -143,7 +146,7 @@ const KAYNAK_ORAN = 1688 / 780;        // denetim karelerinin en-boy oranı
 const GORUNEN = 0.89;                   // ekranın görünen kısmı; kalanı taşar
 const METIN_ORANI = 0.30;               // karenin üst %30'u metne ayrılır
 
-function kareHtml({ w, h, baslik, alt, etiket, resim }) {
+function kareHtml({ w, h, baslik, alt, etiket, resim, resim2 }) {
   const k = w / 1290;                   // tipografi tek orandan türer
   const bezel = Math.round(16 * k);
   const radius = Math.round(76 * k);
@@ -177,6 +180,11 @@ function kareHtml({ w, h, baslik, alt, etiket, resim }) {
          box-shadow:0 ${Math.round(46 * k)}px ${Math.round(110 * k)}px rgba(0,0,0,.55),
                     inset 0 0 0 ${Math.max(1, Math.round(2 * k))}px rgba(211,182,133,.22)}
   .cihaz img{display:block;width:100%;border-radius:${radius - bezel}px ${radius - bezel}px 0 0}
+  /* İki ekranlı kare: ikisi de küçülür; soldaki geride ve aşağıda, sağdaki
+     önde. Tek telefonla aynı yükseklikten başlar ki kareler arası hizalı kalsın. */
+  .cift .cihaz{width:${Math.round(w * 0.58)}px;padding:${Math.round(bezel * 0.8)}px ${Math.round(bezel * 0.8)}px 0}
+  .cift .sol{left:${Math.round(w * 0.30)}px;top:${yaziAlani + Math.round(150 * k)}px}
+  .cift .sag{left:${Math.round(w * 0.70)}px;top:${yaziAlani}px}
   </style>
   ${desen(k)}
   <div class="yazi">
@@ -185,7 +193,9 @@ function kareHtml({ w, h, baslik, alt, etiket, resim }) {
     <div class="cizgi"></div>
     <p>${kacis(alt)}</p>
   </div>
-  <div class="cihaz"><img src="${gomulu(resim)}"></div>`;
+  ${resim2
+    ? `<div class="cift"><div class="cihaz sol"><img src="${gomulu(resim)}"></div><div class="cihaz sag"><img src="${gomulu(resim2)}"></div></div>`
+    : `<div class="cihaz"><img src="${gomulu(resim)}"></div>`}`;
 }
 
 /**
@@ -222,7 +232,7 @@ function ozellikHtml(w, h, logo) {
 }
 
 (async () => {
-  if (!fs.existsSync(path.join(KAYNAK, 'acik'))) {
+  if (!fs.existsSync(path.join(KAYNAK, 'vitrin'))) {
     console.error(`Denetim kareleri yok: ${KAYNAK}\n  npm run preview`);
     process.exit(1);
   }
@@ -238,9 +248,12 @@ function ozellikHtml(w, h, logo) {
     fs.mkdirSync(dizin, { recursive: true });
     for (const [i, kare] of KARELER.entries()) {
       const resim = path.join(KAYNAK, kare.dosya);
-      if (!fs.existsSync(resim)) throw new Error(`kaynak kare yok: ${resim}`);
+      const resim2 = kare.dosya2 ? path.join(KAYNAK, kare.dosya2) : undefined;
+      for (const r of [resim, resim2].filter(Boolean)) {
+        if (!fs.existsSync(r)) throw new Error(`kaynak kare yok: ${r}`);
+      }
       const page = await browser.newPage({ viewport: { width: hedef.w, height: hedef.h } });
-      await page.setContent(kareHtml({ ...hedef, ...kare, resim }), { waitUntil: 'load' });
+      await page.setContent(kareHtml({ ...hedef, ...kare, resim, resim2 }), { waitUntil: 'load' });
       await page.waitForTimeout(400);
       const ad = `${String(i + 1).padStart(2, '0')}-${kare.baslik.toLowerCase().replace(/[^a-z0-9]+/gi, '-')}.png`;
       await page.screenshot({ path: path.join(dizin, ad) });

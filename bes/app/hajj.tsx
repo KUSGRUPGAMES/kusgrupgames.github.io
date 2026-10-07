@@ -28,7 +28,7 @@ export default function HajjScreen() {
   const tamam = HAJJ_CHECKLIST.filter((i) => hazir[i.id]).length;
 
   return (
-    <Screen scroll motif="arch">
+    <Screen topInset={false} scroll motif="arch">
       <Stack.Screen options={{ headerShown: true, title: t('hajj.title') }} />
 
       <Banner tone="info" title={t('hajj.offline')} description={HAJJ_NOTE} />

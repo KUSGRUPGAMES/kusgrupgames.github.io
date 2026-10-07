@@ -112,3 +112,12 @@ describe('Kur’an veri erişimi', () => {
     loadQuran(paket);
   });
 });
+
+describe('meal verisi', () => {
+  it('hiçbir meal satırına tefsir paragrafı karışmamış', () => {
+    // Tanzil tr.yazir'de Yûsuf 101'in sonuna `{*}` ile tefsir eklenmişti;
+    // içe aktarma artık işaretten sonrasını atıyor.
+    const meal = JSON.parse(readFileSync(join(__dirname, '..', 'assets', 'quran', 'translations', 'tr-yazir.json'), 'utf8')) as { rows: string[] };
+    expect(meal.rows.filter((r) => r.includes('{*}'))).toEqual([]);
+  });
+});

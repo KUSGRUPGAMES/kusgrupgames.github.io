@@ -11,7 +11,7 @@
 export type DuaCategory =
   | 'sabah' | 'aksam' | 'yemek' | 'yolculuk' | 'uyku' | 'hastalik'
   | 'sikinti' | 'sukur' | 'rizik' | 'ilim' | 'aile' | 'tovbe'
-  | 'korunma' | 'vefat';
+  | 'korunma' | 'vefat' | 'iman';
 
 export const DUA_CATEGORIES: readonly { id: DuaCategory; label: string }[] = [
   { id: 'sabah', label: 'Sabah' },
@@ -28,6 +28,7 @@ export const DUA_CATEGORIES: readonly { id: DuaCategory; label: string }[] = [
   { id: 'tovbe', label: 'Tövbe ve bağışlanma' },
   { id: 'korunma', label: 'Korunma' },
   { id: 'vefat', label: 'Vefat ve taziye' },
+  { id: 'iman', label: 'İman ve hidayet' },
 ];
 
 export interface Dua {

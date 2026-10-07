@@ -23,6 +23,7 @@ import type { Bookmark, ReadingPosition } from '@/store/reading';
 import type { WorshipSnapshot, QadaSlot, WorshipDay, FastDay, Khatm } from '@/store/worship';
 import type { DhikrSession } from '@/features/dhikr/stats';
 import type { Reminder } from '@/features/notifications/reminders';
+import type { LessonResult } from '@/store/learning';
 
 export const BACKUP_FORMAT = 'bes.backup';
 /** Biçim sürümü. Okuyamadığımız bir sürüm sessizce yarım uygulanmaz, reddedilir. */
@@ -35,6 +36,8 @@ export interface BackupPayload {
   homeLayout: unknown;
   reading: { position: ReadingPosition | null; bookmarks: Bookmark[] };
   worship: WorshipSnapshot;
+  /** Kur'an okuma kursu ilerlemesi. Eski yedeklerde yoktur. */
+  learning?: LessonResult[];
 }
 
 export interface Backup {
@@ -89,6 +92,9 @@ const backupSchema = z.object({
       days: z.record(z.string(), z.object({ date: z.string() }).passthrough()).default({}),
       fasts: z.record(z.string(), z.object({ date: z.string() }).passthrough()).default({}),
     }),
+    learning: z.array(z.object({
+      lessonId: z.string(), stars: z.number().int().min(1).max(3), completedAt: zamanSchema,
+    })).optional(),
   }),
 });
 
@@ -311,6 +317,13 @@ export function restore(
     ? (incoming.worship.qada ?? {})
     : (current.worship.qada ?? {});
 
+  // --- Kurs ilerlemesi: ders başına en çok yıldız kalır.
+  const dersler = birlestir<LessonResult>(
+    current.learning ?? [], incoming.learning ?? [],
+    (d) => d.lessonId,
+    (a, b) => (b.stars > a.stars ? b : a),
+  ).list;
+
   return {
     payload: {
       settings: taze ? incoming.settings : current.settings,
@@ -327,6 +340,7 @@ export function restore(
         days: gunler,
         fasts: oruclar,
       },
+      learning: dersler,
     },
     report: rapor,
   };

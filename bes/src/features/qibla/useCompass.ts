@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import * as Location from 'expo-location';
-import { classifyAccuracy, type CompassAccuracy } from './calc';
+import { accuracyFromLevel, circularSpread, type CompassAccuracy } from './calc';
 
 export interface CompassState {
   /** Gerçek kuzeye göre yön (0–360). Okuma yoksa null. */
@@ -17,10 +17,16 @@ export interface CompassState {
   /** Manyetik girişim şüphesi: okuma çok oynak. */
   interference: boolean;
   available: boolean;
+  /**
+   * Konum izni reddedildi. iOS pusulayı (expo-location `watchDeviceHeading`)
+   * konum izni olmadan **hiç başlatmıyor**; şehir elle seçilince izin hiç
+   * istenmediği için ekran eskiden "bu cihazda pusula yok" diyordu.
+   */
+  permissionDenied: boolean;
 }
 
 const BASLANGIC: CompassState = {
-  heading: null, accuracy: 'unreliable', interference: false, available: true,
+  heading: null, accuracy: 'unreliable', interference: false, available: true, permissionDenied: false,
 };
 
 export function useCompass(enabled: boolean): CompassState {
@@ -38,6 +44,12 @@ export function useCompass(enabled: boolean): CompassState {
       // planda çalışmaya devam eder. AppState 'active' üst üste gelebilir.
       if (abone) return;
       try {
+        const izin = await Location.requestForegroundPermissionsAsync();
+        if (!canli) return;
+        if (izin.status !== 'granted') {
+          setState({ ...BASLANGIC, permissionDenied: true });
+          return;
+        }
         const yeni = await Location.watchHeadingAsync((h) => {
           if (!canli) return;
           // `trueHeading` yalnız konum izni varken gelir; yoksa manyetik kuzey.
@@ -49,16 +61,18 @@ export function useCompass(enabled: boolean): CompassState {
           const gecmis = sonOkumalar.current;
           gecmis.push(yon);
           if (gecmis.length > 8) gecmis.shift();
-          const yayilim = gecmis.length >= 4
-            ? Math.max(...gecmis) - Math.min(...gecmis)
-            : 0;
+          const yayilim = gecmis.length >= 4 ? circularSpread(gecmis) : 0;
 
           setState({
             heading: yon,
-            accuracy: classifyAccuracy(h.accuracy >= 0 ? h.accuracy * 15 : null),
+            accuracy: accuracyFromLevel(h.accuracy),
             interference: yayilim > 45,
             available: true,
+            permissionDenied: false,
           });
+        }, () => {
+          // Akış sırasında gelen hata sessizce yutulursa iğne donar kalırdı.
+          if (canli) setState({ ...BASLANGIC, available: false });
         });
         // Abonelik kurulurken ekran kapandıysa hemen bırakılır; yoksa
         // "pusula yalnız bu ekran açıkken çalışır" sözü tutulmaz.

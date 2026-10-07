@@ -14,8 +14,10 @@ const ARABIC_RANGE = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
 function containsArabicQuery(text: string): boolean {
   return ARABIC_RANGE.test(text);
 }
-import { DUAS, DUA_CATEGORIES } from '@/content/duas';
-import { KNOWLEDGE, KNOWLEDGE_TOPICS } from '@/content/knowledge';
+import { DUA_CATEGORIES } from '@/content/duas';
+import { allDuas } from '@/features/duas/pool';
+import { KNOWLEDGE_TOPICS } from '@/content/knowledge';
+import { allKnowledge } from '@/features/content/pools';
 import { DIVINE_NAMES } from '@/content/names';
 
 export type ResultKind = 'ayahRef' | 'surah' | 'ayahText' | 'translation' | 'dua' | 'name' | 'knowledge';
@@ -134,7 +136,7 @@ export function globalSearch(query: string, deps: GlobalSearchDeps, limit = 30):
   // 4. Dualar. Kategori adı da aranır: kullanıcı "yolculuk" yazdığında
   // "Yola çıkarken" duasını bulması beklenir.
   const duaKategori = new Map(DUA_CATEGORIES.map((c) => [c.id, c.label]));
-  for (const d of DUAS) {
+  for (const d of allDuas()) {
     const kategoriAdi = duaKategori.get(d.category) ?? '';
     const puan = Math.max(
       matchScore(d.title, ham),
@@ -149,7 +151,7 @@ export function globalSearch(query: string, deps: GlobalSearchDeps, limit = 30):
 
   // 5. Bilgi maddeleri — konu adı da aranır.
   const bilgiKonu = new Map(KNOWLEDGE_TOPICS.map((c) => [c.id, c.label]));
-  for (const k of KNOWLEDGE) {
+  for (const k of allKnowledge()) {
     const puan = Math.max(
       matchScore(k.title, ham),
       matchScore(bilgiKonu.get(k.topic) ?? '', ham),

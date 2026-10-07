@@ -1,4 +1,5 @@
 import { DIVINE_NAMES, DIVINE_NAME_COUNT } from '@/content/names';
+import { allDuas } from '@/features/duas/pool';
 import { DUAS, DUA_CATEGORIES } from '@/content/duas';
 import { KNOWLEDGE, KNOWLEDGE_TOPICS } from '@/content/knowledge';
 
@@ -36,7 +37,8 @@ describe('içerik bütünlüğü', () => {
 
   it('her dua kategorisinde en az bir dua vardır', () => {
     for (const c of DUA_CATEGORIES) {
-      const adet = DUAS.filter((d) => d.category === c.id).length;
+      // Ekranın gösterdiği birleşik liste: yazılmış + Kur'an duaları.
+      const adet = allDuas().filter((d) => d.category === c.id).length;
       expect({ kategori: c.id, bos: adet === 0 }).toEqual({ kategori: c.id, bos: false });
     }
   });

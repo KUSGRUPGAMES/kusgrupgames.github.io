@@ -4,7 +4,8 @@ import { Stack } from 'expo-router';
 import { Screen, SectionHeader, Card, Chip, Row, Column, Text, Field, EmptyState } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT } from '@/lib/i18n';
-import { KNOWLEDGE, KNOWLEDGE_TOPICS, type KnowledgeTopic } from '@/content/knowledge';
+import { KNOWLEDGE_TOPICS, type KnowledgeTopic } from '@/content/knowledge';
+import { useAllKnowledge } from '@/features/content/pools';
 import { normalizeSearch } from '@/features/location/normalize';
 
 export default function KnowledgeScreen() {
@@ -13,17 +14,18 @@ export default function KnowledgeScreen() {
   const [konu, setKonu] = useState<KnowledgeTopic | null>(null);
   const [sorgu, setSorgu] = useState('');
 
+  const bilgiler = useAllKnowledge();
   const liste = useMemo(() => {
     const q = normalizeSearch(sorgu);
-    return KNOWLEDGE.filter((k) => {
+    return bilgiler.filter((k) => {
       if (konu && k.topic !== konu) return false;
       if (!q) return true;
       return normalizeSearch(k.title).includes(q) || normalizeSearch(k.body).includes(q);
     });
-  }, [konu, sorgu]);
+  }, [konu, sorgu, bilgiler]);
 
   return (
-    <Screen scroll motif="octagonGrid">
+    <Screen topInset={false} scroll motif="octagonGrid">
       <Stack.Screen options={{ headerShown: true, title: t('knowledge.title') }} />
       <SectionHeader title={t('knowledge.topics')} />
 
@@ -32,7 +34,7 @@ export default function KnowledgeScreen() {
       <Row gap="sm" wrap style={{ marginTop: theme.spacing.md }}>
         <Chip label={t('common.all')} selected={konu === null} onPress={() => setKonu(null)} />
         {KNOWLEDGE_TOPICS.map((c) => (
-          <Chip key={c.id} label={c.label} selected={konu === c.id} onPress={() => setKonu(c.id)} />
+          <Chip key={c.id} label={t(`knowledge.topic.${c.id}`)} selected={konu === c.id} onPress={() => setKonu(c.id)} />
         ))}
       </Row>
 

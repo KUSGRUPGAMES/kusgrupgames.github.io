@@ -56,7 +56,11 @@ function ayikla(ham) {
     if (!s || s.startsWith('#')) continue;
     const parts = s.split('|');
     if (parts.length < 3) continue;
-    out.push({ surah: Number(parts[0]), ayah: Number(parts[1]), body: parts.slice(2).join('|').trim() });
+    // Tanzil'in tr.yazir baskısında Yûsuf 101'in sonuna `{*}` işaretinden
+    // sonra ~700 karakterlik tefsir paragrafı eklenmiş; meal değil, âyet
+    // kartına ve okuyucuya taşmamalı. İşaretten sonrası atılır.
+    const govde = parts.slice(2).join('|').split('{*}')[0].trim();
+    out.push({ surah: Number(parts[0]), ayah: Number(parts[1]), body: govde });
   }
   return out;
 }

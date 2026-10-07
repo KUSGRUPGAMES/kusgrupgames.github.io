@@ -9,3 +9,8 @@ declare module '*.png' {
   const kaynak: number;
   export default kaynak;
 }
+
+declare module '*.m4a' {
+  const value: number;
+  export default value;
+}

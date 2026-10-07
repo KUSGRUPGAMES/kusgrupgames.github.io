@@ -6,8 +6,9 @@
  * sayım saatlerce şaşar. Bu yüzden "şimdi" de konumun çerçevesine çevrilir
  * (`zonedNow`) ve mutlak anlar `wallClockToInstant` ile üretilir.
  */
+import { officialDay, hm, type OfficialTimes } from './official';
 import { zonedNow, offsetForDay, wallClockToInstant } from '@/lib/time/zone';
-import { computeTimes, findNext, findCurrent, type PrayerOptions, type PrayerTimes } from './calc';
+import { applyAdjustments, computeTimes, findNext, findCurrent, type PrayerOptions, type PrayerTimes } from './calc';
 import { PRAYER_KEYS, type PrayerKey } from './methods';
 import type { Coordinates } from '@/features/location/types';
 
@@ -15,6 +16,11 @@ export interface ScheduleInput extends Coordinates {
   /** IANA saat dilimi; null ise cihaz dilimi kullanılır. */
   timezone: string | null;
   options: PrayerOptions;
+  /**
+   * Diyanet ilçe kimliği (Türkiye). Yöntem Diyanet'se ve o gün için resmî
+   * vakit indirilmişse hesap yerine resmî vakit kullanılır (official.ts).
+   */
+  diyanetId?: string;
 }
 
 export interface PrayerEntry {
@@ -40,7 +46,11 @@ export function daySchedule(
   year: number, month: number, day: number,
 ): DaySchedule {
   const offset = offsetForDay(input.timezone, year, month, day, 0);
-  const times = computeTimes(year, month, day, input.latitude, input.longitude, offset, input.options);
+  const resmi = input.diyanetId && (input.options.method ?? 'diyanet') === 'diyanet'
+    ? officialDay(input.diyanetId, year, month, day) : null;
+  const times = resmi
+    ? applyAdjustments(officialToTimes(resmi), input.options.adjustments)
+    : computeTimes(year, month, day, input.latitude, input.longitude, offset, input.options);
   const entries: PrayerEntry[] = PRAYER_KEYS.map((key) => {
     const hours = times[key];
     return {
@@ -127,4 +137,9 @@ export function rangeSchedule(
     out.push(daySchedule(input, d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
   }
   return out;
+}
+
+/** Resmî "HH:MM" vakitleri ondalık saate çevirir. */
+function officialToTimes(r: OfficialTimes): PrayerTimes {
+  return { fajr: hm(r[0]), sunrise: hm(r[1]), dhuhr: hm(r[2]), asr: hm(r[3]), maghrib: hm(r[4]), isha: hm(r[5]) };
 }

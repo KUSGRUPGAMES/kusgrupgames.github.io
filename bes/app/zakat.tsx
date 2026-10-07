@@ -60,7 +60,7 @@ export default function ZakatScreen() {
   );
 
   return (
-    <Screen scroll motif="octagonGrid">
+    <Screen topInset={false} scroll motif="octagonGrid">
       <Stack.Screen options={{ headerShown: true, title: t('zakat.title') }} />
 
       <SectionHeader title={t('zakat.prices')} subtitle={t('zakat.priceHint')} />
@@ -95,7 +95,7 @@ export default function ZakatScreen() {
         {alan('essentialNeeds', t('zakat.essential'))}
       </Column>
 
-      <Card accent motif="starLattice" style={{ marginTop: theme.spacing.xl }}>
+      <Card accent style={{ marginTop: theme.spacing.xl }}>
         <Column gap="sm">
           <Row justify="space-between">
             <Text tone="onAccent">{t('zakat.nisab')}</Text>

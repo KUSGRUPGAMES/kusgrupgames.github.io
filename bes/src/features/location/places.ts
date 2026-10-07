@@ -9,6 +9,7 @@
  * saat kaydı.)
  */
 import type { Place } from './types';
+import { DIYANET_DISTRICTS } from '@/content/diyanetDistricts';
 
 /** Türkiye'nin 81 ili. Hepsi Europe/Istanbul. */
 export const TURKEY_PROVINCES: readonly Place[] = [
@@ -55,6 +56,34 @@ export const TURKEY_PROVINCES: readonly Place[] = [
   ['81', 'Düzce', 40.8438, 31.1565],
 ].map(([code, name, lat, lng]) => ({
   id: `tr-${code as string}`,
+  name: name as string,
+  country: 'Türkiye',
+  countryCode: 'TR',
+  timezone: 'Europe/Istanbul',
+  latitude: lat as number,
+  longitude: lng as number,
+}));
+
+/**
+ * İl merkezi olmayan ama nüfusça büyük ilçeler.
+ *
+ * `nearestPlace()` yalnız 81 il merkezine bakınca büyük bir ilçedeki kullanıcı
+ * en yakın il merkezine eşleniyor — bu bazen coğrafi olarak "en yakın" doğru
+ * olsa da (kuş uçuşu), il sınırını atlayıp yanlış hissettiriyor. Gerçek örnek:
+ * Gebze (Kocaeli, ~900 bin nüfus, Kocaeli merkezinden büyük) kuş uçuşu
+ * Kocaeli'den çok Yalova'ya yakın (körfezin karşı kıyısı) — kullanıcı
+ * "konumumu kullan" dediğinde Yalova çıkıyor, oysa Kocaeli'de yaşıyor.
+ *
+ * Bu liste **tüketici değil**: yalnız somut olarak bildirilen/doğrulanmış
+ * büyük ilçeleri içerir. Türkiye'nin ~973 ilçesinin tamamını buraya elle,
+ * doğrulanmamış koordinatlarla eklemek bir namaz vakti uygulaması için daha
+ * riskli — yanlış koordinat, yanlış vakit demek. Yeni bir ilçe eklerken
+ * koordinatı doğrulanmış bir kaynaktan alın.
+ */
+export const TURKEY_DISTRICTS: readonly Place[] = [
+  ['gebze', 'Gebze', 40.8025, 29.4306],
+].map(([id, name, lat, lng]) => ({
+  id: `tr-${id as string}`,
   name: name as string,
   country: 'Türkiye',
   countryCode: 'TR',
@@ -111,8 +140,33 @@ export const WORLD_CITIES: readonly Place[] = [
   longitude: lng as number,
 }));
 
-export const ALL_PLACES: readonly Place[] = [...TURKEY_PROVINCES, ...WORLD_CITIES];
+/**
+ * Türkiye: Diyanet'in ilçe listesi (5 Ekim). Her ilçe Diyanet kimliğini
+ * taşır; vakitler bu kimlikle Diyanet'ten alınır. İl merkezi kaydı (ilçe adı
+ * = il adı) Diyanet'in ayrıca listelemediği merkez ilçeleri de kapsar
+ * (ör. Ankara = Çankaya, Keçiören, Yenimahalle…).
+ */
+export const TURKEY_DIYANET: readonly Place[] = DIYANET_DISTRICTS.map(([id, il, ilce, lat, lng]) => ({
+  id: `tr-d-${id}`,
+  name: ilce === il ? il : ilce,
+  country: 'Türkiye',
+  countryCode: 'TR',
+  timezone: 'Europe/Istanbul',
+  latitude: lat,
+  longitude: lng,
+  diyanetId: id,
+  province: il,
+}));
 
+export const ALL_PLACES: readonly Place[] = [...TURKEY_DIYANET, ...WORLD_CITIES];
+
+/** Eski sürümlerin kimlikleri (tr-06, tr-gebze) de bulunur. */
 export function findPlace(id: string): Place | undefined {
-  return ALL_PLACES.find((p) => p.id === id);
+  return ALL_PLACES.find((p) => p.id === id)
+    ?? TURKEY_PROVINCES.find((p) => p.id === id) ?? TURKEY_DISTRICTS.find((p) => p.id === id);
+}
+
+/** Gösterim: "Pendik, İstanbul" — il merkezinde yalnız il adı. */
+export function placeLabel(p: Pick<Place, 'name' | 'province'>): string {
+  return p.province && p.province !== p.name ? `${p.name}, ${p.province}` : p.name;
 }

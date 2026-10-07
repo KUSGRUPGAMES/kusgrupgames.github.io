@@ -8,10 +8,12 @@ export interface ProgressBarProps {
   value: number;
   height?: number;
   color?: string;
+  /** Boş kısmın rengi; koyu zeminde varsayılan çizgi rengi dolu gibi görünür. */
+  track?: string;
   accessibilityLabel?: string;
 }
 
-export function ProgressBar({ value, height = 6, color, accessibilityLabel }: ProgressBarProps) {
+export function ProgressBar({ value, height = 6, color, track, accessibilityLabel }: ProgressBarProps) {
   const theme = useTheme();
   const v = Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0;
   return (
@@ -19,7 +21,7 @@ export function ProgressBar({ value, height = 6, color, accessibilityLabel }: Pr
       accessibilityRole="progressbar"
       {...(accessibilityLabel ? { accessibilityLabel } : {})}
       accessibilityValue={{ min: 0, max: 100, now: Math.round(v * 100) }}
-      style={{ height, borderRadius: theme.radius.pill, backgroundColor: theme.colors.border, overflow: 'hidden' }}
+      style={{ height, borderRadius: theme.radius.pill, backgroundColor: track ?? theme.colors.border, overflow: 'hidden' }}
     >
       <View style={{ width: `${v * 100}%`, height: '100%', backgroundColor: color ?? theme.colors.accent }} />
     </View>

@@ -1,5 +1,12 @@
 # Supabase kurulumu — v2'yi açmak için elle yapılacaklar
 
+> **Güncelleme:** Bu belgenin dört maddesinden ikisi — **dua kardeşliği
+> (topluluk)** ve **admin paneli** — artık kodda hazır ve kurulumu çok daha
+> basit: bkz. **`bes/COMMUNITY_SETUP.md`**. Aşağıdaki belge geri kalan iki
+> madde (**çoklu cihaz eşitleme** ve **AI asistan**) için hâlâ geçerli ve
+> henüz yapılmadı; topluluğu kurmak için bunu (Adım 3, 4.2, 8 hariç) baştan
+> takip etmene gerek yok, doğrudan `COMMUNITY_SETUP.md`ye geç.
+
 Bu belge **kullanıcı için** yazıldı; yazılımcı bilgisi gerektirmez. Sırayla
 takip et, her adımın sonunda "ne görmelisin" yazıyor.
 
@@ -7,9 +14,8 @@ takip et, her adımın sonunda "ne görmelisin" yazıyor.
 > anahtar ekranına yazılır (Adım 7). Ben oradan okumam bile gerekmez; derleme
 > akışı okur. Veritabanı parolanı da yalnız kendi parola yöneticine kaydet.
 
-Kurulum bitince v2'nin dört özelliği açılır: **çoklu cihaz eşitleme**,
-**dua kardeşliği (topluluk)**, **AI asistan**, **admin paneli**. Hiçbiri
-kapsamdan çıkarılmadı.
+Kurulum bitince v2'nin geri kalan iki özelliği açılır: **çoklu cihaz
+eşitleme** ve **AI asistan**.
 
 ---
 
@@ -20,17 +26,14 @@ projeyi duraklatır; duraklamış proje demek uygulamanın eşitlemesinin ölmes
 demektir. Üretim için **Pro katman (aylık 25 USD)** gerekiyor. AI asistan ayrıca
 kullanım başına ücretli (Anthropic API).
 
-**2. Topluluk özelliği moderasyon sorumluluğu getiriyor.** Apple'ın kullanıcı
-içeriği kuralı (App Review 1.2) dört şey istiyor: uygunsuz içeriği süzmek,
-şikâyet mekanizması, kullanıcı engelleme ve yayınlanmış bir iletişim adresi.
-Kodun üçünü de hazır; **şikâyetleri 24 saat içinde incelemek senin işin.**
-Bunu yapamayacağın bir dönem olursa topluluk özelliğini kapatabilmeliyiz —
-kapatma anahtarını koda koyacağım.
+**2. Moderasyon sorumluluğu.** Topluluk (dua panosu/sohbet) kuruluysa
+Apple'ın kullanıcı içeriği kuralı (App Review 1.2) gereği şikâyetleri
+incelemek senin işin — bunun kurulumu ve yönetici paneli `COMMUNITY_SETUP.md`de.
 
 **3. Gizlilik etiketin değişiyor.** Bugün App Store'da "Veri Toplanmıyor"
-yazıyor. Hesap + eşitleme + topluluk açılınca e-posta, ibadet kayıtları ve
-dua metinleri sunucuya çıkıyor; etiketleri ve gizlilik metinlerini ben
-güncelleyeceğim, ama bu bilinçli bir değişiklik — bilmeni istiyorum.
+yazıyor. Hesap + eşitleme açılınca e-posta ve ibadet kayıtların sunucuya
+çıkıyor; etiketleri ve gizlilik metinlerini ben güncelleyeceğim, ama bu
+bilinçli bir değişiklik — bilmeni istiyorum.
 
 ---
 
@@ -174,13 +177,10 @@ yapacağım — tamamı otomatik, senin bir şey yapman gerekmeyecek:
 - **Hesap ekranı**: e-posta ile giriş, çıkış, hesabı silme, verini indirme
 - **Eşitleme**: yazılmış ve sınanmış birleştirme motorunun (D12) üstüne taşıma
   katmanı; çevrimdışı öncelikli, çakışmada veri kaybı yok
-- **Dua kardeşliği**: anonim akış (`prayer_feed` görünümünde yazar kimliği
-  yok), âmin, şikâyet, engelleme, moderasyon kuyruğu ve **özelliği tamamen
-  kapatabilen anahtar**
 - **AI asistan**: Edge Function üzerinden, sunucu tarafında anahtar, kaynaklı
   cevap, günlük istek sınırı ve "dinî hüküm vermez" uyarısı
-- **Admin paneli**: içerik doğrulama akışı (taslak → yayın), moderasyon
-  kuyruğu, denetim günlüğü
+
+(Dua kardeşliği ve admin paneli zaten kuruldu — `COMMUNITY_SETUP.md`.)
 
 **Yasal ve mağaza**
 - Gizlilik etiketleri, `docs/bes/privacy.html`, `terms.html` ve mağaza

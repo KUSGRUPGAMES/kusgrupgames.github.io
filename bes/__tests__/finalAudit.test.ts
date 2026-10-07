@@ -65,8 +65,11 @@ describe('yönlendirme bütünlüğü', () => {
   it('kodda geçen her yönlendirme hedefi gerçekten var', () => {
     const hedefler = new Set<string>();
     for (const p of [...uygulamaDosyalari, ...kaynakDosyalari]) {
-      for (const m of oku(p).matchAll(/router\.(push|replace)\(\s*[`'"]\/([a-z-]+)/g)) {
-        hedefler.add(m[2]!);
+      // Doğrudan çağrılar ve tablo halinde tutulan hedefler (`href:`,
+      // `pathname:`) — İbadet ve Ana Sayfa kısayolları tablodan gezinir.
+      const kalip = /(?:router\.(?:push|replace|dismissTo)\(\s*|href:\s*|pathname:\s*)[`'"]\/(?:\(tabs\)\/)?([a-z-]+)/g;
+      for (const m of oku(p).matchAll(kalip)) {
+        hedefler.add(m[1]!);
       }
     }
     const olmayan = [...hedefler].filter(
@@ -75,8 +78,51 @@ describe('yönlendirme bütünlüğü', () => {
     expect(olmayan).toEqual([]);
   });
 
+  it('geri düğmesi bizim: iOS 26 yerleşik düğmesine bırakılmıyor', () => {
+    // react-native-screens 4.16 + iOS 26: başlığı gizli sekmelerden gelinen
+    // yığında yerleşik geri düğmesi birkaç gidiş-dönüşten sonra ölüyordu
+    // (software-mansion/react-native-screens#3294).
+    expect(kokDuzen).toContain('headerLeft:');
+    expect(kokDuzen).toContain('navigation.goBack()');
+  });
+
+  it('başlığı olan ekran üst güvenli alanı ikinci kez eklemiyor', () => {
+    // Başlık çubuğu güvenli alanı zaten kaplıyor; `topInset` açık kalırsa
+    // başlığın altında çentik yüksekliğinde boşluk açılıyor.
+    const hatali = uygulamaDosyalari
+      .filter((p) => !p.includes('(tabs)') && oku(p).includes('headerShown: true'))
+      .filter((p) => /<Screen(?![^>]*topInset=\{false\})[^>]*>/.test(oku(p)))
+      .map((p) => p.slice(ROOT.length + 1));
+    expect(hatali).toEqual([]);
+  });
+
+  it('her ekrana arama kullanmadan, en çok iki dokunuşla ulaşılıyor', () => {
+    // İslami bilgi sayfası yalnız aramadan bulunabiliyordu (kullanıcı
+    // bildirimi). Sekmelerden başlayıp yönlendirmeleri izleyen bir grafik
+    // kurulur; arama sonuçları (search/global.ts) kenar sayılmaz.
+    const kalip = /(?:router\.(?:push|replace|dismissTo)\(\s*\{?\s*(?:pathname:\s*)?|href:\s*|pathname:\s*)[`'"]\/(?:\(tabs\)\/)?([a-z-]+)/g;
+    const hedefler = (dosya: string) => [...oku(dosya).matchAll(kalip)].map((m) => m[1]!);
+    const sekmeDosyalari = uygulamaDosyalari.filter((p) => p.includes('(tabs)'));
+    const ekranYolu = (ad: string) => join(ROOT, 'app', `${ad}.tsx`);
+    // Ana sayfanın günlük kartları da sekmenin parçasıdır.
+    const kok = new Set([
+      ...sekmeDosyalari.flatMap(hedefler),
+      ...hedefler(join(ROOT, 'src', 'features', 'daily', 'components', 'DailyCards.tsx')),
+    ]);
+    const ikinci = new Set([...kok].flatMap((ad) => (existsSync(ekranYolu(ad)) ? hedefler(ekranYolu(ad)) : [])));
+    const ulasilan = new Set([...kok, ...ikinci]);
+    // auth-callback: menüden değil, Google girişinin dönüşünden açılır (D32).
+    const HARIC = new Set(['onboarding', '+not-found', '_layout', 'auth-callback']);
+    const eksik = readdirSync(join(ROOT, 'app'))
+      .filter((f) => f.endsWith('.tsx'))
+      .map((f) => f.replace(/\.tsx$/, ''))
+      .filter((ad) => !HARIC.has(ad) && !ulasilan.has(ad));
+    expect(eksik).toEqual([]);
+  });
+
   it('sekme ekranları eksiksiz', () => {
-    for (const ad of ['index', 'quran', 'worship', 'explore', 'profile']) {
+    // 1 Ekim: Öğren Kur'an sekmesinin içinde (app/learn.tsx), Topluluk sekme.
+    for (const ad of ['index', 'quran', 'worship', 'community', 'profile']) {
       expect({ ad, var: existsSync(join(ROOT, 'app', '(tabs)', `${ad}.tsx`)) })
         .toEqual({ ad, var: true });
     }

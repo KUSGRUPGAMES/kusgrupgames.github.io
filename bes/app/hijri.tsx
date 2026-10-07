@@ -48,10 +48,10 @@ export default function HijriScreen() {
   }, [girdi, yon]);
 
   return (
-    <Screen scroll motif="girih">
+    <Screen topInset={false} scroll motif="girih">
       <Stack.Screen options={{ headerShown: true, title: t('hijri.title') }} />
 
-      <Card accent motif="starLattice">
+      <Card accent>
         <Column gap="xs" align="center">
           <Text variant="callout" tone="onAccent">{t('hijri.today')}</Text>
           <Text variant="title1" tone="onAccent">

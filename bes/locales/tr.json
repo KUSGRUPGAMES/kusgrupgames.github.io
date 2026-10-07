@@ -1,0 +1,7 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "Namaz vakitleri ve kıble yönü bulunduğun konuma göre hesaplanır. İzin vermezsen şehri elle seçebilirsin.",
+    "NSMotionUsageDescription": "Kıble pusulası, telefonun yönünü okumak için hareket algılayıcısını kullanır.",
+    "NSUserTrackingUsageDescription": "Bu izin yalnız reklamların sana daha uygun olması için kullanılır. İzin vermezsen de reklamlar gösterilir, uygulamanın hiçbir özelliği kısıtlanmaz."
+  }
+}

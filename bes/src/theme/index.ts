@@ -2,7 +2,7 @@
  * Tema katmanı — açık ve koyu şema. Şartname §8.
  * Bileşenler yalnız `ThemeColors` rollerini kullanır; ham palet adı geçmez.
  */
-import { palette, spacing, radius, opacity, typography, duration, easing } from './tokens';
+import { palette, spacing, radius, opacity, typography, duration, easing, stroke, elevation } from './tokens';
 
 export interface ThemeColors {
   /** Ekranın en alt katmanı (gradyan çizilemeyen yerlerde düz karşılığı). */
@@ -10,7 +10,7 @@ export interface ThemeColors {
   /**
    * Ekran zemininin gradyan durakları — **yukarıdan aşağı**, tıpkı logonun
    * zemini gibi. Uygulama tek düz renk kullandığı için logonun yanında yavan
-   * duruyordu: masterın zemini üstte `#042B21`, altta `#000D08`.
+   * duruyordu: masterın zemini üstte `#023023`, altta `#01140B`.
    */
   backgroundGradient: readonly [string, string];
   /** Kart ve yüzeyler. */
@@ -73,8 +73,29 @@ export interface ThemeColors {
    * ayırt edilemiyordu (zekât ekranı).
    */
   controlBorder: string;
+  /**
+   * Marka kartı üstündeki halka/ilerleme yatağı.
+   *
+   * `onAccentBorder`den ayrıdır. O, kart içindeki kenarlıklar için soluk bir
+   * beyazdır; geri sayım halkasının yatağı ise **altın ailesinden** olmalı,
+   * yoksa halka gri bir çember gibi duruyor ve altın ilerleme yayı yatağa
+   * ait değilmiş gibi görünüyordu.
+   */
+  onAccentTrack: string;
   /** Arka plan motifi rengi (düşük opaklıkla kullanılır). */
   motif: string;
+  /**
+   * Kat basamakları. Koyu temada derinlik gölgeyle değil **yüzey tonuyla**
+   * verilir; gölge koyu zeminde görünmüyor ve bütün kartlar birbirine
+   * yapışık duruyordu.
+   */
+  kat1: string;
+  kat2: string;
+  kat3: string;
+  /** Bezeme hattı (kemer, madalyon, ayraç) — altın ailesinden. */
+  bezeme: string;
+  /** Bezemenin soluk hâli: ikincil hatlar, iç çizgiler. */
+  bezemeSolgun: string;
 }
 
 export interface Theme {
@@ -84,12 +105,14 @@ export interface Theme {
   radius: typeof radius;
   opacity: typeof opacity;
   typography: typeof typography;
+  stroke: typeof stroke;
+  elevation: typeof elevation;
   /** Süreler ms. Reduced-motion açıkken tema katmanı hepsini 0'a çeker. */
   duration: Record<keyof typeof duration, number>;
   easing: typeof easing;
 }
 
-const shared = { spacing, radius, opacity, typography, duration, easing };
+const shared = { spacing, radius, opacity, typography, duration, easing, stroke, elevation };
 
 export const lightTheme: Theme = {
   name: 'light',
@@ -99,7 +122,10 @@ export const lightTheme: Theme = {
     // Zemin markanın warmIvory'si: açık ikonun zeminiyle birebir aynı renk.
     background: palette.ivory100,
     backgroundGradient: [palette.ivory50, palette.ivory200],
-    surface: palette.ivory25,
+    // Kart zeminden açıkça ayrılsın: eskiden krem üstüne krem (ivory25 /
+    // ivory100) idi, kartlar sayfada kayboluyordu. Kart sıcak beyaz ve
+    // gölgeli (Card.tsx).
+    surface: palette.ivory0,
     surfaceRaised: palette.ivory200,
     border: palette.ivory300,
     hairline: palette.ivory300,
@@ -115,7 +141,13 @@ export const lightTheme: Theme = {
     onAccent: palette.ivory50,
     onAccentHighlight: palette.gold400,
     onAccentBorder: 'rgba(251,246,236,0.20)',
+    onAccentTrack: 'rgba(211,182,133,0.26)',
     highlight: palette.gold600,
+    kat1: palette.ivory25,
+    kat2: palette.ivory50,
+    kat3: palette.ivory200,
+    bezeme: palette.gold600,
+    bezemeSolgun: 'rgba(138,106,42,0.34)',
     danger: palette.danger,
     warning: palette.warning,
     success: palette.emerald500,
@@ -127,7 +159,7 @@ export const lightTheme: Theme = {
 export const darkTheme: Theme = {
   name: 'dark',
   colors: {
-    background: palette.emerald900,
+    background: palette.emerald950,
     backgroundGradient: [palette.emerald800, palette.emerald950],
     surface: palette.emerald850,
     surfaceRaised: palette.emerald700,
@@ -144,7 +176,13 @@ export const darkTheme: Theme = {
     onAccent: palette.ivory50,
     onAccentHighlight: palette.gold400,
     onAccentBorder: 'rgba(251,246,236,0.18)',
+    onAccentTrack: 'rgba(211,182,133,0.24)',
     highlight: palette.gold400,
+    kat1: palette.night850,
+    kat2: palette.night800,
+    kat3: palette.night700,
+    bezeme: palette.gold400,
+    bezemeSolgun: 'rgba(211,182,133,0.34)',
     danger: '#E0715A',
     warning: '#E0A052',
     success: palette.emerald300,

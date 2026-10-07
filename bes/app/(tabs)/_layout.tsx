@@ -1,15 +1,27 @@
 /**
  * Sekme düzeni — şartname §11.
- * Beş sekme: Ana Sayfa · Kuran · İbadet · Keşfet · Profil.
+ * Beş sekme: Vakitler · Kur'an · İbadet · Topluluk · Ayarlar (D25, 1 Ekim
+ * revizyonu: Öğren Kur'an sekmesinin içine taşındı, Topluluk sekme oldu).
  * Sekme adları çeviriden gelir; ikonlar kendi SVG setimizden.
  */
 import React from 'react';
 import { Tabs, Redirect } from 'expo-router';
+import { BottomTabBar } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useBoot } from '@/boot/AppProviders';
 import { useT } from '@/lib/i18n';
 import { Icon, Text, type IconName } from '@/ui';
 import { OfflineBanner } from '@/features/network/OfflineBanner';
+import { AdBanner } from '@/features/pro/AdBanner';
+import type { AdSurface } from '@/features/pro/ads';
+
+/** Sekme → reklam yüzeyi (ads.ts kuralları yüzeye göre). */
+const YUZEY: Record<string, AdSurface> = {
+  index: 'home', quran: 'quranList', worship: 'explore', community: 'explore', profile: 'profile',
+};
+
+/** Şerit reklamın göründüğü tek sekme (7 Ekim kararı). */
+const BANNER_SEKMESI = 'index';
 
 export default function TabsLayout() {
   const theme = useTheme();
@@ -32,7 +44,10 @@ export default function TabsLayout() {
    */
   const etiket = (anahtar: Parameters<typeof t>[0]) =>
     function TabLabel({ color }: { color: string }) {
-      return <Text variant="micro" lines={1} align="center" style={{ color }}>{t(anahtar)}</Text>;
+      // `lines` verilmez: tek satır sınırı metin kutusunu kırpıyor ve
+      // "Öğren"in noktalarıyla "Ayarlar"ın y kuyruğu kesiliyordu. Etiketler
+      // zaten tek kelime.
+      return <Text variant="micro" align="center" style={{ color }}>{t(anahtar)}</Text>;
     };
 
   // İlk açılışta onboarding'e yönlendirilir; sonraki açılışlarda görünmez (§12).
@@ -44,13 +59,21 @@ export default function TabsLayout() {
     <>
       <OfflineBanner />
       <Tabs
+        // Şerit reklam sekme çubuğunun hemen üstünde, sabit (1 Ekim kararı).
+        tabBar={(props) => (
+          <>
+            {/* 7 Ekim: şerit şimdilik yalnız ana sayfada. */}
+            {props.state.routes[props.state.index]?.name === BANNER_SEKMESI ? <AdBanner surface={YUZEY[BANNER_SEKMESI]!} sabit /> : null}
+            <BottomTabBar {...props} />
+          </>
+        )}
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: theme.colors.accent,
-          tabBarInactiveTintColor: theme.colors.textSubtle,
+          tabBarActiveTintColor: theme.colors.onAccentHighlight,
+          tabBarInactiveTintColor: theme.name === 'dark' ? theme.colors.textMuted : theme.colors.onAccent,
           tabBarStyle: {
-            backgroundColor: theme.colors.surface,
-            borderTopColor: theme.colors.border,
+            backgroundColor: theme.colors.accentGradient[1],
+            borderTopColor: theme.colors.bezemeSolgun,
           },
         }}
       >
@@ -67,12 +90,12 @@ export default function TabsLayout() {
           options={{ title: t('nav.worship'), tabBarIcon: ikon('beads'), tabBarLabel: etiket('nav.worship') }}
         />
         <Tabs.Screen
-          name="explore"
-          options={{ title: t('nav.explore'), tabBarIcon: ikon('sparkle'), tabBarLabel: etiket('nav.explore') }}
+          name="community"
+          options={{ title: t('nav.community'), tabBarIcon: ikon('users'), tabBarLabel: etiket('nav.community') }}
         />
         <Tabs.Screen
           name="profile"
-          options={{ title: t('nav.profile'), tabBarIcon: ikon('user'), tabBarLabel: etiket('nav.profile') }}
+          options={{ title: t('nav.profile'), tabBarIcon: ikon('settings'), tabBarLabel: etiket('nav.profile') }}
         />
       </Tabs>
     </>

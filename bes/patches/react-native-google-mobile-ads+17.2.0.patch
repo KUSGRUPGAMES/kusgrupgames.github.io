@@ -1,0 +1,370 @@
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/generated/source/buildConfig/release/io/invertase/googlemobileads/BuildConfig.java b/node_modules/react-native-google-mobile-ads/android/build/generated/source/buildConfig/release/io/invertase/googlemobileads/BuildConfig.java
+new file mode 100644
+index 0000000..ce5b190
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/generated/source/buildConfig/release/io/invertase/googlemobileads/BuildConfig.java
+@@ -0,0 +1,18 @@
++/**
++ * Automatically generated file. DO NOT MODIFY
++ */
++package io.invertase.googlemobileads;
++
++public final class BuildConfig {
++  public static final boolean DEBUG = false;
++  public static final String LIBRARY_PACKAGE_NAME = "io.invertase.googlemobileads";
++  public static final String BUILD_TYPE = "release";
++  // Field from default config.
++  public static final String GOOGLE_MOBILE_ADS_JSON_RAW = "{}";
++  // Field from default config.
++  public static final String GOOGLE_MOBILE_ADS_SDK_VERSION = "25.4.0";
++  // Field from default config.
++  public static final boolean IS_NEW_ARCHITECTURE_ENABLED = true;
++  // Field from default config.
++  public static final String RNGMA_ANDROID_BACKEND = "android-classic";
++}
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/AndroidManifest.xml b/node_modules/react-native-google-mobile-ads/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/AndroidManifest.xml
+new file mode 100644
+index 0000000..2fa2985
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/AndroidManifest.xml
+@@ -0,0 +1,26 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="io.invertase.googlemobileads" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++    <uses-permission android:name="android.permission.INTERNET" />
++    <uses-permission android:name="android.permission.WAKE_LOCK" />
++    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
++
++    <application>
++        <meta-data
++            android:name="com.google.android.gms.ads.APPLICATION_ID"
++            android:value="" />
++        <meta-data
++            android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
++            android:value="false" />
++        <meta-data
++            android:name="com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION"
++            android:value="true" />
++        <meta-data
++            android:name="com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING"
++            android:value="true" />
++    </application>
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/output-metadata.json b/node_modules/react-native-google-mobile-ads/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/output-metadata.json
+new file mode 100644
+index 0000000..0bf55bb
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
++{
++  "version": 3,
++  "artifactType": {
++    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
++    "kind": "Directory"
++  },
++  "applicationId": "io.invertase.googlemobileads",
++  "variantName": "release",
++  "elements": [
++    {
++      "type": "SINGLE",
++      "filters": [],
++      "attributes": [],
++      "outputFile": "AndroidManifest.xml"
++    }
++  ],
++  "elementType": "File"
++}
+\ No newline at end of file
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/aar_metadata/release/writeReleaseAarMetadata/aar-metadata.properties b/node_modules/react-native-google-mobile-ads/android/build/intermediates/aar_metadata/release/writeReleaseAarMetadata/aar-metadata.properties
+new file mode 100644
+index 0000000..1211b1e
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/intermediates/aar_metadata/release/writeReleaseAarMetadata/aar-metadata.properties
+@@ -0,0 +1,6 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=1
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
++coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/annotation_processor_list/release/javaPreCompileRelease/annotationProcessors.json b/node_modules/react-native-google-mobile-ads/android/build/intermediates/annotation_processor_list/release/javaPreCompileRelease/annotationProcessors.json
+new file mode 100644
+index 0000000..9e26dfe
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/intermediates/annotation_processor_list/release/javaPreCompileRelease/annotationProcessors.json
+@@ -0,0 +1 @@
++{}
+\ No newline at end of file
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/compile_r_class_jar/release/generateReleaseRFile/R.jar b/node_modules/react-native-google-mobile-ads/android/build/intermediates/compile_r_class_jar/release/generateReleaseRFile/R.jar
+new file mode 100644
+index 0000000..5b19fbf
+Binary files /dev/null and b/node_modules/react-native-google-mobile-ads/android/build/intermediates/compile_r_class_jar/release/generateReleaseRFile/R.jar differ
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/compile_symbol_list/release/generateReleaseRFile/R.txt b/node_modules/react-native-google-mobile-ads/android/build/intermediates/compile_symbol_list/release/generateReleaseRFile/R.txt
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/incremental/release/packageReleaseResources/compile-file-map.properties b/node_modules/react-native-google-mobile-ads/android/build/intermediates/incremental/release/packageReleaseResources/compile-file-map.properties
+new file mode 100644
+index 0000000..0e045e3
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/intermediates/incremental/release/packageReleaseResources/compile-file-map.properties
+@@ -0,0 +1 @@
++#Fri Oct 02 04:04:32 TRT 2026
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/incremental/release/packageReleaseResources/merger.xml b/node_modules/react-native-google-mobile-ads/android/build/intermediates/incremental/release/packageReleaseResources/merger.xml
+new file mode 100644
+index 0000000..56a42df
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/intermediates/incremental/release/packageReleaseResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="release$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/release/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="release" generated-set="release$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/release/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/build/generated/res/resValues/release"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/build/generated/res/resValues/release"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/local_only_symbol_list/release/parseReleaseLocalResources/R-def.txt b/node_modules/react-native-google-mobile-ads/android/build/intermediates/local_only_symbol_list/release/parseReleaseLocalResources/R-def.txt
+new file mode 100644
+index 0000000..78ac5b8
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/intermediates/local_only_symbol_list/release/parseReleaseLocalResources/R-def.txt
+@@ -0,0 +1,2 @@
++R_DEF: Internal format may change without notice
++local
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/manifest_merge_blame_file/release/processReleaseManifest/manifest-merger-blame-release-report.txt b/node_modules/react-native-google-mobile-ads/android/build/intermediates/manifest_merge_blame_file/release/processReleaseManifest/manifest-merger-blame-release-report.txt
+new file mode 100644
+index 0000000..b71259e
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/intermediates/manifest_merge_blame_file/release/processReleaseManifest/manifest-merger-blame-release-report.txt
+@@ -0,0 +1,41 @@
++1<?xml version="1.0" encoding="utf-8"?>
++2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++3    package="io.invertase.googlemobileads" >
++4
++5    <uses-sdk android:minSdkVersion="24" />
++6
++7    <uses-permission android:name="android.permission.INTERNET" />
++7-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:5:5-67
++7-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:5:22-64
++8    <uses-permission android:name="android.permission.WAKE_LOCK" />
++8-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:6:5-68
++8-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:6:22-65
++9    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
++9-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:7:5-79
++9-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:7:22-76
++10
++11    <application>
++11-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:9:5-22:19
++12        <meta-data
++13            android:name="com.google.android.gms.ads.APPLICATION_ID"
++13-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:11:9-65
++14            android:value="" />
++14-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:12:9-55
++15        <meta-data
++16            android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
++16-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:14:9-77
++17            android:value="false" />
++17-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:15:9-73
++18        <meta-data
++19            android:name="com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION"
++19-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:17:9-79
++20            android:value="true" />
++20-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:18:9-72
++21        <meta-data
++22            android:name="com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING"
++22-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:20:9-75
++23            android:value="true" />
++23-->/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:21:9-67
++24    </application>
++25
++26</manifest>
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml b/node_modules/react-native-google-mobile-ads/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml
+new file mode 100644
+index 0000000..2fa2985
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml
+@@ -0,0 +1,26 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="io.invertase.googlemobileads" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++    <uses-permission android:name="android.permission.INTERNET" />
++    <uses-permission android:name="android.permission.WAKE_LOCK" />
++    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
++
++    <application>
++        <meta-data
++            android:name="com.google.android.gms.ads.APPLICATION_ID"
++            android:value="" />
++        <meta-data
++            android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
++            android:value="false" />
++        <meta-data
++            android:name="com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION"
++            android:value="true" />
++        <meta-data
++            android:name="com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING"
++            android:value="true" />
++    </application>
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/navigation_json/release/extractDeepLinksRelease/navigation.json b/node_modules/react-native-google-mobile-ads/android/build/intermediates/navigation_json/release/extractDeepLinksRelease/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/intermediates/navigation_json/release/extractDeepLinksRelease/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/nested_resources_validation_report/release/generateReleaseResources/nestedResourcesValidationReport.txt b/node_modules/react-native-google-mobile-ads/android/build/intermediates/nested_resources_validation_report/release/generateReleaseResources/nestedResourcesValidationReport.txt
+new file mode 100644
+index 0000000..08f4ebe
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/intermediates/nested_resources_validation_report/release/generateReleaseResources/nestedResourcesValidationReport.txt
+@@ -0,0 +1 @@
++0 Warning/Error
+\ No newline at end of file
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/intermediates/symbol_list_with_package_name/release/generateReleaseRFile/package-aware-r.txt b/node_modules/react-native-google-mobile-ads/android/build/intermediates/symbol_list_with_package_name/release/generateReleaseRFile/package-aware-r.txt
+new file mode 100644
+index 0000000..443764e
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/intermediates/symbol_list_with_package_name/release/generateReleaseRFile/package-aware-r.txt
+@@ -0,0 +1 @@
++io.invertase.googlemobileads
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/kotlin/compileReleaseKotlin/cacheable/dirty-sources.txt b/node_modules/react-native-google-mobile-ads/android/build/kotlin/compileReleaseKotlin/cacheable/dirty-sources.txt
+new file mode 100644
+index 0000000..0b3c7ff
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/kotlin/compileReleaseKotlin/cacheable/dirty-sources.txt
+@@ -0,0 +1,23 @@
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsRewardedModule.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsAdHelper.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeAdView.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsRewardedInterstitialModule.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsMultiFormatBannerViewManager.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/FullscreenAdModuleRefs.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/MultiFormatRequestParser.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/FullscreenRequestSlotTracker.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/PoolGenerationTracker.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsPackage.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeAdViewManager.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsMediaView.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsPoolModule.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsMultiFormatBannerView.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsModule.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAds.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsAppOpenModule.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/OnNativeEvent.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsResponseInfo.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsInterstitialModule.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
++/Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsMediaViewManager.kt
+\ No newline at end of file
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/kotlin/compileReleaseKotlin/local-state/build-history.bin b/node_modules/react-native-google-mobile-ads/android/build/kotlin/compileReleaseKotlin/local-state/build-history.bin
+new file mode 100644
+index 0000000..1e3579a
+Binary files /dev/null and b/node_modules/react-native-google-mobile-ads/android/build/kotlin/compileReleaseKotlin/local-state/build-history.bin differ
+diff --git a/node_modules/react-native-google-mobile-ads/android/build/outputs/logs/manifest-merger-release-report.txt b/node_modules/react-native-google-mobile-ads/android/build/outputs/logs/manifest-merger-release-report.txt
+new file mode 100644
+index 0000000..90d5b97
+--- /dev/null
++++ b/node_modules/react-native-google-mobile-ads/android/build/outputs/logs/manifest-merger-release-report.txt
+@@ -0,0 +1,59 @@
++-- Merging decision tree log ---
++meta-data#com.google.android.gms.ads.APPLICATION_ID
++INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:10:7-12:57
++	android:value
++		INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:12:9-55
++	android:name
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:11:9-65
++meta-data#com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT
++INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:13:7-15:75
++	android:value
++		INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:15:9-73
++	android:name
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:14:9-77
++meta-data#com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION
++INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:16:7-18:74
++	android:value
++		INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:18:9-72
++	android:name
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:17:9-79
++meta-data#com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING
++INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:19:7-21:69
++	android:value
++		INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:21:9-67
++	android:name
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:20:9-75
++manifest
++ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:2:1-23:12
++INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:2:1-23:12
++	package
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:3:5-43
++		INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml
++	xmlns:android
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:2:11-69
++uses-permission#android.permission.INTERNET
++ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:5:5-67
++	android:name
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:5:22-64
++uses-permission#android.permission.WAKE_LOCK
++ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:6:5-68
++	android:name
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:6:22-65
++uses-permission#android.permission.ACCESS_NETWORK_STATE
++ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:7:5-79
++	android:name
++		ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:7:22-76
++application
++ADDED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml:9:5-22:19
++uses-sdk
++INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml
++INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml
++	android:targetSdkVersion
++		INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml
++	android:minSdkVersion
++		INJECTED from /Users/turanburakkus/bes-repo/bes/node_modules/react-native-google-mobile-ads/android/src/main/AndroidManifest.xml
+diff --git a/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt b/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
+index 9c2a445..ade85c3 100644
+--- a/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
++++ b/node_modules/react-native-google-mobile-ads/android/src/classic/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
+@@ -66,7 +66,7 @@ class ReactNativeGoogleMobileAdsNativeModule(
+               "Failed to get a valid response ID from the loaded ad.",
+               "load",
+             )
+-          promise.reject(error.getString("code"), error.getString("message"), error)
++          promise.reject(error.getString("code") ?: "unknown", error.getString("message") ?: "", error)
+           return@loadAd
+         }
+         adHolders[responseId] = holder
+@@ -78,7 +78,7 @@ class ReactNativeGoogleMobileAdsNativeModule(
+         ReactNativeGoogleMobileAdsResponseInfo.toWritableMap(loadAdError.responseInfo)?.let {
+           error.putMap("responseInfo", it)
+         }
+-        promise.reject(error.getString("code"), error.getString("message"), error)
++        promise.reject(error.getString("code") ?: "unknown", error.getString("message") ?: "", error)
+       },
+     )
+   }
+diff --git a/node_modules/react-native-google-mobile-ads/android/src/nextgen/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt b/node_modules/react-native-google-mobile-ads/android/src/nextgen/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
+index 07fcff9..97875e2 100644
+--- a/node_modules/react-native-google-mobile-ads/android/src/nextgen/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
++++ b/node_modules/react-native-google-mobile-ads/android/src/nextgen/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsNativeModule.kt
+@@ -69,7 +69,7 @@ class ReactNativeGoogleMobileAdsNativeModule(
+                 "Failed to get a valid response ID from the loaded ad.",
+                 "load",
+               )
+-            promise.reject(error.getString("code"), error.getString("message"), error)
++            promise.reject(error.getString("code") ?: "unknown", error.getString("message") ?: "", error)
+             ad.destroy()
+             return
+           }

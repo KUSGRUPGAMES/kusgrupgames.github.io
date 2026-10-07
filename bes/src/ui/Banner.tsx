@@ -1,6 +1,6 @@
 /** Bilgi/uyarı şeridi — izin uyarısı, çevrimdışı bildirimi. Şartname §8, §92. */
 import React from 'react';
-import { View } from 'react-native';
+import { View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Text } from './Text';
 import { Icon, type IconName } from './Icon';
@@ -15,9 +15,10 @@ export interface BannerProps {
   description?: string;
   actionLabel?: string;
   onAction?: () => void;
+  style?: StyleProp<ViewStyle>;
 }
 
-export function Banner({ tone = 'info', title, description, actionLabel, onAction }: BannerProps) {
+export function Banner({ tone = 'info', title, description, actionLabel, onAction, style }: BannerProps) {
   const theme = useTheme();
   const color = tone === 'warning' ? theme.colors.warning
     : tone === 'danger' ? theme.colors.danger
@@ -29,7 +30,7 @@ export function Banner({ tone = 'info', title, description, actionLabel, onActio
       accessible
       accessibilityRole={tone === 'danger' ? 'alert' : 'summary'}
       accessibilityLabel={description ? `${title}. ${description}` : title}
-      style={{
+      style={[{
         flexDirection: 'row',
         gap: theme.spacing.md,
         padding: theme.spacing.lg,
@@ -37,7 +38,7 @@ export function Banner({ tone = 'info', title, description, actionLabel, onActio
         borderLeftWidth: 3,
         borderLeftColor: color,
         backgroundColor: theme.colors.surfaceRaised,
-      }}
+      }, style]}
     >
       <Icon name={icon} size={20} color={color} />
       <Column flex={1} gap="xs">

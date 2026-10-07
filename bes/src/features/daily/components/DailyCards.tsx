@@ -9,16 +9,17 @@ import { Card, Column, Row, Text, Badge, IconButton } from '@/ui';
 import { useT } from '@/lib/i18n';
 import { useTheme } from '@/theme/ThemeProvider';
 import { pickDaily } from '../pick';
-import { DUAS } from '@/content/duas';
-import { KNOWLEDGE } from '@/content/knowledge';
+import { useAllDuas } from '@/features/duas/pool';
+import { useAllKnowledge, useVersePool } from '@/features/content/pools';
+import { pickDailyVerse } from '../verse';
+import { DuaText } from '@/features/duas/DuaText';
 import { DIVINE_NAMES } from '@/content/names';
 import { useFavoriteStore } from '@/store/favorites';
 import { toHijri, upcomingReligiousDays } from '@/features/hijri/calc';
 import { useHijriMonthName, useReligiousDayName } from '@/features/hijri/labels';
 import { moonState } from '@/features/moon/phase';
 import { isFriday, ramadanState, KAHF_SURAH } from '@/features/ramadan/calc';
-import { getQuranIndexSize, getAyahByIndex, getTranslationByIndex, getTranslationInfo } from '@/features/quran/data';
-import { dailyIndex } from '../pick';
+import { getTranslationInfo } from '@/features/quran/data';
 import { ArabicText, SourceNote } from '@/ui';
 
 export interface DailyContext {
@@ -33,11 +34,11 @@ export interface DailyContext {
 export function DailyDuaCard({ ctx }: { ctx: DailyContext }) {
   const t = useT();
   const fav = useFavoriteStore();
-  const dua = pickDaily(DUAS, ctx);
+  const dua = pickDaily(useAllDuas(), ctx);
   if (!dua) return null;
   const secili = fav.has('dua', dua.id);
   return (
-    <Card motif="arch" onPress={() => router.push('/duas')} accessibilityLabel={t('dua.ofDay')}>
+    <Card onPress={() => router.push('/duas')} accessibilityLabel={t('dua.ofDay')}>
       <Column gap="sm">
         <Row align="center" justify="space-between">
           <Text variant="caption" tone="muted">{t('dua.ofDay')}</Text>
@@ -49,8 +50,7 @@ export function DailyDuaCard({ ctx }: { ctx: DailyContext }) {
           />
         </Row>
         <Text variant="title3">{dua.title}</Text>
-        <Text variant="body" tone="muted">{dua.body}</Text>
-        <Text variant="micro" tone="subtle">{t('dua.ownContent')}</Text>
+        <DuaText dua={dua} showOwnNote />
       </Column>
     </Card>
   );
@@ -58,10 +58,10 @@ export function DailyDuaCard({ ctx }: { ctx: DailyContext }) {
 
 export function DailyKnowledgeCard({ ctx }: { ctx: DailyContext }) {
   const t = useT();
-  const item = pickDaily(KNOWLEDGE, { ...ctx, salt: 101 });
+  const item = pickDaily(useAllKnowledge(), { ...ctx, salt: 101 });
   if (!item) return null;
   return (
-    <Card motif="octagonGrid" onPress={() => router.push('/knowledge')} accessibilityLabel={t('knowledge.ofDay')}>
+    <Card onPress={() => router.push('/knowledge')} accessibilityLabel={t('knowledge.ofDay')}>
       <Column gap="sm">
         <Text variant="caption" tone="muted">{t('knowledge.ofDay')}</Text>
         <Text variant="title3">{item.title}</Text>
@@ -78,7 +78,7 @@ export function DailyNameCard({ ctx }: { ctx: DailyContext }) {
   if (!isim) return null;
   const secili = fav.has('name', String(isim.ordinal));
   return (
-    <Card motif="starLattice" onPress={() => router.push('/names')} accessibilityLabel={t('names.ofDay')}>
+    <Card onPress={() => router.push('/names')} accessibilityLabel={t('names.ofDay')}>
       <Column gap="sm">
         <Row align="center" justify="space-between">
           <Text variant="caption" tone="muted">{t('names.ofDay')}</Text>
@@ -174,18 +174,16 @@ export function MoonCard({ ctx }: { ctx: DailyContext }) {
 export function DailyAyahCard({ ctx }: { ctx: DailyContext }) {
   const t = useT();
   const fav = useFavoriteStore();
-  const toplam = getQuranIndexSize();
-  const i = dailyIndex({ year: ctx.year, month: ctx.month, day: ctx.day, length: toplam, salt: 313 });
-  const ayet = i < 0 ? null : getAyahByIndex(i);
+  const havuz = useVersePool();
+  const ayet = pickDailyVerse(ctx, havuz);
   if (!ayet) return null;
-  const meal = getTranslationByIndex(i);
+  const meal = ayet.meal;
   const kunye = getTranslationInfo();
   const kimlik = `${ayet.surah}:${ayet.ayah}`;
   const secili = fav.has('ayah', kimlik);
 
   return (
     <Card
-      motif="rubElHizb"
       onPress={() => router.push(`/reader?surah=${ayet.surah}&ayah=${ayet.ayah}`)}
       accessibilityLabel={t('explore.dailyAyah')}
     >
@@ -218,7 +216,7 @@ export function FridayCard({ ctx }: { ctx: DailyContext }) {
   const t = useT();
   if (!isFriday(ctx.year, ctx.month, ctx.day)) return null;
   return (
-    <Card accent motif="arch" onPress={() => router.push(`/reader?surah=${KAHF_SURAH}&ayah=1`)}>
+    <Card accent onPress={() => router.push(`/reader?surah=${KAHF_SURAH}&ayah=1`)}>
       <Column gap="xs">
         <Text variant="caption" tone="onAccent">{t('friday.title')}</Text>
         <Text variant="title3" tone="onAccent">{t('friday.greeting')}</Text>
@@ -234,7 +232,7 @@ export function RamadanCard({ ctx }: { ctx: DailyContext }) {
   const durum = ramadanState(ctx.now, ctx.hijriOffset);
   if (!durum.active) return null;
   return (
-    <Card motif="girih" onPress={() => router.push('/ramadan')} accessibilityLabel={t('ramadan.title')}>
+    <Card onPress={() => router.push('/ramadan')} accessibilityLabel={t('ramadan.title')}>
       <Column gap="xs">
         <Text variant="caption" tone="muted">{t('ramadan.title')}</Text>
         <Text variant="title3" tone="accent">{t('ramadan.day', { day: durum.day })}</Text>

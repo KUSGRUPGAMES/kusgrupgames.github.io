@@ -29,6 +29,24 @@ jobs:
     env:
       APP_VARIANT: production
       BUILD_NUMBER: ${{ github.run_number }}
+      # Mağaza derlemesi: gerçek AdMob kimliği yoksa app.config.ts derlemeyi durdurur.
+      BES_STORE_RELEASE: 'ios'
+      # D32/D33: sunucu, abonelik ve reklam kimlikleri. Secret yoksa boş gelir;
+      # uygulama topluluğu/Pro'yu kapalı, reklamı test biriminde tutar.
+      EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+      EXPO_PUBLIC_REVENUECAT_IOS_KEY: ${{ secrets.EXPO_PUBLIC_REVENUECAT_IOS_KEY }}
+      EXPO_PUBLIC_REVENUECAT_ANDROID_KEY: ${{ secrets.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY }}
+      ADMOB_IOS_APP_ID: ${{ secrets.ADMOB_IOS_APP_ID }}
+      ADMOB_ANDROID_APP_ID: ${{ secrets.ADMOB_ANDROID_APP_ID }}
+      EXPO_PUBLIC_ADMOB_BANNER_IOS: ${{ secrets.EXPO_PUBLIC_ADMOB_BANNER_IOS }}
+      EXPO_PUBLIC_ADMOB_BANNER_ANDROID: ${{ secrets.EXPO_PUBLIC_ADMOB_BANNER_ANDROID }}
+      EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS: ${{ secrets.EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS }}
+      EXPO_PUBLIC_ADMOB_INTERSTITIAL_ANDROID: ${{ secrets.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ANDROID }}
+      EXPO_PUBLIC_ADMOB_APPOPEN_IOS: ${{ secrets.EXPO_PUBLIC_ADMOB_APPOPEN_IOS }}
+      EXPO_PUBLIC_ADMOB_APPOPEN_ANDROID: ${{ secrets.EXPO_PUBLIC_ADMOB_APPOPEN_ANDROID }}
+      EXPO_PUBLIC_ADMOB_REWARDED_IOS: ${{ secrets.EXPO_PUBLIC_ADMOB_REWARDED_IOS }}
+      EXPO_PUBLIC_ADMOB_REWARDED_ANDROID: ${{ secrets.EXPO_PUBLIC_ADMOB_REWARDED_ANDROID }}
       ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
       KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
       KEY_P8: ${{ secrets.APPSTORE_PRIVATE_KEY }}
@@ -113,6 +131,34 @@ jobs:
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO | tail -60
           ls -la build/App.xcarchive/Products/Applications
 
+      - name: Yetkileri arsive isle
+        working-directory: bes/ios
+        # Imzasiz arsivde yetki (entitlements) YOKTUR; disa aktarma imzayi
+        # arsivdeki imzadan kopyalar. Sonuc: App Group'suz uygulama ve widget,
+        # yani widget hep bos. Bu bir kez yasandi (dogrulama adimi yakaladi).
+        # Cozum: arsivdeki her paketi projenin kendi yetki dosyasiyla gecici
+        # (ad-hoc) imzalamak; gercek magaza imzasi disa aktarmada atilir.
+        # aps-environment cikarilir: uzak bildirim yok, yerel bildirim istemez.
+        run: |
+          APP=$(ls -d build/App.xcarchive/Products/Applications/*.app | head -1)
+          yetki() {
+            cp "$1" "$2"
+            /usr/libexec/PlistBuddy -c 'Delete :aps-environment' "$2" 2>/dev/null || true
+            echo "-- $2"; plutil -p "$2"
+          }
+          find "$APP/Frameworks" -maxdepth 1 \( -name '*.framework' -o -name '*.dylib' \) \
+            -exec codesign --force --sign - {} \; 2>/dev/null || true
+          for EK in "$APP"/PlugIns/*.appex; do
+            [ -e "$EK" ] || continue
+            AD=$(basename "$EK" .appex)
+            yetki ".targets/$AD/generated.entitlements" "build/$AD.xcent"
+            codesign --force --sign - --entitlements "build/$AD.xcent" "$EK"
+          done
+          yetki "$SEMA/$SEMA.entitlements" build/uygulama.xcent
+          codesign --force --sign - --entitlements build/uygulama.xcent "$APP"
+          codesign -d --entitlements - "$APP" 2>/dev/null | grep -q application-groups \
+            || { echo "::error::yetki arsive islenemedi"; exit 1; }
+
       - name: IPA uret
         working-directory: bes/ios
         # method adi Xcode 16'da "app-store-connect", oncesinde "app-store".
@@ -145,9 +191,34 @@ jobs:
           if ! disar; then
             echo "app-store-connect kabul edilmedi, eski ad deneniyor: app-store"
             yaz app-store
-            disar
+            # API anahtari App Group olusturamaz; grup Apple hesabiyla bir kez
+            # kaydedilmemisse disa aktarma "Authentication failed / No profiles"
+            # der. Cozum Mac'te tek komut: bes/tools/ios-uretim-kaydi.sh
+            disar || {
+              echo "::error::Imza profili uretilemedi. App Group kaydi eksik olabilir: Mac'te bir kez 'cd ~/bes-repo/bes && bash tools/ios-uretim-kaydi.sh' calistir, sonra bu akisi yeniden baslat."
+              exit 1
+            }
           fi
           ls -la build/ipa
+
+      - name: Imza yetkilerini dogrula
+        working-directory: bes/ios
+        # Widget, vakitleri uygulamayla ortak App Group'tan okur. Arsiv imzasiz
+        # alindigi icin yetkilerin disa aktarmada gercekten islendigini burada
+        # goruyoruz: grup eksikse widget bos kalir, bunu yuklemeden yakala.
+        run: |
+          rm -rf build/ipa-ac && mkdir -p build/ipa-ac
+          unzip -q "$(ls build/ipa/*.ipa | head -1)" -d build/ipa-ac
+          APP=$(ls -d build/ipa-ac/Payload/*.app | head -1)
+          HATA=0
+          for HEDEF in "$APP" "$APP"/PlugIns/*.appex; do
+            echo "== $(basename "$HEDEF")"
+            codesign -d --entitlements - --xml "$HEDEF" 2>/dev/null > yetki.plist || true
+            plutil -p yetki.plist || true
+            grep -q "group.com.kusgrupgames.bes" yetki.plist || { echo "::error::$(basename "$HEDEF") App Group yetkisi yok"; HATA=1; }
+          done
+          ls "$APP"/PlugIns/*.appex >/dev/null 2>&1 || { echo "::error::widget eklentisi IPA'da yok"; HATA=1; }
+          exit $HATA
 
       - name: TestFlight e yukle
         if: ${{ inputs.upload }}

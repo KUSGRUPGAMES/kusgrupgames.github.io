@@ -17,7 +17,8 @@ export type IconName =
   | 'bell' | 'bellOff' | 'share' | 'download' | 'trash' | 'lock' | 'plus' | 'minus' | 'search'
   | 'moon' | 'sun' | 'location' | 'calendar' | 'user' | 'users'
   | 'sparkle' | 'play' | 'pause' | 'bookmark' | 'info' | 'alert' | 'refresh' | 'star' | 'copy'
-  | 'crescentStar' | 'coins' | 'kaaba';
+  | 'crescentStar' | 'coins' | 'kaaba'
+  | 'sunrise' | 'sunHigh' | 'sunLow' | 'sunset' | 'crescent' | 'mosque' | 'chart' | 'message' | 'crown';
 
 export interface IconProps {
   name: IconName;
@@ -78,6 +79,7 @@ function render(name: IconName, p: P): React.ReactNode {
     case 'chevronDown': return <Polyline points="5,9 12,16 19,9" {...p} />;
     case 'chevronUp': return <Polyline points="5,15 12,8 19,15" {...p} />;
     case 'check': return <Polyline points="4,12.5 9.5,18 20,6.5" {...p} />;
+    case 'crown': return <><Path d="M4 17 3 7.5l5 4 4-6.5 4 6.5 5-4L20 17Z" {...p} /><Path d="M4.5 20h15" {...p} /></>;
     case 'close': return <Path d="M6 6l12 12M18 6L6 18" {...p} />;
     case 'bell':
       return <><Path d="M6 17V11a6 6 0 1 1 12 0v6l1.5 2.5h-15Z" {...p} /><Path d="M10 21h4" {...p} /></>;
@@ -97,6 +99,28 @@ function render(name: IconName, p: P): React.ReactNode {
     case 'minus': return <Path d="M5 12h14" {...p} />;
     case 'search':
       return <><Circle cx={11} cy={11} r={6.5} {...p} /><Line x1={16} y1={16} x2={20.5} y2={20.5} {...p} /></>;
+    // --- Vakit ikonları (ana sayfa vakit listesi) ---
+    // Her vaktin güneşin ufka göre yeri farklıdır; ikon bunu anlatır:
+    // imsak ufkun altında, güneş doğarken, öğle tepede, ikindi alçalırken,
+    // akşam batarken, yatsı hilal. Hepsi aynı güneş çizilirse liste okunmaz.
+    case 'sunrise':
+      return <><Path d="M3.5 19h17" {...p} /><Path d="M12 6.4v-3M5.6 9.1 4 7.5M18.4 9.1 20 7.5" {...p} />
+        <Path d="M6.4 19a5.6 5.6 0 0 1 11.2 0" {...p} /><Path d="M9 15.5 12 12.4l3 3.1" {...p} /></>;
+    case 'sunHigh':
+      return <><Circle cx={12} cy={11} r={4} {...p} /><Path d="M12 2.6v2M12 17.4v2M20.4 11h-2M5.6 11h-2M17.9 5.1l-1.4 1.4M7.5 15.5l-1.4 1.4M17.9 16.9l-1.4-1.4M7.5 6.5 6.1 5.1" {...p} /></>;
+    case 'sunLow':
+      return <><Path d="M3.5 19h17" {...p} /><Path d="M7.5 19a4.5 4.5 0 0 1 9 0" {...p} />
+        <Path d="M12 8.6V6.2M6.9 10.6 5.4 9.1M17.1 10.6l1.5-1.5" {...p} /></>;
+    case 'sunset':
+      return <><Path d="M3.5 19h17" {...p} /><Path d="M6.4 19a5.6 5.6 0 0 1 11.2 0" {...p} />
+        <Path d="M12 3.4v3M5.6 7.6 4 6M18.4 7.6 20 6" {...p} /><Path d="M9 9.4 12 12.5l3-3.1" {...p} /></>;
+    case 'crescent':
+      return <Path d="M19.4 15.6A8.4 8.4 0 0 1 8.4 4.6a8.4 8.4 0 1 0 11 11Z" {...p} />;
+    case 'mosque':
+      return <><Path d="M3.5 20.5v-7.2M20.5 20.5v-7.2M3.5 20.5h17" {...p} />
+        <Path d="M6.6 20.5v-6.2a5.4 5.4 0 0 1 10.8 0v6.2" {...p} />
+        <Path d="M12 8.9c1.6-1.5 1.6-3 0-4.2-1.6 1.2-1.6 2.7 0 4.2Z" {...p} />
+        <Path d="M9.8 20.5v-3.1a2.2 2.2 0 0 1 4.4 0v3.1" {...p} /></>;
     case 'moon': return <Path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" {...p} />;
     case 'sun':
       return <><Circle cx={12} cy={12} r={4.2} {...p} /><Path d="M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6M18.4 18.4l-1.6-1.6M7.2 7.2 5.6 5.6" {...p} /></>;
@@ -104,10 +128,14 @@ function render(name: IconName, p: P): React.ReactNode {
       return <><Path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z" {...p} /><Circle cx={12} cy={10} r={2.6} {...p} /></>;
     case 'calendar':
       return <><Path d="M4 6.5h16v14H4z" {...p} /><Path d="M4 11h16M8.5 3.5v4M15.5 3.5v4" {...p} /></>;
+    case 'chart':
+      return <><Line x1={5} y1={19} x2={5} y2={13} {...p} /><Line x1={12} y1={19} x2={12} y2={7} {...p} /><Line x1={19} y1={19} x2={19} y2={11} {...p} /><Line x1={3} y1={19} x2={21} y2={19} {...p} /></>;
     case 'user':
       return <><Circle cx={12} cy={8.5} r={3.8} {...p} /><Path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" {...p} /></>;
     case 'users':
       return <><Circle cx={9} cy={8.5} r={3.4} {...p} /><Path d="M2.8 20a6.2 6.2 0 0 1 12.4 0" {...p} /><Path d="M16 5.5a3.4 3.4 0 0 1 0 6.6M17 14.6a6.2 6.2 0 0 1 4.2 5.4" {...p} /></>;
+    case 'message':
+      return <><Path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9A1.5 1.5 0 0 1 18.5 16H9l-4 3.5V16H5.5A1.5 1.5 0 0 1 4 14.5Z" {...p} /></>;
     case 'sparkle':
       return <Path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9ZM18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8Z" {...p} />;
     case 'play': return <Path d="M8 5.5 18 12 8 18.5Z" {...p} />;

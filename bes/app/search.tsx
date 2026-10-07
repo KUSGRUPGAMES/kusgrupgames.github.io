@@ -42,7 +42,7 @@ export default function SearchScreen() {
   };
 
   return (
-    <Screen motif="girih">
+    <Screen topInset={false} motif="girih">
       <Stack.Screen options={{ headerShown: true, title: t('search.title') }} />
 
       <Field

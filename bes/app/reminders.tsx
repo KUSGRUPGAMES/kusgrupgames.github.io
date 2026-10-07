@@ -1,10 +1,10 @@
 /** Özel hatırlatıcılar — şartname §64. */
 import React, { useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { Switch, View } from 'react-native';
 import { Stack } from 'expo-router';
 import {
   Screen, SectionHeader, Card, Column, Row, Text, Field, Button, Chip,
-  Segmented, Stepper, Toggle, EmptyState, IconButton, Banner, Divider,
+  Segmented, Stepper, EmptyState, IconButton, Banner, Divider,
 } from '@/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT, type StringKey } from '@/lib/i18n';
@@ -27,6 +27,19 @@ const GUN_ANAHTARI: StringKey[] = [
  */
 const GUN_SIRASI = [1, 2, 3, 4, 5, 6, 0] as const;
 
+/**
+ * Tek dokunuşla doldurulan hazır hatırlatıcılar. Kullanıcı ad, saat ve
+ * vakti sonradan değiştirebilir; şablon yalnız formu doldurur.
+ */
+const SABLONLAR: { ad: StringKey; tetik: ReminderTrigger; gunler?: number[] }[] = [
+  { ad: 'reminder.tplQuran', tetik: { kind: 'time', hour: 21, minute: 0 } },
+  { ad: 'reminder.tplMorning', tetik: { kind: 'prayer', slot: 'fajr', offsetMinutes: 30 } },
+  { ad: 'reminder.tplEvening', tetik: { kind: 'prayer', slot: 'maghrib', offsetMinutes: 15 } },
+  { ad: 'reminder.tplDuha', tetik: { kind: 'prayer', slot: 'sunrise', offsetMinutes: 45 } },
+  { ad: 'reminder.tplTahajjud', tetik: { kind: 'prayer', slot: 'fajr', offsetMinutes: -60 } },
+  { ad: 'reminder.tplKahf', tetik: { kind: 'time', hour: 10, minute: 0 }, gunler: [5] },
+];
+
 export default function RemindersScreen() {
   const t = useT();
   const theme = useTheme();
@@ -43,6 +56,16 @@ export default function RemindersScreen() {
   const [slot, setSlot] = useState<PrayerKey>('maghrib');
   const [offset, setOffset] = useState(-30);
   const [gunler, setGunler] = useState<number[]>([]);
+  const [eklendi, setEklendi] = useState(false);
+
+  const sablonUygula = (s: (typeof SABLONLAR)[number]) => {
+    setAd(t(s.ad));
+    setTur(s.tetik.kind);
+    if (s.tetik.kind === 'time') { setSaat(s.tetik.hour); setDakika(s.tetik.minute); }
+    else { setSlot(s.tetik.slot); setOffset(s.tetik.offsetMinutes); }
+    setGunler(s.gunler ?? []);
+    setEklendi(false);
+  };
 
   const tetik: ReminderTrigger = useMemo(
     () => (tur === 'time'
@@ -57,7 +80,7 @@ export default function RemindersScreen() {
       : `${label(r.trigger.slot)} ${r.trigger.offsetMinutes > 0 ? '+' : ''}${r.trigger.offsetMinutes}`;
 
   return (
-    <Screen scroll motif="octagonGrid">
+    <Screen topInset={false} scroll motif="octagonGrid">
       <Stack.Screen options={{ headerShown: true, title: t('reminder.title') }} />
 
 
@@ -75,10 +98,15 @@ export default function RemindersScreen() {
                     {`${anlat(r)} · ${r.weekdays.length === 0 ? t('reminder.everyDay') : GUN_SIRASI.filter((d) => r.weekdays.includes(d)).map((d) => t(GUN_ANAHTARI[d]!)).join(' ')}`}
                   </Text>
                 </Column>
-                <Toggle
-                  title={r.title}
+                {/* Yalın anahtar: `Toggle` tam bir liste satırıdır ve başlığı ikinci
+                    kez çizip yer kaplıyordu; asıl başlık dar sütunda harf harf
+                    kırılıyordu ("Sab/ah/na/ma…", 30 Eylül mağaza karesi). */}
+                <Switch
                   value={r.enabled}
-                  onChange={(v) => update(r.id, { enabled: v })}
+                  onValueChange={(v) => update(r.id, { enabled: v })}
+                  accessibilityLabel={r.title}
+                  trackColor={{ false: theme.colors.border, true: theme.colors.accent }}
+                  thumbColor={theme.colors.surface}
                 />
                 <IconButton name="close" label={t('common.delete')} size={18} onPress={() => remove(r.id)} />
               </Row>
@@ -87,7 +115,12 @@ export default function RemindersScreen() {
         </Card>
       )}
 
-      <SectionHeader title={t('reminder.add')} />
+      <SectionHeader title={t('reminder.add')} subtitle={t('reminder.templatesHint')} />
+      <Row gap="sm" wrap style={{ marginBottom: theme.spacing.md }}>
+        {SABLONLAR.map((s) => (
+          <Chip key={s.ad} label={t(s.ad)} selected={ad === t(s.ad)} onPress={() => sablonUygula(s)} />
+        ))}
+      </Row>
       <Column gap="md">
         <Field label={t('reminder.name')} value={ad} onChangeText={setAd} />
 
@@ -157,9 +190,11 @@ export default function RemindersScreen() {
               add({ title: ad.trim(), trigger: tetik, weekdays: gunler, enabled: true });
               setAd('');
               setGunler([]);
+              setEklendi(true);
             }}
           />
         </Row>
+        {eklendi ? <Banner tone="success" title={t('reminder.added')} /> : null}
       </Column>
 
       <Banner tone="info" title={t('notification.title')} description={t('notification.coverageNote')} />

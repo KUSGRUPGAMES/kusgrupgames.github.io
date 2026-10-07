@@ -623,3 +623,367 @@ hâliyle App Review'dan dönerdi.
 **Sınama:** `brand.test.ts` iki şeyi birden denetliyor — bu iki satırın
 `openLegalPage` çağırdığını, ve genel kural olarak `chevron` taşıyan hiçbir
 `ListItem`'ın `onPress`siz kalmadığını (`chevron={false}` muaf).
+
+## D25 — Bilgi mimarisi: Vakitler · Kur'an · Öğren · İbadet · Ayarlar
+
+**Karar:** Beş sekme, her biri tek bir işe ayrılır. "Keşfet" sekmesi
+kaldırıldı; içeriği ait olduğu yere taşındı. Her özelliğe **en fazla iki
+dokunuşla** (sekme + kutucuk) ulaşılır ve hiçbir özellik iki sekmede
+birden durmaz — ana sayfadaki hızlı erişim düğmeleri hariç.
+
+| Sekme | İçerik |
+|---|---|
+| Vakitler | Sıradaki vakit, günün vakitleri, hızlı erişim (Kıble · Zikirmatik · Kur'an'a devam · Öğren), günün içeriği |
+| Kur'an | Kaldığın yer, sure/cüz/yer imi, arama, kıraat, hatim |
+| Öğren | Kur'an okumayı öğren (elif-bâ kursu), namaz rehberi, dinî bilgiler |
+| İbadet | Zikirmatik, dualar, esmâ, kıble; defter, istatistik, kaza; zekât, Ramazan, hac, hicrî takvim |
+| Ayarlar | Vakit/bildirim/kıraat ayarları, görünüm, dil, yedek, hakkında |
+
+**Neden:** Kullanıcı yapıyı "karmaşık, iç içe, bir yere ulaşmak için
+birkaç yerden geçmek gerekiyor" diye reddetti. Kodda doğrulandı: dualar
+ve esmâ hem İbadet hem Keşfet'te, vakit ayarlarına üç ayrı yerden
+gidiliyordu, Kur'an eğitimi Kur'an sekmesinde üçüncü düğmeye gömülüydü.
+Rakip incelemesi (2026 karşılaştırmaları: Muslim Pro, Athan, Pillars,
+Quran Majeed, Tarteel; Türkçe elif-bâ uygulamaları) en sık şikâyetin
+özellik kalabalığı ve reklam olduğunu, en çok övülenin sade, tek işe
+odaklı ekranlar olduğunu gösterdi. Türkçe elif-bâ uygulamalarında öne
+çıkan: ders ders ilerleme, dokununca ses, alıştırma ve ilerleme takibi.
+
+## D26 — Kur'an eğitimi ses kaynakları
+
+**Karar:** Üç ayrı, doğrulanmış kaynak; hiçbiri uydurma değildir.
+
+1. **Harf adları ve heceler** (elif, bâ; بَ بِ بُ): cihazın kendi Arapça
+   ses motoru (`expo-speech`, iOS/Android yerleşik). Lisans gerektirmez,
+   çevrimdışı çalışır.
+2. **Gerçek Kur'an kelimeleri:** Quran Foundation'ın kelime kelime insan
+   kıraati, `https://audio.qurancdn.com/wbw/SSS_AAA_KKK.mp3`. Resmî
+   belgede "public CDN assets" olarak tanımlı; geliştirici şartları
+   abonelikli uygulamada kullanıma izin veriyor, kaynak gösterimi
+   istiyor ve bir haftadan uzun saklamayı yasaklıyor — bu yüzden
+   yalnız **akış** yapılır, indirilmez. Kelime konumları API'den
+   doğrulanarak seçildi; Arapça metin yine kendi Tanzil verimizden gelir.
+3. **Âyet dinleme:** mevcut Islamic Network kıraati (D-kıraat).
+
+**Neden:** Kullanıcı harf ve kelimeleri "surelerdeki ses gibi"
+dinleyerek öğrenmek istedi. Tek harf için lisanslı bir insan kaydı
+bulunamadı; uydurmak yerine cihaz sesi kullanıldı, insan sesi ise
+gerçekten var olduğu yerde (kelime ve âyet) kullanıldı.
+
+## D27 — Kendi geri düğmemiz, kıble izni, defter ve uyarı düzeni
+
+- **Geri düğmesi:** react-native-screens 4.16'da iOS 26'da, başlığı gizli
+  sekmelerden gelinen yığında yerleşik geri düğmesi birkaç gidiş-dönüşten
+  sonra dokunmaya yanıt vermiyor (software-mansion/react-native-screens#3294,
+  düzeltme 4.18+; Expo SDK 54 4.16'ya sabit). Kök yığında `headerLeft` ile
+  kendi düğmemiz çiziliyor. SDK yükseltmesinde bu kaldırılabilir.
+- **Kıble:** expo-location pusulayı iOS'ta konum izni olmadan başlatmıyor;
+  izin artık kıble ekranında isteniyor. Doğruluk değeri derece değil 0–3
+  düzeyi; eskiden ters okunuyordu.
+- **İbadet defteri:** oruç tek soruya bağlandı; Ramazan'da tutulamayan gün
+  borç, kaza orucu borçtan düşüm. Eksik namaz yalnız kaydı olan günlerden
+  sayılır. "Günün notu" arayüzden kalktı (eski veri korunur).
+- **Vakit uyarıları:** ana sayfadaki zil → `alarms.tsx`. Önceden uyarı açıkken
+  vaktin kendisi de ayrı bildirim olarak kurulur (`alsoAtTime`, varsayılan
+  açık); 64 bildirim sınırı yüzünden kapsama günü yarıya iner.
+- **Dinamik Ada / Live Activity:** yerel bildirim kilit ekranında görünür;
+  canlı geri sayım yerel bir widget eklentisi ister (D3), bu sürümde yok.
+
+## D28 — Logo yenilendi (2026-09-25)
+
+Marka sahibi ChatGPT ile yenilenmiş iki master teslim etti (aynı "5 + hilal +
+cami" kavramı, daha net çizim, daha canlı altın). D17 aynen geçerli: tek
+kaynak `bes/assets/brand/png/BES_AppIcon_{Dark,Light}_1024.png`; onay görseli
+`bes/assets/brand/reference/BES_Approved_Preview_2026-09.png`. Paketteki
+SVG/PDF/EPS dosyaları rasteri taşıyan kaplardır, vektör değildir; depoya
+alınmadı.
+
+`gen-brand.js` yeni masterda iki iz bırakıyordu, ikisi de geometriye
+dokunmadan giderildi: köşe dolgusu ışınsal uzatma yerine yay içindeki
+**ayna** ile yapılıyor (desenli zeminde ışın çizgileri kalıyordu; köşe
+yarıçapı 0.28), kutucuk kenarındaki parlak hat için ikon 6 px, sembol
+ayıklama 24 px içeriden alınıyor. D18 gereği palet yeni masterdan yeniden
+ölçüldü (`tokens.ts`, açılış ekranı zeminleri).
+
+## D29 — Vakitte ezan
+
+Kayıt: Wikimedia Commons "Beautiful adhan.ogg" (Adam-synagda, CC0) —
+ayrıntı `CONTENT_SOURCES.md`. Uygulama kapalıyken ezanı yalnız sistem
+çalabilir: bildirim sesi pakette olmalı ve iOS'ta en çok 30 sn sürebilir,
+bu yüzden `ezan.wav` ilk 29,5 sn'dir. Uygulama açıkken bildirim sessiz
+gösterilir ve tam ezan (`ezan-tam.m4a`) `EzanOkuyucu` ile çalınır; üstteki
+"Durdur" çubuğu ya da ses tuşu (react-native-volume-manager) susturur.
+Android'de ses kanala bağlı olduğundan ezan ayrı kanaldır (`ezan`).
+Ayar: Vakit uyarıları → "Vakitte ezan okunsun" (varsayılan açık).
+
+## D30 — Widget'lar ve Dinamik Ada
+
+`@bacons/apple-targets` ile `targets/widget` eklentisi: vakit widget'ı
+(küçük: sıradaki vakit + geri sayım; orta/büyük: günün vakitleri; kilit
+ekranı aileleri), günün âyeti/duası widget'ı ve canlı etkinlik (Dinamik
+Ada + kilit ekranı geri sayımı). Veri App Group `group.<bundle id>` içinde
+tek JSON (`bes.widget.v1`); yazan `useWidgetSync`. Canlı etkinliği yerel
+modül `modules/bes-live-activity` başlatır; `BesVakitAttributes` iki hedefte
+aynı tanımlıdır (sınama `widget.test.ts`). Geri sayım `Text(timerInterval:)`
+ile sistemde akar, uygulama çalışmasa da ilerler; vakit geçince sıfırda
+durur, uygulama bir sonraki açılışta/arka plana geçişte sıradakine kurar.
+
+**İmza (yaşandı).** Yayın akışı arşivi imzasız alıyordu; imzasız arşivde
+yetki (entitlements) olmadığından dışa aktarılan IPA'da App Group yoktu —
+widget mağaza sürümünde hep boş kalacaktı. Akış artık her paketi projenin
+yetki dosyasıyla geçici imzalıyor ve IPA'daki yetkiyi doğruluyor. App Store
+Connect API anahtarı App Group oluşturamadığı için grup, Mac'te Apple
+hesabıyla bir kez kaydedilir: `tools/ios-uretim-kaydi.sh`.
+
+## D31 — Topluluk modülü: dua panosu, sohbet odaları, hatim grupları, yönetici paneli
+
+Şartname §55'in ("Dua kardeşliği") ilk gerçek uygulaması. Kullanıcı
+talebiyle üç özellik: (1) **dua panosu** — istek paylaş, "dua ettim" say;
+kim ettiği gizli kalır (riya/gösterişten kaçınma — bkz. Sahih Müslim 2733:
+"Bir Müslüman din kardeşi için gıyabında dua ettiğinde, baş ucundaki melek
+'âmin, sana da aynısı' der"), yalnız toplam sayı ve isteyen kişiye "X kişi
+senin için dua etti" görünür; (2) **sohbet odaları** — sabit, konu başlıklı,
+herkese açık dört oda (rastgele/özel eşleşme YOK — Apple 1.2 kuralı
+"rastgele/anonim sohbet"i ayrıca sıkı denetliyor, sabit odalar hem daha
+güvenli hem denetlenmesi daha basit); (3) **hatim grupları** — çok kişili,
+30 cüzü paylaşarak okuma; grup 30/30 tamamlanınca kendiliğinden biter ve her
+katılımcının kayıtlarında kalıcı iz bırakır. Ayrıca: sunucu tarafında
+atlanamaz yasaklı kelime süzgeci, şikâyet + engelleme, ve **web tabanlı bir
+yönetici paneli** (`docs/bes-admin/index.html`, GitHub Pages) — şikâyetleri
+incele/içeriği gizle/kullanıcı kısıtla-yasakla, yasaklı kelime listesini
+büyüt, ve dört tür içerik (duyuru, ek dua, bilgilendirme yazısı, hazır kart)
+uygulama güncellemesi gerekmeden ekle/düzenle/yayından kaldır.
+
+**Mimari kararı — kimlik.** Uygulamanın geri kalanı hesapsız çalışır (D12,
+`app/account.tsx`: "Bu ekran bir 'giriş yap' ekranı değildir çünkü hesap
+yoktur"). Bu, o ilkeyi bozmadan ekleniyor: topluluk **ayrı, isteğe bağlı**
+bir katman. Kimlik Supabase'in **anonim girişi** (`signInAnonymously`) +
+kullanıcının seçtiği bir takma ad — e-posta/ad/telefon hiç istenmez. Modül
+`settings.community.enabled` ile varsayılan **kapalı**; sunucu
+yapılandırılmamışsa (`EXPO_PUBLIC_SUPABASE_URL/ANON_KEY` yoksa) `supabase`
+istemcisi `null`e düşer, ekranlar "henüz hazır değil" gösterir, hiçbir yerde
+çökme olmaz (aynı "kapatma anahtarı" deseni `SUPABASE_KURULUM.md`de zaten
+istenmişti).
+
+**Neden şema Supabase'te, kodda değil.** RLS politikaları (Postgres row
+level security) istemci atlayamayacağı şekilde: hız sınırı (`dua_requests`
+günde 5, `chat_messages` 5 dakikada 30), yasaklı kelime süzgeci
+(`contains_banned_word()`), ve kısıtlı/yasaklı kullanıcının hiçbir yere
+yazamaması hep sunucu tarafında, tetikleyicilerde. Bu, gerçek bir PostgreSQL
+16 kopyasında (bu depoda değil, yalnız yerel sınama için) `auth.users`/
+`auth.uid()` taklit edilip 10 senaryoyla (kendini yönetici yapamama, yasaklı
+kelime reddi, günlük sınır, dua sayacı, tekrar dua engeli, yöneticinin
+başkasının mesajını gizlemesi, kısıtlı kullanıcının yazamaması, hatim
+grubunun 30 cüzünün otomatik oluşması, alınmış cüzün tekrar alınamaması,
+30/30 tamamlanınca grubun kendiliğinden bitmesi) doğrulandı — hepsi geçti.
+
+**Yönetici paneli neden ayrı bir HTML dosyası.** Kök `CLAUDE.md`nin "tek
+dosya" ilkesiyle aynı ruhta: derleme adımı yok, Supabase JS'i CDN'den
+yükler, GitHub Pages'te barınır (`docs/bes-admin/`). Anon anahtar dosyanın
+içinde açık — bu bilerek: gizli değil, güvenlik RLS'ten ve girenin
+`profiles.is_admin` olmasından geliyor. İlk yönetici hesabı elle, tek satır
+SQL ile işaretlenir (`COMMUNITY_SETUP.md`); bir kullanıcının kendini
+yönetici yapması `profiles_guard_privileged_fields` tetikleyicisiyle
+kapatıldı (bir WITH CHECK yerine trigger seçildi: WITH CHECK zaten yönetici
+olan/susturulmuş bir kullanıcının kendi takma adını değiştirmesini de
+yanlışlıkla engellerdi).
+
+**Kapsam dışı bırakılanlar (bilerek).** Görsel/medya paylaşımı yok (yalnız
+metin — moderasyon yükü). Özel (1'e1) mesajlaşma yok. Denetim günlüğü
+(audit log) yok, yalnız `reports.resolved_by/resolved_at/resolution_note`
+temel bir iz bırakıyor. Bunlar `SUPABASE_KURULUM.md`deki çoklu cihaz
+eşitleme ve AI asistanla birlikte gelecekteki genişleme alanı.
+
+## D32 — Topluluk kimliği: anonim giriş yerine Google / Apple
+
+**Karar:** Topluluğa katılmak için Google ya da Apple hesabıyla giriş
+gerekir. D31'deki anonim giriş kaldırıldı. Giriş onboarding'de **atlanabilir**
+bir adım olarak sorulur (yalnız sunucu kuruluysa görünür), sonradan Hesap ve
+Topluluk ekranlarından yapılabilir. Uygulamanın geri kalanı girişsiz çalışır.
+
+**Neden atlanabilir:** Kullanıcı başta zorunlu giriş istedi; App Review
+5.1.1(v) hesap gerektirmeyen özelliği (vakit, Kur'an, kıble) girişe bağlayan
+uygulamayı reddettiği için atlanabilir yol seçildi (kullanıcı onayladı).
+
+**Nasıl:**
+- Apple: iOS'un kendi paneli (`expo-apple-authentication`) → Supabase
+  `signInWithIdToken`. Ham nonce Supabase'e, SHA-256 özeti Apple'a gider.
+  Yalnız e-posta kapsamı istenir; ad istenmez (topluluk takma adla çalışır).
+- Google: Supabase OAuth, sistemin güvenli tarayıcı oturumunda
+  (`expo-web-browser`), PKCE ile `bes://auth-callback`'e döner. Uygulamaya
+  Google SDK'sı girmez — Google Cloud'da yalnız bir "Web application"
+  istemcisi gerekir, iOS/Android istemci kimliği gerekmez.
+- App Review 4.8: iOS'ta Google sunan uygulama Apple'ı da sunmak zorunda —
+  ikisi hep birlikte. Android'de Apple düğmesi yok.
+- App Review 5.1.1(v): hesap silme uygulama içinde (Hesap ekranı →
+  `delete_my_account()`, migration 0003). İşlev parametresizdir, yalnız
+  `auth.uid()`'yi siler; topluluk tabloları cascade ile gider.
+
+**Eksik kalan (KNOWN_ISSUES T7):** Apple, Sign in with Apple kullanan hesap
+silindiğinde Apple belirtecinin REST API ile iptal edilmesini de istiyor.
+Bu, Apple'dan alınacak bir anahtarla (.p8) sunucu tarafında çalışan bir
+Edge Function gerektiriyor; mağazaya göndermeden önce eklenecek.
+
+## D33 — Gelir modeli: reklam + Pro abonelik (RevenueCat)
+
+**Karar (kullanıcı, 2026-09-30):**
+
+| Konu | Karar |
+|---|---|
+| Reklam | Alt şerit (banner) + seyrek tam ekran (en az 3 dk arayla). AdMob. |
+| Pro | Reklamsız · Öğren'in ileri dersleri · Topluluğun ek özellikleri |
+| Fiyat | Aylık + yıllık + ömür boyu (tutarlar mağaza panelinde; kodda yok) |
+| Altyapı | RevenueCat (App Store + Google Play tek yerden, makbuz doğrulaması onda) |
+
+**Her zaman ücretsiz (değişmez, `ALWAYS_FREE` sınaması korur):** namaz
+vakti, kıble, Kur'an metni ve meal, dualar, zikir, kaza, zekât, esmâ, hicrî
+takvim, namaz rehberi, bildirimler. "İbadetin kendisi kilitlenmez" ilkesi (§66).
+
+**Reklam kuralları (`features/pro/ads.ts`, §68):** okuyucu, kıble, zikir ve
+namaz rehberinde hiç reklam yok; vakitten 15 dk önce / 30 dk sonra reklam
+yok; tam ekran reklamlar arası en az 180 sn; uygunsuz kategoriler engelli,
+içerik derecesi G.
+
+**Öğren:** 1-3. üniteler (harfler, bitişme, harekeler — 13 ders) ücretsiz;
+4-7. üniteler (cezm/şedde, tenvin/med, kelime, kısa sureler) Pro. Gerekçe:
+Kur'an harflerini tanımak herkese açık kalsın; ücretli olan, ilerlemeyi
+hızlandıran kısım.
+
+**Topluluk:** okumak, "dua ettim" demek, günde 1 dua isteği ve hatim grubuna
+katılıp cüz almak ücretsiz. Pro: sohbet odalarına yazmak, hatim grubu kurmak,
+günde 5 dua isteği (sunucudaki üst sınır). Bu sınır v1'de istemcide
+uygulanır; sunucuya taşımak RevenueCat webhook'u ister (KNOWN_ISSUES T9).
+
+**Gizlilik etkisi:** "Veri Toplanmıyor" etiketi bu kararla biter. AdMob
+reklam kimliği ve kaba konum kullanır; iOS'ta izin penceresi (ATT), AB'de
+Google'ın onay formu (UMP) gösterilir. İzin verilmezse kişiselleştirilmemiş
+reklam gösterilir. Mağaza gizlilik formları ve gizlilik sayfaları buna göre
+güncellenir.
+
+## D34 — Yalnız koyu tema
+
+**Karar (kullanıcı, 2026-09-30):** Uygulama her zaman koyu yeşil-altın temada
+açılır; Ayarlar'daki tema seçici kaldırıldı. Açılış ekranı ve sistem arayüzü
+(`userInterfaceStyle: 'dark'`) de koyu.
+
+**Neden:** Açık tema krem zemin üstünde koyu yeşil bloklar (vakit kartı,
+zikir sayacı) ve beyaz kartlarla parça parça duruyordu; kullanıcı
+"hiçbir şey uyuşmuyor" dedi. Koyu temada bütün yüzeyler aynı ailede ve
+mağaza görselleriyle birebir aynı. Yeniden tasarım yerine kaldırma seçildi:
+en hızlı ve yayını geciktirmeyen yol.
+
+**Yerinde bırakılanlar:** `lightTheme` tokenları ve `ThemeProvider`'ın `mode`
+API'si silinmedi (sınamalar ve ileride uyumlu bir açık tema için). Denetim
+taraması (`npm run preview`) artık yalnız koyu geçişlerle çalışıyor.
+
+### D33 devamı — reklam yerleşimi (kullanıcı kararı, 2026-10-01)
+
+- **Şerit reklam sekme çubuğunun üstünde sabit** (anchored adaptive). Sayfa
+  sonundaki şerit çoğu zaman görünmüyordu; Google görünmeyen reklama çok
+  az ödüyor. Okuyucu, kıble, zikir, namaz rehberi sekme değil, orada yok.
+- **Açılış reklamı (App Open):** açılışta ya da 30 sn'den uzun arka plandan
+  dönüşte; en sık 4 saatte bir; ilk 3 açılışta yok; 4 sn içinde yüklenemezse
+  o açılışta gösterilmez (Google: yükleme ekranında gösterilmeli, kullanıcı
+  içeriği okurken değil); vakit penceresi ve Pro kuralları geçerli.
+- **Ödüllü reklam:** kullanıcı kendi isteğiyle izler, karşılığında 24 saat (D39 ile 4 saat)
+  hiç reklam yok (Ayarlar ve Pro ekranı). Süre yenilenir, üst üste eklenmez.
+- İki yeni birim: `EXPO_PUBLIC_ADMOB_APPOPEN_*`, `EXPO_PUBLIC_ADMOB_REWARDED_*`.
+- **Ekran geçişlerinde tam ekran reklam** (kullanıcı kararı, 2026-10-01):
+  Kur'an okuyucu hariç; ekranın ortasında değil yol değişiminde çıkar (zikir
+  sayarken, kıbleye bakarken ekran kapanmaz); en az 4 geçişte bir, en sık 3
+  dakikada bir; vakit penceresi, Pro ve reklamsız süre geçerli. Bu yüzden
+  "kıble, zikir ve namaz rehberinde reklam yok" vaadi gizlilik sayfaları,
+  destek sayfaları ve mağaza metinlerinden kaldırıldı; vaat artık "Kur'an
+  okuyucuda reklam yok". Şerit reklam yine yalnız sekme ekranlarında.
+
+## D35 — Hesapla eşitleme, sekme düzeni ve ilk kullanım tanıtımı (2026-10-01)
+
+**Hesapla eşitleme.** Giriş yapan kullanıcının kişisel kayıtları (yedek
+dosyasıyla aynı kapsam: Kur'an konumu ve yer imleri, ibadet defteri, zikir,
+kaza, hatim, oruç, hatırlatıcılar, favoriler, kurs, ayarlar, kayıtlı
+şehirler) `user_data` tablosunda tek satır JSON olarak tutulur (migration
+0004, RLS: yalnız sahibi; canlı veritabanında A/B kullanıcısıyla denendi).
+Birleştirme istemcide, **üç yönlü** (`src/features/sync/cloud.ts`): base =
+bu cihazın son eşitlediği hâl. Silmeler yayılır, kaza sayaçlarında iki
+cihazın farkı toplanır, ilk eşitlemede (base yok) hiçbir kayıt silinmez.
+Etkin konum cihaza özeldir. Ayarlar → Hesap'ta kapatılabilir (varsayılan
+açık, yalnız girişliyken). GPS koordinatı gönderilmez; kayıtlı şehirler
+katalogdaki şehir merkezidir.
+
+Topluluk verisi (dua istekleri, aldığı dualar, sohbet, hatim grupları)
+zaten sunucuda ve hesaba bağlı; dua panosuna "İsteklerim" görünümü eklendi
+(akışın 100 sınırı olmadan bütün geçmiş + toplam alınan dua).
+
+**Sekme düzeni.** Vakitler · Kur'an · İbadet · Topluluk · Ayarlar. Apple'ın
+beş sekme önerisi korundu: Öğren Kur'an sekmesinin içine taşındı
+(`app/learn.tsx`, Kur'an sekmesinin başında kart; ana sayfa hızlı erişimde
+de var), Topluluk sekme oldu.
+
+**İlk kullanım tanıtımı.** Her sekme ilk açıldığında 3–4 adımlık kart
+(`src/features/tour`); her adımda "Tanıtımı atla" — basılınca hiçbir
+sekmede tekrar gösterilmez; Ayarlar'dan yeniden gösterilebilir.
+
+## D36 — Yönetici paneli (2026-10-01)
+
+Statik tek sayfa (GitHub Pages, `docs/yonetim-…/`), Supabase'e anon anahtar +
+yöneticinin Google oturumuyla bağlanır; yetki RLS ve `is_admin` denetimli
+`security definer` işlevlerde. Gizli anahtarlar (RevenueCat, App Store
+Connect) yalnız Edge Function `admin-metrics`'te. Kullanıcı içeriği panelde
+yalnız textContent ile basılır (XSS), CSP yalnız kendi dosyaları. Panel
+kurulurken 0007 ile kritik bir yetki yükseltme açığı (profil eklerken
+`is_admin`) ve beş ufak açık kapatıldı. Panel içeriği (dua, âyet havuzu,
+bilgi, kart, duyuru, yerleşik gizleme) bütün kullanıcılara gider; topluluğa
+katılmak gerekmez, istek hesapsızdır (gizlilik §7). Ayrıntı ve işletim:
+`bes/ADMIN_PANEL.md`.
+
+## D37 — Lansman dönemi: Pro ücretsiz + rozet, 1.0.1'de satış ve 14 gün deneme (2026-10-02)
+
+Banka/ücretli uygulama sözleşmesi beklenirken yayına çıkmak için (kullanıcı
+kararı): 1.0'da satış kapalı (`extra.proSales` false), Pro özellikleri
+herkese açık ve taç/PRO rozetiyle işaretli; satın alma ekranı, fiyat ve
+geri yükleme gösterilmez; reklam ve "reklam izle, 4 saat reklamsız" var (D39).
+Sözleşme etkin olunca 1.0.1 `BES_PRO_SALES=1` ile derlenir: satış açılır ve
+giriş yapmış kullanıcıya sunucuda bir kez 14 günlük deneme başlar
+(`pro_trials`, `start_pro_trial()`, 0008). Deneme saati satış açılınca
+başlar — önce başlasaydı süre satın alma düğmesi yokken bitebilirdi.
+Deneme Pro özelliklerini açar, reklamı kaldırmaz (reklam yalnız
+satın almaya bakar). Kilitlenen yalnız Pro özellikleridir; ibadet kayıtları
+hiçbir zaman (ALWAYS_FREE). Mağaza açıklamasının 1.0.1 paragrafı
+`store/app-store*.md` sonunda hazır.
+
+## D38 — Panelden ücretsiz Pro verme (2026-10-02)
+
+Yönetici, kullanıcı ayrıntısından 1 hafta / 1 ay / 1 yıl / süresiz Pro verir
+ya da geri alır. RevenueCat promosyon hakkı (`grant_entitlement`) kullanılır:
+satın alınmış Pro gibi çalışır (reklamsız + Pro özellikleri), süre dolunca
+kendiliğinden biter, kullanıcının kendi aboneliğine dokunmaz. Bunun için
+uygulama girişte RevenueCat kimliğini Supabase kullanıcı kimliğine bağlar
+(`Purchases.logIn(uid)`, çıkışta `logOut`); 1.0.1'den itibaren geçerli.
+Sunucu işlevi `admin-pro` (yalnız yönetici; işlem günlüğüne yazar).
+
+## D39 — Ödüllü reklamın reklamsız süresi 24 saatten 4 saate (2026-10-05)
+
+Bir ödüllü reklam izleyen kullanıcı 24 saat boyunca hiç reklam görmüyordu;
+günlük kullanıcının neredeyse bütün reklam gösterimi tek ödüllü reklama
+düşüyordu ve gelir çok azdı (kullanıcının gözlemi). Süre 4 saat
+(`REWARD_AD_FREE_MS`). Eski 24 saatlik ödüller kayıtlı bitiş anına göre
+kendiliğinden biter. Uygulama metinleri (5 dil), mağaza metinleri ve
+destek sayfaları birlikte değişti.
+
+## D40 — Reklam yoğunluğu azaltıldı (2026-10-07)
+
+Kullanıcı (ürün sahibi) uygulamanın "aşırı reklam" gösterdiğini söyledi:
+- **Şerit:** yalnız ana sayfa sekmesinde (öteki sekmelerde yok) ve uyarlanır
+  boyut yerine standart 320×50 — uyarlanır şerit ekran genişliğinde, 60-90 pt
+  yüksekliğindeydi, çok göze batıyordu.
+- **Açılış reklamı:** her açılışta (4 saatte bir) değil, **günde bir kez,
+  günün ikinci açılışında**. Günün ilk açılışı reklamsız (vakte bakmak için
+  açılır). Gün = cihazın yerel takvim günü. Eski "ilk 3 açılışta yok" kuralı
+  kalktı.
+- **Ödüllü reklam** (4 saat reklamsız, geri sayımlı) aynen kalır.
+- Ekran geçişi tam ekran reklamı (D33/1 Ekim: 4 geçişte bir, 3 dakikada en
+  çok bir) bu kararda değişmedi.
+- Panelden verilen ücretsiz Pro (D38) Android'de de çalışsın diye
+  RevenueCat'e Android uygulaması eklendi (yalnız promosyon hakkı için; Play
+  satın alma bağlantısı Pro satışı açılınca kurulur).
+

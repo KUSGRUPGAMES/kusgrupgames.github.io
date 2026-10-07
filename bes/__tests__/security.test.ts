@@ -75,8 +75,13 @@ describe('sır yönetimi', () => {
       if (!t || t.startsWith('#')) continue;
       const ad = (t.split('=')[0] ?? '').trim();
       // Sır niteliğindeki bir değişken EXPO_PUBLIC_ ile başlarsa pakete gömülür.
+      // İki bilinen istisna tasarım gereği herkese açık istemci anahtarıdır:
+      // Supabase `anon` anahtarı (koruma RLS'te) ve RevenueCat'in "public SDK
+      // key"i (appl_/goog_ önekli; satın alma doğrulaması RevenueCat
+      // sunucusunda, gizli anahtar hiçbir zaman istemciye girmez).
+      const acikIstemciAnahtari = /ANON|^EXPO_PUBLIC_REVENUECAT_(IOS|ANDROID)_KEY$/.test(ad);
       if (ad.startsWith('EXPO_PUBLIC_')) {
-        expect({ ad, sir: sirKalibi.test(ad.replace('EXPO_PUBLIC_', '')) && !/ANON/i.test(ad) })
+        expect({ ad, sir: sirKalibi.test(ad.replace('EXPO_PUBLIC_', '')) && !acikIstemciAnahtari })
           .toEqual({ ad, sir: false });
       }
     }
@@ -111,45 +116,55 @@ describe('gizlilik', () => {
   });
 
   /**
-   * Mağaza gizlilik formunda "veri toplanmıyor" yazıyor ve gizlilik
-   * sayfalarında "reklam yok, izleyici yok, analitik yok" deniyor
-   * (`store/app-privacy.md`). Bu üç cümle bir bağımlılık eklendiği an sessizce
-   * yalan olabilir; bağımlılık listesi o yüzden sınamaya bağlandı.
+   * D33: reklam artık var (AdMob), ama analitik, izleme ve pazarlama SDK'sı
+   * yok. Gizlilik formu ve sayfaları bu ayrımı söylüyor; yeni bir bağımlılık
+   * bunu sessizce yalan yapmasın diye liste sınamaya bağlı.
    */
-  it('pakette reklam, izleme ya da analitik kütüphanesi yok', () => {
+  it('pakette yalnız AdMob var; analitik ya da izleme kütüphanesi yok', () => {
     const pkg = JSON.parse(oku(join(ROOT, 'package.json'))) as {
       dependencies?: Record<string, string>; devDependencies?: Record<string, string>;
     };
     const adlar = [...Object.keys(pkg.dependencies ?? {}), ...Object.keys(pkg.devDependencies ?? {})];
+    const IZINLI = new Set(['react-native-google-mobile-ads']);
     const yasak = /admob|google-mobile-ads|facebook|firebase|analytics|amplitude|mixpanel|segment|sentry|bugsnag|appsflyer|adjust|onesignal|branch|clevertap|posthog/i;
-    expect(adlar.filter((a) => yasak.test(a))).toEqual([]);
+    expect(adlar.filter((a) => yasak.test(a) && !IZINLI.has(a))).toEqual([]);
   });
 
-  it('izleme izni istenmiyor, reklam kimliği kapalı', () => {
+  it('izleme izni yalnız reklam için, dürüst bir metinle ve yalnız reklam katmanında isteniyor', () => {
     const cfg = oku(join(ROOT, 'app.config.ts'));
-    // iOS: App Tracking Transparency anahtarı varsa Apple izleme yaptığımızı
-    // varsayar ve gizlilik etiketleriyle çelişir.
-    expect(cfg).not.toContain('NSUserTrackingUsageDescription');
-    // Android: Play, AD_ID'yi bildirip kullanmayanı da reddediyor.
-    expect(cfg).toContain("'com.google.android.gms.permission.AD_ID'");
+    expect(cfg).toMatch(/'expo-tracking-transparency'/);
+    // Metin, izin verilmezse hiçbir özelliğin kısıtlanmadığını söylemeli.
+    expect(cfg).toMatch(/userTrackingPermission:[\s\S]*?reklam[\s\S]*?kısıtlanmaz/);
+    const isteyenler = kaynaklar.filter((p) => /requestTrackingPermissionsAsync\(/.test(kodu(p)));
+    expect(isteyenler.map((p) => p.slice(ROOT.length + 1))).toEqual([join('src', 'features', 'pro', 'adsRuntime.ts')]);
   });
 
-  it('mağaza metinleri olmayan özelliği vaat etmiyor', () => {
-    // Reklam kuralları ve Pro aboneliği kodda **dormant**: hiçbir ekran
-    // `entitlements` ya da `ads` modülünü kullanmıyor. Mağaza açıklamasında
-    // bunlardan söz etmek, App Review'un "metadata describes functionality
-    // not present" gerekçesiyle reddettiği şeydir.
+  it('reklam içeriği G derecesinde; mağaza derlemesi test kimliğiyle çıkmaz', () => {
+    expect(oku(join(ROOT, 'src', 'features', 'pro', 'adsRuntime.ts'))).toMatch(/maxAdContentRating:\s*MaxAdContentRating\.G/);
+    const cfg = oku(join(ROOT, 'app.config.ts'));
+    expect(cfg).toMatch(/MAGAZA === 'ios'[\s\S]*?ADMOB_TEST\.ios\)[\s\S]*?throw new Error/);
+    expect(cfg).toMatch(/MAGAZA === 'android'[\s\S]*?ADMOB_TEST\.android\)[\s\S]*?throw new Error/);
+  });
+
+  it('mağaza metinleri reklam ve abonelik konusunda doğruyu söylüyor (D33)', () => {
+    // v1.0.0'ın ilk metni "tamamen ücretsiz, reklamsız, abonelik yok" diyordu.
+    // Reklam ve Pro geldikten sonra bu cümle kalırsa App Review "metadata
+    // uygulamayla uyuşmuyor" diye reddeder; kullanıcı da kandırılmış olur.
     for (const dosya of ['store/app-store.md', 'store/play-store.md']) {
       const metin = oku(join(ROOT, dosya));
-      const aciklama = metin.slice(metin.indexOf('## Açıklama'), metin.indexOf('## Sürüm notları'));
-      expect({ dosya, vaat: /Pro aboneliği|abonelik satın|reklam gösterilmez/i.test(aciklama) })
-        .toEqual({ dosya, vaat: false });
+      const aciklama = metin.slice(metin.indexOf('## '), metin.indexOf('## Sürüm notları') > 0 ? metin.indexOf('## Sürüm notları') : undefined);
+      expect({ dosya, eskiIddia: /REKLAMSIZ|Abonelik yok|reklam yok\./.test(aciklama) }).toEqual({ dosya, eskiIddia: false });
+      // Otomatik yenilenen abonelik açıklamada yazılı olmalı (App Review 3.1.2).
+      expect({ dosya, yenileme: /kendiliğinden yenilenir/.test(metin) }).toEqual({ dosya, yenileme: true });
     }
   });
 
-  it('ekranların hiçbiri Pro kilidi ya da reklam yüzeyi çizmiyor', () => {
-    const ekranlar = kaynaklar.filter((p) => p.includes(`${sep}app${sep}`) || p.endsWith('.tsx'));
-    const suclular = ekranlar.filter((p) => /entitlementsFor|FREE_LIMITS|adDecision|<ProLock/.test(kodu(p)));
+  it('ibadet ekranları hiçbir zaman Pro kilidine ya da reklama bağlanmaz (§66, §68, D33)', () => {
+    // "İbadetin kendisi kilitlenmez": bu ekranlar ne Pro durumuna bakar ne
+    // reklam çizer. Okuyucu, kıble, zikir ve namaz rehberi ayrıca
+    // AD_FREE_SURFACES'ta; burada dosya düzeyinde de kapatılıyor.
+    const IBADET = ['reader', 'qibla', 'dhikr', 'duas', 'qada', 'zakat', 'names', 'prayer-guide', 'hijri', 'prayer-calendar'];
+    const suclular = IBADET.filter((ad) => /usePro|AdBanner|maybeShowInterstitial|ProLock/.test(kodu(join(ROOT, 'app', `${ad}.tsx`))));
     expect(suclular).toEqual([]);
   });
 

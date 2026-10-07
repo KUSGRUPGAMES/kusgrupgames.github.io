@@ -459,16 +459,39 @@ describe('renk disiplini', () => {
   });
 
   it('zemin gradyanı masterın inişini taşıyor', () => {
+    // **Kural ölçülür, token adı ezberlenmez.** Eski sürüm
+    // `[palette.emerald800, palette.emerald950]` dizesini birebir arıyordu;
+    // gece rampasına geçilince kural bozulmadığı hâlde sınama kırmızı yandı.
+    // Korunan şey şu: üst durak alt duraktan **açık** olmalı, yoksa ekran
+    // tepeden aşağı açılır ve ikonun inişiyle ters düşer.
     const tema = oku(join(KOK, 'src/theme/index.ts'));
+    const tokenlar = oku(join(KOK, 'src/theme/tokens.ts'));
     const koyu = tema.slice(tema.indexOf('export const darkTheme'));
     const acik = tema.slice(tema.indexOf('export const lightTheme'), tema.indexOf('export const darkTheme'));
-    // Üst durak alt duraktan açık olmalı; ters çevrilirse ekran tepeden
-    // aşağı açılıyor ve ikonla ters düşüyor.
-    expect(koyu).toContain('backgroundGradient: [palette.emerald800, palette.emerald950]');
-    expect(acik).toContain('backgroundGradient: [palette.ivory50, palette.ivory200]');
-    // Marka kartı iki temada da ikonun kutucuğu gibi koyulaşır.
-    expect(koyu).toContain('accentGradient: [palette.emerald600, palette.emerald950]');
-    expect(acik).toContain('accentGradient: [palette.emerald600, palette.emerald900]');
+
+    /** `palette.foo` adını ham onaltılık değerine çevirir. */
+    const hex = (ad: string): string => {
+      const m = tokenlar.match(new RegExp(`\\b${ad}:\\s*'(#[0-9A-Fa-f]{6})'`));
+      if (!m?.[1]) throw new Error(`palette.${ad} bulunamadı`);
+      return m[1];
+    };
+    const parlaklik = (h: string): number => {
+      const k = (v: number) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+      const [r, g, b] = [1, 3, 5].map((i) => k(parseInt(h.slice(i, i + 2), 16) / 255));
+      return 0.2126 * (r ?? 0) + 0.7152 * (g ?? 0) + 0.0722 * (b ?? 0);
+    };
+    const duraklar = (govde: string, alan: string): [number, number] => {
+      const m = govde.match(new RegExp(`${alan}:\\s*\\[palette\\.(\\w+),\\s*palette\\.(\\w+)\\]`));
+      if (!m?.[1] || !m[2]) throw new Error(`${alan} okunamadı`);
+      return [parlaklik(hex(m[1])), parlaklik(hex(m[2]))];
+    };
+
+    for (const [govde, ad] of [[koyu, 'koyu'], [acik, 'açık']] as const) {
+      const [ust, alt] = duraklar(govde, 'backgroundGradient');
+      expect({ ad, iniyor: ust > alt }).toEqual({ ad, iniyor: true });
+      const [mUst, mAlt] = duraklar(govde, 'accentGradient');
+      expect({ ad, kartIniyor: mUst > mAlt }).toEqual({ ad, kartIniyor: true });
+    }
   });
 
   it('marka yüzeyindeki altın iki temada da aynı — logodaki eşleşme', () => {

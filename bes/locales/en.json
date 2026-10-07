@@ -1,0 +1,7 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "Prayer times and the qibla direction are calculated for where you are. If you don’t allow it, you can pick your city manually.",
+    "NSMotionUsageDescription": "The qibla compass uses the motion sensor to read which way your phone is facing.",
+    "NSUserTrackingUsageDescription": "This permission is only used to make ads more relevant to you. If you don’t allow it, ads are still shown and no feature of the app is limited."
+  }
+}

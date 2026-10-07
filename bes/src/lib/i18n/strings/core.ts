@@ -12,7 +12,7 @@
 import type { StringKey } from './tr';
 
 export const CORE_KEYS: readonly StringKey[] = [
-  'nav.home', 'nav.quran', 'nav.worship', 'nav.explore', 'nav.profile',
+  'nav.home', 'nav.quran', 'nav.learn', 'nav.worship', 'nav.community', 'nav.profile',
   'nav.back', 'nav.close',
 
   'common.ok', 'common.cancel', 'common.save', 'common.delete', 'common.edit',
@@ -41,7 +41,7 @@ export const CORE_KEYS: readonly StringKey[] = [
   'settings.themeLight', 'settings.themeDark', 'settings.language',
   'settings.notifications', 'settings.about', 'settings.privacy', 'settings.version',
 
-  'pro.title', 'pro.unlock', 'pro.monthly', 'pro.yearly', 'pro.restore',
+  'pro.title', 'pro.locked', 'pro.planMonthly', 'pro.planAnnual', 'pro.restore',
 
   'error.title', 'error.generic', 'error.network', 'error.timeout',
   'error.restart', 'offline.title', 'offline.body',

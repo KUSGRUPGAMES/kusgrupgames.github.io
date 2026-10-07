@@ -4,8 +4,9 @@ Semantic versioning. Yayınlanan ilk üretim sürümü hedefi: **1.0.0**.
 
 ## [1.0.0] — ilk yayın adayı
 
-İlk mağaza sürümü. Hesapsız, sunucusuz, **tamamen ücretsiz ve reklamsız**
-çalışan bir namaz vakti ve Kur'an uygulaması.
+İlk mağaza sürümü. İbadet bölümleri hesapsız ve her zaman ücretsiz çalışan bir
+namaz vakti ve Kur'an uygulaması; ücretsiz sürümde reklam, isteğe bağlı BEŞ
+Pro ve isteğe bağlı topluluk (D32, D33).
 
 **Kapsam:** beş vakit ve güneş doğuşu, aylık takvim (yedi hesaplama yöntemi, vakit başına
 dakika düzeltmesi), kıble pusulası, Kur'an-ı Kerim'in tamamı (Tanzil metni +
@@ -18,8 +19,40 @@ paylaşım kartı ve yerel yedek.
 **Beş dil:** arayüzün tamamı Türkçe, İngilizce, Arapça, Almanca ve
 Fransızca (573 anahtar × 5). Kur'an meali ve bilgi yazıları Türkçedir.
 
-**Gizlilik:** hesap yok, sunucu yok, reklam yok, izleyici yok, analitik yok.
-Kişisel veri cihazdan çıkmıyor. İki mağaza formunda da "veri toplanmıyor".
+**Gizlilik:** ibadet kayıtları ve konum cihazdan çıkmıyor; analitik ve
+izleyici yok. Reklam (AdMob), Pro (RevenueCat) ve topluluk (Supabase) için
+işlenen veriler `bes/store/app-privacy.md` ve gizlilik sayfasında tek tek yazılı.
+
+### Reklam ve BEŞ Pro (2026-09-30, D33)
+
+- AdMob: alt şerit (ana sayfa, Kur'an listesi, İbadet, Ayarlar) ve seyrek tam
+  ekran (ders sonu, kart paylaşımı; en az 3 dk arayla). Okuyucu, kıble, zikir,
+  namaz rehberinde ve vakitten 15 dk önce / 30 dk sonra reklam yok. AB'de
+  Google onay formu, iOS'ta izleme izni onboarding'den sonra; Ayarlar'da
+  "Reklam gizlilik seçenekleri".
+- BEŞ Pro (RevenueCat): aylık, yıllık, ömür boyu. Reklamsız; Öğren 4-7.
+  üniteler; toplulukta sohbete yazma, hatim kurma, günde 5 dua isteği.
+  Satın alma ekranında geri yükleme, yenileme açıklaması, koşul bağlantıları.
+- İbadet ekranlarının Pro'ya ya da reklama hiç bağlanmadığı sınamaya bağlı.
+- Gizlilik sayfaları, koşullar, destek, mağaza metinleri ve gizlilik formu
+  yanıtları yeniden yazıldı.
+
+### İçerik çoğaltıldı, gözden geçirme düzeltmeleri (2026-09-30)
+
+- **Dualar 34 → 98:** Kur'an'daki 64 dua eklendi (`content/quranDuas.ts`).
+  Dosyada yalnız sure:âyet referansı var; Arapça metin ve meal paketten okunur.
+  Her referans meal metni okunarak doğrulandı. Günün duası, dualar ekranı,
+  arama ve widget aynı birleşik listeyi kullanıyor. Yeni kategori: İman ve hidayet.
+- **Hazır kartlar ~80 → ~150:** yeni tebrik mesajları (cuma, bayram, kandil,
+  Ramazan, gün), 25 yeni âyet kartı, Kur'an dualarından otomatik dua kartları.
+  Kartta kırpılacak uzunluktaki âyet kart olmuyor (sınamaya bağlı).
+- **Meal düzeltmesi:** Tanzil tr.yazir'de Yûsuf 101'in sonuna ~700 karakterlik
+  tefsir paragrafı karışmıştı; içe aktarma artık `{*}` işaretinden sonrasını
+  atıyor. Yalnız o satır değişti.
+- Dua ve bilgi konusu düğmeleri beş dile çevrildi (Arapça arayüzde Türkçe
+  kalıyordu).
+- `tools/preview.js` onboarding'deki dil ve giriş adımlarını tanıyor ve Mac'te
+  kurulu Chrome'la çalışıyor (dil adımı eklendiğinden beri tarama kırıktı).
 
 ### Kimlik: KUS GRUP GAMES (D23)
 

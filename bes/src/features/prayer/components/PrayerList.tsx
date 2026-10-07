@@ -1,9 +1,16 @@
-/** Günün altı vakti — şartname §14. */
+/**
+ * Günün vakit listesi — beş vakit ve güneş doğuşu (§14).
+ *
+ * Tasarım, ürün sahibinin onayladığı ana sayfa taslağından gelir: her satırda
+ * vaktin kendi ikonu, sağda saat ve ok; **aktif vakit altın çerçeveli bir
+ * şeritle** vurgulanır. Önceki sürüm yalnız yazıyı kalınlaştırıyordu ve
+ * listede gözle bulunmuyordu.
+ */
 import React from 'react';
-import { View } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useT, type StringKey } from '@/lib/i18n';
-import { Row, Text, Divider } from '@/ui';
+import { Row, Text, Divider, Icon, type IconName } from '@/ui';
 import { formatHM } from '../calc';
 import { PRAYER_KEYS, type PrayerKey } from '../methods';
 import type { DaySchedule } from '../schedule';
@@ -11,6 +18,15 @@ import type { DaySchedule } from '../schedule';
 const LABEL_KEY: Record<PrayerKey, 'prayer.fajr' | 'prayer.sunrise' | 'prayer.dhuhr' | 'prayer.asr' | 'prayer.maghrib' | 'prayer.isha'> = {
   fajr: 'prayer.fajr', sunrise: 'prayer.sunrise', dhuhr: 'prayer.dhuhr',
   asr: 'prayer.asr', maghrib: 'prayer.maghrib', isha: 'prayer.isha',
+};
+
+/**
+ * Vakte göre ikon: güneşin ufka göre yeri. İmsak ufkun altında, güneş
+ * doğarken, öğle tepede, ikindi alçalırken, akşam batarken, yatsı hilal.
+ */
+const ICON: Record<PrayerKey, IconName> = {
+  fajr: 'sunLow', sunrise: 'sunrise', dhuhr: 'sunHigh',
+  asr: 'sunLow', maghrib: 'sunset', isha: 'crescent',
 };
 
 const SHORT_KEY: Record<PrayerKey, StringKey> = {
@@ -35,8 +51,12 @@ export function usePrayerShortLabel(): (key: PrayerKey) => string {
   return (key) => t(SHORT_KEY[key]);
 }
 
-export function PrayerList({ day, highlight }: { day: DaySchedule; highlight?: PrayerKey | null }) {
+export function PrayerList({ day, highlight, branded = false, compact = false, onPrayerPress }: {
+  day: DaySchedule; highlight?: PrayerKey | null; branded?: boolean;
+  compact?: boolean; onPrayerPress?: (key: PrayerKey) => void;
+}) {
   const theme = useTheme();
+  const t = useT();
   const label = usePrayerLabel();
   return (
     <View>
@@ -45,21 +65,52 @@ export function PrayerList({ day, highlight }: { day: DaySchedule; highlight?: P
         const aktif = highlight === key;
         return (
           <View key={key}>
-            {i > 0 ? <Divider /> : null}
-            <Row
-              align="center"
-              justify="space-between"
-              style={{ paddingVertical: theme.spacing.md }}
+            {i > 0 && !aktif ? branded
+              ? <View style={{ height: 1, backgroundColor: theme.colors.bezemeSolgun }} />
+              : <Divider /> : null}
+            <Pressable
+              onPress={onPrayerPress ? () => onPrayerPress(key) : undefined}
+              accessibilityRole={onPrayerPress ? 'button' : 'text'}
+              style={({ pressed }) => ({
+                flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+                minHeight: compact ? 38 : 48,
+                paddingVertical: compact ? theme.spacing.xs : theme.spacing.md,
+                paddingHorizontal: aktif ? theme.spacing.sm : compact ? theme.spacing.xs : 0,
+                borderRadius: aktif ? theme.radius.md : 0,
+                borderWidth: aktif ? 1 : 0,
+                borderColor: aktif ? (branded ? theme.colors.onAccentHighlight : theme.colors.highlight) : 'transparent',
+                backgroundColor: aktif ? theme.colors.onAccentBorder : pressed ? theme.colors.onAccentBorder : 'transparent',
+              })}
               accessible
               accessibilityLabel={`${label(key)} ${formatHM(entry?.hours ?? null)}`}
             >
-              <Text variant={aktif ? 'bodyStrong' : 'body'} tone={aktif ? 'accent' : 'default'}>
-                {label(key)}
-              </Text>
-              <Text variant={aktif ? 'bodyStrong' : 'body'} tone={aktif ? 'accent' : 'muted'}>
-                {formatHM(entry?.hours ?? null)}
-              </Text>
-            </Row>
+              <Row align="center" gap="sm">
+                <Icon
+                  name={ICON[key]}
+                  size={20}
+                  color={branded ? theme.colors.onAccentHighlight : aktif ? theme.colors.highlight : theme.colors.textMuted}
+                />
+                <Text variant={aktif ? 'bodyStrong' : 'body'} tone={branded ? 'onAccent' : aktif ? 'accent' : 'default'}
+                  style={branded && aktif ? { color: theme.colors.onAccentHighlight } : undefined}>
+                  {label(key)}
+                </Text>
+                {/* Vurgu "şu anki vakit"tir (sıradaki değil); geri sayım
+                    sıradakini gösterdiği için etiketsiz vurgu karışıyordu. */}
+                {aktif ? (
+                  <Text variant="micro" style={{ color: branded ? theme.colors.onAccentHighlight : theme.colors.highlight, letterSpacing: 0.8 }}>
+                    {t('prayer.nowTag')}
+                  </Text>
+                ) : null}
+              </Row>
+              <Row align="center" gap="xs">
+                <Text variant={aktif ? 'bodyStrong' : 'body'} tone={branded ? 'onAccent' : aktif ? 'accent' : 'muted'}
+                  style={branded && aktif ? { color: theme.colors.onAccentHighlight } : undefined}>
+                  {formatHM(entry?.hours ?? null)}
+                </Text>
+                {onPrayerPress ? <Icon name="chevronRight" size={16}
+                  color={branded ? theme.colors.onAccentHighlight : aktif ? theme.colors.highlight : theme.colors.textSubtle} /> : null}
+              </Row>
+            </Pressable>
           </View>
         );
       })}
