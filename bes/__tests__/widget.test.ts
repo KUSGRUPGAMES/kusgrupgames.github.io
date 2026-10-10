@@ -99,7 +99,7 @@ describe('canlı etkinlik arka plan yenilemesi', () => {
   });
 
   it('etkinliğe önümüzdeki vakitlerin listesi gönderiliyor; iki Swift tanımı aynı alanları taşıyor', () => {
-    expect(oku('src/features/widget/useWidgetSync.ts')).toMatch(/upcoming,\n/);
+    expect(oku('src/features/widget/useWidgetSync.tsx')).toMatch(/upcoming,\n/);
     const alan = /var upcoming: \[BesVakitSlot\] = \[\]/;
     expect(oku('modules/bes-live-activity/ios/BesLiveActivityModule.swift')).toMatch(alan);
     expect(oku('targets/widget/VakitAktivitesi.swift')).toMatch(alan);

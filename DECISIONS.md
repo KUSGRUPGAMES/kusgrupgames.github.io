@@ -987,3 +987,44 @@ Kullanıcı (ürün sahibi) uygulamanın "aşırı reklam" gösterdiğini söyle
   RevenueCat'e Android uygulaması eklendi (yalnız promosyon hakkı için; Play
   satın alma bağlantısı Pro satışı açılınca kurulur).
 
+## D41 — Android ana ekran widget'ları (Faz 1) (2026-10-11)
+
+Kullanıcı Android'de hiç widget olmadığını bildirdi (iOS'ta Namaz vakitleri
+ve Günün âyeti widget'ları zaten vardı). Android'de iOS'taki gibi bir kilit
+ekranı widget API'si **yok** (Google Android 5.0'da kaldırdı) — en yakın
+karşılığı kalıcı bir bildirim, o **ayrı bir faz** (henüz yazılmadı).
+
+Bu faz yalnız ana ekran widget'larını ekliyor:
+- Kütüphane: `react-native-android-widget` (Expo config plugin'li, JSX→
+  RemoteViews, ayrı native modül gerekmiyor). El yazısı Kotlin/Gradle
+  yazılmadı — CI (`bes-android.yml`) her push'ta `expo prebuild --clean`
+  çalıştırıp `android/` klasörünü sıfırdan ürettiği için commit edilmiş
+  native dosyalar hayatta kalmıyor; config plugin bunu otomatik halleder.
+- Veri akışı iOS'un App Group'una karşılık: `useWidgetSync.tsx`'teki `veri`
+  değişince `src/features/widget/android/store.ts` üzerinden kalıcı depoya
+  yazılır (OS'un kendi tetiklediği periyodik yenileme — uygulama kapalıyken
+  de — buradan okur) ve açık uygulamadaki widget'lar anında güncellenir.
+- Görünüm `src/features/widget/android/render.tsx`'te — React context'i
+  (tema/i18n) olmayan headless bir görevde çalıştığı için renkler iOS
+  tarafındaki `BesRenk` sabitleriyle birebir aynı, sabit yazılmış (D34 — tek
+  koyu tema, `brand.test.ts`'in "tema dışı renk" denetimine bu klasör için
+  istisna eklendi).
+- **Android'in kendi sınırı:** widget yenilemesi 30 dakikadan sık olamaz
+  (`updatePeriodMillis` tabanı) — iOS'taki gibi saniye saniye akan geri
+  sayım yok, "Sıradaki: İkindi 16:42" periyodik yenilenir. Bu, Android'deki
+  hemen bütün widget'ların (hava durumu dahil) normal davranışı.
+- `package.json`'daki `main` alanı `expo-router/entry`'den kök dizindeki
+  `index.tsx`'e çevrildi (widget'ın headless görev kaydı için gerekli);
+  `index.tsx` hâlâ `expo-router/entry`'i import edip uygulamayı normal
+  başlatıyor.
+- Burada Android SDK/cihaz yok — derleme doğrulaması yalnız CI'de, görünüm
+  doğrulaması kullanıcının kendi cihazında (KNOWN_ISSUES E1/E2'deki iOS
+  kalıbının aynısı).
+
+Faz 2 (kilit ekranında görünen kalıcı bildirim, iOS Live Activity'nin
+Android karşılığı) henüz yazılmadı — plan: `modules/bes-live-activity/`
+modülüne bir Android tarafı (Kotlin) eklemek, `AlarmManager` ile (zaten
+izni var: `SCHEDULE_EXACT_ALARM`) her vakit değişiminde yeniden kurulan,
+`setOngoing(true)` ile kalıcı bir bildirim. `useWidgetSync.tsx`'teki
+`liveActivity.startOrUpdate()/end()` çağrıları değişmeyecek.
+

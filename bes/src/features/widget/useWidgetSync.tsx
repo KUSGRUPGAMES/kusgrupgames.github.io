@@ -2,16 +2,19 @@
  * Widget ve Dinamik Ada eşitleyicisi — D30.
  *
  * - Konum, ayar, dil ya da gün değişince vakitleri (bugün + 3 gün) ve günlük
- *   içeriği App Group'a yazar, widget'ları yeniden yükletir.
+ *   içeriği iOS'ta App Group'a, Android'de kalıcı depoya yazar, widget'ları
+ *   yeniden yükletir.
  * - Uygulama arka plana geçerken (ve açıkken vakit değişince) Dinamik
- *   Ada'daki geri sayımı sıradaki vakte kurar; ayar kapalıysa kaldırır.
+ *   Ada'daki geri sayımı sıradaki vakte kurar; ayar kapalıysa kaldırır
+ *   (yalnız iOS — Android'in Live Activity karşılığı yok).
  *
- * Yalnız iOS'ta iş yapar; yerel modül yoksa (Expo Go, web, test) sessiz.
+ * iOS/Android dışında ya da yerel modül yoksa (Expo Go, web, test) sessiz.
  */
 import { useEffect, useMemo, useRef } from 'react';
 import { AppState, Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { requireOptionalNativeModule } from 'expo-modules-core';
+import { requestWidgetUpdate } from 'react-native-android-widget';
 import { useT } from '@/lib/i18n';
 import { useSettingsStore } from '@/store/settings';
 import { useLocationStore } from '@/store/locations';
@@ -26,6 +29,8 @@ import { pickDailyVerse } from '@/features/daily/verse';
 import { logger } from '@/lib/log';
 import { liveActivity } from '../../../modules/bes-live-activity';
 import { buildWidgetPayload, nextTwo, WIDGET_KEY, type WidgetDaily } from './payload';
+import { saveAndroidWidgetPayload } from './android/store';
+import { VakitWidget, GununWidget } from './android/render';
 import { scheduleInputFrom } from '@/features/prayer/window';
 import { useOfficialVersion } from '@/features/prayer/officialRuntime';
 
@@ -78,7 +83,7 @@ export function useWidgetSync(): void {
     // `bugun` yalnız gün değişince yeniden hesaplatmak için bağımlılıkta.
   }, [konum, settings, t, label, bugun, resmiSurum]);
 
-  // Widget verisi.
+  // Widget verisi (iOS — App Group üzerinden).
   useEffect(() => {
     if (!depo || !grup || !veri) return;
     try {
@@ -88,6 +93,24 @@ export function useWidgetSync(): void {
       log.warn('widget verisi yazılamadı', { error: e });
     }
   }, [veri, grup]);
+
+  // Widget verisi (Android — ana ekran widget'ları). `veri` değişince hem
+  // kalıcı depoya yazılır (OS'un kendi tetiklediği periyodik yenileme
+  // buradan okur, uygulama kapalıyken de), hem açık uygulamadaki widget'lar
+  // anında güncellenir.
+  useEffect(() => {
+    if (Platform.OS !== 'android' || !veri) return;
+    void saveAndroidWidgetPayload(veri).then(() => {
+      void requestWidgetUpdate({
+        widgetName: 'VakitWidget',
+        renderWidget: () => <VakitWidget payload={veri} nowSec={Date.now() / 1000} />,
+      }).catch((e: unknown) => log.warn('vakit widget güncellenemedi', { error: e }));
+      void requestWidgetUpdate({
+        widgetName: 'GununWidget',
+        renderWidget: () => <GununWidget payload={veri} />,
+      }).catch((e: unknown) => log.warn('günün widget güncellenemedi', { error: e }));
+    });
+  }, [veri]);
 
   // Dinamik Ada: açıkken vakit değişince ve arka plana geçerken güncellenir.
   const acik = settings.notifications.liveActivity;

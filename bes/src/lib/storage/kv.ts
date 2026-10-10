@@ -81,6 +81,7 @@ export const KEYS = {
   directionReloadAt: 'directionReloadAt',
   permissionNudges: 'permissionNudges',
   locationNoticeDismissed: 'locationNoticeDismissed',
+  androidWidgetData: 'androidWidgetData',
 } as const;
 
 export type StorageKey = (typeof KEYS)[keyof typeof KEYS];

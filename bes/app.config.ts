@@ -273,6 +273,36 @@ const config: ExpoConfig = {
         'Bu izin yalnız reklamların sana daha uygun olması için kullanılır. İzin vermezsen de reklamlar gösterilir, uygulamanın hiçbir özelliği kısıtlanmaz.',
     }],
     ['expo-font', { fonts: ['./assets/fonts/Amiri-Regular.ttf', './assets/fonts/AmiriQuran-Regular.ttf'] }],
+    // Android ana ekran widget'ları (iOS'taki targets/widget'ın karşılığı,
+    // D30'un Android tarafı). Veri `src/features/widget/android/store.ts`
+    // üzerinden akar; görünüm `render.tsx`. 30 dakikadan sık yenilenemez
+    // (Android'in kendi sınırı) — iOS'taki gibi canlı geri sayım yok.
+    ['react-native-android-widget', {
+      widgets: [
+        {
+          name: 'VakitWidget',
+          label: 'Namaz vakitleri',
+          description: 'Sıradaki vakte geri sayım.',
+          minWidth: '110dp',
+          minHeight: '110dp',
+          targetCellWidth: 2,
+          targetCellHeight: 2,
+          updatePeriodMillis: 1800000,
+          resizeMode: 'horizontal|vertical',
+        },
+        {
+          name: 'GununWidget',
+          label: 'Günün âyeti',
+          description: 'Her gün bir âyet ve meali.',
+          minWidth: '180dp',
+          minHeight: '110dp',
+          targetCellWidth: 3,
+          targetCellHeight: 2,
+          updatePeriodMillis: 1800000,
+          resizeMode: 'horizontal|vertical',
+        },
+      ],
+    }],
   ],
   locales: { tr: './locales/tr.json', en: './locales/en.json', de: './locales/de.json', fr: './locales/fr.json', ar: './locales/ar.json' },
   experiments: { typedRoutes: true },

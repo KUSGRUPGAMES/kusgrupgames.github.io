@@ -504,6 +504,10 @@ describe('renk disiplini', () => {
     const suclular: string[] = [];
     for (const f of [...dosyalar(join(KOK, 'src'), ['.ts', '.tsx']), ...dosyalar(join(KOK, 'app'), ['.ts', '.tsx'])]) {
       if (f.includes(`${sep}theme${sep}`)) continue;
+      // Android widget'ı headless JS görevinde çalışır: React ağacı/
+      // ThemeProvider yok (tıpkı iOS tarafının targets/widget/Paylasilan.swift
+      // içinde kendi BesRenk sabitlerini kullanması gibi, D34 — tek koyu tema).
+      if (f.includes(`${sep}widget${sep}android${sep}`)) continue;
       if (/#[0-9A-Fa-f]{6}\b/.test(oku(f))) suclular.push(f.slice(KOK.length + 1));
     }
     expect(suclular).toEqual([]);
