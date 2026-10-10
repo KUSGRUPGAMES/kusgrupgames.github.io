@@ -1021,10 +1021,50 @@ Bu faz yalnız ana ekran widget'larını ekliyor:
   doğrulaması kullanıcının kendi cihazında (KNOWN_ISSUES E1/E2'deki iOS
   kalıbının aynısı).
 
-Faz 2 (kilit ekranında görünen kalıcı bildirim, iOS Live Activity'nin
-Android karşılığı) henüz yazılmadı — plan: `modules/bes-live-activity/`
-modülüne bir Android tarafı (Kotlin) eklemek, `AlarmManager` ile (zaten
-izni var: `SCHEDULE_EXACT_ALARM`) her vakit değişiminde yeniden kurulan,
-`setOngoing(true)` ile kalıcı bir bildirim. `useWidgetSync.tsx`'teki
-`liveActivity.startOrUpdate()/end()` çağrıları değişmeyecek.
+## D42 — Android kilit ekranı eşdeğeri: kalıcı bildirim (Faz 2) (2026-10-11)
+
+iOS'un Live Activity'sinin ilk denemesi (yalnız `staleDate` + arka plan
+yenileme) cihazda yetersiz kalmıştı ("kilit ekranı öğleden 39 dk sonra hâlâ
+'Öğle 0:00' gösteriyordu" — bkz. `modules/bes-live-activity/ios/
+BesLiveActivityModule.swift`'teki not) ve asıl çözüm push bildirimi (APNs +
+Supabase Edge Function) oldu. Android için aynı güvenceyi FCM/sunucu
+altyapısıyla kurmak (Firebase projesi + Edge Function genişletmesi) ayrı,
+büyük bir iş; kullanıcı önce daha basit yerel yaklaşımı (yalnız
+`AlarmManager`, sunucu yok) deneyip sonucu görmeyi seçti. Yetersiz kalırsa
+FCM'e geçilir.
+
+Eklenen: `modules/bes-live-activity/android/` — iOS modülüyle **aynı JS
+arayüzü** (`isSupported`/`startOrUpdate`/`end`, `modules/bes-live-activity/
+index.ts` değişmedi):
+- `BesVakitDepo.kt`: önümüzdeki vakitler listesini (iOS'taki `upcoming` ile
+  aynı alanlar) `SharedPreferences`'a yazar/okur — headless bir
+  `BroadcastReceiver` içinde de her zaman erişilebilir.
+- `BesVakitYoneticisi.kt`: `startOrUpdate` çağrıldığında bildirimi kurar ve
+  sıradaki vakit anı için tek seferlik, tam bir `AlarmManager.
+  setExactAndAllowWhileIdle` alarmı kurar (zaten izni var:
+  `SCHEDULE_EXACT_ALARM`, Doze modunda da tetiklenir). Alarm ateşlenince
+  `BesVakitReceiver` aynı fonksiyonu tekrar çağırıp listeden bir sonraki
+  vakte geçer — **uygulama kapalıyken de, JS'e gerek kalmadan** (iOS'un
+  `BesVakitIcerik.ilerlet()`'iyle aynı fikir, ama Android'de `AlarmManager`
+  tek seferlik uyandırmada iOS'un `BGAppRefreshTask`'ından daha güvenilir
+  olabilir — kanıtlanmadı, cihazda denenmeli).
+- `BesVakitBildirim.kt`: kendi bildirim kanalı (`IMPORTANCE_LOW`, sessiz —
+  yalnız içerik değişir), `expo-notifications`in ikonunu (`@drawable/
+  notification_icon`) yeniden kullanır.
+- `useWidgetSync.tsx`'teki Dinamik Ada efekti artık Android'de de çalışıyor
+  (`Platform.OS !== 'ios' && Platform.OS !== 'android'` kapısı) — asıl
+  ilerleme native tarafta olduğu için bu çağrı yalnız veriyi tazeler,
+  zararsız ve tekrarlanabilir (idempotent).
+- Ayarlardaki anahtar (`app/alarms.tsx`) önceden yalnız iOS'ta görünüyordu
+  ("Dinamik Ada'da geri sayım" metniyle, Android'de anlamsız olurdu); artık
+  Android'de de görünüyor, metni platforma göre değişiyor ("Kilit ekranında
+  bildirim").
+- `HomeNotices.tsx`'teki "Canlı Etkinlikler'i aç" hatırlatma kartı **bilerek
+  iOS'ta kaldı** — o kart iOS'un sistem Ayarlar'ındaki ayrı bir izni
+  (Live Activities) hatırlatıyor, Android'de öyle bir izin yok; Android'in
+  bildirim izni zaten ayrı bir hatırlatma kartıyla kapsanıyor.
+
+Burada Android SDK/cihaz yok — derleme CI'de, gerçek davranış (alarm
+Doze'da tetikleniyor mu, bildirim doğru güncelleniyor mu) kullanıcının
+kendi cihazında doğrulanmalı.
 

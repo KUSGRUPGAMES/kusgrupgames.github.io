@@ -520,7 +520,7 @@ export const de: Partial<Record<StringKey, string>> = {
   'ezan.testRealSent': 'Spielt in {n} Sekunden ab — verlasse jetzt die App.',
   'ezan.testRealBody': 'Dies entspricht genau einer echten Gebetszeit-Benachrichtigung.',
   'widget.openApp': 'Öffne BEŞ, um die Zeiten zu laden',
-  'widget.liveActivity': 'Countdown in der Dynamic Island',
+  'widget.liveActivity': 'Countdown in der Dynamic Island', 'widget.liveActivityAndroid': 'Benachrichtigung auf dem Sperrbildschirm', 'widget.liveActivityHintAndroid': 'Die nächste Gebetszeit erscheint in einer dauerhaften Benachrichtigung auf dem Sperrbildschirm.',
   'widget.liveActivityHint': 'Die Zeit bis zum nächsten Gebet erscheint live auf dem Sperrbildschirm und in der Dynamic Island.',
 
   'community.title': 'Gemeinschaft',

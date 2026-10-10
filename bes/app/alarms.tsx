@@ -130,8 +130,11 @@ export default function AlarmsScreen() {
             <Text variant="micro" tone="subtle">{Platform.OS === 'ios' ? t('ezan.outsideHintIos') : t('ezan.outsideHintAndroid')}</Text>
           </Column>
         ) : null}
-        {Platform.OS === 'ios' ? (
-          <Toggle title={t('widget.liveActivity')} subtitle={t('widget.liveActivityHint')} value={n.liveActivity}
+        {Platform.OS === 'ios' || Platform.OS === 'android' ? (
+          <Toggle
+            title={t(Platform.OS === 'ios' ? 'widget.liveActivity' : 'widget.liveActivityAndroid')}
+            subtitle={t(Platform.OS === 'ios' ? 'widget.liveActivityHint' : 'widget.liveActivityHintAndroid')}
+            value={n.liveActivity}
             onChange={(v) => ayarla({ liveActivity: v })} icon="clock" />
         ) : null}
         <ListItem title={t('ezan.preview')} icon="play" chevron={false}

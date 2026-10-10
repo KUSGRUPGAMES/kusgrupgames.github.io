@@ -520,7 +520,7 @@ export const fr: Partial<Record<StringKey, string>> = {
   'ezan.testRealSent': "Se déclenchera dans {n} secondes — quitte l'application maintenant.",
   'ezan.testRealBody': "Ceci est identique à une vraie notification d'heure de prière.",
   'widget.openApp': 'Ouvre BEŞ pour charger les horaires',
-  'widget.liveActivity': 'Compte à rebours dans la Dynamic Island',
+  'widget.liveActivity': 'Compte à rebours dans la Dynamic Island', 'widget.liveActivityAndroid': "Notification sur l'écran verrouillé", 'widget.liveActivityHintAndroid': "La prochaine prière apparaît dans une notification persistante sur l'écran verrouillé.",
   'widget.liveActivityHint': 'Le temps restant avant la prochaine prière s’affiche en direct sur l’écran verrouillé.',
 
   'community.title': 'Communauté',

@@ -520,7 +520,7 @@ export const en: Partial<Record<StringKey, string>> = {
   'ezan.testRealSent': 'Will play in {n} seconds — leave the app now.',
   'ezan.testRealBody': 'This is identical to a real prayer-time notification.',
   'widget.openApp': 'Open BEŞ to load prayer times',
-  'widget.liveActivity': 'Countdown in the Dynamic Island',
+  'widget.liveActivity': 'Countdown in the Dynamic Island', 'widget.liveActivityAndroid': 'Lock screen notification', 'widget.liveActivityHintAndroid': 'The next prayer time appears in an ongoing notification on the lock screen.',
   'widget.liveActivityHint': 'Time left to the next prayer shows live on the lock screen and in the Dynamic Island.',
 
   'community.title': 'Community',

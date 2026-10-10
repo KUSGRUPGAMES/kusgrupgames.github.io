@@ -794,6 +794,8 @@ export const tr = {
   'widget.openApp': 'Vakitleri görmek için BEŞ’i aç',
   'widget.liveActivity': 'Dinamik Ada’da geri sayım',
   'widget.liveActivityHint': 'Sıradaki vakte kalan süre kilit ekranında ve Dinamik Ada’da canlı görünür.',
+  'widget.liveActivityAndroid': 'Kilit ekranında bildirim',
+  'widget.liveActivityHintAndroid': 'Sıradaki vakit, kalıcı bir bildirimle kilit ekranında görünür.',
 
   // Topluluk (D31) — dua panosu, sohbet odaları, hatim grupları.
   // Şartname §55'in ("Dua kardeşliği") gerçek uygulaması; eski anahtarlar

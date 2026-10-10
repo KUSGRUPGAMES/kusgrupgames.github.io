@@ -112,13 +112,16 @@ export function useWidgetSync(): void {
     });
   }, [veri]);
 
-  // Dinamik Ada: açıkken vakit değişince ve arka plana geçerken güncellenir.
+  // Dinamik Ada (iOS) / kalıcı bildirim (Android): açıkken vakit değişince
+  // ve arka plana geçerken güncellenir. Android'de asıl ilerleme native
+  // tarafta (AlarmManager + BesVakitReceiver) olur, bu çağrı yalnız veri
+  // tazeler ve alarmı yeniden kurar — zararsız, idempotent.
   const acik = settings.notifications.liveActivity;
   const veriRef = useRef(veri);
   veriRef.current = veri;
   const sonHedef = useRef<string | null>(null);
   useEffect(() => {
-    if (Platform.OS !== 'ios') return undefined;
+    if (Platform.OS !== 'ios' && Platform.OS !== 'android') return undefined;
     const kur = () => {
       const v = veriRef.current;
       if (!acik || !v) {

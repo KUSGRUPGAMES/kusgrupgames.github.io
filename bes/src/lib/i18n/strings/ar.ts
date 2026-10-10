@@ -520,7 +520,7 @@ export const ar: Partial<Record<StringKey, string>> = {
   'ezan.testRealSent': 'سيُشغَّل خلال {n} ثانية — أغلق التطبيق الآن.',
   'ezan.testRealBody': 'هذا مطابق تمامًا لإشعار وقت الصلاة الحقيقي.',
   'widget.openApp': 'افتح «BEŞ» لعرض المواقيت',
-  'widget.liveActivity': 'العد التنازلي في الجزيرة الديناميكية',
+  'widget.liveActivity': 'العد التنازلي في الجزيرة الديناميكية', 'widget.liveActivityAndroid': 'إشعار على شاشة القفل', 'widget.liveActivityHintAndroid': 'يظهر وقت الصلاة القادم في إشعار دائم على شاشة القفل.',
   'widget.liveActivityHint': 'يظهر الوقت المتبقي للصلاة التالية مباشرة على شاشة القفل وفي الجزيرة الديناميكية.',
 
   'community.title': 'المجتمع',
