@@ -548,6 +548,8 @@ export const tr = {
   'onboarding.start': 'Başla',
   'onboarding.finish': 'Bitir',
   'onboarding.notificationAllow': 'Bildirimlere izin ver',
+  'onboarding.notificationGranted': 'İzin verildi',
+  'onboarding.notificationDenied': 'İzin verilmedi — sonra Ayarlar\'dan açabilirsin',
   'onboarding.locationNeeded': 'Devam etmek için bir konum seç',
 
   // --- ana sayfa ve günlük içerik (FAZ 3)

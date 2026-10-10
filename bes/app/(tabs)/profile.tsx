@@ -16,7 +16,7 @@ import { openLegalPage } from '@/lib/legal';
 import { showAdPrivacyOptions, useAdsStore } from '@/features/pro/adsRuntime';
 import { RewardedAdFreeItem } from '@/features/pro/RewardedAdFreeItem';
 import { TabTour, resetTour } from '@/features/tour/TabTour';
-import { PRO_SALES_ENABLED } from '@/features/pro/useProAccess';
+import { PRO_SALES_ENABLED, useProAccess } from '@/features/pro/useProAccess';
 
 export default function SettingsScreen() {
   const [turSifirlandi, setTurSifirlandi] = useState(false);
@@ -25,6 +25,14 @@ export default function SettingsScreen() {
   const theme = useTheme();
   const { language, setLanguage } = useI18n();
   const konum = useLocationStore((s) => s.active());
+  const erisim = useProAccess();
+
+  // Pro durumu hesapta aktifse (satın alma, panelden verilme ya da lansman
+  // dönemi) ayarlarda görünür — önceden yalnız genel tanıtım metni vardı,
+  // kullanıcı hesabının Pro olup olmadığını buradan anlayamıyordu.
+  const proAltYazi = erisim.has
+    ? (erisim.reason === 'trial' ? t('pro.trialActive', { n: erisim.trialDaysLeft ?? 0 }) : t('pro.active'))
+    : (PRO_SALES_ENABLED ? t('pro.settingsHint') : t('pro.launchShort'));
 
   return (
     <Screen scroll>
@@ -32,7 +40,7 @@ export default function SettingsScreen() {
       <PageHeader title={t('settings.title')} icon="settings" />
 
       <Card padding="sm">
-        <ListItem title={t('pro.title')} subtitle={PRO_SALES_ENABLED ? t('pro.settingsHint') : t('pro.launchShort')} icon="crown" onPress={() => router.push('/pro')} />
+        <ListItem title={t('pro.title')} subtitle={proAltYazi} icon="crown" onPress={() => router.push('/pro')} />
         <RewardedAdFreeItem />
       </Card>
 

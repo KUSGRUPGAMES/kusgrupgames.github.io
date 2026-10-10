@@ -58,6 +58,7 @@ export default function OnboardingScreen() {
   const [adim, setAdim] = useState(0);
   const [sorgu, setSorgu] = useState('');
   const [uyari, setUyari] = useState<string | null>(null);
+  const [bildirimDurumu, setBildirimDurumu] = useState<'verildi' | 'reddedildi' | null>(null);
   const [aliniyor, setAliniyor] = useState(false);
 
   const konumlar = useLocationStore((s) => s.locations);
@@ -218,13 +219,21 @@ export default function OnboardingScreen() {
           <Column gap="md">
             <Text variant="title2" tone="onAccent">{t('onboarding.notificationTitle')}</Text>
             <Text variant="body" tone="onAccent">{t('onboarding.notificationBody')}</Text>
-            <Button
-              label={t('onboarding.notificationAllow')}
-              icon="bell"
-              onPress={() => { void requestPermission(); }}
-              block
-              style={eylemStili}
-            />
+            {bildirimDurumu ? (
+              <Banner
+                tone={bildirimDurumu === 'verildi' ? 'success' : 'warning'}
+                title={t(bildirimDurumu === 'verildi' ? 'onboarding.notificationGranted' : 'onboarding.notificationDenied')}
+                style={{ backgroundColor: theme.colors.kat3, borderWidth: 1, borderColor: theme.colors.onAccentBorder }}
+              />
+            ) : (
+              <Button
+                label={t('onboarding.notificationAllow')}
+                icon="bell"
+                onPress={() => { void requestPermission().then((ok) => setBildirimDurumu(ok ? 'verildi' : 'reddedildi')); }}
+                block
+                style={eylemStili}
+              />
+            )}
             <Text variant="caption" tone="onAccent">{t('notification.coverageNote')}</Text>
           </Column>
         ) : null}

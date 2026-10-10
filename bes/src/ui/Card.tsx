@@ -1,6 +1,6 @@
 /** Kart yüzeyi — şartname §8. */
 import React, { Children, cloneElement, isValidElement } from 'react';
-import { View, Pressable, type ViewStyle, type StyleProp } from 'react-native';
+import { View, Pressable, type ViewStyle, type StyleProp, type LayoutChangeEvent } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Motif } from './motif/Motif';
 import { Gradient } from './Gradient';
@@ -19,10 +19,11 @@ export interface CardProps {
   onPress?: () => void;
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
+  onLayout?: (e: LayoutChangeEvent) => void;
 }
 
 export function Card({
-  children, padding = 'lg', radius = 'lg', accent = false, motif, onPress, accessibilityLabel, style,
+  children, padding = 'lg', radius = 'lg', accent = false, motif, onPress, accessibilityLabel, style, onLayout,
 }: CardProps) {
   const theme = useTheme();
   const base: ViewStyle = {
@@ -57,12 +58,13 @@ export function Card({
       {cocuklar}
     </>
   );
-  if (!onPress) return <View style={[base, style]}>{inner}</View>;
+  if (!onPress) return <View onLayout={onLayout} style={[base, style]}>{inner}</View>;
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       onPress={onPress}
+      onLayout={onLayout}
       style={({ pressed }) => [base, pressed ? { opacity: 0.85 } : null, style]}
     >
       {inner}

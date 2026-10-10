@@ -289,7 +289,7 @@ export const en: Partial<Record<StringKey, string>> = {
   'notification.coverage': '{days} days covered from today',
   'notification.coverageNote': 'A phone can hold only so many scheduled notifications. They are rescheduled further ahead each time you open the app.',
   'onboarding.step': '{current} / {total}', 'onboarding.start': 'Start',
-  'onboarding.finish': 'Finish', 'onboarding.notificationAllow': 'Allow notifications',
+  'onboarding.finish': 'Finish', 'onboarding.notificationAllow': 'Allow notifications', 'onboarding.notificationGranted': 'Permission granted', 'onboarding.notificationDenied': "Permission denied — you can turn it on later in Settings",
   'onboarding.locationNeeded': 'Choose a location to continue',
 
   'home.customize': 'Arrange the home screen',

@@ -18,10 +18,12 @@ export interface ScreenProps {
   onRefresh?: () => void;
   refreshing?: boolean;
   style?: ViewStyle;
+  /** Dışarıdan belirli bir öğeye kaydırmak için (ör. arama sonucundan gelince). */
+  scrollRef?: React.RefObject<ScrollView | null>;
 }
 
 export function Screen({
-  children, scroll = false, padding = 'lg', topInset = true, onRefresh, refreshing = false, style,
+  children, scroll = false, padding = 'lg', topInset = true, onRefresh, refreshing = false, style, scrollRef,
 }: ScreenProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -42,6 +44,7 @@ export function Screen({
       <BrandPattern opacity={theme.opacity.motifEkran} />
       {scroll ? (
         <ScrollView
+          ref={scrollRef}
           contentContainerStyle={content}
           keyboardShouldPersistTaps="handled"
           refreshControl={

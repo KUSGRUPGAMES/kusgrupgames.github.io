@@ -145,7 +145,7 @@ export function globalSearch(query: string, deps: GlobalSearchDeps, limit = 30):
       matchScore(d.body, ham) > 0 ? 1 : 0,
     );
     if (puan > 0) {
-      out.push({ kind: 'dua', href: '/duas', title: d.title, subtitle: d.body.slice(0, 80), score: 300 + puan * 10 });
+      out.push({ kind: 'dua', href: `/duas?id=${encodeURIComponent(d.id)}`, title: d.title, subtitle: d.body.slice(0, 80), score: 300 + puan * 10 });
     }
   }
 
@@ -158,7 +158,7 @@ export function globalSearch(query: string, deps: GlobalSearchDeps, limit = 30):
       matchScore(k.body, ham) > 0 ? 1 : 0,
     );
     if (puan > 0) {
-      out.push({ kind: 'knowledge', href: '/knowledge', title: k.title, subtitle: k.body.slice(0, 80), score: 200 + puan * 10 });
+      out.push({ kind: 'knowledge', href: `/knowledge?id=${encodeURIComponent(k.id)}`, title: k.title, subtitle: k.body.slice(0, 80), score: 200 + puan * 10 });
     }
   }
 

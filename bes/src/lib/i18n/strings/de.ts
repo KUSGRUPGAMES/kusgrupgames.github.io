@@ -289,7 +289,7 @@ export const de: Partial<Record<StringKey, string>> = {
   'notification.coverage': '{days} Tage ab heute abgedeckt',
   'notification.coverageNote': 'Ein Telefon kann nur begrenzt viele Benachrichtigungen vormerken. Bei jedem Öffnen der App werden sie weiter nach vorn geplant.',
   'onboarding.step': '{current} / {total}', 'onboarding.start': 'Los geht\u2019s',
-  'onboarding.finish': 'Fertig', 'onboarding.notificationAllow': 'Benachrichtigungen erlauben',
+  'onboarding.finish': 'Fertig', 'onboarding.notificationAllow': 'Benachrichtigungen erlauben', 'onboarding.notificationGranted': 'Erlaubnis erteilt', 'onboarding.notificationDenied': 'Nicht erlaubt — du kannst es später in den Einstellungen aktivieren',
   'onboarding.locationNeeded': 'Wähle einen Ort, um fortzufahren',
 
   'home.customize': 'Startseite einrichten',

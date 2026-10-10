@@ -63,7 +63,9 @@ export default function ChatRoomScreen() {
       <Stack.Screen options={{ headerShown: true, title: title ?? t('community.chatRooms') }} />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        // Android'de 'height' kullanılır — bkz. Sheet.tsx'teki not: native
+        // pencere/Activity ayarına güvenmek yerine JS tarafında çalışır.
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         <FlatList

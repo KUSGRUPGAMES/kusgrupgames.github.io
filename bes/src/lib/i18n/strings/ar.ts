@@ -289,7 +289,7 @@ export const ar: Partial<Record<StringKey, string>> = {
   'notification.coverage': 'مغطّى {days} يومًا من اليوم',
   'notification.coverageNote': 'يستطيع الهاتف حفظ عدد محدود من الإشعارات المجدولة. وتُعاد جدولتها إلى الأمام كلما فتحت التطبيق.',
   'onboarding.step': '{current} / {total}', 'onboarding.start': 'ابدأ',
-  'onboarding.finish': 'إنهاء', 'onboarding.notificationAllow': 'السماح بالإشعارات',
+  'onboarding.finish': 'إنهاء', 'onboarding.notificationAllow': 'السماح بالإشعارات', 'onboarding.notificationGranted': 'تم منح الإذن', 'onboarding.notificationDenied': 'لم يُمنح الإذن — يمكنك تفعيله لاحقًا من الإعدادات',
   'onboarding.locationNeeded': 'اختر موقعًا للمتابعة',
 
   'home.customize': 'ترتيب الصفحة الرئيسية',

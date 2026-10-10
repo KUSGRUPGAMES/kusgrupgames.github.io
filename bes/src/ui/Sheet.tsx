@@ -10,6 +10,12 @@
  *   kapatır, düğmelere dokunmak ise çalışır (keyboardShouldPersistTaps),
  * - klavye açıkken karartılmış arka plana dokunmak önce klavyeyi kapatır,
  *   yazılanı kaybettirecek şekilde sayfayı kapatmaz.
+ *
+ * Android'de `behavior` boş bırakılmıştı: `Modal` kendi native Dialog
+ * penceresini açar ve bu pencere Activity'nin `windowSoftInputMode`
+ * ayarını (adjustResize) miras almaz — yazı alanı klavyenin altında
+ * kalıyordu (dua isteği, şikâyet, hatim grubu formları, 11 Ekim). 'height'
+ * JS tarafında çalıştığı için native pencere ayarından bağımsız düzeltir.
  */
 import React from 'react';
 import { Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView } from 'react-native';
@@ -38,7 +44,7 @@ export function Sheet({ visible, onClose, title, children }: SheetProps) {
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <Pressable

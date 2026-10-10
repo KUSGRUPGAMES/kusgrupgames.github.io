@@ -289,7 +289,7 @@ export const fr: Partial<Record<StringKey, string>> = {
   'notification.coverage': "{days} jours couverts à partir d'aujourd'hui",
   'notification.coverageNote': "Un téléphone ne peut retenir qu'un nombre limité de notifications. Elles sont reprogrammées plus loin à chaque ouverture de l'application.",
   'onboarding.step': '{current} / {total}', 'onboarding.start': 'Commencer',
-  'onboarding.finish': 'Terminer', 'onboarding.notificationAllow': 'Autoriser les notifications',
+  'onboarding.finish': 'Terminer', 'onboarding.notificationAllow': 'Autoriser les notifications', 'onboarding.notificationGranted': 'Autorisation accordée', 'onboarding.notificationDenied': "Autorisation refusée — tu peux l'activer plus tard dans Réglages",
   'onboarding.locationNeeded': 'Choisissez un lieu pour continuer',
 
   'home.customize': "Organiser l'accueil",
