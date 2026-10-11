@@ -42,9 +42,11 @@ class BesLiveActivityModule : Module() {
       BesVakitYoneticisi.kur(context, p.city, p.title, slots)
     }
 
+    // Parametresiz AsyncFunction içinde değersiz `return@AsyncFunction`
+    // tip çıkarımını bozuyordu ("expected 'Any?', actual 'Unit'",
+    // CI'de görüldü); `?.let` aynı işi belirsizliğe düşmeden yapar.
     AsyncFunction("end") {
-      val context = appContext.reactContext ?: return@AsyncFunction
-      BesVakitYoneticisi.durdur(context)
+      appContext.reactContext?.let { BesVakitYoneticisi.durdur(it) }
     }
   }
 }
